@@ -149,7 +149,7 @@ static ColliderQuadInit sQuadInit = {
     },
     {
         ELEMTYPE_UNK0,
-        { 0x20000000, 0x00, 0x40 },
+        { 0x20000000, 0x00, 0x00 }, //{ 0x20000000, 0x00, 0x40 },
         { 0x00000000, 0x00, 0x00 },
         TOUCH_ON | TOUCH_SFX_NORMAL | TOUCH_UNK7,
         BUMP_NONE,
@@ -209,6 +209,7 @@ void EnIk_SetupAction(EnIk* this, EnIkActionFunc actionFunc) {
     this->actionFunc = actionFunc;
 }
 
+//global infos like health (but not damage dealt)
 void func_80A74398(Actor* thisx, GlobalContext* globalCtx) {
     EnIk* this = THIS;
     s32 pad;
@@ -228,7 +229,7 @@ void func_80A74398(Actor* thisx, GlobalContext* globalCtx) {
     thisx->colChkInfo.damageTable = &sDamageTable;
     thisx->colChkInfo.mass = MASS_HEAVY;
     this->unk_2FC = 0;
-    thisx->colChkInfo.health = 30;
+    thisx->colChkInfo.health = 1; //30
     thisx->gravity = -1.0f;
     this->switchFlags = (thisx->params >> 8) & 0xFF;
     thisx->params &= 0xFF;
@@ -237,7 +238,7 @@ void func_80A74398(Actor* thisx, GlobalContext* globalCtx) {
         thisx->colChkInfo.health += 20;
         thisx->naviEnemyId = 52;
     } else {
-        Actor_SetScale(thisx, 0.012f);
+        Actor_SetScale(thisx, 0.012f); //0.012f
         thisx->naviEnemyId = 53;
         Actor_ChangeCategory(globalCtx, &globalCtx->actorCtx, thisx, ACTORCAT_ENEMY);
     }
@@ -361,17 +362,18 @@ void func_80A7492C(EnIk* this, GlobalContext* globalCtx) {
     SkelAnime_Update(&this->skelAnime);
 }
 
+//walking speed related
 void func_80A74AAC(EnIk* this) {
     this->unk_2F8 = 5;
     if (this->unk_2FB == 0) {
         Animation_Change(&this->skelAnime, &D_0600ED24, 1.0f, 0.0f, Animation_GetLastFrame(&D_0600ED24), ANIMMODE_LOOP,
                          -4.0f);
-        this->actor.speedXZ = 0.9f;
+        this->actor.speedXZ = 0.9f; //0.9f
     } else {
         Animation_Change(&this->skelAnime, &D_06006734, 1.0f, 0.0f, Animation_GetLastFrame(&D_06006734), ANIMMODE_LOOP,
                          -4.0f);
         Audio_PlayActorSound2(&this->actor, NA_SE_EN_IRONNACK_DASH);
-        this->actor.speedXZ = 2.5f;
+        this->actor.speedXZ = 2.5f; //2.5f
     }
     this->actor.world.rot.y = this->actor.shape.rot.y;
     EnIk_SetupAction(this, func_80A74BA4);
@@ -658,6 +660,7 @@ void func_80A7598C(EnIk* this) {
     EnIk_SetupAction(this, func_80A75A38);
 }
 
+//item drops
 void func_80A75A38(EnIk* this, GlobalContext* globalCtx) {
     if (SkelAnime_Update(&this->skelAnime)) {
         if ((this->actor.colChkInfo.health == 0) && (this->unk_2F9 != 0)) {
@@ -769,6 +772,7 @@ void func_80A75C38(EnIk* this, GlobalContext* globalCtx) {
     CollisionCheck_SpawnShieldParticles(globalCtx, &sp38);
 }
 
+//damages from ik to player
 void func_80A75FA0(Actor* thisx, GlobalContext* globalCtx) {
     EnIk* this = THIS;
     s32 pad;
@@ -791,11 +795,11 @@ void func_80A75FA0(Actor* thisx, GlobalContext* globalCtx) {
                     player->invincibilityTimer = 0;
                 } else {
                     player->invincibilityTimer = 0;
-                    globalCtx->damagePlayer(globalCtx, -64);
+                    globalCtx->damagePlayer(globalCtx, -8);
                     this->unk_2FE = 0;
                 }
             }
-            func_8002F71C(globalCtx, &this->actor, 8.0f, this->actor.yawTowardsPlayer, 8.0f);
+            func_8002F71C(globalCtx, &this->actor, 50.0f, this->actor.yawTowardsPlayer, 25.0f); //8.0f both
             player->invincibilityTimer = prevInvincibilityTimer;
         }
     }
