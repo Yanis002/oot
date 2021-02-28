@@ -97,7 +97,7 @@ static ColliderCylinderInit sCylinderInit = {
         BUMP_ON | BUMP_HOOKABLE,
         OCELEM_ON,
     },
-    { 25, 80, 0, { 0, 0, 0 } },
+    { 20, 25, 20, { 0, 0, 0 } }, //25 80 0
 };
 
 static ColliderTrisElementInit sTrisElementsInit[2] = {
@@ -149,7 +149,7 @@ static ColliderQuadInit sQuadInit = {
     },
     {
         ELEMTYPE_UNK0,
-        { 0x20000000, 0x00, 0x00 }, //{ 0x20000000, 0x00, 0x40 },
+        { 0x20000000, 0x00, 0x80 }, //{ 0x20000000, 0x00, 0x40 },
         { 0x00000000, 0x00, 0x00 },
         TOUCH_ON | TOUCH_SFX_NORMAL | TOUCH_UNK7,
         BUMP_NONE,
@@ -159,7 +159,7 @@ static ColliderQuadInit sQuadInit = {
 };
 
 static DamageTable sDamageTable = {
-    /* Deku nut      */ DMG_ENTRY(0, 0xD),
+    /* Deku nut      */ DMG_ENTRY(1, 0xD),
     /* Deku stick    */ DMG_ENTRY(2, 0xF),
     /* Slingshot     */ DMG_ENTRY(1, 0xE),
     /* Explosive     */ DMG_ENTRY(2, 0xF),
@@ -169,10 +169,10 @@ static DamageTable sDamageTable = {
     /* Hookshot      */ DMG_ENTRY(0, 0xD),
     /* Kokiri sword  */ DMG_ENTRY(1, 0xF),
     /* Master sword  */ DMG_ENTRY(2, 0xF),
-    /* Giant's Knife */ DMG_ENTRY(4, 0xF),
-    /* Fire arrow    */ DMG_ENTRY(2, 0xE),
-    /* Ice arrow     */ DMG_ENTRY(2, 0xE),
-    /* Light arrow   */ DMG_ENTRY(2, 0xE),
+    /* Giant's Knife */ DMG_ENTRY(0, 0xF),
+    /* Fire arrow    */ DMG_ENTRY(0, 0xE),
+    /* Ice arrow     */ DMG_ENTRY(0, 0xE),
+    /* Light arrow   */ DMG_ENTRY(0, 0xE),
     /* Unk arrow 1   */ DMG_ENTRY(2, 0xE),
     /* Unk arrow 2   */ DMG_ENTRY(2, 0xE),
     /* Unk arrow 3   */ DMG_ENTRY(15, 0xE),
@@ -181,15 +181,15 @@ static DamageTable sDamageTable = {
     /* Light magic   */ DMG_ENTRY(0, 0x6),
     /* Shield        */ DMG_ENTRY(0, 0x0),
     /* Mirror Ray    */ DMG_ENTRY(0, 0x0),
-    /* Kokiri spin   */ DMG_ENTRY(1, 0xF),
-    /* Giant spin    */ DMG_ENTRY(4, 0xF),
-    /* Master spin   */ DMG_ENTRY(2, 0xF),
-    /* Kokiri jump   */ DMG_ENTRY(2, 0xF),
-    /* Giant jump    */ DMG_ENTRY(8, 0xF),
-    /* Master jump   */ DMG_ENTRY(4, 0xF),
+    /* Kokiri spin   */ DMG_ENTRY(0, 0xF),
+    /* Giant spin    */ DMG_ENTRY(0, 0xF),
+    /* Master spin   */ DMG_ENTRY(0, 0xF),
+    /* Kokiri jump   */ DMG_ENTRY(4, 0xF),
+    /* Giant jump    */ DMG_ENTRY(1, 0xF),
+    /* Master jump   */ DMG_ENTRY(2, 0xF),
     /* Unknown 1     */ DMG_ENTRY(10, 0xF),
     /* Unblockable   */ DMG_ENTRY(0, 0x0),
-    /* Hammer jump   */ DMG_ENTRY(4, 0xF),
+    /* Hammer jump   */ DMG_ENTRY(3, 0xF),
     /* Unknown 2     */ DMG_ENTRY(0, 0x0),
 };
 
@@ -229,7 +229,7 @@ void func_80A74398(Actor* thisx, GlobalContext* globalCtx) {
     thisx->colChkInfo.damageTable = &sDamageTable;
     thisx->colChkInfo.mass = MASS_HEAVY;
     this->unk_2FC = 0;
-    thisx->colChkInfo.health = 1; //30
+    thisx->colChkInfo.health = 40; //30
     thisx->gravity = -1.0f;
     this->switchFlags = (thisx->params >> 8) & 0xFF;
     thisx->params &= 0xFF;
@@ -238,7 +238,7 @@ void func_80A74398(Actor* thisx, GlobalContext* globalCtx) {
         thisx->colChkInfo.health += 20;
         thisx->naviEnemyId = 52;
     } else {
-        Actor_SetScale(thisx, 0.012f); //0.012f
+        Actor_SetScale(thisx, 0.008f); //0.012f
         thisx->naviEnemyId = 53;
         Actor_ChangeCategory(globalCtx, &globalCtx->actorCtx, thisx, ACTORCAT_ENEMY);
     }
@@ -368,12 +368,12 @@ void func_80A74AAC(EnIk* this) {
     if (this->unk_2FB == 0) {
         Animation_Change(&this->skelAnime, &D_0600ED24, 1.0f, 0.0f, Animation_GetLastFrame(&D_0600ED24), ANIMMODE_LOOP,
                          -4.0f);
-        this->actor.speedXZ = 0.9f; //0.9f
+        this->actor.speedXZ = 1.9f; //0.9f
     } else {
         Animation_Change(&this->skelAnime, &D_06006734, 1.0f, 0.0f, Animation_GetLastFrame(&D_06006734), ANIMMODE_LOOP,
                          -4.0f);
         Audio_PlayActorSound2(&this->actor, NA_SE_EN_IRONNACK_DASH);
-        this->actor.speedXZ = 2.5f; //2.5f
+        this->actor.speedXZ = 3.5f; //2.5f
     }
     this->actor.world.rot.y = this->actor.shape.rot.y;
     EnIk_SetupAction(this, func_80A74BA4);
@@ -407,8 +407,8 @@ void func_80A74BA4(EnIk* this, GlobalContext* globalCtx) {
     }
     this->actor.shape.rot.y = this->actor.world.rot.y;
     yawDiff = this->actor.yawTowardsPlayer - this->actor.shape.rot.y;
-    if ((ABS(yawDiff) <= temp_t0) && (this->actor.xzDistToPlayer < 100.0f)) {
-        if (ABS(this->actor.yDistToPlayer) < 150.0f) {
+    if ((ABS(yawDiff) <= temp_t0) && (this->actor.xzDistToPlayer < 50.0f)) { //100
+        if (ABS(this->actor.yDistToPlayer) < 100.0f) { //150
             if ((globalCtx->gameplayFrames & 1)) {
                 func_80A74E2C(this);
             } else {
@@ -795,11 +795,12 @@ void func_80A75FA0(Actor* thisx, GlobalContext* globalCtx) {
                     player->invincibilityTimer = 0;
                 } else {
                     player->invincibilityTimer = 0;
-                    globalCtx->damagePlayer(globalCtx, -8);
+                    globalCtx->damagePlayer(globalCtx, -64);
                     this->unk_2FE = 0;
                 }
             }
-            func_8002F71C(globalCtx, &this->actor, 50.0f, this->actor.yawTowardsPlayer, 25.0f); //8.0f both
+            func_8002F71C(globalCtx, &this->actor, 15.0f, this->actor.yawTowardsPlayer, 15.0f); //8.0f both
+            func_800F5ACC(0x40);
             player->invincibilityTimer = prevInvincibilityTimer;
         }
     }
