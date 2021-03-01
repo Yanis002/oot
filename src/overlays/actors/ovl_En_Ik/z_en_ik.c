@@ -800,7 +800,6 @@ void func_80A75FA0(Actor* thisx, GlobalContext* globalCtx) {
                 }
             }
             func_8002F71C(globalCtx, &this->actor, 15.0f, this->actor.yawTowardsPlayer, 15.0f); //8.0f both
-            func_800F5ACC(0x40);
             player->invincibilityTimer = prevInvincibilityTimer;
         }
     }

@@ -39,7 +39,7 @@ static ColliderCylinderInit sCylinderInit = {
         BUMP_ON,
         OCELEM_NONE,
     },
-    { 9, 23, 0, { 0 } },
+    { 11, 25, 0, { 0 } },
 };
 
 const ActorInit En_Tubo_Trap_InitVars = {
@@ -62,7 +62,7 @@ void EnTuboTrap_Init(Actor* thisx, GlobalContext* globalCtx) {
     osSyncPrintf(VT_FGCOL(GREEN) "☆☆☆☆☆ 壷トラップ ☆☆☆☆☆ %x\n" VT_RST, this->actor.params); // "Urn Trap"
     Collider_InitCylinder(globalCtx, &this->collider);
     Collider_SetCylinder(globalCtx, &this->collider, &this->actor, &sCylinderInit);
-    Actor_SetScale(&this->actor, 0.1f);
+    Actor_SetScale(&this->actor, 0.15f); //0.1f
     this->actionFunc = EnTuboTrap_WaitForProximity;
 }
 

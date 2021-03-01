@@ -51,7 +51,7 @@ static ColliderJntSphElementInit sJntSphElementsInit[1] = {
     {
         {
             ELEMTYPE_UNK0,
-            { 0xFFCFFFFF, 0x01, 0x08 },
+            { 0xFFCFFFFF, 0x02, 0x08 }, //something, 0x01, something
             { 0xFFCFFFFF, 0x00, 0x00 },
             TOUCH_ON | TOUCH_SFX_HARD,
             BUMP_ON,
@@ -179,10 +179,10 @@ void EnFirefly_Init(Actor* thisx, GlobalContext* globalCtx) {
         }
 
         if (this->actor.params == KEESE_ICE_FLY) {
-            this->collider.elements[0].info.toucher.effect = 2; // Ice
+            this->collider.elements[0].info.toucher.effect = 1; // Ice: 2
             this->actor.naviEnemyId = 0x56;                     // Ice Keese
         } else {
-            this->collider.elements[0].info.toucher.effect = 0; // Nothing
+            this->collider.elements[0].info.toucher.effect = 3; // Nothing: 0
             this->actor.naviEnemyId = 0x12;                     // Keese
         }
 
