@@ -97,28 +97,28 @@ static DamageTable sDamageTable = {
     /* Hammer swing  */ DMG_ENTRY(2, 0x0),
     /* Hookshot      */ DMG_ENTRY(0, 0x1),
     /* Kokiri sword  */ DMG_ENTRY(1, 0x0),
-    /* Master sword  */ DMG_ENTRY(2, 0x0),
-    /* Giant's Knife */ DMG_ENTRY(4, 0x0),
+    /* Master sword  */ DMG_ENTRY(1, 0x0),
+    /* Giant's Knife */ DMG_ENTRY(1, 0x0),
     /* Fire arrow    */ DMG_ENTRY(2, 0x0),
     /* Ice arrow     */ DMG_ENTRY(2, 0x0),
     /* Light arrow   */ DMG_ENTRY(2, 0x0),
     /* Unk arrow 1   */ DMG_ENTRY(2, 0x0),
     /* Unk arrow 2   */ DMG_ENTRY(2, 0x0),
     /* Unk arrow 3   */ DMG_ENTRY(2, 0x0),
-    /* Fire magic    */ DMG_ENTRY(2, 0xE),
+    /* Fire magic    */ DMG_ENTRY(10, 0xE),
     /* Ice magic     */ DMG_ENTRY(0, 0x6),
     /* Light magic   */ DMG_ENTRY(3, 0xD),
     /* Shield        */ DMG_ENTRY(0, 0x0),
-    /* Mirror Ray    */ DMG_ENTRY(0, 0x0),
+    /* Mirror Ray    */ DMG_ENTRY(10, 0x0),
     /* Kokiri spin   */ DMG_ENTRY(1, 0x0),
     /* Giant spin    */ DMG_ENTRY(4, 0x0),
     /* Master spin   */ DMG_ENTRY(2, 0x0),
     /* Kokiri jump   */ DMG_ENTRY(2, 0x0),
-    /* Giant jump    */ DMG_ENTRY(8, 0x0),
-    /* Master jump   */ DMG_ENTRY(4, 0x0),
+    /* Giant jump    */ DMG_ENTRY(1, 0x0),
+    /* Master jump   */ DMG_ENTRY(1, 0x0),
     /* Unknown 1     */ DMG_ENTRY(0, 0x0),
     /* Unblockable   */ DMG_ENTRY(0, 0x0),
-    /* Hammer jump   */ DMG_ENTRY(4, 0x0),
+    /* Hammer jump   */ DMG_ENTRY(1, 0x0),
     /* Unknown 2     */ DMG_ENTRY(0, 0x0),
 };
 
@@ -137,7 +137,7 @@ void EnTorch2_Init(Actor* thisx, GlobalContext* globalCtx2) {
     this->swordQuads[0].base.atFlags = this->swordQuads[1].base.atFlags = AT_ON | AT_TYPE_ENEMY;
     this->swordQuads[0].base.acFlags = this->swordQuads[1].base.acFlags = AC_ON | AC_HARD | AC_TYPE_PLAYER;
     this->swordQuads[0].base.colType = this->swordQuads[1].base.colType = COLTYPE_METAL;
-    this->swordQuads[0].info.toucher.damage = this->swordQuads[1].info.toucher.damage = 8;
+    this->swordQuads[0].info.toucher.damage = this->swordQuads[1].info.toucher.damage = 8; //8 80
     this->swordQuads[0].info.bumperFlags = this->swordQuads[1].info.bumperFlags = BUMP_ON;
     this->shieldQuad.base.atFlags = AT_ON | AT_TYPE_ENEMY;
     this->shieldQuad.base.acFlags = AC_ON | AC_HARD | AC_TYPE_PLAYER;

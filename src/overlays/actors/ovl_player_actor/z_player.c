@@ -3512,9 +3512,9 @@ s32 func_8083816C(s32 arg0) {
 }
 
 void func_8083819C(Player* this, GlobalContext* globalCtx) {
-    if (this->currentShield == PLAYER_SHIELD_DEKU) {
-        Actor_Spawn(&globalCtx->actorCtx, globalCtx, ACTOR_ITEM_SHIELD, this->actor.world.pos.x,
-                    this->actor.world.pos.y, this->actor.world.pos.z, 0, 0, 0, 1);
+    if (this->currentShield == PLAYER_SHIELD_HYLIAN) {//PLAYER_SHIELD_DEKU
+        /*Actor_Spawn(&globalCtx->actorCtx, globalCtx, ACTOR_ITEM_SHIELD, this->actor.world.pos.x,
+                    this->actor.world.pos.y, this->actor.world.pos.z, 0, 0, 0, 1);*/
         Inventory_DeleteEquipment(globalCtx, EQUIP_SHIELD);
         func_8010B680(globalCtx, 0x305F, NULL); // "Your shield is gone!"
     }
@@ -3640,9 +3640,9 @@ s32 func_808382DC(Player* this, GlobalContext* globalCtx) {
                     }
                 }
 
-                if (sp64 && (this->shieldQuad.info.acHitInfo->toucher.effect == 1)) {
+               /* if (sp64 && (this->currentShield == PLAYER_SHIELD_HYLIAN)) { //sp64 && (this->shieldQuad.info.acHitInfo->toucher.effect == 1)
                     func_8083819C(this, globalCtx);
-                }
+                }*/
 
                 return 0;
             }
@@ -7827,6 +7827,13 @@ FallImpactInfo D_80854600[] = {
     { -16, 255, 140, 150, NA_SE_VO_LI_LAND_DAMAGE_S },
 };
 
+//progressive fall damages
+s8 calculateFallDamage(u16 totalHealth) {
+    s8 fallDamage = totalHealth * 136 / (864 - totalHealth);
+
+    return (fallDamage + 3) & ~3;
+}
+
 s32 func_80843E64(GlobalContext* globalCtx, Player* this) {
     s32 sp34;
 
@@ -7843,6 +7850,8 @@ s32 func_80843E64(GlobalContext* globalCtx, Player* this) {
     if (sp34 >= 400) {
         s32 impactIndex;
         FallImpactInfo* impactInfo;
+        u8 fallDamages = -8;
+        u16 totalHealth = gSaveContext.healthCapacity;
 
         if (this->fallDistance < 800) {
             impactIndex = 0;
@@ -7850,9 +7859,12 @@ s32 func_80843E64(GlobalContext* globalCtx, Player* this) {
             impactIndex = 1;
         }
 
+        if(totalHealth < 0x40) fallDamages = 0x08;
+        else fallDamages = calculateFallDamage(totalHealth);
+        
         impactInfo = &D_80854600[impactIndex];
 
-        if (Player_InflictDamage(globalCtx, impactInfo->damage)) {
+        if (Player_InflictDamage(globalCtx, -fallDamages)) {//if (Player_InflictDamage(globalCtx, impactInfo->damage)) 
             return -1;
         }
 
@@ -9723,7 +9735,7 @@ void func_80848C74(GlobalContext* globalCtx, Player* this) {
         sp58 = 0;
     }
 
-    func_8083819C(this, globalCtx);
+    //func_8083819C(this, globalCtx);
 
     for (i = 0; i < 18; i++, timerPtr++) {
         timerStep = sp58 + sp54;
@@ -9797,6 +9809,10 @@ void Player_UpdateCommon(Player* this, GlobalContext* globalCtx, Input* input) {
     s32 pad;
 
     sControlInput = input;
+
+    if (this->currentShield == PLAYER_SHIELD_HYLIAN) { //sp64 && (this->shieldQuad.info.acHitInfo->toucher.effect == 1)
+        func_8083819C(this, globalCtx);
+    }
 
     if (this->unk_A86 < 0) {
         this->unk_A86++;
@@ -9908,6 +9924,11 @@ void Player_UpdateCommon(Player* this, GlobalContext* globalCtx, Input* input) {
 
         if (this->currentMask == PLAYER_MASK_BUNNY) {
             func_8085002C(this);
+
+            //Note: temporary, copy paste MM's code for fast bunny hood (BUG)
+            if((sControlInput->rel.stick_x < -30) || (sControlInput->rel.stick_x > 30) 
+            || (sControlInput->rel.stick_y < -30) || (sControlInput->rel.stick_y > 30))
+            this->linearVelocity = 8.0f;
         }
 
         if (func_8002DD6C(this) != 0) {

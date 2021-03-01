@@ -23,7 +23,7 @@ void Opening_SetupTitleScreen(OpeningContext* this) {
     gSaveContext.unk_13F4 = 0;
     gSaveContext.magicLevel = gSaveContext.magic;
 
-    gSaveContext.linkAge = 0;
+    gSaveContext.linkAge = 1;
     gSaveContext.dayTime = 0x8000;
     gSaveContext.environmentTime = gSaveContext.dayTime;
     gSaveContext.buttonStatus[4] = BTN_ENABLED;
@@ -33,7 +33,7 @@ void Opening_SetupTitleScreen(OpeningContext* this) {
     gSaveContext.buttonStatus[0] = BTN_ENABLED;
     gSaveContext.unk_13E7 = gSaveContext.unk_13E8 = gSaveContext.unk_13EA = gSaveContext.unk_13EC = 0;
     Audio_SetBGM(NA_BGM_STOP);
-    gSaveContext.entranceIndex = 0x165;
+    gSaveContext.entranceIndex = 0x165; //47 for dark link area
     gSaveContext.respawnFlag = 0;
     gSaveContext.respawn[RESPAWN_MODE_DOWN].entranceIndex = -1;
     gSaveContext.seqIndex = 0xFF;
