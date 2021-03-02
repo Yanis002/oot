@@ -185,13 +185,14 @@ void Sram_InitNewSave(void) {
 SavePlayerData sDebugSavePlayerData = {
     { 'Z', 'E', 'L', 'D', 'A', 'Z' },                   // newf
     0,                                                  // deaths
-    { 0x15, 0x12, 0x17, 0x14, 0x3E, 0x3E, 0x3E, 0x3E }, // playerName ( "LINK" )
+    //{ 0x15, 0x12, 0x17, 0x14, 0x3E, 0x3E, 0x3E, 0x3E }, // playerName ( "LINK" )
+    { 'L', 'i', 'n', 'k'},
     0,                                                  // n64ddFlag
     0xE0,                                               // healthCapacity
     0xE0,                                               // health
     0,                                                  // magicLevel
     0x30,                                               // magic
-    150,                                                // rupees
+    0,                                                // rupees
     8,                                                  // swordHealth
     0,                                                  // naviTimer
     1,                                                  // magicAcquired

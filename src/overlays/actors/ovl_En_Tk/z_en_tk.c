@@ -409,21 +409,21 @@ s16 func_80B1C5A0(GlobalContext* globalCtx, Actor* thisx) {
 
 s32 EnTk_ChooseReward(EnTk* this) {
     f32 luck;
-    s32 reward;
+    s32 reward; //0 = green rupee, 1 = blue rupee, 2 = red rupee, 3 = HP/purple rupee
 
     luck = Rand_ZeroOne();
 
-    if (luck < 0.4f) {
-        reward = 0;
-    } else if (luck < 0.7) {
-        reward = 1;
-    } else if (luck < 0.9) {
-        reward = 2;
-    } else {
+    if (luck < 0.43f) { //if luck is 42% (0.0 to 0.42)
         reward = 3;
-    }
+    } else if (luck < 0.7) { //if luck is 28% (0.42 to 0.7)
+        reward = 2;
+    } else if (luck < 0.9) { //if luck is 20% (0.7 to 0.9)
+        reward = 1;
+    } else { //if luck is 10% (0.9 to 1.0)
+        reward = 0;
+    }//0, 1, 2, 3
 
-    switch (reward) {
+    switch (reward) { //maximum awarded without reloading
         case 0:
             if (this->rewardCount[0] < 8) {
                 this->rewardCount[0] += 1;

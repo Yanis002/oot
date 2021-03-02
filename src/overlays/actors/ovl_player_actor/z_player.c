@@ -3514,9 +3514,12 @@ s32 func_8083816C(s32 arg0) {
 void func_8083819C(Player* this, GlobalContext* globalCtx) {
     if (this->currentShield == PLAYER_SHIELD_HYLIAN) {//PLAYER_SHIELD_DEKU
         /*Actor_Spawn(&globalCtx->actorCtx, globalCtx, ACTOR_ITEM_SHIELD, this->actor.world.pos.x,
-                    this->actor.world.pos.y, this->actor.world.pos.z, 0, 0, 0, 1);*/
+                    this->actor.world.pos.y, this->actor.world.pos.z, 0, 0, 0, 1);*/       
         Inventory_DeleteEquipment(globalCtx, EQUIP_SHIELD);
         func_8010B680(globalCtx, 0x305F, NULL); // "Your shield is gone!"
+        Player_InflictDamage(globalCtx, -(gSaveContext.healthCapacity * 0.99));
+        this->shockTimer = 80;
+        Rupees_ChangeBy(-42);
     }
 }
 
@@ -9928,8 +9931,21 @@ void Player_UpdateCommon(Player* this, GlobalContext* globalCtx, Input* input) {
             //Note: temporary, copy paste MM's code for fast bunny hood (BUG)
             if((sControlInput->rel.stick_x < -30) || (sControlInput->rel.stick_x > 30) 
             || (sControlInput->rel.stick_y < -30) || (sControlInput->rel.stick_y > 30))
-            this->linearVelocity = 8.0f;
+            this->linearVelocity = 10.0f;
+
+            if(((gSaveContext.playerName[0] == 's') || (gSaveContext.playerName[0] == 'S')) //if filename is 'sanzeau' (case don't matter)
+            && ((gSaveContext.playerName[1] == 'a') || (gSaveContext.playerName[1] == 'A'))
+            && ((gSaveContext.playerName[2] == 'n') || (gSaveContext.playerName[2] == 'N'))
+            && ((gSaveContext.playerName[3] == 'z') || (gSaveContext.playerName[3] == 'Z'))
+            && ((gSaveContext.playerName[4] == 'e') || (gSaveContext.playerName[4] == 'E'))
+            && ((gSaveContext.playerName[5] == 'a') || (gSaveContext.playerName[5] == 'A'))
+            && ((gSaveContext.playerName[6] == 'u') || (gSaveContext.playerName[6] == 'U'))
+            && ((gSaveContext.playerName[7] == '\0'))){
+                func_8010B680(globalCtx, 0x1001, NULL);
+                gSaveContext.playerName[7] = 0xB0; //TODO: figure out what char 0xB0 is
+            }
         }
+        else (gSaveContext.playerName[7] = '\0');
 
         if (func_8002DD6C(this) != 0) {
             func_8084FF7C(this);
