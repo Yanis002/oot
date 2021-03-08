@@ -1,0 +1,38 @@
+rom_header.s: change region (P for PAL, E for NTSC)
+unk = unknown (if something is not named yet itll be called that with its offset)
+sudo make -j4 COMPARE=0 to build
+
+AC = hurtbox (blue on gz)
+AT = hitbox (red on gz)
+OC = bump (gray)
+
+Updating fork:
+git fetch upstream
+git checkout master
+git merge upstream/master
+git push origin master
+
+func_800F5ACC(bgm_id_hex): change the background music
+func_8085002C(): bunny mask function
+Sram_InitDebugSave(): initialise la save du title screen
+
+kaleidoscope: pause menu
+
+z_sram.c:
+permet de modifier la save du title screen (sDebugSavePlayerData)
+
+z_obj_oshihiki:
+change pushSpeed increment and clamp
+
+z_player.c:
+max expl limit: (globalCtx->actorCtx.actorLists[ACTORCAT_EXPLOSIVE].length >= 30))))))
+func_8083819C: deku shield fall function
+func_80848C74: burning link function
+
+z_en_ik (iron knuckle):
+func_80A74AAC = movement speed
+func_80A75A38: Item_DropCollectibleRandom = what they drop
+sQuadInit, after ELEMTYPE_UNK0, { something, something, damages in hex (0x00 format) },
+func_80A75FA0 line func_8002F71C, first float is horizontal distance, second is vertical
+func_80A74BA4: change the distance between IK and Player: if ((ABS(yawDiff) <= temp_t0) && (this->actor.xzDistToPlayer < 50.0f)) { //100
+        if (ABS(this->actor.yDistToPlayer) < 100.0f) { //150
