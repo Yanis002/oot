@@ -19,6 +19,7 @@
 #include "z64animation.h"
 #include "z64dma.h"
 #include "z64math.h"
+#include "z64map_mark.h"
 #include "z64transition.h"
 #include "bgm.h"
 #include "sfx.h"
@@ -221,15 +222,15 @@ typedef struct {
 } TargetContext; // size = 0x98
 
 typedef struct {
-    /* 0x00 */ u8*      texture;
-    /* 0x04 */ s16      unk_4;
-    /* 0x06 */ s16      unk_6;
-    /* 0x08 */ u8       unk_8;
-    /* 0x09 */ u8       unk_9;
-    /* 0x0A */ u8       delayA;
-    /* 0x0B */ u8       delayB;
-    /* 0x0C */ s16      unk_C;
-    /* 0x0E */ s16      unk_E;
+    /* 0x00 */ void*      texture;
+    /* 0x04 */ s16      x;
+    /* 0x06 */ s16      y;
+    /* 0x08 */ u8       width;
+    /* 0x09 */ u8       height;
+    /* 0x0A */ u8       durationTimer; // how long the title card appears for before fading
+    /* 0x0B */ u8       delayTimer; // how long the title card waits to appear
+    /* 0x0C */ s16      alpha;
+    /* 0x0E */ s16      intensity;
 } TitleCardContext; // size = 0x10
 
 typedef struct {
@@ -552,7 +553,7 @@ typedef struct {
     /* 0xCF */ u8       unk_CF[3];
     /* 0xD2 */ s16      unk_D2;
     /* 0xD4 */ char     unk_D4[0x02];
-    /* 0xD6 */ s16      unk_D6;
+    /* 0xD6 */ u16      unk_D6;
     /* 0xD8 */ f32      unk_D8;
     /* 0xDC */ u8       unk_DC;
     /* 0xDD */ u8       gloomySkyEvent;
@@ -880,8 +881,8 @@ typedef struct GlobalContext {
     /* 0x000B0 */ void* sceneSegment;
     /* 0x000B8 */ View view;
     /* 0x001E0 */ Camera mainCamera;
-    /* 0x0034C */ Camera subCameras[3];
-    /* 0x00790 */ Camera* cameraPtrs[4];
+    /* 0x0034C */ Camera subCameras[NUM_CAMS - SUBCAM_FIRST];
+    /* 0x00790 */ Camera* cameraPtrs[NUM_CAMS];
     /* 0x007A0 */ s16 activeCamera;
     /* 0x007A2 */ s16 nextCamera;
     /* 0x007A4 */ SoundContext soundCtx;
@@ -931,7 +932,7 @@ typedef struct GlobalContext {
     /* 0x11E04 */ s16* setupExitList;
     /* 0x11E08 */ Path* setupPathList;
     /* 0x11E0C */ ElfMessage* cUpElfMsgs;
-    /* 0x11E10 */ char unk_11E10[0x4];
+    /* 0x11E10 */ void* specialEffects;
     /* 0x11E14 */ u8 skyboxId;
     /* 0x11E15 */ s8 sceneLoadFlag; // "fade_direction"
     /* 0x11E16 */ s16 unk_11E16;
@@ -1166,19 +1167,6 @@ typedef struct {
     /* 0x68 */ u8  (*floorID)[8];
     /* 0x6C */ s16* skullFloorIconY; // dungeon big skull icon Y pos
 } MapData; // size = 0x70
-
-typedef struct {
-    /* 0x00 */ s8 chestFlag; // chest icon is only displayed if this flag is not set for the current room
-    /* 0x01 */ u8 x, y; // coordinates to place the icon (top-left corner), relative to the minimap texture
-} MapMarkPoint; // size = 0x3
-
-typedef struct {
-    /* 0x00 */ s8 markType; // 0 for the chest icon, 1 for the boss skull icon, -1 for none
-    /* 0x01 */ u8 count; // number of icons to display
-    /* 0x02 */ MapMarkPoint points[12];
-} MapMarkData; // size = 0x26
-
-typedef MapMarkData MapMarksData[3]; // size = 0x72
 
 typedef struct DebugDispObject {
     /* 0x00 */ Vec3f pos;
