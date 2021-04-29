@@ -69,7 +69,7 @@ void EnWonderItem_Destroy(Actor* thisx, GlobalContext* globalCtx) {
 
 void EnWonderItem_DropCollectible(EnWonderItem* this, GlobalContext* globalCtx, s32 autoCollect) {
     static s16 dropTable[] = {
-        ITEM00_NUTS,        ITEM00_HEART_PIECE,  ITEM00_MAGIC_LARGE,   ITEM00_MAGIC_SMALL,
+        ITEM00_NUTS,        ITEM00_HEART_PIECE,  ITEM00_SMALL_KEY,   ITEM00_MAGIC_SMALL,
         ITEM00_HEART,       ITEM00_ARROWS_SMALL, ITEM00_ARROWS_MEDIUM, ITEM00_ARROWS_LARGE,
         ITEM00_RUPEE_GREEN, ITEM00_RUPEE_BLUE,   ITEM00_RUPEE_RED,     ITEM00_FLEXIBLE,
     };

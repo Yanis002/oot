@@ -8332,17 +8332,17 @@ beginseg
 endseg
 
 beginseg
-    name "spot01_scene"
-    romalign 0x1000
-    include "build/assets/scenes/overworld/spot01/spot01_scene.o"
-    number 2
+	name "spot01_scene"
+	romalign 0x1000
+	include "build/assets/scenes/overworld/spot01/spot01_scene.o"
+	number 2
 endseg
 
 beginseg
-    name "spot01_room_0"
-    romalign 0x1000
-    include "build/assets/scenes/overworld/spot01/spot01_room_0.o"
-    number 3
+	name "spot01_room_0"
+	romalign 0x1000
+	include "build/assets/scenes/overworld/spot01/spot01_room_0.o"
+	number 3
 endseg
 
 beginseg
@@ -8710,17 +8710,17 @@ beginseg
 endseg
 
 beginseg
-    name "market_day_scene"
-    romalign 0x1000
-    include "build/assets/scenes/misc/market_day/market_day_scene.o"
-    number 2
+	name "market_day_scene"
+	romalign 0x1000
+	include "build/assets/scenes/misc/market_day/market_day_scene.o"
+	number 2
 endseg
 
 beginseg
-    name "market_day_room_0"
-    romalign 0x1000
-    include "build/assets/scenes/misc/market_day/market_day_room_0.o"
-    number 3
+	name "market_day_room_0"
+	romalign 0x1000
+	include "build/assets/scenes/misc/market_day/market_day_room_0.o"
+	number 3
 endseg
 
 beginseg
