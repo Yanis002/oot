@@ -9868,6 +9868,9 @@ Vec3f D_80854814 = { 0.0f, 0.0f, 200.0f };
 f32 D_80854820[] = { 2.0f, 4.0f, 7.0f };
 f32 D_8085482C[] = { 0.5f, 1.0f, 3.0f };
 
+//test quick text
+extern u8 D_8014B300;
+
 void Player_UpdateCommon(Player* this, GlobalContext* globalCtx, Input* input) {
     s32 pad;
 
@@ -9987,6 +9990,9 @@ void Player_UpdateCommon(Player* this, GlobalContext* globalCtx, Input* input) {
 
         if (this->currentMask == PLAYER_MASK_BUNNY) {
             func_8085002C(this);
+
+            //test quick text
+            D_8014B300 = 1;
 
             //Note: temporary, copy paste MM's code for fast bunny hood (BUG)
             if((sControlInput->rel.stick_x < -30) || (sControlInput->rel.stick_x > 30) 
