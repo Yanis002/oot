@@ -9875,6 +9875,14 @@ void Player_UpdateCommon(Player* this, GlobalContext* globalCtx, Input* input) {
 
     sControlInput = input;
 
+    //test file select
+    if(CHECK_BTN_ALL(sControlInput->cur.button, BTN_A + BTN_B + BTN_Z + BTN_START)){
+        func_800F68BC(0);
+        gSaveContext.gameMode = 2;
+        globalCtx->sceneLoadFlag = 20;
+        globalCtx->fadeTransition = 2;
+    }
+
     if (this->currentShield == PLAYER_SHIELD_HYLIAN) { //sp64 && (this->shieldQuad.info.acHitInfo->toucher.effect == 1)
         func_8083819C(this, globalCtx);
     }
