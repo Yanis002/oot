@@ -233,7 +233,7 @@ static Inventory sDebugSaveInventory = {
     { 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 }, // dungeonItems
     { 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8 },    // dungeonKeys
     0,                                                              // defenseHearts
-    100,                                                            // gsTokens
+    0,                                                            // gsTokens
 };
 
 static u16 sDebugSaveChecksum = 0;
@@ -836,7 +836,8 @@ void Sram_InitSram(GameState* gameState, SramContext* sramCtx) {
         if (sZeldaMagic[i + 3] != sramCtx->readBuff[i + 3]) {
             // SRAM destruction! ! ! ! ! !
             osSyncPrintf("ＳＲＡＭ破壊！！！！！！\n");
-            gSaveContext.language = sramCtx->readBuff[2];
+           // gSaveContext.language = sramCtx->readBuff[2];
+            gSaveContext.language = 2;
             MemCopy(sramCtx->readBuff, sZeldaMagic, sizeof(sZeldaMagic));
             sramCtx->readBuff[2] = gSaveContext.language;
             Sram_Write16Bytes(sramCtx);

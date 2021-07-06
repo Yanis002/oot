@@ -9876,12 +9876,23 @@ void Player_UpdateCommon(Player* this, GlobalContext* globalCtx, Input* input) {
     sControlInput = input;
 
     //test file select
-    if(CHECK_BTN_ALL(sControlInput->cur.button, BTN_A + BTN_B + BTN_Z + BTN_START)){
+    if(CHECK_BTN_ALL(sControlInput->cur.button, BTN_L + BTN_B + BTN_A)){
         func_800F68BC(0);
+        Audio_PlaySoundGeneral(NA_SE_SY_PIECE_OF_HEART, &D_801333D4, 4, &D_801333E0, &D_801333E0, &D_801333E8);
         gSaveContext.gameMode = 2;
         globalCtx->sceneLoadFlag = 20;
         globalCtx->fadeTransition = 2;
     }
+
+    //paella
+    if(CHECK_BTN_ALL(sControlInput->cur.button, BTN_L + BTN_R + BTN_CUP))
+    {
+        Audio_SetBGM(0x61);
+        Audio_PlaySoundGeneral(NA_SE_EN_TWINROBA_FIGHT, &D_801333D4, 4, &D_801333E0, &D_801333E0, &D_801333E8);
+    }
+
+    //StalZone
+    if(CHECK_BTN_ALL(sControlInput->cur.button, BTN_L + BTN_R + BTN_CLEFT)) Audio_SetBGM(0x38);
 
     if (this->currentShield == PLAYER_SHIELD_HYLIAN) { //sp64 && (this->shieldQuad.info.acHitInfo->toucher.effect == 1)
         func_8083819C(this, globalCtx);
