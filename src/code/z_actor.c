@@ -2902,6 +2902,9 @@ Actor* Actor_Delete(ActorContext* actorCtx, Actor* actor, GlobalContext* globalC
         Actor_FreeOverlay(overlayEntry);
     }
 
+    //SRM Patch
+    Actor_Kill(actor);
+
     return newHead;
 }
 
