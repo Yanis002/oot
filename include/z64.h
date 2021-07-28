@@ -1833,4 +1833,11 @@ typedef struct {
     /* 0x04 */ const char* name;
 } FlagSetEntry; // size = 0x08
 
+//Project-A
+//xyz & rgb are hex values
+typedef struct{
+    /* 0x00 */ u32 xyz;  //xyz  = 0xXXYYZZ
+    /* 0x04 */ u32 rgba; //rgba = 0xRRGGBBAA
+} ColorPos;
+
 #endif

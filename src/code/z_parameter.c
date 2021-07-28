@@ -4170,3 +4170,27 @@ void Interface_Update(GlobalContext* globalCtx) {
         }
     }
 }
+
+/* Project-A */
+
+//Use that to print a string in-game
+void Printf_Print(GlobalContext* globalCtx, ColorPos colorPos, const char* string){
+    GfxPrint printer;
+
+    GfxPrint_Init(&printer);
+    GfxPrint_Open(&printer, globalCtx->state.gfxCtx->polyOpa.p);
+
+    GfxPrint_SetColor(&printer, 
+                      ((colorPos.rgba >> 0x10) >> 0x08), //r
+                      ((colorPos.rgba >> 0x10) & 0xFF),  //g
+                      ((colorPos.rgba >> 0x08) & 0xFF),  //b
+                      (colorPos.rgba & 0xFF));           //a
+
+    GfxPrint_SetPos(&printer,
+                    (colorPos.xyz >> 0x10),              //x
+                    ((colorPos.xyz >> 0x08) & 0xFF));    //y
+
+    GfxPrint_Printf(&printer, string);
+    globalCtx->state.gfxCtx->polyOpa.p = GfxPrint_Close(&printer);
+    GfxPrint_Destroy(&printer);
+}

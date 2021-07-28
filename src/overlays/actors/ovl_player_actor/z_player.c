@@ -9872,8 +9872,13 @@ extern u8 D_8014B300;
 
 void Player_UpdateCommon(Player* this, GlobalContext* globalCtx, Input* input) {
     s32 pad;
-    
+    ColorPos colorPos;
     sControlInput = input;
+
+    //printf things
+    colorPos.rgba = 0xFFFFFFFF;
+    colorPos.xyz = 0x010100;
+    Printf_Print(globalCtx, colorPos, "hello world!");
 
     //test file select
     if(CHECK_BTN_ALL(sControlInput->cur.button, BTN_L + BTN_B + BTN_A)){

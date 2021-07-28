@@ -2532,4 +2532,15 @@ void Opening_Destroy(GameState* thisx);
 void func_80811A20(GameState* thisx); // FileChoose_Init
 void func_80811A18(GameState* thisx); // FileChoose_Destroy
 
+/* Project-A */
+
+//All-in-one in-game printf function
+void Printf_Print(GlobalContext* globalCtx, ColorPos printMetadata, const char* string);
+
+//string.c & stdlib functions, needs a initialized char array to avoid crashing
+char* reverseItoa(char s[]);
+char* itoa(int n, char s[]);
+char* strcpy(char *dest, const char *src);
+char* strcat(char *dest, const char *src);
+
 #endif
