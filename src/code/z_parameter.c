@@ -1752,9 +1752,9 @@ u8 Item_Give(GlobalContext* globalCtx, u8 item) {
             }
         }
     } else if ((item >= ITEM_WEIRD_EGG) && (item <= ITEM_CLAIM_CHECK)) {
-        if (item == ITEM_SAW) {
-            gSaveContext.itemGetInf[1] |= 0x8000;
-        }
+        /*if (item == ITEM_SAW) {
+            gSaveContext.itemGetInf[1] |= 0x8000; //deku upgrade glitch
+        }*/
 
         temp = INV_CONTENT(item);
         INV_CONTENT(item) = item;

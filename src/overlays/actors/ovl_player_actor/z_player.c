@@ -9872,7 +9872,7 @@ extern u8 D_8014B300;
 
 void Player_UpdateCommon(Player* this, GlobalContext* globalCtx, Input* input) {
     s32 pad;
-
+    
     sControlInput = input;
 
     //test file select
@@ -9887,12 +9887,12 @@ void Player_UpdateCommon(Player* this, GlobalContext* globalCtx, Input* input) {
     //paella
     if(CHECK_BTN_ALL(sControlInput->cur.button, BTN_L + BTN_R + BTN_CUP))
     {
-        Audio_SetBGM(0x61);
+        Audio_QueueSeqCmd(0x61);
         Audio_PlaySoundGeneral(NA_SE_EN_TWINROBA_FIGHT, &D_801333D4, 4, &D_801333E0, &D_801333E0, &D_801333E8);
     }
 
     //StalZone
-    if(CHECK_BTN_ALL(sControlInput->cur.button, BTN_L + BTN_R + BTN_CLEFT)) Audio_SetBGM(0x38);
+    if(CHECK_BTN_ALL(sControlInput->cur.button, BTN_L + BTN_R + BTN_CLEFT)) Audio_QueueSeqCmd(0x38);
 
     if (this->currentShield == PLAYER_SHIELD_HYLIAN) { //sp64 && (this->shieldQuad.info.acHitInfo->toucher.effect == 1)
         func_8083819C(this, globalCtx);
