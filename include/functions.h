@@ -2535,7 +2535,8 @@ void func_80811A18(GameState* thisx); // FileChoose_Destroy
 /* Project-A */
 
 //All-in-one in-game printf function
-void Printf_Print(GlobalContext* globalCtx, ColorPos printMetadata, const char* string);
+void Printf_Process(GlobalContext* globalCtx, ColorPos printMetadata, const char* string);
+void Printf_Print(GlobalContext* globalCtx, u32 rgba, u32 xyz, const char* string);
 
 //string.c & stdlib functions, needs a initialized char array to avoid crashing
 char* reverseItoa(char s[]);

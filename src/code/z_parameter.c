@@ -4174,7 +4174,17 @@ void Interface_Update(GlobalContext* globalCtx) {
 /* Project-A */
 
 //Use that to print a string in-game
-void Printf_Print(GlobalContext* globalCtx, ColorPos colorPos, const char* string){
+void Printf_Print(GlobalContext* globalCtx, u32 rgba, u32 xyz, const char* string){
+    ColorPos colorPos;
+
+    colorPos.rgba = rgba;
+    colorPos.xyz = xyz;
+
+    Printf_Process(globalCtx, colorPos, string);
+}
+
+//Actual print process
+void Printf_Process(GlobalContext* globalCtx, ColorPos colorPos, const char* string){
     GfxPrint printer;
 
     GfxPrint_Init(&printer);

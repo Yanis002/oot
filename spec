@@ -9934,17 +9934,17 @@ beginseg
 endseg
 
 beginseg
-    name "shrine_scene"
-    romalign 0x1000
-    include "build/assets/scenes/misc/shrine/shrine_scene.o"
-    number 2
+	name "shrine_scene"
+	romalign 0x1000
+	include "build/assets/scenes/misc/shrine/shrine_scene.o"
+	number 2
 endseg
 
 beginseg
-    name "shrine_room_0"
-    romalign 0x1000
-    include "build/assets/scenes/misc/shrine/shrine_room_0.o"
-    number 3
+	name "shrine_room_0"
+	romalign 0x1000
+	include "build/assets/scenes/misc/shrine/shrine_room_0.o"
+	number 3
 endseg
 
 beginseg

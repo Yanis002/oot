@@ -9872,13 +9872,35 @@ extern u8 D_8014B300;
 
 void Player_UpdateCommon(Player* this, GlobalContext* globalCtx, Input* input) {
     s32 pad;
-    ColorPos colorPos;
-    sControlInput = input;
+    u16 sec, minutes, hours;
+    char* timer = "00:00:00";
+    char tmp[20];
 
-    //printf things
-    colorPos.rgba = 0xFFFFFFFF;
-    colorPos.xyz = 0x010100;
-    Printf_Print(globalCtx, colorPos, "hello world!");
+    sControlInput = input;
+    sec = __osViIntrCount / 60;
+    hours = sec / 3600;
+    minutes = (sec / 60) % 60;
+    sec %= 60;
+
+    //show commands
+    Printf_Print(globalCtx, 0xFFFFFFFE, 0x051C00, "Hold L+R+C-Right for commands");
+    if(CHECK_BTN_ALL(sControlInput->cur.button, BTN_L + BTN_R + BTN_CRIGHT)){
+        Printf_Print(globalCtx, 0xFFFFFFFE, 0x010800, "Hold L+R+C-Down to display timer \n L+B+A for file select \n L+R+C-Up for Paella \n L+R+C-Left for StalZone \n L+D-Pad Right for no clip mode \n (A/B for Up/down) \n D-Pad Right to cancel cutscenes");
+    }
+
+    //display timer
+    if(CHECK_BTN_ALL(sControlInput->cur.button, BTN_L + BTN_R + BTN_CDOWN)){
+        //timer format
+        if(hours < 10){
+            timer = strcpy(timer, "0");
+            timer = strcat(timer, itoa(hours, tmp));
+        } else timer = strcpy(timer, itoa(hours, tmp));
+        if(minutes < 10) timer = strcat(timer, ":0"); else timer = strcat(timer, ":");
+        timer = strcat(timer, itoa(minutes, tmp));
+        if(sec < 10) timer = strcat(timer, ":0"); else timer = strcat(timer, ":");
+        timer = strcat(timer, itoa(sec, tmp));
+        Printf_Print(globalCtx, 0xFFFFFFFE, 0x010100, timer);
+    }
 
     //test file select
     if(CHECK_BTN_ALL(sControlInput->cur.button, BTN_L + BTN_B + BTN_A)){
