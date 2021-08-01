@@ -7425,14 +7425,11 @@ Vec3s Camera_Update(Camera* camera) {
     }
 
     // enable/disable debug cam
-    if (CHECK_BTN_ALL(D_8015BD7C->state.input[2].press.button, BTN_START)) {
+    if ((CHECK_BTN_ALL(D_8015BD7C->state.input[0].cur.button, BTN_L)) && (CHECK_BTN_ALL(D_8015BD7C->state.input[0].press.button, BTN_DUP))) 
         gDbgCamEnabled ^= 1;
-        if (gDbgCamEnabled) {
-            DbgCamera_Enable(&D_8015BD80, camera);
-        } else if (camera->globalCtx->csCtx.state != CS_STATE_IDLE) {
-            func_80064534(camera->globalCtx, &camera->globalCtx->csCtx);
-        }
-    }
+
+    if (gDbgCamEnabled) DbgCamera_Enable(&D_8015BD80, camera);
+    else if (camera->globalCtx->csCtx.state != CS_STATE_IDLE) func_80064534(camera->globalCtx, &camera->globalCtx->csCtx);
 
     // Debug cam update
     if (gDbgCamEnabled) {

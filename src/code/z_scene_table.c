@@ -832,7 +832,7 @@ Scene gSceneTable[] = {
 	TITLED_SCENE(market_day_scene, g_pn_17, 0, 19, 0),
 	TITLED_SCENE(market_night_scene, g_pn_17, 0, 0, 0),
 	TITLED_SCENE(market_ruins_scene, g_pn_17, 0, 0, 0),
-	UNTITLED_SCENE(shrine_scene, 0, 0, 0),
+	UNTITLED_SCENE(shrine_scene, 0, 19, 0),
 	UNTITLED_SCENE(shrine_n_scene, 0, 0, 0),
 	UNTITLED_SCENE(shrine_r_scene, 0, 0, 0),
 	UNTITLED_SCENE(kokiri_home_scene, 0, 0, 0),

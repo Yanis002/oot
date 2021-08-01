@@ -489,6 +489,9 @@ static s16 D_80853610 = 0;
 static s32 D_80853614 = 0;
 static s32 D_80853618 = 0;
 
+/* Project-A */
+static u8 switchPrint = false;
+
 static u16 D_8085361C[] = {
     NA_SE_VO_LI_SWEAT,
     NA_SE_VO_LI_SNEEZE,
@@ -9883,9 +9886,13 @@ void Player_UpdateCommon(Player* this, GlobalContext* globalCtx, Input* input) {
     sec %= 60;
 
     //show commands
-    Printf_Print(globalCtx, 0xFFFFFFFE, 0x051C00, "Hold L+R+C-Right for commands");
-    if(CHECK_BTN_ALL(sControlInput->cur.button, BTN_L + BTN_R + BTN_CRIGHT)){
-        Printf_Print(globalCtx, 0xFFFFFFFE, 0x010800, "Hold L+R+C-Down to display timer \n L+B+A for file select \n L+R+C-Up for Paella \n L+R+C-Left for StalZone \n L+D-Pad Right for no clip mode \n (A/B for Up/down) \n D-Pad Right to cancel cutscenes");
+    Printf_Print(globalCtx, 0xFFFFFFFE, 0x081C00, "L+D-Pad Down for commands");
+    if((CHECK_BTN_ALL(sControlInput->cur.button, BTN_L)) && (CHECK_BTN_ALL(sControlInput->press.button, BTN_DDOWN))){
+        switchPrint ^= 1;
+    }
+
+    if(switchPrint){
+            Printf_Print(globalCtx, 0xFFFFFFFE, 0x010800, "Hold L+R+C-Down to display timer \n L+B+A for file select \n L+R+C-Up for Paella \n L+R+C-Left for StalZone \n L+D-Pad Right for no clip mode \n (A/B for Up/down) \n D-Pad Right to cancel cutscenes \n L + D-Pad Up for debug camera");
     }
 
     //display timer
