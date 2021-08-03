@@ -41,7 +41,7 @@ static InitChainEntry sInitChain[] = {
     ICHAIN_F32(uncullZoneDownward, 100, ICHAIN_STOP),
 };
 
-void func_80B9A9D0(ObjMure3* this, GlobalContext* globalCtx) {
+void func_80B9A9D0(ObjMure3* this, GlobalContext* globalCtx) { //blupee spawner
     s32 i;
     Vec3f spawnPos;
 
@@ -56,7 +56,7 @@ void func_80B9A9D0(ObjMure3* this, GlobalContext* globalCtx) {
     }
 }
 
-void func_80B9AA90(ObjMure3* this, GlobalContext* globalCtx) {
+void func_80B9AA90(ObjMure3* this, GlobalContext* globalCtx) { //green spawner
     s32 i;
     Vec3f spawnPos;
     f32 sn = Math_SinS(this->actor.world.rot.y);
@@ -77,7 +77,7 @@ void func_80B9AA90(ObjMure3* this, GlobalContext* globalCtx) {
     }
 }
 
-void func_80B9ABA0(ObjMure3* this, GlobalContext* globalCtx) {
+void func_80B9ABA0(ObjMure3* this, GlobalContext* globalCtx) { //green + red center spawner
     s32 i;
     Vec3f spawnPos;
     s16 yRot;
@@ -105,7 +105,7 @@ void func_80B9ABA0(ObjMure3* this, GlobalContext* globalCtx) {
     }
 }
 
-void func_80B9ACE4(ObjMure3* this, GlobalContext* globalCtx) {
+void func_80B9ACE4(ObjMure3* this, GlobalContext* globalCtx) { //cleanup and die?
     s16 count = sRupeeCounts[(this->actor.params >> 13) & 7];
     s32 i;
 

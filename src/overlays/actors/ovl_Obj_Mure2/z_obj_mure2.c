@@ -46,7 +46,7 @@ static f32 sDistSquared1[] = { SQ(1600.0f), SQ(1600.0f), SQ(1600.0f) };
 
 static f32 sDistSquared2[] = { SQ(1705.0f), SQ(1705.0f), SQ(1705.0f) };
 
-static s16 D_80B9A818[] = { 9, 12, 8 };
+static s16 D_80B9A818[] = { 9, 12, 8 }; //how many to spawn
 
 static s16 sActorSpawnIDs[] = { ACTOR_EN_KUSA, ACTOR_EN_KUSA, ACTOR_EN_ISHI };
 
