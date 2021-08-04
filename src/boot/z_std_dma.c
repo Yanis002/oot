@@ -13,7 +13,7 @@ u32 D_80009460 = 0;
 u32 gDmaMgrDmaBuffSize = 0x2000;
 u32 sDmaMgrDataExistError = 0;
 
-const char* sDmaMgrFileNames[0x5fc] = {
+const char* sDmaMgrFileNames[0x5fd] = {
 	"makerom",
 	"boot",
 	"dmadata",
@@ -1546,6 +1546,7 @@ const char* sDmaMgrFileNames[0x5fc] = {
 	"anime_texture_5_static",
 	"anime_texture_6_static",
 	"softsprite_matrix_static",
+	"ovl_Obj_Mure4",
 };
 
 s32 DmaMgr_CompareName(const char* name1, const char* name2) {

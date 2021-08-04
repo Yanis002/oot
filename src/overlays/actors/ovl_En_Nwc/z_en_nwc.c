@@ -8,12 +8,10 @@
  * Test Actor: Tree + bushed spawner
  */
 
-
-
 #include "z_en_nwc.h"
 
 // #define FLAGS 0x00000030
-#define FLAGS 0x00000000
+#define FLAGS 0x00000030
 
 #define THIS ((EnNwc*)thisx)
 
@@ -24,12 +22,6 @@ void EnNwc_Update(Actor* thisx, GlobalContext* globalCtx);
 void EnNwc_Spawner(EnNwc* this, GlobalContext* globalCtx);
 void EnNwc_CleanupAndDie(EnNwc* this, GlobalContext* globalCtx);
 void EnNwc_SetActorSpawnParams(s16* params, EnNwc* this);
-
-static InitChainEntry sInitChain[] = {
-    ICHAIN_F32(uncullZoneForward, 100, ICHAIN_CONTINUE),
-    ICHAIN_F32(uncullZoneScale, 1800, ICHAIN_CONTINUE),
-    ICHAIN_F32(uncullZoneDownward, 100, ICHAIN_STOP),
-};
 
 const ActorInit En_Nwc_InitVars = {
     ACTOR_EN_NWC,
@@ -47,15 +39,10 @@ static s16 sActorSpawnIDs[] = { ACTOR_EN_WOOD02, ACTOR_EN_KUSA, ACTOR_EN_ISHI };
 static s16 spawnNb[] = { 1, 3 }; //how many to spawn: 1 tree, 3 bushes
 
 void EnNwc_Init(Actor* thisx, GlobalContext* globalCtx){
-    s32 pad;
-    EnNwc* this = THIS;
-    
-    Actor_ProcessInitChain(&this->actor, sInitChain);
-    EnNwc_Update(&this->actor, globalCtx);
 }
 
 void EnNwc_Destroy(Actor* thisx, GlobalContext* globalCtx){
-    /*s32 pad;
+    /*
     EnNwc_CleanupAndDie(THIS, globalCtx);*/
 }
 
@@ -63,59 +50,64 @@ void EnNwc_Update(Actor* thisx, GlobalContext* globalCtx){
     s32 pad;
     EnNwc* this = THIS;
 
-    this->actionFunc(this, globalCtx);
-    Printf_Print(globalCtx, 0xFFFFFFFF, 0x010100, "coucou");
+    this->actionFunc = EnNwc_Spawner;
+    Printf_Print(globalCtx, 0xFFFFFFFF, 0x010300, "coucou");
 }
 
-// void EnNwc_Spawner(EnNwc* this, GlobalContext* globalCtx){
-//     s32 i;
-//     s32 actorNum = this->actor.params & 3;
-//     Vec3f spawnPos;
-//     s16 params;
+void EnNwc_Spawner(EnNwc* this, GlobalContext* globalCtx){
+    s32 i;
+    s32 actorNum = this->actor.params & 3;
+    Vec3f spawnPos;
+    s16 params;
 
-//     spawnPos.y = this->actor.world.pos.y;
+    spawnPos.y = this->actor.world.pos.y;
+    spawnPos.z = this->actor.world.pos.z;
+    spawnPos.x = this->actor.world.pos.x;
 
-//     for (i = 0; i < spawnNb[actorNum]; i++) {
-//         if (((this->currentActorNum >> i) & 1) == 0) {
-//             this->actorSpawnPtrList[i] =
-//                 Actor_Spawn(&globalCtx->actorCtx, globalCtx, sActorSpawnIDs[actorNum], spawnPos.x, spawnPos.y,
-//                             spawnPos.z, this->actor.world.rot.x, 0, this->actor.world.rot.z, params);
-//             if (this->actorSpawnPtrList[i] != NULL) {
-//                 this->actorSpawnPtrList[i]->room = this->actor.room;
-//             }
-//         }
-//     }
-// }
+    Actor_Spawn(&globalCtx->actorCtx, globalCtx, /*sActorSpawnIDs[actorNum]*/ACTOR_EN_KUSA, spawnPos.x, spawnPos.y,
+                            spawnPos.z, this->actor.world.rot.x, 0, this->actor.world.rot.z, params);
 
-// void EnNwc_CleanupAndDie(EnNwc* this, GlobalContext* globalCtx){
-//     s32 i;
+    /*for (i = 0; i < spawnNb[actorNum]; i++) {
+        //if (((this->currentActorNum >> i) & 1) == 0) {
+            this->actorSpawnPtrList[i] =
+                Actor_Spawn(&globalCtx->actorCtx, globalCtx, sActorSpawnIDs[actorNum], spawnPos.x, spawnPos.y,
+                            spawnPos.z, this->actor.world.rot.x, 0, this->actor.world.rot.z, params);
+            if (this->actorSpawnPtrList[i] != NULL) {
+                this->actorSpawnPtrList[i]->room = this->actor.room;
+            }
+        }
+    }*/
+}
 
-//     for (i = 0; i < spawnNb[this->actor.params & 3]; i++) {
-//         if (((this->currentActorNum >> i) & 1) == 0) {
-//             if (this->actorSpawnPtrList[i] != NULL) {
-//                 if (Actor_HasParent(this->actorSpawnPtrList[i], globalCtx)) {
-//                     this->currentActorNum |= (1 << i);
-//                 } else {
-//                     Actor_Kill(this->actorSpawnPtrList[i]);
-//                 }
-//                 this->actorSpawnPtrList[i] = NULL;
-//             }
-//         } else {
-//             this->actorSpawnPtrList[i] = NULL;
-//         }
-//     }
-// }
+void EnNwc_CleanupAndDie(EnNwc* this, GlobalContext* globalCtx){
+    s32 i;
 
-// void EnNwc_SetActorSpawnParams(s16* params, EnNwc* this) {
-//     static s16 actorSpawnParams[] = { 0, 0, 0 };
-//     s16 dropTable = (this->actor.params >> 8) & 0xF;
+    for (i = 0; i < spawnNb[this->actor.params & 3]; i++) {
+        if (((this->currentActorNum >> i) & 1) == 0) {
+            if (this->actorSpawnPtrList[i] != NULL) {
+                if (Actor_HasParent(this->actorSpawnPtrList[i], globalCtx)) {
+                    this->currentActorNum |= (1 << i);
+                } else {
+                    Actor_Kill(this->actorSpawnPtrList[i]);
+                }
+                this->actorSpawnPtrList[i] = NULL;
+            }
+        } else {
+            this->actorSpawnPtrList[i] = NULL;
+        }
+    }
+}
 
-//     if (dropTable >= 13) {
-//         dropTable = 0;
-//     }
-//     *params = actorSpawnParams[this->actor.params & 3] & 0xF0FF;
-//     *params |= (dropTable << 8);
-// }
+void EnNwc_SetActorSpawnParams(s16* params, EnNwc* this) {
+    static s16 actorSpawnParams[] = { 0, 0, 0 };
+    s16 dropTable = (this->actor.params >> 8) & 0xF;
+
+    if (dropTable >= 13) {
+        dropTable = 0;
+    }
+    *params = actorSpawnParams[this->actor.params & 3] & 0xF0FF;
+    *params |= (dropTable << 8);
+}
 
 // void EnNwc_Draw(Actor* thisx, GlobalContext* globalCtx);
 
