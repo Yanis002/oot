@@ -4,9 +4,9 @@
 #include "ultra64.h"
 #include "global.h"
 
-typedef struct Obj_Mure4 {
+typedef struct ObjMure4 {
     Actor actor;
-} Obj_Mure4;
+} ObjMure4;
 
 extern const ActorInit Obj_Mure4_InitVars;
 
