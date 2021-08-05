@@ -6,6 +6,8 @@
 
 typedef struct ObjMure4 {
     Actor actor;
+    Actor* ptrList[35];
+    s16 curActorNb;
 } ObjMure4;
 
 extern const ActorInit Obj_Mure4_InitVars;
