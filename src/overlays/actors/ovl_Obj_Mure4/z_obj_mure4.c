@@ -27,6 +27,8 @@
     0x000F starting type (1 for bushes, 2 for rocks)
 */
 
+//TODO: use starting type 0 for spawning trees
+
 #include "z_obj_mure4.h"
 
 #define THIS ((ObjMure4*)thisx)
@@ -34,15 +36,17 @@
 void ObjMure4_Init(Actor* thisx, GlobalContext* globalCtx);
 void ObjMure4_Destroy(Actor* thisx, GlobalContext* globalCtx);
 void ObjMure4_Update(Actor* thisx, GlobalContext* globalCtx);
+
+u16 ObjMure4_GetWood02Vars(Vec3s rot);
+u16 ObjMure4_GetVariantVars(ObjMure4* this, Vec3s rot);
+void ObjMure4_SetVariantParams(ObjMure4* this, Vec3s rot);
+
+void ObjMure4_SpawnTree(ObjMure4* this, GlobalContext *globalCtx, Vec3f pos, Vec3s rot, u16 i);
+void ObjMure4_SpawnVariant(ObjMure4* this, GlobalContext *globalCtx, Vec3f pos, u16 i);
+void ObjMure4_SpawnBothVariants(ObjMure4* this, GlobalContext *globalCtx, Vec3f pos, Vec3s rot, u16 i);
+
 void ObjMure4_ActorSpawn(ObjMure4* this, GlobalContext* globalCtx, Vec3f pos, Vec3f pos2, Vec3s rot);
-void ObjMure4_SpawnTree(ObjMure4* this, GlobalContext *globalCtx, Vec3f pos, Vec3s rot, s16 i);
-void ObjMure4_SpawnVariant(ObjMure4* this, GlobalContext *globalCtx, Vec3f pos, s16 i);
-void ObjMure4_SetVariantParams(ObjMure4* this, Vec3s rot, s16 params);
-void ObjMure4_SpawnBoth(ObjMure4* this, GlobalContext *globalCtx, Vec3f pos, Vec3s rot, s16 params, s16 i);
-s16 ObjMure4_GetWood02Vars(Vec3s rot);
-s16 ObjMure4_GetVariantVars(ObjMure4* this, Vec3s rot);
-void test(ObjMure4* this, GlobalContext* globalCtx, s16 params);
-void test2(ObjMure4* this, s16 total);
+void ObjMure4_Kill(ObjMure4* this, GlobalContext* globalCtx);
 
 const ActorInit Obj_Mure4_InitVars = {
     ACTOR_OBJ_MURE4,
@@ -56,89 +60,48 @@ const ActorInit Obj_Mure4_InitVars = {
     NULL,
 };
 
-static s16 sActorSpawnIDs[] = { ACTOR_EN_WOOD02, ACTOR_EN_KUSA, ACTOR_EN_ISHI };
-static s16 type = 0x0, spawnParams = 0x0;
+//array used to choose the type of actor that should spawn
+static u16 sActorSpawnIDs[] = { ACTOR_EN_WOOD02, ACTOR_EN_KUSA, ACTOR_EN_ISHI };
+static u16 type = 0x0, spawnParams = 0x0, params = 0x0;
 
+//constructor
 void ObjMure4_Init(Actor* thisx, GlobalContext* globalCtx){
     ObjMure4* this = THIS;
-    s16 i, params;
+    u16 i;
 
+    //initialize global and Mure4 struct vars
     params = this->actor.params;
-
-    for(i = 0; i < ((params >> 12) * ((params >> 8) & 0xF)); i++){
-        this->ptrList[i] = NULL;
-    }
-
-    test2(this, ((params >> 12) * ((params >> 8) & 0xF)));
-
     type = (params & 0xF);
-    ObjMure4_ActorSpawn(this, globalCtx, this->actor.world.pos, this->actor.world.pos, this->actor.world.rot);
-    test(this, globalCtx, params);
-}
+    this->treeCount = 0;
+    this->ptrNb = 0;
 
-//main function that spawns the actors, still WIP
-void ObjMure4_ActorSpawn(ObjMure4* this, GlobalContext* globalCtx, Vec3f pos, Vec3f pos2, Vec3s rot){
-    s16 i, j, params, variantNb, bitBoth, howMany, dist, dir;
-
-    params = this->actor.params;
-    variantNb = (params >> 8) & 0xF;
-    bitBoth = (params & 0xFF) >> 4;
-    howMany = params >> 12; 
-    dist = (rot.z & 0xFF) * 10;
-    dir = (rot.z >> 8) & 0xF;
-    ObjMure4_SetVariantParams(this, rot, params);
-
-    if(dir == 0) pos2.x = this->actor.world.pos.x + dist;
-    else pos2.z = this->actor.world.pos.z + dist;
-    
-    ObjMure4_SpawnTree(this, globalCtx, pos, rot, 0);
-    //place the first tree
-
-    for(j = 0; j < howMany; j++){
-        for(i = 0; i < variantNb; i++){
-            if(!bitBoth) ObjMure4_SpawnVariant(this, globalCtx, pos2, i + 1);
-            else ObjMure4_SpawnBoth(this, globalCtx, pos2, rot, params, i + 1);
-
-            if(dir == 0) pos2.x += dist;
-            else pos2.z += dist;
-            //place the variants and increment pos2 by the custom distance from the mure4 params/rotation
-        }
-        
-        if(dir == 0){
-            pos.x = pos2.x;
-            pos2.x += dist;
-        }
-        else {
-            pos.z = pos2.z;
-            pos2.z += dist;
-        }
-
-        ObjMure4_SpawnTree(this, globalCtx, pos, rot, i + 1);
-
-        if(bitBoth){
-            if(type == 1) type = 2;
-            else type = 1;
-        }
-        //place the last tree of the current iteration and switch type if needed
+    //filling the array with NULLs just in case something is weird with memory
+    for(i = 0; i < 256; i++){
+        this->actorPtrList[i] = NULL;
     }
+
+    //when the vars are initialized, call the main function
+    ObjMure4_ActorSpawn(this, globalCtx, this->actor.world.pos, this->actor.world.pos, this->actor.world.rot);
 }
 
-//used to spawn both variants, alternating
-void ObjMure4_SpawnBoth(ObjMure4* this, GlobalContext *globalCtx, Vec3f pos, Vec3s rot, s16 params, s16 i){
-    ObjMure4_SetVariantParams(this, rot, params);
-    ObjMure4_SpawnVariant(this, globalCtx, pos, i);
-    
-    if(type == 1) type = 2;
-    else type = 1;
+//destructor
+void ObjMure4_Destroy(Actor* thisx, GlobalContext* globalCtx){
+    ObjMure4* this = THIS;
+
+    ObjMure4_Kill(this, globalCtx);
+    Actor_Kill(&this->actor);
 }
 
-//get En_Wood02 parameters from the Mure4 X rot
-s16 ObjMure4_GetWood02Vars(Vec3s rot){
+void ObjMure4_Update(Actor* thisx, GlobalContext* globalCtx){
+}
+
+//returns En_Wood02 parameters from the Mure4 X rot
+u16 ObjMure4_GetWood02Vars(Vec3s rot){
     return rot.x;
 }
 
-//get the variant's parameters from the Mure4 Y or Z rot
-s16 ObjMure4_GetVariantVars(ObjMure4* this, Vec3s rot){
+//returns the variant's parameters from the Mure4 Y or Z rot
+u16 ObjMure4_GetVariantVars(ObjMure4* this, Vec3s rot){
     switch(type){
         case 1: //en_kusa
             return (((rot.y >> 12) << 8) + (((rot.y >> 8) & 0xF) << 4) + ((rot.y & 0xFF) >> 4));
@@ -148,18 +111,8 @@ s16 ObjMure4_GetVariantVars(ObjMure4* this, Vec3s rot){
     } 
 }
 
-//spawn a single tree
-void ObjMure4_SpawnTree(ObjMure4* this, GlobalContext *globalCtx, Vec3f pos, Vec3s rot, s16 i){
-    this->ptrList[i] = Actor_Spawn(&globalCtx->actorCtx, globalCtx, sActorSpawnIDs[0], pos.x, pos.y, pos.z, 0, 0, 0, ObjMure4_GetWood02Vars(rot));
-}
-
-//spawn a single variant
-void ObjMure4_SpawnVariant(ObjMure4* this, GlobalContext *globalCtx, Vec3f pos, s16 i){
-    this->ptrList[i] =  Actor_Spawn(&globalCtx->actorCtx, globalCtx, sActorSpawnIDs[type], pos.x, pos.y, pos.z, 0, 0, 0, spawnParams);
-}
-
 //set variant's parameters
-void ObjMure4_SetVariantParams(ObjMure4* this, Vec3s rot, s16 params){
+void ObjMure4_SetVariantParams(ObjMure4* this, Vec3s rot){
     if(!((params & 0xFF) >> 4)){
         if((params & 0xF) == 1) type = 1;
         else if((params & 0xF) == 2) type = 2;
@@ -168,52 +121,93 @@ void ObjMure4_SetVariantParams(ObjMure4* this, Vec3s rot, s16 params){
     spawnParams = ObjMure4_GetVariantVars(this, rot);
 }
 
-void test(ObjMure4* this, GlobalContext* globalCtx, s16 params){
-    s16 i, total;
+//spawn a single tree and store the returned value of Actor_Spawn() in the pointer list
+void ObjMure4_SpawnTree(ObjMure4* this, GlobalContext *globalCtx, Vec3f pos, Vec3s rot, u16 i){
+    this->actorPtrList[i] = Actor_Spawn(&globalCtx->actorCtx, globalCtx, sActorSpawnIDs[0], pos.x, pos.y, pos.z, 0, 0, 0, ObjMure4_GetWood02Vars(rot));
+    this->treeCount++;
+}
 
-    total = ((params >> 12) * ((params >> 8) & 0xF));
+//spawn a single variant and store the returned value of Actor_Spawn() in the pointer list
+void ObjMure4_SpawnVariant(ObjMure4* this, GlobalContext *globalCtx, Vec3f pos, u16 i){
+    this->actorPtrList[i] = Actor_Spawn(&globalCtx->actorCtx, globalCtx, sActorSpawnIDs[type], pos.x, pos.y, pos.z, 0, 0, 0, spawnParams);
+}
 
-    // for (i = 0; i < total; i++) {
-    //     if (this->ptrList[i] != NULL && (((this->curActorNb >> i) & 1) == 0) &&
-    //         (this->ptrList[i]->update == NULL)) {
-    //         this->curActorNb |= (1 << i);
-    //         this->ptrList[i] = NULL;
-    //     }
-    // }
+//used to spawn both variants, alternating
+void ObjMure4_SpawnBothVariants(ObjMure4* this, GlobalContext *globalCtx, Vec3f pos, Vec3s rot, u16 i){
+    ObjMure4_SetVariantParams(this, rot);
+    ObjMure4_SpawnVariant(this, globalCtx, pos, i);
+    
+    if(type == 1) type = 2;
+    else type = 1;
+}
 
-    for(i = 0; i < total; i++){
-        if(((this->curActorNb >> i) & 1) == 0) {
-            if(this->ptrList[i] != NULL){
-                if(Actor_HasParent(this->ptrList[i], globalCtx)){
-                    this->curActorNb |= (1 << i);
-                }
-                else Actor_Kill(this->ptrList[i]);
-                this->ptrList[i] = NULL;
+//main function that spawns the actors
+void ObjMure4_ActorSpawn(ObjMure4* this, GlobalContext* globalCtx, Vec3f pos, Vec3f pos2, Vec3s rot){
+    u16 i, j, variantNb, iterationNb, boolAlt, dir, dist;
+
+    variantNb = (params >> 8) & 0xF;
+    boolAlt = (params & 0xFF) >> 4;
+    iterationNb = params >> 12; 
+    dist = (rot.z & 0xFF) * 10;
+    dir = (rot.z >> 8) & 0xF;
+    ObjMure4_SetVariantParams(this, rot);
+
+    if(!dir) pos2.x = this->actor.world.pos.x + dist;
+    else pos2.z = this->actor.world.pos.z + dist;
+
+    //place the first tree
+    ObjMure4_SpawnTree(this, globalCtx, pos, rot, this->ptrNb);
+
+    for(j = 0; j < iterationNb; j++){
+        //place the variants and increment pos2 by the custom distance from the mure4 params/rotation
+        for(i = 0; i < variantNb; i++){
+            this->ptrNb++;
+
+            if(!boolAlt) ObjMure4_SpawnVariant(this, globalCtx, pos2, this->ptrNb);
+            else ObjMure4_SpawnBothVariants(this, globalCtx, pos2, rot, this->ptrNb);
+
+            if(!dir) pos2.x += dist;
+            else pos2.z += dist;
+
+            //incrementing ptrNb when a tree comes after the last variant
+            if((i + 1) == variantNb) this->ptrNb++;
+        }
+        
+        //direction stuff; 0 for X, 1 for Z
+        switch(dir){
+            case 0:
+                pos.x = pos2.x;
+                pos2.x += dist;
+                break;
+
+            case 1:
+                pos.z = pos2.z;
+                pos2.z += dist;
+                break;
+        }
+
+        //place the last tree of the current iteration
+        ObjMure4_SpawnTree(this, globalCtx, pos, rot, this->ptrNb);
+
+        //if you want both variants, switch the type
+        if(boolAlt){
+            if(type == 1) type = 2; else type = 1;
+        }
+    }
+}
+
+//uses the pointers from the actorPtrList[] array to kill every spawned actor
+void ObjMure4_Kill(ObjMure4* this, GlobalContext* globalCtx){
+    u16 i;
+
+    //for i < total of spawned actors, total = (repetition * variant number) + number of trees
+    for(i = 0; i < (((params >> 12) * ((params >> 8) & 0xF)) + this->treeCount); i++){
+        if(this->actorPtrList[i] != NULL){
+            if(!Actor_HasParent(this->actorPtrList[i], globalCtx)){
+                Actor_Kill(this->actorPtrList[i]);
             }
-        }
-        else{
-            this->ptrList[i] = NULL;
-        }
-    }
-}
 
-void test2(ObjMure4* this, s16 total){
-    s16 i;
-
-    for (i = 0; i < total; i++) {
-        if (this->ptrList[i] != NULL && (((this->curActorNb >> i) & 1) == 0) &&
-            (this->ptrList[i]->update == NULL)) {
-            this->curActorNb |= (1 << i);
-            this->ptrList[i] = NULL;
+            this->actorPtrList[i] = NULL;
         }
     }
-}
-
-void ObjMure4_Destroy(Actor* thisx, GlobalContext* globalCtx){
-}
-
-void ObjMure4_Update(Actor* thisx, GlobalContext* globalCtx){
-    ObjMure4* this = THIS;
-
-    if(this->ptrList[1] == NULL) Printf_Print(globalCtx, 0xFEFEFEFE, 0x010100, "ptrList[1] = NULL");
 }
