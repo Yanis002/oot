@@ -4,13 +4,28 @@
  * Description: Tree + bush/rock spawner
  */
 
-// Actor parameters:
-// 0x000F: type/which type come first
-// 0x00F0: 1 for both types
-// 0x0F00: for variant number
-// 0xF000: for repetition number
+/*  Documentation:
 
-//TODO: add custom distance and direction parameters
+    Obj_Mure4 rot.x:
+    0xFFFF exact same parameters as en_wood02
+
+    Obj_Mure4 rot.y:
+    0xF000 drop table (usually 2)
+    0x0F00 bugs for grass (1 for bugs, 0 for no bugs)
+    0x00F0 type for grass (look https://wiki.cloudmodding.com/oot/Actor_List_(Variables)#En_Kusa for type)
+    0x000F bugs for rock (1 for bugs, 0 for no bugs)
+
+    Obj_Mure4 rot.z:
+    0xF000 type for rock (look https://wiki.cloudmodding.com/oot/Actor_List_(Variables)#En_Ishi for type, switch flag is always 0xF000)
+    0x0F00 direction (0 for horizontal (X), 1 for vertical (Z))
+    0x00FF distance (this value will be multiplied by 10, 0x0A = 100 units)
+
+    Obj_Mure4 params:
+    0xF000 iteration (how many times you want it to repete)
+    0x0F00 variant number (how many bushes or rocks you want before the next tree)
+    0x00F0 both or single (1 if you want both rocks and bushes, 0 if you want only rocks or only bushes)
+    0x000F starting type (1 for bushes, 2 for rocks)
+*/
 
 #include "z_obj_mure4.h"
 
@@ -40,25 +55,29 @@ const ActorInit Obj_Mure4_InitVars = {
 };
 
 static s16 sActorSpawnIDs[] = { ACTOR_EN_WOOD02, ACTOR_EN_KUSA, ACTOR_EN_ISHI };
-static s16 type = 0xFFFE, spawnParams = 0xFFFE;
+static s16 type = 0x0, spawnParams = 0x0;
 
 void ObjMure4_Init(Actor* thisx, GlobalContext* globalCtx){
     ObjMure4* this = THIS;
 
-    type = this->actor.params & 0xF;
+    type = (this->actor.params & 0xF);
     ObjMure4_ActorSpawn(this, globalCtx, this->actor.world.pos, this->actor.world.pos, this->actor.world.rot);
 }
 
 //main function that spawns the actors, still WIP
 void ObjMure4_ActorSpawn(ObjMure4* this, GlobalContext* globalCtx, Vec3f pos, Vec3f pos2, Vec3s rot){
-    s16 i, j, params, variantNb, bitBoth, howMany;
+    s16 i, j, params, variantNb, bitBoth, howMany, dist, dir;
 
     params = this->actor.params;
     variantNb = (params >> 8) & 0xF;
     bitBoth = (params & 0xFF) >> 4;
     howMany = params >> 12;
+    dist = (rot.z & 0xFF) * 10;
+    dir = (rot.z >> 8) & 0xF;
     ObjMure4_SetVariantParams(this, rot, params);
-    pos2.x = this->actor.world.pos.x + 100;
+
+    if(dir == 0) pos2.x = this->actor.world.pos.x + dist;
+    else pos2.z = this->actor.world.pos.z + dist;
     
     ObjMure4_SpawnTree(globalCtx, pos, rot);
     //place the first tree
@@ -67,12 +86,21 @@ void ObjMure4_ActorSpawn(ObjMure4* this, GlobalContext* globalCtx, Vec3f pos, Ve
         for(i = 0; i < variantNb; i++){
             if(!bitBoth) ObjMure4_SpawnVariant(globalCtx, pos2);
             else ObjMure4_SpawnBoth(this, globalCtx, pos2, rot, params);
-            pos2.x += 100;
+
+            if(dir == 0) pos2.x += dist;
+            else pos2.z += dist;
             //place the variants and increment pos2.x by the custom distance from the mure4 params/rotation
         }
         
-        pos.x = pos2.x;
-        pos2.x += 100;
+        if(dir == 0){
+            pos.x = pos2.x;
+            pos2.x += dist;
+        }
+        else {
+            pos.z = pos2.z;
+            pos2.z += dist;
+        }
+
         ObjMure4_SpawnTree(globalCtx, pos, rot);
 
         if(bitBoth){
@@ -100,11 +128,11 @@ s16 ObjMure4_GetWood02Vars(Vec3s rot){
 //get the variant's parameters from the Mure4 Y or Z rot
 s16 ObjMure4_GetVariantVars(ObjMure4* this, Vec3s rot){
     switch(type){
-        case 1: //bush
-            return rot.y;
+        case 1: //en_kusa
+            return (((rot.y >> 12) << 8) + (((rot.y >> 8) & 0xF) << 4) + ((rot.y & 0xFF) >> 4));
             
-        case 2: //rock
-            return rot.z;
+        case 2: //en_ishi
+            return (0xF000 + ((rot.y >> 12) << 8) + ((rot.y & 0xF) << 4) + (rot.z >> 12));
     } 
 }
 
@@ -121,8 +149,8 @@ void ObjMure4_SpawnVariant(GlobalContext *globalCtx, Vec3f pos){
 //set variant's parameters
 void ObjMure4_SetVariantParams(ObjMure4* this, Vec3s rot, s16 params){
     if(!((params & 0xFF) >> 4)){
-        if(params & 0xF) type = 1;
-        else type = 2;
+        if((params & 0xF) == 1) type = 1;
+        else if((params & 0xF) == 2) type = 2;
     } 
 
     spawnParams = ObjMure4_GetVariantVars(this, rot);
