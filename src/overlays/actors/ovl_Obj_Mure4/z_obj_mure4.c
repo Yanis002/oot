@@ -27,8 +27,6 @@
     0x000F starting type (1 for bushes, 2 for rocks)
 */
 
-//TODO: use starting type 0 for spawning trees
-
 #include "z_obj_mure4.h"
 
 #define THIS ((ObjMure4*)thisx)
@@ -72,7 +70,6 @@ void ObjMure4_Init(Actor* thisx, GlobalContext* globalCtx){
     //initialize global and Mure4 struct vars
     params = this->actor.params;
     type = (params & 0xF);
-    this->treeCount = 0;
     this->ptrNb = 0;
 
     //filling the array with NULLs just in case something is weird with memory
@@ -103,10 +100,10 @@ u16 ObjMure4_GetWood02Vars(Vec3s rot){
 //returns the variant's parameters from the Mure4 Y or Z rot
 u16 ObjMure4_GetVariantVars(ObjMure4* this, Vec3s rot){
     switch(type){
-        case 1: //en_kusa
+        case 1: //en_kusa, bushes
             return (((rot.y >> 12) << 8) + (((rot.y >> 8) & 0xF) << 4) + ((rot.y & 0xFF) >> 4));
             
-        case 2: //en_ishi
+        case 2: //en_ishi, rocks
             return (0xF000 + ((rot.y >> 12) << 8) + ((rot.y & 0xF) << 4) + (rot.z >> 12));
     } 
 }
@@ -124,7 +121,6 @@ void ObjMure4_SetVariantParams(ObjMure4* this, Vec3s rot){
 //spawn a single tree and store the returned value of Actor_Spawn() in the pointer list
 void ObjMure4_SpawnTree(ObjMure4* this, GlobalContext *globalCtx, Vec3f pos, Vec3s rot, u16 i){
     this->actorPtrList[i] = Actor_Spawn(&globalCtx->actorCtx, globalCtx, sActorSpawnIDs[0], pos.x, pos.y, pos.z, 0, 0, 0, ObjMure4_GetWood02Vars(rot));
-    this->treeCount++;
 }
 
 //spawn a single variant and store the returned value of Actor_Spawn() in the pointer list
@@ -201,12 +197,9 @@ void ObjMure4_Kill(ObjMure4* this, GlobalContext* globalCtx){
     u16 i;
 
     //for i < total of spawned actors, total = (repetition * variant number) + number of trees
-    for(i = 0; i < (((params >> 12) * ((params >> 8) & 0xF)) + this->treeCount); i++){
+    for(i = 0; i < (((params >> 12) * ((params >> 8) & 0xF)) + ((params >> 12) + 1)); i++){
         if(this->actorPtrList[i] != NULL){
-            if(!Actor_HasParent(this->actorPtrList[i], globalCtx)){
-                Actor_Kill(this->actorPtrList[i]);
-            }
-
+            if(!Actor_HasParent(this->actorPtrList[i], globalCtx)) Actor_Kill(this->actorPtrList[i]);
             this->actorPtrList[i] = NULL;
         }
     }
