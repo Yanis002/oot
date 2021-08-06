@@ -192,9 +192,10 @@ distclean: clean assetclean
 	
 rom:
 	make -j2 COMPARE=0
-	python3 tools/z64compress_wrapper.py --mb 32 --matching zelda_ocarina_mq_dbg.z64 project-a.z64 zelda_ocarina_mq_dbg.elf spec
+	python3 tools/z64compress_wrapper.py --cache cache --mb 32 --matching zelda_ocarina_mq_dbg.z64 project-a.z64 zelda_ocarina_mq_dbg.elf spec
 	
-wad: rom
+wad:
+	make rom
 	gzinject -a inject -w oot.wad -m project-a.z64 -o project.wad -p ./tools/gzinject/patches/gz_mem_patch.gzi
 
 setup:

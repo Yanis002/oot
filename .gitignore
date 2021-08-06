@@ -60,3 +60,4 @@ tools/gzinject
 common-key.bin
 wadextract/
 *.wad
+cache/
