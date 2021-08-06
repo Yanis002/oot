@@ -248,40 +248,41 @@ static u16 sDebugSaveChecksum = 0;
  *  and set water level in Water Temple to lowest level.
  */
 void Sram_InitDebugSave(void) {
-    SaveContext* temp = &gSaveContext;
+    Sram_InitNewSave();
+    // SaveContext* temp = &gSaveContext;
 
-    bzero(&SAVE_INFO, sizeof(SaveInfo));
-    gSaveContext.numDays = 0;
-    gSaveContext.unk_18 = 0;
+    // bzero(&SAVE_INFO, sizeof(SaveInfo));
+    // gSaveContext.numDays = 0;
+    // gSaveContext.unk_18 = 0;
 
-    SAVE_PLAYER_DATA = sDebugSavePlayerData;
-    gSaveContext.equips = sDebugSaveEquips;
-    gSaveContext.inventory = sDebugSaveInventory;
+    // SAVE_PLAYER_DATA = sDebugSavePlayerData;
+    // gSaveContext.equips = sDebugSaveEquips;
+    // gSaveContext.inventory = sDebugSaveInventory;
 
-    temp->checksum = sDebugSaveChecksum;
-    gSaveContext.horseData.scene = SCENE_SPOT00;
-    gSaveContext.horseData.pos.x = -1840;
-    gSaveContext.horseData.pos.y = 72;
-    gSaveContext.horseData.pos.z = 5497;
-    gSaveContext.horseData.angle = -0x6AD9;
-    gSaveContext.infTable[0] |= 0x5009;
-    gSaveContext.eventChkInf[0] |= 0x123F;
-    gSaveContext.eventChkInf[8] |= 1;
-    gSaveContext.eventChkInf[12] |= 0x10;
+    // temp->checksum = sDebugSaveChecksum;
+    // gSaveContext.horseData.scene = SCENE_SPOT00;
+    // gSaveContext.horseData.pos.x = -1840;
+    // gSaveContext.horseData.pos.y = 72;
+    // gSaveContext.horseData.pos.z = 5497;
+    // gSaveContext.horseData.angle = -0x6AD9;
+    // gSaveContext.infTable[0] |= 0x5009;
+    // gSaveContext.eventChkInf[0] |= 0x123F;
+    // gSaveContext.eventChkInf[8] |= 1;
+    // gSaveContext.eventChkInf[12] |= 0x10;
 
-    if (LINK_AGE_IN_YEARS == YEARS_CHILD) {
-        gSaveContext.equips.buttonItems[0] = ITEM_SWORD_KOKIRI;
-        Inventory_ChangeEquipment(EQUIP_SWORD, 1);
-        if (gSaveContext.fileNum == 0xFF) {
-            gSaveContext.equips.buttonItems[1] = ITEM_SLINGSHOT;
-            gSaveContext.equips.cButtonSlots[0] = SLOT_SLINGSHOT;
-            Inventory_ChangeEquipment(EQUIP_SHIELD, 1);
-        }
-    }
+    // if (LINK_AGE_IN_YEARS == YEARS_CHILD) {
+    //     gSaveContext.equips.buttonItems[0] = ITEM_SWORD_KOKIRI;
+    //     Inventory_ChangeEquipment(EQUIP_SWORD, 1);
+    //     if (gSaveContext.fileNum == 0xFF) {
+    //         gSaveContext.equips.buttonItems[1] = ITEM_SLINGSHOT;
+    //         gSaveContext.equips.cButtonSlots[0] = SLOT_SLINGSHOT;
+    //         Inventory_ChangeEquipment(EQUIP_SHIELD, 1);
+    //     }
+    // }
 
-    gSaveContext.entranceIndex = 0xCD;
-    gSaveContext.magicLevel = 0;
-    gSaveContext.sceneFlags[5].swch = 0x40000000;
+    // gSaveContext.entranceIndex = 0xCD;
+    // gSaveContext.magicLevel = 0;
+    // gSaveContext.sceneFlags[5].swch = 0x40000000;
 }
 
 /**

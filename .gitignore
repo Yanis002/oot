@@ -52,3 +52,7 @@ graphs/
 # Per-user configuration
 .python-version
 notes-decomp.txt
+tools/z64compress/z64compress-linux64:Zone.Identifier
+tools/z64compress_wrapper.py:Zone.Identifier
+tools/z64compress/z64compress
+tools/z64compress_wrapper.py
