@@ -293,7 +293,7 @@ static InitChainEntry sInitChains[][5] = {
     {
         ICHAIN_F32_DIV1000(gravity, -1200, ICHAIN_CONTINUE),
         ICHAIN_F32_DIV1000(minVelocityY, -20000, ICHAIN_CONTINUE),
-        ICHAIN_F32(uncullZoneForward, 1200, ICHAIN_CONTINUE),
+        ICHAIN_F32(uncullZoneForward, 3000, ICHAIN_CONTINUE), //default: 1200
         ICHAIN_F32(uncullZoneScale, 150, ICHAIN_CONTINUE),
         ICHAIN_F32(uncullZoneDownward, 400, ICHAIN_STOP),
     },
