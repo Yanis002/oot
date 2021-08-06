@@ -726,9 +726,6 @@ void EnHy_Init(Actor* thisx, GlobalContext* globalCtx) {
         Actor_Kill(&this->actor);
     }
 
-    /* Project-A */
-    this->actor.uncullZoneForward = 3000.f;
-
     this->actionFunc = func_80A70E34;
 }
 
