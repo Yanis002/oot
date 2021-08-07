@@ -51,6 +51,11 @@ graphs/
 
 # Per-user configuration
 .python-version
+<<<<<<< Updated upstream
+=======
+notes-decomp.txt
+tools/z64compress/
+>>>>>>> Stashed changes
 tools/z64compress_wrapper.py
 tools/z64compress/
 *.wad

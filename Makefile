@@ -97,7 +97,7 @@ endif
 #### Files ####
 
 # ROM image
-ROMC := oot_mq_dbg_comp.z64
+ROMC := zelda_ocarina_mq_dbg_compressed.z64
 ROM := zelda_ocarina_mq_dbg.z64
 ELF := $(ROM:.z64=.elf)
 # description of ROM segments
@@ -196,6 +196,7 @@ assetclean:
 
 distclean: clean assetclean
 	$(RM) -r baserom/
+	$(RM) -r cache/yaz
 	$(MAKE) -C tools distclean
 
 setup:
@@ -205,10 +206,6 @@ setup:
 	python3 extract_assets.py
 
 compressed: $(ROMC)
-ifeq ($(COMPARE),1)
-	@md5sum $(ROMC)
-	@md5sum -c checksum.md5
-endif
 
 resources: $(ASSET_FILES_OUT)
 test: $(ROM)
@@ -217,7 +214,9 @@ test: $(ROM)
 .PHONY: all clean setup test distclean assetclean
 
 $(ROMC): $(ROM)
-	python3 tools/z64compress_wrapper.py --mb 32 --matching --threads $(N_THREADS) $< $@ $(ELF) build/$(SPEC)
+	python3 tools/z64compress_wrapper.py --cache cache --mb 32 --matching --threads $(N_THREADS) $< $@ $(ELF) build/$(SPEC)
+
+# python3 tools/z64compress_wrapper.py --cache cache --mb 32 --matching in.z64 out.z64 elf spec
 
 #### Various Recipes ####
 
