@@ -52,7 +52,7 @@ graphs/
 # Per-user configuration
 .python-version
 tools/z64compress_wrapper.py
-tools/z64compress/z64compress
+tools/z64compress/
 *.wad
 cache/
 wadextract/
