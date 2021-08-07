@@ -87,9 +87,17 @@ else
   CC_CHECK += -m32
 endif
 
+# Threads to compress and extract assets with, TODO improve later
+ifeq ($(DETECTED_OS),linux)
+  N_THREADS ?= $(shell nproc)
+else
+  N_THREADS ?= 1
+endif
+
 #### Files ####
 
 # ROM image
+ROMC := zelda_ocarina_mq_dbg_compressed.z64
 ROM := zelda_ocarina_mq_dbg.z64
 ELF := $(ROM:.z64=.elf)
 # description of ROM segments
@@ -188,15 +196,8 @@ assetclean:
 
 distclean: clean assetclean
 	$(RM) -r baserom/
+	$(RM) -r cache/yaz
 	$(MAKE) -C tools distclean
-	
-rom:
-	make -j2 COMPARE=0
-	python3 tools/z64compress_wrapper.py --cache cache --mb 32 --matching zelda_ocarina_mq_dbg.z64 project-a.z64 zelda_ocarina_mq_dbg.elf spec
-	
-wad:
-	make rom
-	gzinject -a inject -w oot.wad -m project-a.z64 -o project.wad -p ./tools/gzinject/patches/gz_mem_patch.gzi
 
 setup:
 	$(MAKE) -C tools
@@ -204,11 +205,18 @@ setup:
 	python3 extract_baserom.py
 	python3 extract_assets.py
 
+compressed: $(ROMC)
+
 resources: $(ASSET_FILES_OUT)
 test: $(ROM)
 	$(EMULATOR) $(EMU_FLAGS) $<
 
 .PHONY: all clean setup test distclean assetclean
+
+$(ROMC): $(ROM)
+	python3 tools/z64compress_wrapper.py --cache cache --mb 32 --matching --threads $(N_THREADS) $< $@ $(ELF) build/$(SPEC)
+
+# python3 tools/z64compress_wrapper.py --cache cache --mb 32 --matching in.z64 out.z64 elf spec
 
 #### Various Recipes ####
 

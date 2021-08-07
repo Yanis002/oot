@@ -52,7 +52,7 @@ graphs/
 # Per-user configuration
 .python-version
 notes-decomp.txt
-tools/z64compress/z64compress
+tools/z64compress/
 tools/z64compress_wrapper.py
 tools/gzinject
 common-key.bin
