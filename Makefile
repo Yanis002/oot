@@ -95,10 +95,14 @@ else
 endif
 
 #### Files ####
+# GZI Patch
+GZI := tools/gzinject/patches/gz_mem_patch_dpad.gzi
 
 # ROM image
 ROMC := zelda_ocarina_mq_dbg_compressed.z64
 ROM := zelda_ocarina_mq_dbg.z64
+WAD_ORIGINAL := base.wad
+WAD := zelda_ocarina_mq_dbg.wad
 ELF := $(ROM:.z64=.elf)
 # description of ROM segments
 SPEC := spec
@@ -167,11 +171,10 @@ build/assets/%.o: CC := python3 tools/asm_processor/build.py $(CC) -- $(AS) $(AS
 
 #### Main Targets ###
 
-all: $(ROM)
-ifeq ($(COMPARE),1)
-	@md5sum $(ROM)
-	@md5sum -c checksum.md5
-endif
+all: uncompressed
+
+$(ROMC): $(ROM)
+	python3 tools/z64compress_wrapper.py --cache cache --threads $(N_THREADS) $< $@ $(ELF) build/$(SPEC)
 
 $(ROM): $(ELF)
 	$(ELF2ROM) -cic 6105 $< $@
@@ -207,16 +210,22 @@ setup:
 
 compressed: $(ROMC)
 
+uncompressed: $(ROM)
+ifeq ($(COMPARE),1)
+	@md5sum $(ROM)
+	@md5sum -c checksum.md5
+endif
+
+wad:
+	$(MAKE) compressed
+	tools/gzinject/gzinject -a inject -w $(WAD_ORIGINAL) -m $(ROMC) -o $(WAD) -p $(GZI)
+	$(RM) -r wadextract
+
 resources: $(ASSET_FILES_OUT)
 test: $(ROM)
 	$(EMULATOR) $(EMU_FLAGS) $<
 
 .PHONY: all clean setup test distclean assetclean
-
-$(ROMC): $(ROM)
-	python3 tools/z64compress_wrapper.py --cache cache --mb 32 --matching --threads $(N_THREADS) $< $@ $(ELF) build/$(SPEC)
-
-# python3 tools/z64compress_wrapper.py --cache cache --mb 32 --matching in.z64 out.z64 elf spec
 
 #### Various Recipes ####
 
