@@ -605,6 +605,13 @@ beginseg
 endseg
 
 beginseg
+    name "ovl_Obj_Mure4"
+    compress
+    include "build/src/overlays/actors/ovl_Obj_Mure4/z_obj_mure4.o"
+    include "build/src/overlays/actors/ovl_Obj_Mure4/z_obj_mure4_reloc.o"
+endseg
+
+beginseg
     name "ovl_map_mark_data"
     compress
     include "build/src/overlays/ovl_map_mark_data/z_map_mark_data.o"
