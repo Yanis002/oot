@@ -52,7 +52,9 @@ graphs/
 # Per-user configuration
 .python-version
 tools/gzinject
-tools/z64compress
+tools/z64compress/z64compress
+tools/z64compress/o
+tools/z64compress/bin
 common-key.bin
 *.wad
 cache/
