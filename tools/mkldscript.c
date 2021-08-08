@@ -22,11 +22,13 @@ enum
     STMT_entry,
     STMT_flags,
     STMT_include,
+    STMT_include_readonly,
     STMT_name,
     STMT_number,
     STMT_romalign,
     STMT_stack,
     STMT_increment,
+    STMT_compress,
 };
 
 enum
@@ -34,6 +36,7 @@ enum
     FLAG_BOOT = (1 << 0),
     FLAG_OBJECT = (1 << 1),
     FLAG_RAW = (1 << 2),
+    FLAG_NOLOAD = (1 << 3),
 };
 
 struct Segment
@@ -50,7 +53,9 @@ struct Segment
     uint32_t entry;
     uint32_t number;
     char **includes;
+    uint8_t *readOnlyData;
     int includesCount;
+    bool compress;
 };
 
 static struct Segment *g_segments = NULL;
@@ -128,6 +133,8 @@ static bool parse_flags(char *str, unsigned int *flags)
             f |= FLAG_OBJECT;
         else if (strcmp(str, "RAW") == 0)
             f |= FLAG_RAW;
+        else if (strcmp(str, "NOLOAD") == 0)
+            f |= FLAG_NOLOAD;
         else
             return false;
 
@@ -176,11 +183,13 @@ static const char *const stmtNames[] =
     [STMT_entry]     = "entry",
     [STMT_flags]     = "flags",
     [STMT_include]   = "include",
+    [STMT_include_readonly] = "include_readonly",
     [STMT_name]      = "name",
     [STMT_number]    = "number",
     [STMT_romalign]  = "romalign",
     [STMT_stack]     = "stack",
     [STMT_increment] = "increment",
+    [STMT_compress] = "compress",
 };
 
 static void parse_rom_spec(char *spec)
@@ -215,10 +224,11 @@ static void parse_rom_spec(char *spec)
             if (currSeg != NULL)
             {
                 // ensure no duplicates (except for 'include')
-                if (stmt != STMT_include && (currSeg->fields & (1 << stmt)))
+                if (stmt != STMT_include && stmt != STMT_include_readonly && (currSeg->fields & (1 << stmt)))
                     util_fatal_error("line %i: duplicate '%s' statement", lineNum, stmtName);
 
                 currSeg->fields |= 1 << stmt;
+                currSeg->compress = false;
 
                 // statements valid within a segment definition
                 switch (stmt)
@@ -267,14 +277,20 @@ static void parse_rom_spec(char *spec)
                         util_fatal_error("line %i: alignment is not a power of two", lineNum);
                     break;
                 case STMT_include:
+                case STMT_include_readonly:
                     currSeg->includesCount++;
                     currSeg->includes = realloc(currSeg->includes, currSeg->includesCount * sizeof(*currSeg->includes));
+                    currSeg->readOnlyData = realloc(currSeg->readOnlyData, currSeg->includesCount * sizeof(*currSeg->readOnlyData));
+                    currSeg->readOnlyData[currSeg->includesCount - 1] = (stmt == STMT_include_readonly);
                     if (!parse_quoted_string(args, &currSeg->includes[currSeg->includesCount - 1]))
                         util_fatal_error("line %i: invalid filename", lineNum);
                     break;
                  case STMT_increment:
                     if (!parse_number(args, &currSeg->increment))
                         util_fatal_error("line %i: expected number after 'increment'", lineNum);
+                    break;
+                 case STMT_compress:
+                    currSeg->compress = true;
                     break;
                 default:
                     fprintf(stderr, "warning: '%s' is not implemented\n", stmtName);
@@ -328,9 +344,8 @@ static void write_ld_script(void)
         //if (seg->fields & (1 << STMT_increment))
             //fprintf(fout, "    . += 0x%08X;\n", seg->increment);
 
-        fprintf(fout, "    _%sSegmentRomStartTemp = _RomSize;\n"
-                  "    _%sSegmentRomStart = _%sSegmentRomStartTemp;\n"
-                  "    ..%s ", seg->name, seg->name, seg->name, seg->name);
+        fprintf(fout, "    _%sSegmentRomStart = _RomSize;\n"
+                  "    ..%s ", seg->name, seg->name);
 
         if (seg->fields & (1 << STMT_after))
             fprintf(fout, "_%sSegmentEnd ", seg->after);
@@ -359,7 +374,10 @@ static void write_ld_script(void)
         fprintf(fout, "        _%sSegmentDataStart = .;\n", seg->name);
 
         for (j = 0; j < seg->includesCount; j++)
-            fprintf(fout, "            %s (.data)\n", seg->includes[j]);
+        {
+            if (seg->readOnlyData[j] == false)
+                fprintf(fout, "            %s (.data)\n", seg->includes[j]);
+        }
 
         /*
          for (j = 0; j < seg->includesCount; j++)
@@ -377,7 +395,11 @@ static void write_ld_script(void)
         fprintf(fout, "        _%sSegmentRoDataStart = .;\n", seg->name);
 
         for (j = 0; j < seg->includesCount; j++)
+        {
+            if (seg->readOnlyData[j] == true)
+                fprintf(fout, "            %s (.data)\n", seg->includes[j]);
             fprintf(fout, "            %s (.rodata)\n", seg->includes[j]);
+        }
 
          //fprintf(fout, "        . = ALIGN(0x10);\n");
 
@@ -411,9 +433,7 @@ static void write_ld_script(void)
         //fprintf(fout, "    _RomSize += ( _%sSegmentDataEnd - _%sSegmentTextStart );\n", seg->name, seg->name);
         fprintf(fout, "    _RomSize += ( _%sSegmentOvlEnd - _%sSegmentTextStart );\n", seg->name, seg->name);
 
-        fprintf(fout, "    _%sSegmentRomEndTemp = _RomSize;\n"
-                  "_%sSegmentRomEnd = _%sSegmentRomEndTemp;\n\n",
-                  seg->name, seg->name, seg->name);
+        fprintf(fout, "    _%sSegmentRomEnd = _RomSize;\n\n", seg->name);
 
         // algn end of ROM segment
         if (seg->fields & (1 << STMT_romalign))
