@@ -58,3 +58,4 @@ tools/z64compress/bin
 common-key.bin
 *.wad
 cache/
+test-fast64.py
