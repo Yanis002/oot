@@ -3913,6 +3913,13 @@ beginseg
 endseg
 
 beginseg
+    name "ovl_En_Freezer"
+    compress
+    include "build/src/overlays/actors/ovl_En_Freezer/z_en_freezer.o"
+    include "build/src/overlays/actors/ovl_En_Freezer/ovl_En_Freezer_reloc.o"
+endseg
+
+beginseg
     name "gameplay_keep"
     compress
     romalign 0x1000
@@ -10214,19 +10221,17 @@ beginseg
 endseg
 
 beginseg
-    name "market_day_scene"
-    compress
-    romalign 0x1000
-    include "build/assets/scenes/misc/market_day/market_day_scene.o"
-    number 2
+	name "market_day_scene"
+	romalign 0x1000
+	include "build/assets/scenes/misc/market_day/market_day_scene.o"
+	number 2
 endseg
 
 beginseg
-    name "market_day_room_0"
-    compress
-    romalign 0x1000
-    include "build/assets/scenes/misc/market_day/market_day_room_0.o"
-    number 3
+	name "market_day_room_0"
+	romalign 0x1000
+	include "build/assets/scenes/misc/market_day/market_day_room_0.o"
+	number 3
 endseg
 
 beginseg
@@ -12046,3 +12051,4 @@ beginseg
     romalign 0x1000
     include "build/baserom/softsprite_matrix_static.o"
 endseg
+

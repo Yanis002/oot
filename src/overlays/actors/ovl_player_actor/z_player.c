@@ -10047,9 +10047,9 @@ void Player_UpdateCommon(Player* this, GlobalContext* globalCtx, Input* input) {
             D_8014B300 = 1;
 
             //Note: temporary, copy paste MM's code for fast bunny hood (BUG)
-            if((sControlInput->rel.stick_x < -30) || (sControlInput->rel.stick_x > 30) 
-            || (sControlInput->rel.stick_y < -30) || (sControlInput->rel.stick_y > 30))
-            this->linearVelocity = 10.0f;
+            // if((sControlInput->rel.stick_x < -30) || (sControlInput->rel.stick_x > 30) 
+            // || (sControlInput->rel.stick_y < -30) || (sControlInput->rel.stick_y > 30))
+            // this->linearVelocity = 10.0f;
 
             if(((gSaveContext.playerName[0] == 's') || (gSaveContext.playerName[0] == 'S')) //if filename is 'sanzeau' (case don't matter)
             && ((gSaveContext.playerName[1] == 'a') || (gSaveContext.playerName[1] == 'A'))

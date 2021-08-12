@@ -5570,3 +5570,19 @@ s32 func_80038290(GlobalContext* globalCtx, Actor* actor, Vec3s* arg2, Vec3s* ar
 
     return true;
 }
+
+/* Project-A */
+u8 sActorCategories[] = { ACTORCAT_ENEMY, ACTORCAT_BOSS, ACTORCAT_NPC, ACTORCAT_ITEMACTION, ACTORCAT_EXPLOSIVE };
+
+void Actor_FreezeAllActors(GlobalContext* globalCtx, ActorContext* actorCtx, s32 duration) {
+    Actor* actor;
+    s32 i;
+
+    for (i = 0; i < ARRAY_COUNT(sActorCategories); i++) {
+        actor = actorCtx->actorLists[sActorCategories[i]].head;
+        while (actor != NULL) {
+            actor->freezeTimer = duration;
+            actor = actor->next;
+        }
+    }
+}

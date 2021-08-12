@@ -470,5 +470,6 @@ extern ActorInit Obj_Warp2block_InitVars;
 
 /* Project-A */
 extern ActorInit Obj_Mure4_InitVars;
+extern ActorInit En_Freezer_InitVars;
 
 #endif

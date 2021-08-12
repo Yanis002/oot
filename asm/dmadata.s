@@ -1541,4 +1541,5 @@ DMA_TABLE_ENTRY anime_texture_5_static
 DMA_TABLE_ENTRY anime_texture_6_static
 DMA_TABLE_ENTRY softsprite_matrix_static
 DMA_TABLE_ENTRY ovl_Obj_Mure4
+DMA_TABLE_ENTRY ovl_En_Freezer
 .space 0x100

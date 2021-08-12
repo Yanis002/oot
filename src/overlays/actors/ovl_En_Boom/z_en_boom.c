@@ -20,7 +20,7 @@ void EnBoom_Fly(EnBoom* this, GlobalContext* globalCtx);
 
 const ActorInit En_Boom_InitVars = {
     ACTOR_EN_BOOM,
-    ACTORCAT_MISC,
+    ACTORCAT_ITEMACTION, //misc
     FLAGS,
     OBJECT_GAMEPLAY_KEEP,
     sizeof(EnBoom),
