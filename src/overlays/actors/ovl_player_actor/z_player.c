@@ -9875,39 +9875,49 @@ extern u8 D_8014B300;
 
 void Player_UpdateCommon(Player* this, GlobalContext* globalCtx, Input* input) {
     s32 pad;
-    u16 sec, minutes, hours;
-    char* timer = "00:00:00";
+    // u16 sec, minutes, hours;
+    // char* timer = "00:00:00";
     char tmp[20];
+    char posStr[20];
+    char actorNbStr[20];
 
     sControlInput = input;
-    sec = __osViIntrCount / 60;
-    hours = sec / 3600;
-    minutes = (sec / 60) % 60;
-    sec %= 60;
+    // sec = __osViIntrCount / 60;
+    // hours = sec / 3600;
+    // minutes = (sec / 60) % 60;
+    // sec %= 60;
+
+    //show Player coords
+    sprintf(posStr, "X: %.2f \n Y: %.2f \n Z: %.2f", this->actor.world.pos.x, this->actor.world.pos.y, this->actor.world.pos.z);
+    Printf_Print(globalCtx, 0xFEFEFEFE, 0x011700, posStr);
+
+    //show actor count
+    sprintf(actorNbStr, "Loaded Actors: %d", globalCtx->actorCtx.total);
+    Printf_Print(globalCtx, 0xFEFEFEFE, 0x010100, actorNbStr);
 
     //show commands
-    Printf_Print(globalCtx, 0xFFFFFFFE, 0x081C00, "L+D-Pad Down for commands");
+    Printf_Print(globalCtx, 0xFEFEFEFE, 0x081C00, "L+D-Pad Down for commands");
     if((CHECK_BTN_ALL(sControlInput->cur.button, BTN_L)) && (CHECK_BTN_ALL(sControlInput->press.button, BTN_DDOWN))){
         switchPrint ^= 1;
     }
 
     if(switchPrint){
-            Printf_Print(globalCtx, 0xFFFFFFFE, 0x010800, "Hold L+R+C-Down to display timer \n L+B+A for file select \n L+R+C-Up for Paella \n L+R+C-Left for StalZone \n L+D-Pad Right for no clip mode \n (A/B for Up/down) \n D-Pad Right to cancel cutscenes \n L + D-Pad Up for debug camera");
+            Printf_Print(globalCtx, 0xFEFEFEFE, 0x010800, "L+B+A for file select \n L+R+C-Up for Paella \n L+R+C-Left for StalZone \n L+D-Pad Right for no clip mode \n (A/B for Up/down) \n D-Pad Right to cancel cutscenes \n L + D-Pad Up for debug camera");
     }
 
     //display timer
-    if(CHECK_BTN_ALL(sControlInput->cur.button, BTN_L + BTN_R + BTN_CDOWN)){
-        //timer format
-        if(hours < 10){
-            timer = strcpy(timer, "0");
-            timer = strcat(timer, itoa(hours, tmp));
-        } else timer = strcpy(timer, itoa(hours, tmp));
-        if(minutes < 10) timer = strcat(timer, ":0"); else timer = strcat(timer, ":");
-        timer = strcat(timer, itoa(minutes, tmp));
-        if(sec < 10) timer = strcat(timer, ":0"); else timer = strcat(timer, ":");
-        timer = strcat(timer, itoa(sec, tmp));
-        Printf_Print(globalCtx, 0xFFFFFFFE, 0x010100, timer);
-    }
+    // if(CHECK_BTN_ALL(sControlInput->cur.button, BTN_L + BTN_R + BTN_CDOWN)){
+    //     //timer format
+    //     if(hours < 10){
+    //         timer = strcpy(timer, "0");
+    //         timer = strcat(timer, itoa(hours, tmp));
+    //     } else timer = strcpy(timer, itoa(hours, tmp));
+    //     if(minutes < 10) timer = strcat(timer, ":0"); else timer = strcat(timer, ":");
+    //     timer = strcat(timer, itoa(minutes, tmp));
+    //     if(sec < 10) timer = strcat(timer, ":0"); else timer = strcat(timer, ":");
+    //     timer = strcat(timer, itoa(sec, tmp));
+    //     Printf_Print(globalCtx, 0xFFFFFFFE, 0x010100, timer);
+    // }
 
     //test file select
     if(CHECK_BTN_ALL(sControlInput->cur.button, BTN_L + BTN_B + BTN_A)){

@@ -138,7 +138,6 @@ endseg
 
 beginseg
     name "icon_item_static"
-    compress
     romalign 0x1000
     include "build/assets/textures/icon_item_static/icon_item_static.o"
     number 8
@@ -218,7 +217,6 @@ endseg
 
 beginseg
     name "do_action_static"
-    compress
     romalign 0x1000
     include "build/assets/textures/do_action_static/do_action_static.o"
     number 7
@@ -242,7 +240,6 @@ endseg
 
 beginseg
     name "nes_font_static"
-    compress
     romalign 0x1000
     include "build/assets/textures/nes_font_static/nes_font_static.o"
     number 10
@@ -10222,6 +10219,7 @@ endseg
 
 beginseg
 	name "market_day_scene"
+    compress
 	romalign 0x1000
 	include "build/assets/scenes/misc/market_day/market_day_scene.o"
 	number 2
@@ -10229,6 +10227,7 @@ endseg
 
 beginseg
 	name "market_day_room_0"
+    compress
 	romalign 0x1000
 	include "build/assets/scenes/misc/market_day/market_day_room_0.o"
 	number 3

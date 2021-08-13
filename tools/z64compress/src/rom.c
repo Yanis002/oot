@@ -7,6 +7,7 @@
  * 
  */
 
+#include <stdbool.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <assert.h>
@@ -39,6 +40,8 @@
 #define  fwrite  wow_fwrite
 #define  remove  wow_remove
 
+extern FILE* printer;
+
 #define SIZE_16MB (1024 * 1024 * 16)
 #define SIZE_4MB  (1024 * 1024 * 4)
 
@@ -65,6 +68,7 @@ for (dma = rom->dma; (unsigned)(dma - rom->dma) < rom->dma_num; ++dma)
 
 #define PROGRESS_A_B (int)(dma - rom->dma), rom->dma_num
 
+#define ALIGN16(x) (((x) + 0xF) & ~0xF)
 
 /*
  *
@@ -160,6 +164,7 @@ struct compThread
 	int ofs;      /* starting entry in list */
 	int report;   /* report progress to stderr (last thread only) */
 	void *ctx;    /* compression context */
+	bool matching;
 	pthread_t pt; /* pthread */
 };
 
@@ -531,7 +536,7 @@ static void report_progress(
 	/* caching enabled */
 	if (rom->cache)
 		fprintf(
-			stderr
+			printer
 			, "\r""updating '%s/%s' %d/%d: "
 			, rom->cache
 			, codec
@@ -541,7 +546,7 @@ static void report_progress(
 	
 	else
 		fprintf(
-			stderr
+			printer
 			, "\r""compressing file %d/%d: "
 			, v
 			, total
@@ -566,6 +571,7 @@ static void dma_compress(
 	, int ofs      /* starting entry in list */
 	, int report   /* report progress to stderr (last thread only) */
 	, void *ctx    /* compression context */
+	, bool matching
 )
 {
 	struct dma *dma;
@@ -617,7 +623,7 @@ static void dma_compress(
 			);
 			
 			/* file doesn't benefit from compression */
-			if (dma->compSz >= dma->end - dma->start)
+			if (!matching && dma->compSz >= dma->end - dma->start)
 			{
 				dma->compSz = dma->end - dma->start;
 				dma->compbuf =	memdup_safe(
@@ -694,7 +700,7 @@ static void dma_compress(
 				die("compression error");
 			
 			/* file doesn't benefit from compression */
-			if (out_sz >= dma->end - dma->start)
+			if (!matching && out_sz >= dma->end - dma->start)
 			{
 				out = rom->data + dma->start;
 				out_sz = dma->end - dma->start;
@@ -737,6 +743,7 @@ static void *dma_compress_threadfunc(void *_CT)
 		, CT->ofs
 		, CT->report
 		, CT->ctx
+		, CT->matching
 	);
 	
 	return 0;
@@ -761,6 +768,7 @@ static void dma_compress_thread(
 	, int ofs      /* starting entry in list */
 	, int report   /* report progress to stderr (last thread only) */
 	, void *ctx    /* compression context */
+	, bool matching
 )
 {
 	CT->rom = rom;
@@ -773,6 +781,7 @@ static void dma_compress_thread(
 	CT->ofs = ofs;
 	CT->report = report;
 	CT->ctx = ctx;
+	CT->matching = matching;
 	
 	if (pthread_create(&CT->pt, 0, dma_compress_threadfunc, CT))
 		die("threading error");
@@ -891,7 +900,7 @@ static void rom_write_dmadata(struct rom *rom)
  */
 
 /* compress rom using specified algorithm */
-void rom_compress(struct rom *rom, int mb, int numThreads)
+void rom_compress(struct rom *rom, int mb, int numThreads, bool matching)
 {
 	struct dma *dma;
 	struct folder *list = 0;
@@ -1009,6 +1018,7 @@ void rom_compress(struct rom *rom, int mb, int numThreads)
 			, 0  /* ofs    */
 			, 1  /* report */
 			, compThread[0].ctx
+			, matching
 		);
 	}
 	else
@@ -1028,6 +1038,7 @@ void rom_compress(struct rom *rom, int mb, int numThreads)
 				, i                  /* ofs    */
 				, (i+1)==numThreads  /* report */
 				, compThread[i].ctx
+				, matching
 			);
 		}
 
@@ -1041,13 +1052,26 @@ void rom_compress(struct rom *rom, int mb, int numThreads)
 	
 	/* all files now compressed */
 	report_progress(rom, codec, PROGRESS_A_B);
-	fprintf(stderr, "success!\n");
+	fprintf(printer, "success!\n");
 	
 	/* sort by original start, ascending */
 	DMASORT(rom, sortfunc_dma_start_ascend);
 	
-	/* zero the entire (compressed) rom space */
-	memset(rom->data, 0, compsz);
+	if (matching)
+	{
+		/* fill the entire (compressed) rom space with 00010203...FF...
+		   in order to match retail rom padding                         */
+		unsigned char n = 0; // will intentionally overflow
+		for (unsigned int j = 0; j < compsz; j++, n++)
+		{
+			rom->data[j] = n;
+		}
+	}
+	else
+	{
+		/* zero the entire (compressed) rom space */
+		memset(rom->data, 0, compsz);
+	}
 	
 	/* go through dma table, injecting compressed files */
 	comp_total = 0;
@@ -1057,7 +1081,10 @@ void rom_compress(struct rom *rom, int mb, int numThreads)
 		char *fn = dma->compname;
 		unsigned int sz;
 		unsigned int sz16;
-		fprintf(stderr, "\r""injecting file %d/%d: ", PROGRESS_A_B);
+		fprintf(printer, "\r""injecting file %d/%d: ", PROGRESS_A_B);
+		
+		if (dma->deleted)
+			continue;
 		
 		/* cached file logic */
 		if (cache)
@@ -1117,13 +1144,19 @@ void rom_compress(struct rom *rom, int mb, int numThreads)
 		else
 		{
 			memcpy(dst, dma->compbuf, dma->compSz);
+			if (matching)
+			{
+				// since matching rom padding is not zero but file padding is zero,
+				// fill file padding space with zeros
+				memset(dst + dma->compSz, 0, ALIGN16(dma->compSz) - dma->compSz);
+			}
 		}
 	}
-	fprintf(stderr, "\r""injecting file %d/%d: ", dma_num, dma_num);
-	fprintf(stderr, "success!\n");
+	fprintf(printer, "\r""injecting file %d/%d: ", dma_num, dma_num);
+	fprintf(printer, "success!\n");
 	
 	fprintf(
-		stderr
+		printer
 		, "compression ratio: %.02f%%\n"
 		, (total_compressed / total_decompressed) * 100.0f
 	);
@@ -1158,12 +1191,12 @@ void rom_compress(struct rom *rom, int mb, int numThreads)
 	DMA_FOR_EACH
 	{
 		/* zero starts/ends of deleted files */
-		if (dma->deleted)
+		if (!matching && dma->deleted)
 		{
 			dma->start = 0;
 			dma->end = 0;
 			dma->Pstart = 0;
-			dma->Pstart = 0;
+			dma->Pend = 0;
 		}
 		
 		/* free any compbufs */
@@ -1196,7 +1229,7 @@ void rom_compress(struct rom *rom, int mb, int numThreads)
 
 
 /* specify start of dmadata and number of entries */
-void rom_dma(struct rom *rom, unsigned int offset, int num_entries)
+void rom_dma(struct rom *rom, unsigned int offset, int num_entries, bool matching)
 {
 	struct dma *dma;
 	unsigned char *raw;
@@ -1232,12 +1265,16 @@ void rom_dma(struct rom *rom, unsigned int offset, int num_entries)
 		if (dma->Pstart == DMA_DELETED && dma->Pend == DMA_DELETED)
 		{
 			dma->deleted = 1;
-			dma->start = 0;
-			dma->end = 0;
-			dma->Ostart = 0;
-			dma->Oend = 0;
-			dma->Pstart = 0;
-			dma->Pend = 0;
+
+			if (!matching)
+			{
+				dma->start = 0;
+				dma->end = 0;
+				dma->Ostart = 0;
+				dma->Oend = 0;
+				dma->Pstart = 0;
+				dma->Pend = 0;
+			}
 		}
 		
 		/* invalid dma conditions */
@@ -1258,7 +1295,7 @@ void rom_dma(struct rom *rom, unsigned int offset, int num_entries)
 		}
 		
 		/* rom is compressed */
-		if (dma->Pend)
+		if (dma->Pend && dma->Pend != DMA_DELETED)
 		{
 			die(
 				"encountered dma entry %08X %08X %08X %08X"
@@ -1275,7 +1312,7 @@ void rom_dma(struct rom *rom, unsigned int offset, int num_entries)
 }
 
 /* call this once dma settings are finalized */
-void rom_dma_ready(struct rom *rom)
+void rom_dma_ready(struct rom *rom, bool matching)
 {
 	struct dma *dma;
 	int num;
@@ -1304,7 +1341,7 @@ void rom_dma_ready(struct rom *rom)
 		if (dma->end == dma->start)
 		{
 			fprintf(
-				stderr
+				printer
 				, "warning: dma entry %d is empty file (%08X == %08X)\n"
 				, dma->index, dma->start, dma->end
 			);
@@ -1315,11 +1352,15 @@ void rom_dma_ready(struct rom *rom)
 		if (dma->Pstart == DMA_DELETED && dma->Pend == DMA_DELETED)
 		{
 			dma->deleted = 1;
-			dma->Ostart = 0;
-			dma->Oend = 0;
-			dma->start = 0;
-			dma->end = 0;
-			dma->compress = 0;
+
+			if (!matching)
+			{
+				dma->Ostart = 0;
+				dma->Oend = 0;
+				dma->start = 0;
+				dma->end = 0;
+				dma->compress = 0;
+			}
 			continue;
 		}
 		
@@ -1474,7 +1515,7 @@ void rom_dma_repack(
 		
 		/* fatal error */
 		if (errstr)
-			die(errstr);
+			die("%s", errstr);
 		
 		/* repacked archive won't fit in place of original archive */
 		if (Nsz > Osz)
@@ -1486,7 +1527,7 @@ void rom_dma_repack(
 		memcpy(dst, rom->mem.mb16, Nsz);
 		
 		/* file sizes changed */
-		fprintf(stderr, "%.2f kb saved!\n", ((float)(Osz-Nsz))/1000.0f);
+		fprintf(printer, "%.2f kb saved!\n", ((float)(Osz-Nsz))/1000.0f);
 		
 		dma->end = dma->start + Nsz;
 		
