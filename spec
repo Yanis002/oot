@@ -138,7 +138,6 @@ endseg
 
 beginseg
     name "icon_item_static"
-    compress
     romalign 0x1000
     include "build/assets/textures/icon_item_static/icon_item_static.o"
     number 8
@@ -146,7 +145,6 @@ endseg
 
 beginseg
     name "icon_item_24_static"
-    compress
     romalign 0x1000
     include "build/assets/textures/icon_item_24_static/icon_item_24_static.o"
     number 9
@@ -202,7 +200,6 @@ endseg
 
 beginseg
     name "item_name_static"
-    compress
     romalign 0x1000
     include "build/assets/textures/item_name_static/item_name_static.o"
     number 10
@@ -210,7 +207,6 @@ endseg
 
 beginseg
     name "map_name_static"
-    compress
     romalign 0x1000
     include "build/assets/textures/map_name_static/map_name_static.o"
     number 11
@@ -218,7 +214,6 @@ endseg
 
 beginseg
     name "do_action_static"
-    compress
     romalign 0x1000
     include "build/assets/textures/do_action_static/do_action_static.o"
     number 7
@@ -226,7 +221,6 @@ endseg
 
 beginseg
     name "message_static"
-    compress
     romalign 0x1000
     include "build/assets/textures/message_static/message_static.o"
     number 7
@@ -234,7 +228,6 @@ endseg
 
 beginseg
     name "message_texture_static"
-    compress
     romalign 0x1000
     include "build/assets/textures/message_texture_static/message_texture_static.o"
     number 9
@@ -242,7 +235,6 @@ endseg
 
 beginseg
     name "nes_font_static"
-    compress
     romalign 0x1000
     include "build/assets/textures/nes_font_static/nes_font_static.o"
     number 10
@@ -274,7 +266,6 @@ endseg
 
 beginseg
     name "map_grand_static"
-    compress
     romalign 0x1000
     include "build/assets/textures/map_grand_static/map_grand_static.o"
     number 11
@@ -282,7 +273,6 @@ endseg
 
 beginseg
     name "map_48x85_static"
-    compress
     romalign 0x1000
     include "build/assets/textures/map_48x85_static/map_48x85_static.o"
     number 11
@@ -290,7 +280,6 @@ endseg
 
 beginseg
     name "map_i_static"
-    compress
     romalign 0x1000
     include "build/assets/textures/map_i_static/map_i_static.o"
     number 11
