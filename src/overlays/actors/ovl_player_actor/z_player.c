@@ -2718,6 +2718,7 @@ void func_80835F44(GlobalContext* globalCtx, Player* this, s32 item) {
                  (temp = Player_ActionToExplosive(this, actionParam),
                   ((temp >= 0) && ((AMMO(sExplosiveInfos[temp].itemId) == 0) ||
                                    (globalCtx->actorCtx.actorLists[ACTORCAT_EXPLOSIVE].length >= 3)))))) {
+                                       //^ bomb limit
                 func_80078884(NA_SE_SY_ERROR);
                 return;
             }

@@ -6,7 +6,8 @@
 
 typedef enum {
     /* 0x00 */ OCEFF_WIPE_ZL,
-    /* 0x01 */ OCEFF_WIPE_SOT
+    /* 0x01 */ OCEFF_WIPE_SOT,
+    /* 0x02 */ OCEFF_WIPE_SOT2
 } OceffWipeType;
 
 struct OceffWipe;

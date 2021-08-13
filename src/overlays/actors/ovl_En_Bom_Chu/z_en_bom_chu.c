@@ -202,7 +202,11 @@ void EnBomChu_WaitForRelease(EnBomChu* this, GlobalContext* globalCtx) {
     }
 
     if (Actor_HasNoParent(&this->actor, globalCtx)) {
-        this->actor.world.pos = player->actor.world.pos;
+        //Original: this->actor.world.pos = player->actor.world.pos;
+        //Project-A 
+        this->actor.world.pos.y = player->actor.world.pos.y;
+        //prevent updating X and Z coord
+
         Actor_UpdateBgCheckInfo(globalCtx, &this->actor, 0.0f, 0.0f, 0.0f, 4);
         this->actor.shape.rot.y = player->actor.shape.rot.y;
 
