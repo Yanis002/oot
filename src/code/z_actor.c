@@ -5574,7 +5574,7 @@ s32 func_80038290(GlobalContext* globalCtx, Actor* actor, Vec3s* arg2, Vec3s* ar
 /* Project-A */
 u8 sActorCategories[] = { ACTORCAT_ENEMY, ACTORCAT_BOSS, ACTORCAT_NPC, ACTORCAT_ITEMACTION, ACTORCAT_EXPLOSIVE };
 
-void Actor_FreezeAllActors(GlobalContext* globalCtx, ActorContext* actorCtx, s32 duration) {
+void Actor_FreezeAllActors(GlobalContext* globalCtx, ActorContext* actorCtx, u16 duration) {
     Actor* actor;
     s32 i;
 

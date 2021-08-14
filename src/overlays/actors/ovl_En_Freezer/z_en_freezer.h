@@ -6,7 +6,6 @@
 
 typedef struct En_Freezer {
     Actor actor;
-    Actor* actorPtr;
 } En_Freezer;
 
 extern const ActorInit En_Freezer_InitVars;

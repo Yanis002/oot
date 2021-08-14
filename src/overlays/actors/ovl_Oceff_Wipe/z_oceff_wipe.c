@@ -42,6 +42,10 @@ void OceffWipe_Init(Actor* thisx, GlobalContext* globalCtx) {
     this->counter = 0;
     this->actor.world.pos = ACTIVE_CAM->eye;
     osSyncPrintf(VT_FGCOL(CYAN) " WIPE arg_data = %d\n" VT_RST, this->actor.params);
+
+    //Project-A
+    this->counter2 = 0;
+    this->boolWipe2 = 0;
 }
 
 void OceffWipe_Destroy(Actor* thisx, GlobalContext* globalCtx) {
@@ -64,11 +68,17 @@ void OceffWipe_Update(Actor* thisx, GlobalContext* globalCtx) {
     else changedValue = 100;
 
     this->actor.world.pos = ACTIVE_CAM->eye;
-    if (this->counter < changedValue) { //100
-        this->counter++;
-    } else {
-        Actor_Kill(&this->actor);
+
+    if(this->actor.params == OCEFF_WIPE_SOT2){
+        if(this->counter2 < 35) this->counter2++;
+        else if(!(this->boolWipe2)){
+            D_801614B0.a ^= 1;
+            this->boolWipe2 = 1;
+        }
     }
+
+    if (this->counter < changedValue) this->counter++; 
+    else Actor_Kill(&this->actor);
 }
 
 void OceffWipe_Draw(Actor* thisx, GlobalContext* globalCtx) {

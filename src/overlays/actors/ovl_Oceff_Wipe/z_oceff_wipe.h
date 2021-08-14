@@ -15,6 +15,8 @@ struct OceffWipe;
 typedef struct OceffWipe {
     /* 0x0000 */ Actor actor;
     /* 0x014C */ s16 counter;
+    /* P-A    */ s16 counter2;
+                 u8 boolWipe2;
 } OceffWipe; // size = 0x0150
 
 extern const ActorInit Oceff_Wipe_InitVars;

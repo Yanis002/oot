@@ -2547,6 +2547,6 @@ char* strcpy(char *dest, const char *src);
 char* strcat(char *dest, const char *src);
 
 //Freeze actor test
-void Actor_FreezeAllActors(GlobalContext* globalCtx, ActorContext* actorCtx, s32 duration);
+void Actor_FreezeAllActors(GlobalContext* globalCtx, ActorContext* actorCtx, u16 duration);
 
 #endif
