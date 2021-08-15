@@ -2801,9 +2801,7 @@ void func_80835F44(GlobalContext* globalCtx, Player* this, s32 item) {
                 }
                 return;
             }
-
             paramIsNL:
-
             D_80853614 = D_80853618 = true;
         }
     }

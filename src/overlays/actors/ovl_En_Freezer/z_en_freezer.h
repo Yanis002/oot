@@ -6,7 +6,10 @@
 
 typedef struct En_Freezer {
     Actor actor;
-    Actor* actorPtr;
+    u8 counter;
+    u8 isEffectSpawned;
+    u8 isCase1;
+    u16 duration;
 } En_Freezer;
 
 extern const ActorInit En_Freezer_InitVars;
