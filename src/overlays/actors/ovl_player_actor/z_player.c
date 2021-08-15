@@ -2747,6 +2747,12 @@ void func_80835F44(GlobalContext* globalCtx, Player* this, s32 item) {
             }
 
             temp = Player_ActionToMagicSpell(this, actionParam);
+
+            if(actionParam == PLAYER_AP_NAYRUS_LOVE){
+                this->itemActionParam = actionParam;
+                goto paramIsNL;
+            }
+            
             if (temp >= 0) {
                 if (((actionParam == PLAYER_AP_FARORES_WIND) && (gSaveContext.respawn[RESPAWN_MODE_TOP].data > 0)) ||
                     ((gSaveContext.unk_13F4 != 0) && (gSaveContext.unk_13F0 == 0) &&
@@ -2795,6 +2801,8 @@ void func_80835F44(GlobalContext* globalCtx, Player* this, s32 item) {
                 }
                 return;
             }
+
+            paramIsNL:
 
             D_80853614 = D_80853618 = true;
         }
@@ -9060,6 +9068,8 @@ void Player_Init(Actor* thisx, GlobalContext* globalCtx2) {
     s32 sp50;
     s32 sp4C;
 
+    this->isFreezerSpawned = 0;
+
     globalCtx->shootingGalleryStatus = globalCtx->bombchuBowlingStatus = 0;
 
     globalCtx->playerInit = Player_InitCommon;
@@ -9879,14 +9889,25 @@ void Player_UpdateCommon(Player* this, GlobalContext* globalCtx, Input* input) {
     // u16 sec, minutes, hours;
     // char* timer = "00:00:00";
     char tmp[20];
+    char freezedebug[50];
     char posStr[20];
     char actorNbStr[20];
+    s8 tmp2;
 
     sControlInput = input;
     // sec = __osViIntrCount / 60;
     // hours = sec / 3600;
     // minutes = (sec / 60) % 60;
     // sec %= 60;
+
+    //en_freezer
+    if((this->itemActionParam == PLAYER_AP_NAYRUS_LOVE) && (this->isFreezerSpawned == 0)){
+        Actor_Spawn(&globalCtx->actorCtx, globalCtx, ACTOR_EN_FREEZER, this->actor.world.pos.x,
+                    this->actor.world.pos.y, this->actor.world.pos.z, 0, 0, 0, 2);
+    }
+
+    sprintf(freezedebug, "isFreezerSpawned: %d \n itemActionParam: %d", this->isFreezerSpawned, this->itemActionParam);
+    Printf_Print(globalCtx, 0xFEFEFEFE, 0x010300, freezedebug);
 
     //show Player coords
     sprintf(posStr, "X: %.2f \n Y: %.2f \n Z: %.2f", this->actor.world.pos.x, this->actor.world.pos.y, this->actor.world.pos.z);
@@ -9920,7 +9941,7 @@ void Player_UpdateCommon(Player* this, GlobalContext* globalCtx, Input* input) {
     //     Printf_Print(globalCtx, 0xFFFFFFFE, 0x010100, timer);
     // }
 
-    //test file select
+    //file select
     if(CHECK_BTN_ALL(sControlInput->cur.button, BTN_L + BTN_B + BTN_A)){
         func_800F68BC(0);
         Audio_PlaySoundGeneral(NA_SE_SY_PIECE_OF_HEART, &D_801333D4, 4, &D_801333E0, &D_801333E0, &D_801333E8);
@@ -10058,9 +10079,7 @@ void Player_UpdateCommon(Player* this, GlobalContext* globalCtx, Input* input) {
             D_8014B300 = 1;
 
             //Note: temporary, copy paste MM's code for fast bunny hood (BUG)
-            // if((sControlInput->rel.stick_x < -30) || (sControlInput->rel.stick_x > 30) 
-            // || (sControlInput->rel.stick_y < -30) || (sControlInput->rel.stick_y > 30))
-            // this->linearVelocity = 10.0f;
+            
 
             if(((gSaveContext.playerName[0] == 's') || (gSaveContext.playerName[0] == 'S')) //if filename is 'sanzeau' (case don't matter)
             && ((gSaveContext.playerName[1] == 'a') || (gSaveContext.playerName[1] == 'A'))
