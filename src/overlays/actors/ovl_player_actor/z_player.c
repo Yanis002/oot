@@ -5743,7 +5743,7 @@ void func_8083DF68(Player* this, f32 arg1, s16 arg2) {
     //fast bunny hood (shoutouts to Ticamus)
     if (this->currentMask == PLAYER_MASK_BUNNY) {
         if (this->func_674 == func_80842180) {
-            this->linearVelocity = arg1 * 1.5;
+            this->linearVelocity = arg1 * 1.7;
             //osSyncPrintf("%08x\n", arg1);
         }
     }

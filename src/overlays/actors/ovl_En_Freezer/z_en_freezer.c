@@ -4,9 +4,20 @@
 * Description: Time stop (literally)
 */
 
-//TODO: prevent using c-buttons while time is stopped, make bombs draw,
-//  limit the amount of spawnable actors during the time stop
-//  prevent vismono to make link black and white
+/*
+    TO DO:
+        fix bombs not drawing
+        fix freezing appearing before the effect ends
+        fix bow and slingshot
+        allow NL to be used underwater
+        make timers freezing
+        make everything back to normal is link don't move for 15s
+        make time freeze and skybox pausing
+
+    WIP:
+        make hookshot, ocarina, DF, FW, magic arrows not being affected by the freeze
+            (TODO: check and complete the blacklist in z_actor.c)
+*/
 
 #include "z_en_freezer.h"
 
