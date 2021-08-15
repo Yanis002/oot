@@ -5573,15 +5573,39 @@ s32 func_80038290(GlobalContext* globalCtx, Actor* actor, Vec3s* arg2, Vec3s* ar
 
 /* Project-A */
 u8 sActorCategories[] = { ACTORCAT_ENEMY, ACTORCAT_BOSS, ACTORCAT_NPC, ACTORCAT_ITEMACTION, ACTORCAT_EXPLOSIVE };
+u16 actorBlacklist[] = 
+{
+    ACTOR_OCEFF_WIPE,
+    ACTOR_OCEFF_WIPE2,
+    ACTOR_OCEFF_WIPE3,
+    ACTOR_OCEFF_WIPE4,
+    ACTOR_OCEFF_STORM,
+    ACTOR_END_TITLE,
+    ACTOR_EN_OKARINA_EFFECT,
+    ACTOR_ARROW_FIRE,
+    ACTOR_ARROW_ICE,
+    ACTOR_ARROW_LIGHT,
+    ACTOR_MAGIC_FIRE,
+    ACTOR_MAGIC_WIND,
+    ACTOR_ARMS_HOOK,
+};
 
 void Actor_FreezeAllActors(GlobalContext* globalCtx, ActorContext* actorCtx, u16 duration) {
     Actor* actor;
-    s32 i;
+    s32 i, j;
 
     for (i = 0; i < ARRAY_COUNT(sActorCategories); i++) {
         actor = actorCtx->actorLists[sActorCategories[i]].head;
         while (actor != NULL) {
             actor->freezeTimer = duration;
+            actor = actor->next;
+        }
+    }
+
+    for(j = 0; j < ARRAY_COUNT(actorBlacklist); j++){
+        actor = actorCtx->actorLists[sActorCategories[j]].head;
+        if(actor->id == actorBlacklist[j]){
+            actor->freezeTimer = 0;
             actor = actor->next;
         }
     }

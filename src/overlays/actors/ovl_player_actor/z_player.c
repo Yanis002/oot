@@ -5739,6 +5739,15 @@ void func_8083DDC8(Player* this, GlobalContext* globalCtx) {
 
 void func_8083DF68(Player* this, f32 arg1, s16 arg2) {
     Math_AsymStepToF(&this->linearVelocity, arg1, REG(19) / 100.0f, 1.5f);
+
+    //fast bunny hood (shoutouts to Ticamus)
+    if (this->currentMask == PLAYER_MASK_BUNNY) {
+        if (this->func_674 == func_80842180) {
+            this->linearVelocity = arg1 * 1.5;
+            //osSyncPrintf("%08x\n", arg1);
+        }
+    }
+
     Math_ScaledStepToS(&this->currentYaw, arg2, REG(27));
 }
 

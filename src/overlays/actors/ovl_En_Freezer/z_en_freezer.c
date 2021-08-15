@@ -35,7 +35,8 @@ void EnFreezer_Init(Actor* thisx, GlobalContext* globalCtx) {
     En_Freezer* this = THIS;
     Player* player = PLAYER;
 
-    player->isFreezerSpawned ^= 1;
+    player->isFreezerSpawned = !player->isFreezerSpawned;
+
     player->itemActionParam = PLAYER_AP_NONE;
     this->counter = 0;
     this->isEffectSpawned = 0;
