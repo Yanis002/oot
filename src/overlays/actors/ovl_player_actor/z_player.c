@@ -2748,11 +2748,6 @@ void func_80835F44(GlobalContext* globalCtx, Player* this, s32 item) {
 
             temp = Player_ActionToMagicSpell(this, actionParam);
 
-            if(actionParam == PLAYER_AP_NAYRUS_LOVE){
-                this->itemActionParam = actionParam;
-                goto paramIsNL;
-            }
-            
             if (temp >= 0) {
                 if (((actionParam == PLAYER_AP_FARORES_WIND) && (gSaveContext.respawn[RESPAWN_MODE_TOP].data > 0)) ||
                     ((gSaveContext.unk_13F4 != 0) && (gSaveContext.unk_13F0 == 0) &&
@@ -2801,7 +2796,6 @@ void func_80835F44(GlobalContext* globalCtx, Player* this, s32 item) {
                 }
                 return;
             }
-            paramIsNL:
             D_80853614 = D_80853618 = true;
         }
     }
@@ -4709,7 +4703,15 @@ s32 func_8083B040(Player* this, GlobalContext* globalCtx) {
         if (!func_8083ADD4(globalCtx, this)) {
             if (this->unk_6AD == 4) {
                 sp2C = Player_ActionToMagicSpell(this, this->itemActionParam);
+
                 if (sp2C >= 0) {
+                    if((sp2C == 4)){
+                        Actor_Spawn(&globalCtx->actorCtx, globalCtx, ACTOR_EN_FREEZER, this->actor.world.pos.x,
+                                    this->actor.world.pos.y, this->actor.world.pos.z, 0, 0, 0, 2);
+                        this->unk_6AD = 0;
+                        return 1;
+                    }
+
                     if ((sp2C != 3) || (gSaveContext.respawn[RESPAWN_MODE_TOP].data <= 0)) {
                         func_8083AF44(globalCtx, this, sp2C);
                     } else {
@@ -9881,17 +9883,16 @@ static f32 D_8085482C[] = { 0.5f, 1.0f, 3.0f };
 
 //test quick text
 extern u8 D_8014B300;
+s8 counter = 0;
 
 void Player_UpdateCommon(Player* this, GlobalContext* globalCtx, Input* input) {
     s32 pad;
     // u16 sec, minutes, hours;
     // char* timer = "00:00:00";
     char tmp[20];
-    char freezedebug[50];
     char posStr[20];
     char actorNbStr[20];
-    s8 tmp2;
-
+    
     sControlInput = input;
     // sec = __osViIntrCount / 60;
     // hours = sec / 3600;
@@ -9899,13 +9900,10 @@ void Player_UpdateCommon(Player* this, GlobalContext* globalCtx, Input* input) {
     // sec %= 60;
 
     //en_freezer
-    if((this->itemActionParam == PLAYER_AP_NAYRUS_LOVE) && (this->isFreezerSpawned == 0)){
-        Actor_Spawn(&globalCtx->actorCtx, globalCtx, ACTOR_EN_FREEZER, this->actor.world.pos.x,
-                    this->actor.world.pos.y, this->actor.world.pos.z, 0, 0, 0, 2);
+    if(this->isFreezerSpawned == 1){
+        if(counter < 35) counter++;
+        else Actor_FreezeAllActors(globalCtx, &globalCtx->actorCtx, 35);
     }
-
-    sprintf(freezedebug, "isFreezerSpawned: %d \n itemActionParam: %d", this->isFreezerSpawned, this->itemActionParam);
-    Printf_Print(globalCtx, 0xFEFEFEFE, 0x010300, freezedebug);
 
     //show Player coords
     sprintf(posStr, "X: %.2f \n Y: %.2f \n Z: %.2f", this->actor.world.pos.x, this->actor.world.pos.y, this->actor.world.pos.z);

@@ -494,9 +494,6 @@ s32 Player_HasMirrorShieldSetToDraw(GlobalContext* globalCtx) {
 s32 Player_ActionToMagicSpell(Player* this, s32 actionParam) {
     s32 magicSpell = actionParam - PLAYER_AP_MAGIC_SPELL_15;
 
-    //fix lens of truth
-    if(actionParam == PLAYER_AP_NAYRUS_LOVE) return -1;
-
     if ((magicSpell >= 0) && (magicSpell < 6)) {
         return magicSpell;
     } else {
