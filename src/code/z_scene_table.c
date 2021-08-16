@@ -796,117 +796,117 @@ EntranceInfo gEntranceTable[] = {
 #define UNTITLED_SCENE(name, unk_10, config, unk_12) \
     { (u32) _##name##SegmentRomStart, (u32)_##name##SegmentRomEnd, 0, 0, unk_10, config, unk_12, 0 }
 
-Scene gSceneTable[] = {
-	TITLED_SCENE(ydan_scene, g_pn_06, 1, 19, 2),
-	TITLED_SCENE(ddan_scene, g_pn_08, 1, 20, 3),
-	TITLED_SCENE(bdan_scene, g_pn_07, 1, 21, 4),
-	TITLED_SCENE(Bmori1_scene, g_pn_01, 2, 22, 5),
-	TITLED_SCENE(HIDAN_scene, g_pn_03, 2, 18, 6),
-	TITLED_SCENE(MIZUsin_scene, g_pn_04, 1, 23, 7),
-	TITLED_SCENE(jyasinzou_scene, g_pn_05, 1, 25, 8),
-	TITLED_SCENE(HAKAdan_scene, g_pn_02, 2, 24, 9),
-	TITLED_SCENE(HAKAdanCH_scene, g_pn_54, 2, 24, 10),
-	TITLED_SCENE(ice_doukutu_scene, g_pn_10, 0, 37, 0),
-	UNTITLED_SCENE(ganon_scene, 2, 0, 0),
-	TITLED_SCENE(men_scene, g_pn_11, 0, 27, 0),
-	TITLED_SCENE(gerudoway_scene, g_pn_49, 0, 40, 0),
-	TITLED_SCENE(ganontika_scene, g_pn_09, 0, 26, 0),
-	UNTITLED_SCENE(ganon_sonogo_scene, 0, 51, 0),
-	UNTITLED_SCENE(ganontikasonogo_scene, 0, 52, 0),
-	TITLED_SCENE(takaraya_scene, g_pn_51, 0, 0, 0),
-	UNTITLED_SCENE(ydan_boss_scene, 0, 28, 0),
-	UNTITLED_SCENE(ddan_boss_scene, 0, 0, 0),
-	UNTITLED_SCENE(bdan_boss_scene, 0, 21, 0),
-	UNTITLED_SCENE(moribossroom_scene, 1, 0, 0),
-	UNTITLED_SCENE(FIRE_bs_scene, 0, 18, 0),
-	UNTITLED_SCENE(MIZUsin_bs_scene, 0, 29, 0),
-	UNTITLED_SCENE(jyasinboss_scene, 0, 0, 0),
-	UNTITLED_SCENE(HAKAdan_bs_scene, 0, 24, 0),
-	UNTITLED_SCENE(ganon_boss_scene, 0, 0, 0),
-	UNTITLED_SCENE(ganon_final_scene, 0, 38, 0),
-	UNTITLED_SCENE(entra_scene, 0, 0, 0),
-	UNTITLED_SCENE(entra_n_scene, 0, 0, 0),
-	UNTITLED_SCENE(enrui_scene, 0, 0, 0),
-	TITLED_SCENE(market_alley_scene, g_pn_18, 0, 0, 0),
-	TITLED_SCENE(market_alley_n_scene, g_pn_18, 0, 0, 0),
-	TITLED_SCENE(market_day_scene, g_pn_17, 0, 19, 0),
-	TITLED_SCENE(market_night_scene, g_pn_17, 0, 0, 0),
-	TITLED_SCENE(market_ruins_scene, g_pn_17, 0, 0, 0),
-	UNTITLED_SCENE(shrine_scene, 0, 19, 0),
-	UNTITLED_SCENE(shrine_n_scene, 0, 0, 0),
-	UNTITLED_SCENE(shrine_r_scene, 0, 0, 0),
-	UNTITLED_SCENE(kokiri_home_scene, 0, 0, 0),
-	UNTITLED_SCENE(kokiri_home3_scene, 0, 0, 0),
-	UNTITLED_SCENE(kokiri_home4_scene, 0, 0, 0),
-	UNTITLED_SCENE(kokiri_home5_scene, 0, 0, 0),
-	UNTITLED_SCENE(kakariko_scene, 0, 0, 0),
-	UNTITLED_SCENE(kakariko3_scene, 0, 0, 0),
-	TITLED_SCENE(shop1_scene, g_pn_23, 0, 0, 0),
-	TITLED_SCENE(kokiri_shop_scene, g_pn_19, 0, 0, 0),
-	TITLED_SCENE(golon_scene, g_pn_20, 0, 0, 0),
-	TITLED_SCENE(zoora_scene, g_pn_21, 0, 0, 0),
-	TITLED_SCENE(drag_scene, g_pn_24, 0, 0, 0),
-	TITLED_SCENE(alley_shop_scene, g_pn_24, 0, 0, 0),
-	TITLED_SCENE(night_shop_scene, g_pn_56, 0, 0, 0),
-	TITLED_SCENE(face_shop_scene, g_pn_50, 0, 0, 0),
-	UNTITLED_SCENE(link_home_scene, 0, 0, 0),
-	UNTITLED_SCENE(impa_scene, 0, 0, 0),
-	TITLED_SCENE(malon_stable_scene, g_pn_48, 0, 0, 0),
-	UNTITLED_SCENE(labo_scene, 0, 0, 0),
-	TITLED_SCENE(hylia_labo_scene, g_pn_26, 0, 43, 0),
-	UNTITLED_SCENE(tent_scene, 0, 0, 0),
-	TITLED_SCENE(hut_scene, g_pn_25, 0, 0, 0),
-	TITLED_SCENE(daiyousei_izumi_scene, g_pn_13, 0, 33, 0),
-	TITLED_SCENE(yousei_izumi_tate_scene, g_pn_45, 0, 39, 0),
-	TITLED_SCENE(yousei_izumi_yoko_scene, g_pn_13, 0, 33, 0),
-	UNTITLED_SCENE(kakusiana_scene, 0, 31, 0),
-	UNTITLED_SCENE(hakaana_scene, 0, 48, 0),
-	UNTITLED_SCENE(hakaana2_scene, 0, 39, 0),
-	TITLED_SCENE(hakaana_ouke_scene, g_pn_44, 0, 42, 0),
-	TITLED_SCENE(syatekijyou_scene, g_pn_15, 0, 34, 0),
-	TITLED_SCENE(tokinoma_scene, g_pn_16, 0, 30, 0),
-	TITLED_SCENE(kenjyanoma_scene, g_pn_14, 0, 32, 0),
-	TITLED_SCENE(hairal_niwa_scene, g_pn_12, 0, 35, 0),
-	TITLED_SCENE(hairal_niwa_n_scene, g_pn_12, 0, 35, 0),
-	UNTITLED_SCENE(hiral_demo_scene, 0, 0, 0),
-	TITLED_SCENE(hakasitarelay_scene, g_pn_57, 0, 48, 0),
-	TITLED_SCENE(turibori_scene, g_pn_46, 0, 50, 0),
-	TITLED_SCENE(nakaniwa_scene, g_pn_12, 0, 47, 0),
-	TITLED_SCENE(bowling_scene, g_pn_47, 0, 41, 0),
-	UNTITLED_SCENE(souko_scene, 0, 44, 0),
-	UNTITLED_SCENE(miharigoya_scene, 0, 45, 0),
-	TITLED_SCENE(mahouya_scene, g_pn_24, 0, 46, 0),
-	UNTITLED_SCENE(ganon_demo_scene, 0, 36, 0),
-	TITLED_SCENE(kinsuta_scene, g_pn_22, 0, 0, 0),
-	TITLED_SCENE(spot00_scene, g_pn_27, 0, 1, 0),
-	TITLED_SCENE(spot01_scene, g_pn_28, 0, 19, 0),
-	TITLED_SCENE(spot02_scene, g_pn_29, 0, 0, 0),
-	TITLED_SCENE(spot03_scene, g_pn_30, 0, 3, 0),
-	TITLED_SCENE(spot04_scene, g_pn_31, 0, 4, 0),
-	TITLED_SCENE(spot05_scene, g_pn_52, 0, 19, 0),
-	TITLED_SCENE(spot06_scene, g_pn_32, 0, 5, 0),
-	TITLED_SCENE(spot07_scene, g_pn_33, 0, 6, 0),
-	TITLED_SCENE(spot08_scene, g_pn_34, 0, 7, 0),
-	TITLED_SCENE(spot09_scene, g_pn_35, 0, 8, 0),
-	TITLED_SCENE(spot10_scene, g_pn_36, 0, 9, 0),
-	TITLED_SCENE(spot11_scene, g_pn_55, 0, 10, 0),
-	TITLED_SCENE(spot12_scene, g_pn_53, 0, 11, 0),
-	TITLED_SCENE(spot13_scene, g_pn_37, 0, 12, 0),
-	TITLED_SCENE(spot15_scene, g_pn_38, 0, 13, 0),
-	TITLED_SCENE(spot16_scene, g_pn_39, 0, 14, 0),
-	TITLED_SCENE(spot17_scene, g_pn_40, 0, 15, 0),
-	TITLED_SCENE(spot18_scene, g_pn_41, 0, 16, 0),
-	TITLED_SCENE(spot20_scene, g_pn_42, 0, 17, 0),
-	TITLED_SCENE(ganon_tou_scene, g_pn_43, 0, 36, 0),
-	UNTITLED_SCENE(test01_scene, 0, 47, 0),
-	UNTITLED_SCENE(besitu_scene, 0, 49, 0),
-	UNTITLED_SCENE(depth_test_scene, 0, 0, 0),
-	UNTITLED_SCENE(syotes_scene, 0, 0, 0),
-	UNTITLED_SCENE(syotes2_scene, 0, 0, 0),
-	UNTITLED_SCENE(sutaru_scene, 0, 0, 0),
-	TITLED_SCENE(hairal_niwa2_scene, g_pn_12, 0, 35, 0),
-	UNTITLED_SCENE(sasatest_scene, 0, 0, 0),
-	UNTITLED_SCENE(testroom_scene, 0, 0, 0),
+SceneTableEntry gSceneTable[] = {
+    TITLED_SCENE(ydan_scene, g_pn_06, 1, 19, 2),
+    TITLED_SCENE(ddan_scene, g_pn_08, 1, 20, 3),
+    TITLED_SCENE(bdan_scene, g_pn_07, 1, 21, 4),
+    TITLED_SCENE(Bmori1_scene, g_pn_01, 2, 22, 5),
+    TITLED_SCENE(HIDAN_scene, g_pn_03, 2, 18, 6),
+    TITLED_SCENE(MIZUsin_scene, g_pn_04, 1, 23, 7),
+    TITLED_SCENE(jyasinzou_scene, g_pn_05, 1, 25, 8),
+    TITLED_SCENE(HAKAdan_scene, g_pn_02, 2, 24, 9),
+    TITLED_SCENE(HAKAdanCH_scene, g_pn_54, 2, 24, 10),
+    TITLED_SCENE(ice_doukutu_scene, g_pn_10, 0, 37, 0),
+    UNTITLED_SCENE(ganon_scene, 2, 0, 0),
+    TITLED_SCENE(men_scene, g_pn_11, 0, 27, 0),
+    TITLED_SCENE(gerudoway_scene, g_pn_49, 0, 40, 0),
+    TITLED_SCENE(ganontika_scene, g_pn_09, 0, 26, 0),
+    UNTITLED_SCENE(ganon_sonogo_scene, 0, 51, 0),
+    UNTITLED_SCENE(ganontikasonogo_scene, 0, 52, 0),
+    TITLED_SCENE(takaraya_scene, g_pn_51, 0, 0, 0),
+    UNTITLED_SCENE(ydan_boss_scene, 0, 28, 0),
+    UNTITLED_SCENE(ddan_boss_scene, 0, 0, 0),
+    UNTITLED_SCENE(bdan_boss_scene, 0, 21, 0),
+    UNTITLED_SCENE(moribossroom_scene, 1, 0, 0),
+    UNTITLED_SCENE(FIRE_bs_scene, 0, 18, 0),
+    UNTITLED_SCENE(MIZUsin_bs_scene, 0, 29, 0),
+    UNTITLED_SCENE(jyasinboss_scene, 0, 0, 0),
+    UNTITLED_SCENE(HAKAdan_bs_scene, 0, 24, 0),
+    UNTITLED_SCENE(ganon_boss_scene, 0, 0, 0),
+    UNTITLED_SCENE(ganon_final_scene, 0, 38, 0),
+    UNTITLED_SCENE(entra_scene, 0, 0, 0),
+    UNTITLED_SCENE(entra_n_scene, 0, 0, 0),
+    UNTITLED_SCENE(enrui_scene, 0, 0, 0),
+    TITLED_SCENE(market_alley_scene, g_pn_18, 0, 0, 0),
+    TITLED_SCENE(market_alley_n_scene, g_pn_18, 0, 0, 0),
+    TITLED_SCENE(market_day_scene, g_pn_17, 0, 0, 0),
+    TITLED_SCENE(market_night_scene, g_pn_17, 0, 0, 0),
+    TITLED_SCENE(market_ruins_scene, g_pn_17, 0, 0, 0),
+    UNTITLED_SCENE(shrine_scene, 0, 0, 0),
+    UNTITLED_SCENE(shrine_n_scene, 0, 0, 0),
+    UNTITLED_SCENE(shrine_r_scene, 0, 0, 0),
+    UNTITLED_SCENE(kokiri_home_scene, 0, 0, 0),
+    UNTITLED_SCENE(kokiri_home3_scene, 0, 0, 0),
+    UNTITLED_SCENE(kokiri_home4_scene, 0, 0, 0),
+    UNTITLED_SCENE(kokiri_home5_scene, 0, 0, 0),
+    UNTITLED_SCENE(kakariko_scene, 0, 0, 0),
+    UNTITLED_SCENE(kakariko3_scene, 0, 0, 0),
+    TITLED_SCENE(shop1_scene, g_pn_23, 0, 0, 0),
+    TITLED_SCENE(kokiri_shop_scene, g_pn_19, 0, 0, 0),
+    TITLED_SCENE(golon_scene, g_pn_20, 0, 0, 0),
+    TITLED_SCENE(zoora_scene, g_pn_21, 0, 0, 0),
+    TITLED_SCENE(drag_scene, g_pn_24, 0, 0, 0),
+    TITLED_SCENE(alley_shop_scene, g_pn_24, 0, 0, 0),
+    TITLED_SCENE(night_shop_scene, g_pn_56, 0, 0, 0),
+    TITLED_SCENE(face_shop_scene, g_pn_50, 0, 0, 0),
+    UNTITLED_SCENE(link_home_scene, 0, 0, 0),
+    UNTITLED_SCENE(impa_scene, 0, 0, 0),
+    TITLED_SCENE(malon_stable_scene, g_pn_48, 0, 0, 0),
+    UNTITLED_SCENE(labo_scene, 0, 0, 0),
+    TITLED_SCENE(hylia_labo_scene, g_pn_26, 0, 43, 0),
+    UNTITLED_SCENE(tent_scene, 0, 0, 0),
+    TITLED_SCENE(hut_scene, g_pn_25, 0, 0, 0),
+    TITLED_SCENE(daiyousei_izumi_scene, g_pn_13, 0, 33, 0),
+    TITLED_SCENE(yousei_izumi_tate_scene, g_pn_45, 0, 39, 0),
+    TITLED_SCENE(yousei_izumi_yoko_scene, g_pn_13, 0, 33, 0),
+    UNTITLED_SCENE(kakusiana_scene, 0, 31, 0),
+    UNTITLED_SCENE(hakaana_scene, 0, 48, 0),
+    UNTITLED_SCENE(hakaana2_scene, 0, 39, 0),
+    TITLED_SCENE(hakaana_ouke_scene, g_pn_44, 0, 42, 0),
+    TITLED_SCENE(syatekijyou_scene, g_pn_15, 0, 34, 0),
+    TITLED_SCENE(tokinoma_scene, g_pn_16, 0, 30, 0),
+    TITLED_SCENE(kenjyanoma_scene, g_pn_14, 0, 32, 0),
+    TITLED_SCENE(hairal_niwa_scene, g_pn_12, 0, 35, 0),
+    TITLED_SCENE(hairal_niwa_n_scene, g_pn_12, 0, 35, 0),
+    UNTITLED_SCENE(hiral_demo_scene, 0, 0, 0),
+    TITLED_SCENE(hakasitarelay_scene, g_pn_57, 0, 48, 0),
+    TITLED_SCENE(turibori_scene, g_pn_46, 0, 50, 0),
+    TITLED_SCENE(nakaniwa_scene, g_pn_12, 0, 47, 0),
+    TITLED_SCENE(bowling_scene, g_pn_47, 0, 41, 0),
+    UNTITLED_SCENE(souko_scene, 0, 44, 0),
+    UNTITLED_SCENE(miharigoya_scene, 0, 45, 0),
+    TITLED_SCENE(mahouya_scene, g_pn_24, 0, 46, 0),
+    UNTITLED_SCENE(ganon_demo_scene, 0, 36, 0),
+    TITLED_SCENE(kinsuta_scene, g_pn_22, 0, 0, 0),
+    TITLED_SCENE(spot00_scene, g_pn_27, 0, 1, 0),
+    TITLED_SCENE(spot01_scene, g_pn_28, 0, 2, 0),
+    TITLED_SCENE(spot02_scene, g_pn_29, 0, 0, 0),
+    TITLED_SCENE(spot03_scene, g_pn_30, 0, 3, 0),
+    TITLED_SCENE(spot04_scene, g_pn_31, 0, 4, 0),
+    TITLED_SCENE(spot05_scene, g_pn_52, 0, 47, 0),
+    TITLED_SCENE(spot06_scene, g_pn_32, 0, 5, 0),
+    TITLED_SCENE(spot07_scene, g_pn_33, 0, 6, 0),
+    TITLED_SCENE(spot08_scene, g_pn_34, 0, 7, 0),
+    TITLED_SCENE(spot09_scene, g_pn_35, 0, 8, 0),
+    TITLED_SCENE(spot10_scene, g_pn_36, 0, 9, 0),
+    TITLED_SCENE(spot11_scene, g_pn_55, 0, 10, 0),
+    TITLED_SCENE(spot12_scene, g_pn_53, 0, 11, 0),
+    TITLED_SCENE(spot13_scene, g_pn_37, 0, 12, 0),
+    TITLED_SCENE(spot15_scene, g_pn_38, 0, 13, 0),
+    TITLED_SCENE(spot16_scene, g_pn_39, 0, 14, 0),
+    TITLED_SCENE(spot17_scene, g_pn_40, 0, 15, 0),
+    TITLED_SCENE(spot18_scene, g_pn_41, 0, 16, 0),
+    TITLED_SCENE(spot20_scene, g_pn_42, 0, 17, 0),
+    TITLED_SCENE(ganon_tou_scene, g_pn_43, 0, 36, 0),
+    UNTITLED_SCENE(test01_scene, 0, 47, 0),
+    UNTITLED_SCENE(besitu_scene, 0, 49, 0),
+    UNTITLED_SCENE(depth_test_scene, 0, 0, 0),
+    UNTITLED_SCENE(syotes_scene, 0, 0, 0),
+    UNTITLED_SCENE(syotes2_scene, 0, 0, 0),
+    UNTITLED_SCENE(sutaru_scene, 0, 0, 0),
+    TITLED_SCENE(hairal_niwa2_scene, g_pn_12, 0, 35, 0),
+    UNTITLED_SCENE(sasatest_scene, 0, 0, 0),
+    UNTITLED_SCENE(testroom_scene, 0, 0, 0),
 };
 
 Gfx sDefaultDisplayList[] = {
@@ -1023,11 +1023,11 @@ void func_80099878(GlobalContext* globalCtx) {
 
     gSPSegment(POLY_OPA_DISP++, 0x0B, displayListHead);
     gDPPipeSync(displayListHead++);
-    gDPSetEnvColor(displayListHead++, 255, 255, 255, globalCtx->unk_11D30[0]);
+    gDPSetEnvColor(displayListHead++, 255, 255, 255, globalCtx->roomCtx.unk_74[0]);
     gSPEndDisplayList(displayListHead++);
     gSPSegment(POLY_OPA_DISP++, 0x0C, displayListHead);
     gDPPipeSync(displayListHead++);
-    gDPSetEnvColor(displayListHead++, 255, 255, 255, globalCtx->unk_11D30[1]);
+    gDPSetEnvColor(displayListHead++, 255, 255, 255, globalCtx->roomCtx.unk_74[1]);
     gSPEndDisplayList(displayListHead);
 
     CLOSE_DISPS(globalCtx->state.gfxCtx, "../z_scene_table.c", 4956);
@@ -1040,7 +1040,7 @@ void func_80099BD8(GlobalContext* globalCtx) {
 
     OPEN_DISPS(globalCtx->state.gfxCtx, "../z_scene_table.c", 5069);
 
-    temp = globalCtx->unk_11D30[0] / 255.0f;
+    temp = globalCtx->roomCtx.unk_74[0] / 255.0f;
 
     gSPSegment(POLY_XLU_DISP++, 0x08, displayListHead);
     gSPSegment(POLY_OPA_DISP++, 0x08, displayListHead);
@@ -1057,7 +1057,7 @@ void func_80099BD8(GlobalContext* globalCtx) {
     gSPSegment(POLY_OPA_DISP++, 0x0A, displayListHead);
     gSPSegment(POLY_XLU_DISP++, 0x0A, displayListHead);
     gDPPipeSync(displayListHead++);
-    gDPSetEnvColor(displayListHead++, 0, 0, 0, globalCtx->unk_11D30[0]);
+    gDPSetEnvColor(displayListHead++, 0, 0, 0, globalCtx->roomCtx.unk_74[0]);
     gSPEndDisplayList(displayListHead++);
 
     gSPSegment(POLY_OPA_DISP++, 0x0B, displayListHead);
@@ -1065,7 +1065,7 @@ void func_80099BD8(GlobalContext* globalCtx) {
     gDPSetPrimColor(displayListHead++, 0, 0, 89 + (u8)(166.0f * temp), 89 + (u8)(166.0f * temp),
                     89 + (u8)(166.0f * temp), 255);
     gDPPipeSync(displayListHead++);
-    gDPSetEnvColor(displayListHead++, 0, 0, 0, globalCtx->unk_11D30[0]);
+    gDPSetEnvColor(displayListHead++, 0, 0, 0, globalCtx->roomCtx.unk_74[0]);
     gSPEndDisplayList(displayListHead++);
 
     gSPSegment(POLY_OPA_DISP++, 0x0C, displayListHead);
@@ -1073,13 +1073,13 @@ void func_80099BD8(GlobalContext* globalCtx) {
     gDPSetPrimColor(displayListHead++, 0, 0, 255 + (u8)(179.0f * temp), 255 + (u8)(179.0f * temp),
                     255 + (u8)(179.0f * temp), 255);
     gDPPipeSync(displayListHead++);
-    gDPSetEnvColor(displayListHead++, 0, 0, 0, globalCtx->unk_11D30[0]);
+    gDPSetEnvColor(displayListHead++, 0, 0, 0, globalCtx->roomCtx.unk_74[0]);
     gSPEndDisplayList(displayListHead++);
 
     gSPSegment(POLY_OPA_DISP++, 0x0D, displayListHead);
     gSPSegment(POLY_XLU_DISP++, 0x0D, displayListHead);
     gDPPipeSync(displayListHead++);
-    gDPSetEnvColor(displayListHead++, 0, 0, 0, globalCtx->unk_11D30[1]);
+    gDPSetEnvColor(displayListHead++, 0, 0, 0, globalCtx->roomCtx.unk_74[1]);
     gSPEndDisplayList(displayListHead);
 
     CLOSE_DISPS(globalCtx->state.gfxCtx, "../z_scene_table.c", 5145);
@@ -1272,8 +1272,8 @@ void func_8009B0FC(GlobalContext* globalCtx) {
 
     if (1) {} // Necessary to match
 
-    spB0 = (globalCtx->unk_11D30[1] >> 8) & 0xFF;
-    spAC = globalCtx->unk_11D30[1] & 0xFF;
+    spB0 = (globalCtx->roomCtx.unk_74[1] >> 8) & 0xFF;
+    spAC = globalCtx->roomCtx.unk_74[1] & 0xFF;
     gameplayFrames = globalCtx->gameplayFrames;
 
     gSPSegment(POLY_XLU_DISP++, 0x08, SEGMENTED_TO_VIRTUAL(D_8012A330[gSaveContext.nightFlag]));
@@ -1345,7 +1345,7 @@ void func_8009B86C(GlobalContext* globalCtx) {
                Gfx_TwoTexScroll(globalCtx->state.gfxCtx, 0, gameplayFrames * 1, 0, 32, 32, 1, 0, 0, 32, 32));
 
     gDPPipeSync(POLY_OPA_DISP++);
-    gDPSetEnvColor(POLY_OPA_DISP++, 128, 128, 128, globalCtx->unk_11D30[0]);
+    gDPSetEnvColor(POLY_OPA_DISP++, 128, 128, 128, globalCtx->roomCtx.unk_74[0]);
 
     gDPPipeSync(POLY_XLU_DISP++);
     gDPSetEnvColor(POLY_XLU_DISP++, 128, 128, 128, 145);
@@ -1654,7 +1654,7 @@ void func_8009CF84(GlobalContext* globalCtx) {
                Gfx_TwoTexScrollPrimColor(globalCtx->state.gfxCtx, 0, 127 - gameplayFrames % 128,
                                          (gameplayFrames * 1) % 128, 32, 32, 1, gameplayFrames % 128,
                                          (gameplayFrames * 1) % 128, 32, 32, 255, 255, 255,
-                                         globalCtx->unk_11D30[0] + 127));
+                                         globalCtx->roomCtx.unk_74[0] + 127));
 
     gDPPipeSync(POLY_OPA_DISP++);
     gDPSetEnvColor(POLY_OPA_DISP++, 128, 128, 128, 128);
@@ -1829,16 +1829,16 @@ void func_8009DA30(GlobalContext* globalCtx) {
         gSPEndDisplayList(displayListHead);
     } else {
         if (gSaveContext.dayTime > 0xC555) {
-            if (globalCtx->unk_11D30[0] != 255) {
-                Math_StepToS(&globalCtx->unk_11D30[0], 255, 5);
+            if (globalCtx->roomCtx.unk_74[0] != 255) {
+                Math_StepToS(&globalCtx->roomCtx.unk_74[0], 255, 5);
             }
         } else if (gSaveContext.dayTime >= 0x4000) {
-            if (globalCtx->unk_11D30[0] != 0) {
-                Math_StepToS(&globalCtx->unk_11D30[0], 0, 10);
+            if (globalCtx->roomCtx.unk_74[0] != 0) {
+                Math_StepToS(&globalCtx->roomCtx.unk_74[0], 0, 10);
             }
         }
 
-        gDPSetPrimColor(displayListHead++, 0, 0, 255, 255, 255, globalCtx->unk_11D30[0]);
+        gDPSetPrimColor(displayListHead++, 0, 0, 255, 255, 255, globalCtx->roomCtx.unk_74[0]);
         gSPDisplayList(displayListHead++, &D_03012B20);
         gSPEndDisplayList(displayListHead);
     }
@@ -1922,9 +1922,9 @@ void func_8009E0B8(GlobalContext* globalCtx) {
     gDPSetEnvColor(POLY_XLU_DISP++, 128, 128, 128, 128);
 
     if (gSaveContext.sceneSetupIndex == 4) {
-        spA3 = 255 - (u8)globalCtx->unk_11D30[0];
+        spA3 = 255 - (u8)globalCtx->roomCtx.unk_74[0];
     } else if (gSaveContext.sceneSetupIndex == 6) {
-        spA0 = globalCtx->unk_11D30[0] + 500;
+        spA0 = globalCtx->roomCtx.unk_74[0] + 500;
     } else if (((gSaveContext.sceneSetupIndex < 4) || LINK_IS_ADULT) && (gSaveContext.eventChkInf[0] & 0x80)) {
         spA0 = 2150;
     }
@@ -1941,8 +1941,8 @@ void func_8009E0B8(GlobalContext* globalCtx) {
     gSPEndDisplayList(displayListHead);
 
     gSPSegment(POLY_OPA_DISP++, 0x0C,
-               Gfx_TwoTexScroll(globalCtx->state.gfxCtx, 0, 0, (s16)(-globalCtx->unk_11D30[0] * 0.02f), 32, 16, 1, 0,
-                                (s16)(-globalCtx->unk_11D30[0] * 0.02f), 32, 16));
+               Gfx_TwoTexScroll(globalCtx->state.gfxCtx, 0, 0, (s16)(-globalCtx->roomCtx.unk_74[0] * 0.02f), 32, 16, 1,
+                                0, (s16)(-globalCtx->roomCtx.unk_74[0] * 0.02f), 32, 16));
 
     CLOSE_DISPS(globalCtx->state.gfxCtx, "../z_scene_table.c", 7044);
 }
@@ -1954,16 +1954,16 @@ void func_8009E54C(GlobalContext* globalCtx) {
     OPEN_DISPS(globalCtx->state.gfxCtx, "../z_scene_table.c", 7058);
 
     if ((gSaveContext.sceneSetupIndex > 3) || (LINK_IS_ADULT && !(gSaveContext.eventChkInf[6] & 0x200))) {
-        globalCtx->unk_11D30[0] = 87;
+        globalCtx->roomCtx.unk_74[0] = 87;
     }
 
     gameplayFrames = globalCtx->gameplayFrames;
     gSPSegment(POLY_OPA_DISP++, 0x08,
                Gfx_TwoTexScrollEnvColor(globalCtx->state.gfxCtx, 0, gameplayFrames, gameplayFrames, 32, 32, 1, 0, 0, 32,
-                                        32, 0, 0, 0, globalCtx->unk_11D30[0] + 168));
+                                        32, 0, 0, 0, globalCtx->roomCtx.unk_74[0] + 168));
     gSPSegment(POLY_OPA_DISP++, 0x09,
                Gfx_TwoTexScrollEnvColor(globalCtx->state.gfxCtx, 0, -gameplayFrames, -gameplayFrames, 32, 32, 1, 0, 0,
-                                        16, 64, 0, 0, 0, globalCtx->unk_11D30[0] + 168));
+                                        16, 64, 0, 0, 0, globalCtx->roomCtx.unk_74[0] + 168));
 
     gDPPipeSync(POLY_OPA_DISP++);
     gDPSetEnvColor(POLY_OPA_DISP++, 255, 255, 255, 128);
@@ -2079,12 +2079,12 @@ void func_8009EE44(GlobalContext* globalCtx) {
     gDPPipeSync(POLY_OPA_DISP++);
     gDPSetEnvColor(POLY_OPA_DISP++, 128, 128, 128, 128);
 
-    if ((globalCtx->unk_11D30[0] == 0) && (INV_CONTENT(ITEM_COJIRO) == ITEM_COJIRO)) {
-        if (globalCtx->unk_11D30[1] == 50) {
+    if ((globalCtx->roomCtx.unk_74[0] == 0) && (INV_CONTENT(ITEM_COJIRO) == ITEM_COJIRO)) {
+        if (globalCtx->roomCtx.unk_74[1] == 50) {
             func_8002F7DC(&PLAYER->actor, NA_SE_EV_CHICKEN_CRY_M);
-            globalCtx->unk_11D30[0] = 1;
+            globalCtx->roomCtx.unk_74[0] = 1;
         }
-        globalCtx->unk_11D30[1]++;
+        globalCtx->roomCtx.unk_74[1]++;
     }
 
     CLOSE_DISPS(globalCtx->state.gfxCtx, "../z_scene_table.c", 7309);
@@ -2180,16 +2180,16 @@ void func_8009F5D4(GlobalContext* globalCtx) {
         gSPEndDisplayList(displayListHead);
     } else {
         if (gSaveContext.dayTime > 0xC000) {
-            if (globalCtx->unk_11D30[0] != 255) {
-                Math_StepToS(&globalCtx->unk_11D30[0], 255, 5);
+            if (globalCtx->roomCtx.unk_74[0] != 255) {
+                Math_StepToS(&globalCtx->roomCtx.unk_74[0], 255, 5);
             }
         } else if (gSaveContext.dayTime >= 0x4000) {
-            if (globalCtx->unk_11D30[0] != 0) {
-                Math_StepToS(&globalCtx->unk_11D30[0], 0, 10);
+            if (globalCtx->roomCtx.unk_74[0] != 0) {
+                Math_StepToS(&globalCtx->roomCtx.unk_74[0], 0, 10);
             }
         }
 
-        gDPSetPrimColor(displayListHead++, 0, 0, 255, 255, 255, globalCtx->unk_11D30[0]);
+        gDPSetPrimColor(displayListHead++, 0, 0, 255, 255, 255, globalCtx->roomCtx.unk_74[0]);
         gSPDisplayList(displayListHead++, &D_0300AA48);
         gSPEndDisplayList(displayListHead);
     }
@@ -2339,27 +2339,27 @@ void func_8009FE58(GlobalContext* globalCtx) {
                       1.f + (0.39999998f * temp * Math_CosS(D_8012A3A0)), 1.f + (1 * temp * Math_CosS(D_8012A39C)));
         func_800AA7AC(&globalCtx->view, 0.95f);
 
-        switch (globalCtx->unk_11D30[0]) {
+        switch (globalCtx->roomCtx.unk_74[0]) {
             case 0:
                 break;
             case 1:
-                if (globalCtx->unk_11D30[1] < 1200) {
-                    globalCtx->unk_11D30[1] += 200;
+                if (globalCtx->roomCtx.unk_74[1] < 1200) {
+                    globalCtx->roomCtx.unk_74[1] += 200;
                 } else {
-                    globalCtx->unk_11D30[0]++;
+                    globalCtx->roomCtx.unk_74[0]++;
                 }
                 break;
             case 2:
-                if (globalCtx->unk_11D30[1] > 0) {
-                    globalCtx->unk_11D30[1] -= 30;
+                if (globalCtx->roomCtx.unk_74[1] > 0) {
+                    globalCtx->roomCtx.unk_74[1] -= 30;
                 } else {
-                    globalCtx->unk_11D30[1] = 0;
-                    globalCtx->unk_11D30[0] = 0;
+                    globalCtx->roomCtx.unk_74[1] = 0;
+                    globalCtx->roomCtx.unk_74[0] = 0;
                 }
                 break;
         }
 
-        D_8012A398 += 0.15f + (globalCtx->unk_11D30[1] * 0.001f);
+        D_8012A398 += 0.15f + (globalCtx->roomCtx.unk_74[1] * 0.001f);
     }
 
     if (globalCtx->roomCtx.curRoom.num == 2) {
