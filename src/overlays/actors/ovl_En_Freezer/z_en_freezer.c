@@ -5,18 +5,17 @@
 */
 
 /*
-    TO DO:
-        fix bombs not drawing
-        fix freezing appearing before the effect ends
+    TO DO: 
+        fix freezing appearing before the effect ends (not a bug?)
         fix bow and slingshot
         allow NL to be used underwater
         make timers freezing
         make everything back to normal is link don't move for 15s
         make time freeze and skybox pausing
 
-    WIP:
+    DONE:
         make hookshot, ocarina, DF, FW, magic arrows not being affected by the freeze
-            (TODO: check and complete the blacklist in z_actor.c)
+        fix bombs not drawing (Pog)
 */
 
 #include "z_en_freezer.h"
@@ -27,7 +26,7 @@ void EnFreezer_Init(Actor* thisx, GlobalContext* globalCtx);
 void EnFreezer_Destroy(Actor* thisx, GlobalContext* globalCtx);
 void EnFreezer_Update(Actor* thisx, GlobalContext* globalCtx);
 
-void EnFreezer_Freeze(GlobalContext* globalCtx, u16 duration);
+void EnFreezer_Freeze(GlobalContext* globalCtx, En_Freezer* this, u16 duration);
 
 const ActorInit En_Freezer_InitVars = {
     ACTOR_EN_FREEZER,
@@ -48,8 +47,9 @@ static u8 categories[] =
         ACTORCAT_BOSS,         
         ACTORCAT_NPC,        
         ACTORCAT_ITEMACTION,         
-        ACTORCAT_EXPLOSIVE    
-    }; 
+        ACTORCAT_EXPLOSIVE,
+        ACTORCAT_MISC
+    };
 
 void EnFreezer_Init(Actor* thisx, GlobalContext* globalCtx) {
     En_Freezer* this = THIS;
@@ -76,21 +76,29 @@ void EnFreezer_Update(Actor* thisx, GlobalContext* globalCtx) {
     }
 
     if(player->isFreezerSpawned == 1){
-        if(this->counter < 35) this->counter++;
-        else EnFreezer_Freeze(globalCtx, 35);
-    } else Actor_Kill(&this->actor);
+        if(this->counter < 35){
+            this->counter++;
+        }
+        else EnFreezer_Freeze(globalCtx, this, 35);
+    } 
+    else Actor_Kill(&this->actor);
 }
 
-void EnFreezer_Freeze(GlobalContext* globalCtx, u16 duration) {
+
+void EnFreezer_Freeze(GlobalContext* globalCtx, En_Freezer* this, u16 duration){
     Actor* actor;
-    s32 i;
+    u8 i;
 
     for (i = 0; i < ARRAY_COUNT(categories); i++) {
         actor = globalCtx->actorCtx.actorLists[categories[i]].head;
 
         while (actor != NULL) {
-            //preventing some actors to be frozen
             switch(actor->id){
+                //add a case to blacklist an actor
+                case ACTOR_EN_FREEZER:
+                case ACTOR_BG_SST_FLOOR:
+                case ACTOR_BOSS_VA:
+                case ACTOR_ITEM_B_HEART:
                 case ACTOR_EN_ELF:
                 case ACTOR_OCEFF_SPOT:
                 case ACTOR_OCEFF_WIPE:
@@ -109,6 +117,12 @@ void EnFreezer_Freeze(GlobalContext* globalCtx, u16 duration) {
                     actor->freezeTimer = 0;
                     break;
 
+                //add a case to run the update function until the actor is drawn
+                case ACTOR_EN_BOM:
+                    if(actor->isDrawn == 0) actor->update(actor, globalCtx);
+                    else actor->freezeTimer = duration;    
+                    break;
+                
                 default:
                     actor->freezeTimer = duration;
                     break;

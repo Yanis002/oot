@@ -18,7 +18,7 @@ void OceffWipe_Draw(Actor* thisx, GlobalContext* globalCtx);
 
 const ActorInit Oceff_Wipe_InitVars = {
     ACTOR_OCEFF_WIPE,
-    ACTORCAT_MISC, //ACTORCAT_ITEMACTION
+    ACTORCAT_ITEMACTION,
     FLAGS,
     OBJECT_GAMEPLAY_KEEP,
     sizeof(OceffWipe),
@@ -75,6 +75,8 @@ void OceffWipe_Update(Actor* thisx, GlobalContext* globalCtx) {
             D_801614B0.a ^= 1;
             this->boolWipe2 = 1;
         }
+
+        if(this->counter2 == 5) Audio_PlayActorSound2(&this->actor, NA_SE_EV_RED_EYE);
     }
 
     if (this->counter < changedValue) this->counter++; 
@@ -97,7 +99,7 @@ void OceffWipe_Draw(Actor* thisx, GlobalContext* globalCtx) {
     s8 val1, val2, val3, val4;
 
     if(this->actor.params == OCEFF_WIPE_SOT2){
-         multiplicateur = 800;
+         multiplicateur = 1200;
          val1 = 30;
          val2 = 0x28;
          val3 = 16;
