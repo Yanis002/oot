@@ -8,6 +8,7 @@ typedef struct En_Freezer {
     Actor actor;
     u8 counter;
     u8 isEffectSpawned;
+    u8 categories[12];
 } En_Freezer;
 
 extern const ActorInit En_Freezer_InitVars;

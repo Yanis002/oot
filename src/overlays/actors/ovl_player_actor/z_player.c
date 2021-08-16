@@ -5754,8 +5754,15 @@ void func_8083DF68(Player* this, f32 arg1, s16 arg2) {
 void func_8083DFE0(Player* this, f32* arg1, s16* arg2) {
     s16 yawDiff = this->currentYaw - *arg2;
 
+    //credits: ticamus
     if (this->swordState == 0) {
-        this->linearVelocity = CLAMP(this->linearVelocity, -(R_RUN_SPEED_LIMIT / 100.0f), (R_RUN_SPEED_LIMIT / 100.0f));
+        if (this->currentMask == PLAYER_MASK_BUNNY) {
+            this->linearVelocity =
+                CLAMP(this->linearVelocity, -(R_RUN_SPEED_LIMIT / 75.0f), (R_RUN_SPEED_LIMIT / 75.0f));
+        } else {
+            this->linearVelocity =
+                CLAMP(this->linearVelocity, -(R_RUN_SPEED_LIMIT / 100.0f), (R_RUN_SPEED_LIMIT / 100.0f));
+        }
     }
 
     if (ABS(yawDiff) > 0x6000) {
@@ -9892,14 +9899,14 @@ static f32 D_8085482C[] = { 0.5f, 1.0f, 3.0f };
 
 //test quick text
 extern u8 D_8014B300;
-s8 counter = 0;
+u8 counter = 0, counter2 = 0;
 
 void Player_UpdateCommon(Player* this, GlobalContext* globalCtx, Input* input) {
     s32 pad;
     // u16 sec, minutes, hours;
     // char* timer = "00:00:00";
     char tmp[20];
-    char posStr[20];
+    char posStr[140];
     char actorNbStr[20];
     
     sControlInput = input;
@@ -9908,14 +9915,8 @@ void Player_UpdateCommon(Player* this, GlobalContext* globalCtx, Input* input) {
     // minutes = (sec / 60) % 60;
     // sec %= 60;
 
-    //en_freezer
-    if(this->isFreezerSpawned == 1){
-        if(counter < 35) counter++;
-        else Actor_FreezeAllActors(globalCtx, &globalCtx->actorCtx, 35);
-    }
-
     //show Player coords
-    sprintf(posStr, "X: %.2f \n Y: %.2f \n Z: %.2f", this->actor.world.pos.x, this->actor.world.pos.y, this->actor.world.pos.z);
+    sprintf(posStr, "AP: %d \n X: %.2f \n Y: %.2f \n Z: %.2f", this->itemActionParam, this->actor.world.pos.x, this->actor.world.pos.y, this->actor.world.pos.z);
     Printf_Print(globalCtx, 0xFEFEFEFE, 0x011700, posStr);
 
     //show actor count
