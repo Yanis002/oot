@@ -23,7 +23,7 @@ void Opening_SetupTitleScreen(OpeningContext* this) {
     gSaveContext.unk_13F4 = 0;
     gSaveContext.magicLevel = gSaveContext.magic;
 
-    gSaveContext.linkAge = 1;
+    gSaveContext.linkAge = 0;
     gSaveContext.dayTime = 0x8000;
     gSaveContext.environmentTime = gSaveContext.dayTime;
     gSaveContext.buttonStatus[4] = BTN_ENABLED;
@@ -33,7 +33,7 @@ void Opening_SetupTitleScreen(OpeningContext* this) {
     gSaveContext.buttonStatus[0] = BTN_ENABLED;
     gSaveContext.unk_13E7 = gSaveContext.unk_13E8 = gSaveContext.unk_13EA = gSaveContext.unk_13EC = 0;
     Audio_QueueSeqCmd(NA_BGM_STOP);
-    gSaveContext.entranceIndex = 0xB1; //B1 for mkt, 171 for tot exterior, 33 for mkt entrance
+    gSaveContext.entranceIndex = 0x1FD; //B1 for mkt, 171 for tot exterior, 33 for mkt entrance, 1FD for field
     gSaveContext.respawnFlag = 0;
     gSaveContext.respawn[RESPAWN_MODE_DOWN].entranceIndex = -1;
     gSaveContext.seqIndex = 0xFF;

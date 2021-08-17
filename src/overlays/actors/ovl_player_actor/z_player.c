@@ -2699,8 +2699,32 @@ void func_80835F44(GlobalContext* globalCtx, Player* this, s32 item) {
     s8 actionParam;
     s32 temp;
     s32 nextType;
+    Actor* actor;
 
     actionParam = Player_ItemToActionParam(item);
+
+    if(this->isFreezerSpawned){
+        actor = globalCtx->actorCtx.actorLists[ACTORCAT_ITEMACTION].head;
+        switch(actor->id){ 
+            case ACTOR_EN_ARROW:
+                if((this->nbEnArrow >= 10) && 
+                  ((actionParam == PLAYER_AP_NUT) || 
+                   (actionParam == PLAYER_AP_BOW) || 
+                   (actionParam == PLAYER_AP_SLINGSHOT))){
+                    this->itemActionParam = PLAYER_AP_NONE;
+                    func_80078884(NA_SE_SY_ERROR);
+                    return;
+                }
+                break;
+        }
+
+        switch(actionParam){
+            case PLAYER_AP_BOTTLE_BUG:
+            case PLAYER_AP_BOTTLE_FISH:
+                func_80078884(NA_SE_SY_ERROR);
+                return;
+        }
+    } else this->nbEnArrow = 0;
 
     if (((this->heldItemActionParam == this->itemActionParam) &&
          (!(this->stateFlags1 & 0x400000) || (Player_ActionToSword(actionParam) != 0) ||
@@ -9084,7 +9108,7 @@ void Player_Init(Actor* thisx, GlobalContext* globalCtx2) {
     s32 sp50;
     s32 sp4C;
 
-    this->isFreezerSpawned = 0;
+    this->isFreezerSpawned = this->nbEnArrow = 0;
 
     globalCtx->shootingGalleryStatus = globalCtx->bombchuBowlingStatus = 0;
 

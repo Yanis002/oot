@@ -84,6 +84,12 @@ void EnArrow_Init(Actor* thisx, GlobalContext* globalCtx) {
     };
     EnArrow* this = THIS;
 
+    //Project-A
+    Player* player = PLAYER;
+    if(player->isFreezerSpawned) player->nbEnArrow++;
+    player->isArrowShot = 0;
+    this->counter = 0;
+
     Actor_ProcessInitChain(&this->actor, sInitChain);
 
     if (this->actor.params == ARROW_CS_NUT) {
@@ -390,6 +396,15 @@ void EnArrow_Update(Actor* thisx, GlobalContext* globalCtx) {
     s32 pad;
     EnArrow* this = THIS;
     Player* player = PLAYER;
+
+    //Project-A
+    if(player->isFreezerSpawned){
+         if(this->counter < 7) this->counter++;
+         else {
+             this->counter = 0;
+             player->isArrowShot = 1;
+         }
+    } else player->isArrowShot = 0;
 
     if (this->isCsNut || ((this->actor.params >= ARROW_NORMAL_LIT) && (player->unk_A73 != 0)) ||
         !Player_InBlockingCsMode(globalCtx, player)) {

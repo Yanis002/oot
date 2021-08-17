@@ -214,8 +214,8 @@ static SavePlayerData sDebugSavePlayerData = {
 };
 
 static ItemEquips sDebugSaveEquips = {
-    { ITEM_SWORD_MASTER, ITEM_BOMB, ITEM_NAYRUS_LOVE, ITEM_MASK_BUNNY }, // buttonItems
-    { SLOT_BOMB, SLOT_NAYRUS_LOVE, SLOT_TRADE_CHILD },                          // cButtonSlots
+    { ITEM_SWORD_MASTER, ITEM_BOW, ITEM_NAYRUS_LOVE, ITEM_MASK_BUNNY }, // buttonItems
+    { SLOT_BOW, SLOT_NAYRUS_LOVE, SLOT_TRADE_CHILD },                          // cButtonSlots
     0x1232,                                                         // equipment: 0x1152 0x1242
 };
 

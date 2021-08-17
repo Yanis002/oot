@@ -7,6 +7,7 @@
 typedef struct En_Freezer {
     Actor actor;
     u8 counter;
+    u8 counter2;
     u8 isEffectSpawned;
     u8 categories[12];
     u8 boolTimeSky;

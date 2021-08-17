@@ -5,21 +5,27 @@
 */
 
 /*
-    TO DO: 
-        fix bow and slingshot
+    TO DO:
+        fix NL still need magic to use (but don't actually use magic)
+        fix can't use items after using NL
         allow NL to be used underwater
         make timers freezing (might be too broken)
         make everything back to normal is link don't move for 15s
+        if possible, make link & en_freezer not being affected by color change
+        actor number restriction?
     
     WIP:
-
+        fix bow and slingshot
+            bug: elemental arrows half working
     DONE:
         make hookshot, ocarina, DF, FW, magic arrows not being affected by the freeze
         fix bombs not drawing (Pog)
         make time freeze and skybox pausing
+        fix bugs and fishes unfreezing the actors
 */
 
 #include "z_en_freezer.h"
+#include "../ovl_En_Arrow/z_en_arrow.h"
 
 #define THIS ((En_Freezer*)thisx)
 
@@ -64,7 +70,7 @@ void EnFreezer_Init(Actor* thisx, GlobalContext* globalCtx) {
 
     player->isFreezerSpawned = !player->isFreezerSpawned;
     player->itemActionParam = PLAYER_AP_NONE;
-    this->counter = this->isEffectSpawned = this->dayTime = this->boolTimeSky = 0;
+    this->counter = this->counter2 = this->isEffectSpawned = this->dayTime = this->boolTimeSky = 0;
     this->skyRot.x = this->skyRot.y = this->skyRot.z = 0;
 }
 
@@ -83,16 +89,14 @@ void EnFreezer_Update(Actor* thisx, GlobalContext* globalCtx) {
                     player->actor.world.pos.z, 0, 0, 0, 2);
     }
 
-    if(player->isFreezerSpawned == 1){
-        if(this->counter < 35){
-            this->counter++;
-        } else EnFreezer_Freeze(globalCtx, this, 35); //process everything
-    } 
+    if(this->counter < 35) this->counter++;
+    else if(player->isFreezerSpawned == 1) EnFreezer_Freeze(globalCtx, this, 35);
     else Actor_Kill(&this->actor);
 }
 
 void EnFreezer_Freeze(GlobalContext* globalCtx, En_Freezer* this, u16 duration){
     Actor *wlActor, *blActor;
+    Player* player = PLAYER;
     u8 i;
 
     //process actors
@@ -130,10 +134,41 @@ void EnFreezer_Freeze(GlobalContext* globalCtx, En_Freezer* this, u16 duration){
                     else wlActor->freezeTimer = duration;    
                     break;
 
+                //add a case to skip an actor if needed
+                case ACTOR_EN_ARROW:
+                    break;
+
                 default:
                     wlActor->freezeTimer = duration;
                     break;
-            } wlActor = wlActor->next;
+            } 
+            
+            if(wlActor->id == ACTOR_EN_ARROW){
+                switch(wlActor->params){
+                        case ARROW_SEED:
+                        case ARROW_NORMAL_SILENT:
+                        case ARROW_NORMAL_LIT: 
+                        case ARROW_NORMAL_HORSE:
+                        case ARROW_NORMAL:
+                        case ARROW_FIRE:
+                        case ARROW_ICE:
+                        case ARROW_LIGHT:
+                            if(player->isArrowShot) wlActor->freezeTimer = duration;
+                            else if(this->counter2 < 7){
+                                this->counter2++;
+                                wlActor->freezeTimer = 0;
+                            } else player->isArrowShot = 0;
+                            break;
+
+                        case ARROW_CS_NUT:
+                        case ARROW_NUT:
+                        default:
+                            wlActor->freezeTimer = duration;
+                            break;
+                    }
+            }
+            
+            wlActor = wlActor->next;
         }
     }
 
@@ -158,6 +193,7 @@ void EnFreezer_Freeze(GlobalContext* globalCtx, En_Freezer* this, u16 duration){
         this->skyRot = globalCtx->skyboxCtx.rot;
         this->boolTimeSky = 1;
     }
+
     gSaveContext.dayTime = this->dayTime;
     globalCtx->skyboxCtx.rot = this->skyRot;
 }
