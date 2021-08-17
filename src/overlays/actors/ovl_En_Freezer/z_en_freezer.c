@@ -6,19 +6,17 @@
 
 /*
     TO DO: 
-        fix freezing appearing before the effect ends (not a bug?)
         fix bow and slingshot
         allow NL to be used underwater
-        make timers freezing
+        make timers freezing (might be too broken)
         make everything back to normal is link don't move for 15s
     
     WIP:
-        make time freeze and skybox pausing
-            DONE: time freeze
 
     DONE:
         make hookshot, ocarina, DF, FW, magic arrows not being affected by the freeze
         fix bombs not drawing (Pog)
+        make time freeze and skybox pausing
 */
 
 #include "z_en_freezer.h"
@@ -66,7 +64,8 @@ void EnFreezer_Init(Actor* thisx, GlobalContext* globalCtx) {
 
     player->isFreezerSpawned = !player->isFreezerSpawned;
     player->itemActionParam = PLAYER_AP_NONE;
-    this->counter = this->isEffectSpawned = this->dayTime = 0;
+    this->counter = this->isEffectSpawned = this->dayTime = this->boolTimeSky = 0;
+    this->skyRot.x = this->skyRot.y = this->skyRot.z = 0;
 }
 
 void EnFreezer_Destroy(Actor* thisx, GlobalContext* globalCtx) {
@@ -78,7 +77,6 @@ void EnFreezer_Update(Actor* thisx, GlobalContext* globalCtx) {
 
     if(!this->isEffectSpawned){
         this->isEffectSpawned = 1;
-        this->dayTime = gSaveContext.dayTime;
         Actor_Spawn(&globalCtx->actorCtx, globalCtx,
                     ACTOR_OCEFF_WIPE, player->actor.world.pos.x,
                     player->actor.world.pos.y,
@@ -88,10 +86,7 @@ void EnFreezer_Update(Actor* thisx, GlobalContext* globalCtx) {
     if(player->isFreezerSpawned == 1){
         if(this->counter < 35){
             this->counter++;
-        } else {
-            EnFreezer_Freeze(globalCtx, this, 35); //process the actors
-            gSaveContext.dayTime = this->dayTime; //process time of day
-        }
+        } else EnFreezer_Freeze(globalCtx, this, 35); //process everything
     } 
     else Actor_Kill(&this->actor);
 }
@@ -100,6 +95,7 @@ void EnFreezer_Freeze(GlobalContext* globalCtx, En_Freezer* this, u16 duration){
     Actor *wlActor, *blActor;
     u8 i;
 
+    //process actors
     for (i = 0; i < ARRAY_COUNT(actorCatWhitelist); i++) {
         wlActor = globalCtx->actorCtx.actorLists[actorCatWhitelist[i]].head;
 
@@ -155,4 +151,13 @@ void EnFreezer_Freeze(GlobalContext* globalCtx, En_Freezer* this, u16 duration){
             } blActor = blActor->next;
         }
     }
+
+    //process time of day and skybox rotation
+    if(this->boolTimeSky == 0){
+        this->dayTime = gSaveContext.dayTime;
+        this->skyRot = globalCtx->skyboxCtx.rot;
+        this->boolTimeSky = 1;
+    }
+    gSaveContext.dayTime = this->dayTime;
+    globalCtx->skyboxCtx.rot = this->skyRot;
 }
