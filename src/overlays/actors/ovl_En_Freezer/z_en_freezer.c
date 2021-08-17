@@ -11,7 +11,10 @@
         allow NL to be used underwater
         make timers freezing
         make everything back to normal is link don't move for 15s
+    
+    WIP:
         make time freeze and skybox pausing
+            DONE: time freeze
 
     DONE:
         make hookshot, ocarina, DF, FW, magic arrows not being affected by the freeze
@@ -41,7 +44,7 @@ const ActorInit En_Freezer_InitVars = {
 };
 
 //every actors in these categories will be frozen
-static u8 categories[] = 
+static u8 actorCatWhitelist[] = 
     {         
         ACTORCAT_ENEMY,         
         ACTORCAT_BOSS,         
@@ -51,13 +54,19 @@ static u8 categories[] =
         ACTORCAT_MISC
     };
 
+static u8 actorCatBlacklist[] =
+    {
+        ACTORCAT_PROP,
+        ACTORCAT_BG
+    };
+
 void EnFreezer_Init(Actor* thisx, GlobalContext* globalCtx) {
     En_Freezer* this = THIS;
     Player* player = PLAYER;
 
     player->isFreezerSpawned = !player->isFreezerSpawned;
     player->itemActionParam = PLAYER_AP_NONE;
-    this->counter = this->isEffectSpawned = 0;
+    this->counter = this->isEffectSpawned = this->dayTime = 0;
 }
 
 void EnFreezer_Destroy(Actor* thisx, GlobalContext* globalCtx) {
@@ -69,6 +78,7 @@ void EnFreezer_Update(Actor* thisx, GlobalContext* globalCtx) {
 
     if(!this->isEffectSpawned){
         this->isEffectSpawned = 1;
+        this->dayTime = gSaveContext.dayTime;
         Actor_Spawn(&globalCtx->actorCtx, globalCtx,
                     ACTOR_OCEFF_WIPE, player->actor.world.pos.x,
                     player->actor.world.pos.y,
@@ -78,22 +88,23 @@ void EnFreezer_Update(Actor* thisx, GlobalContext* globalCtx) {
     if(player->isFreezerSpawned == 1){
         if(this->counter < 35){
             this->counter++;
+        } else {
+            EnFreezer_Freeze(globalCtx, this, 35); //process the actors
+            gSaveContext.dayTime = this->dayTime; //process time of day
         }
-        else EnFreezer_Freeze(globalCtx, this, 35);
     } 
     else Actor_Kill(&this->actor);
 }
 
-
 void EnFreezer_Freeze(GlobalContext* globalCtx, En_Freezer* this, u16 duration){
-    Actor* actor;
+    Actor *wlActor, *blActor;
     u8 i;
 
-    for (i = 0; i < ARRAY_COUNT(categories); i++) {
-        actor = globalCtx->actorCtx.actorLists[categories[i]].head;
+    for (i = 0; i < ARRAY_COUNT(actorCatWhitelist); i++) {
+        wlActor = globalCtx->actorCtx.actorLists[actorCatWhitelist[i]].head;
 
-        while (actor != NULL) {
-            switch(actor->id){
+        while (wlActor != NULL) {
+            switch(wlActor->id){
                 //add a case to blacklist an actor
                 case ACTOR_EN_FREEZER:
                 case ACTOR_BG_SST_FLOOR:
@@ -114,20 +125,34 @@ void EnFreezer_Freeze(GlobalContext* globalCtx, En_Freezer* this, u16 duration){
                 case ACTOR_MAGIC_FIRE:
                 case ACTOR_MAGIC_WIND:
                 case ACTOR_ARMS_HOOK:
-                    actor->freezeTimer = 0;
+                    wlActor->freezeTimer = 0;
                     break;
 
                 //add a case to run the update function until the actor is drawn
                 case ACTOR_EN_BOM:
-                    if(actor->isDrawn == 0) actor->update(actor, globalCtx);
-                    else actor->freezeTimer = duration;    
+                    if(wlActor->isDrawn == 0) wlActor->update(wlActor, globalCtx);
+                    else wlActor->freezeTimer = duration;    
                     break;
-                
+
                 default:
-                    actor->freezeTimer = duration;
+                    wlActor->freezeTimer = duration;
                     break;
-            }
-            actor = actor->next;
+            } wlActor = wlActor->next;
+        }
+    }
+
+    for (i = 0; i < ARRAY_COUNT(actorCatBlacklist); i++){
+        blActor = globalCtx->actorCtx.actorLists[actorCatBlacklist[i]].head;
+
+        while (blActor != NULL) {
+            switch(blActor->id){
+                //add a case to freeze an actor from the blacklist
+                case ACTOR_EN_NIW:
+                case ACTOR_BG_SPOT00_HANEBASI:
+                case ACTOR_EN_RIVER_SOUND:
+                    blActor->freezeTimer = duration;
+                    break;
+            } blActor = blActor->next;
         }
     }
 }
