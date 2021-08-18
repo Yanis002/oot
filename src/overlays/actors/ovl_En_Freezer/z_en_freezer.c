@@ -15,13 +15,13 @@
         actor number restriction?
     
     WIP:
-        fix bow and slingshot
-            bug: elemental arrows half working
+    
     DONE:
         make hookshot, ocarina, DF, FW, magic arrows not being affected by the freeze
         fix bombs not drawing (Pog)
         make time freeze and skybox pausing
         fix bugs and fishes unfreezing the actors
+        fix bow and slingshot
 */
 
 #include "z_en_freezer.h"
@@ -134,38 +134,9 @@ void EnFreezer_Freeze(GlobalContext* globalCtx, En_Freezer* this, u16 duration){
                     else wlActor->freezeTimer = duration;    
                     break;
 
-                //add a case to skip an actor if needed
-                case ACTOR_EN_ARROW:
-                    break;
-
                 default:
                     wlActor->freezeTimer = duration;
                     break;
-            } 
-            
-            if(wlActor->id == ACTOR_EN_ARROW){
-                switch(wlActor->params){
-                        case ARROW_SEED:
-                        case ARROW_NORMAL_SILENT:
-                        case ARROW_NORMAL_LIT: 
-                        case ARROW_NORMAL_HORSE:
-                        case ARROW_NORMAL:
-                        case ARROW_FIRE:
-                        case ARROW_ICE:
-                        case ARROW_LIGHT:
-                            if(player->isArrowShot) wlActor->freezeTimer = duration;
-                            else if(this->counter2 < 7){
-                                this->counter2++;
-                                wlActor->freezeTimer = 0;
-                            } else player->isArrowShot = 0;
-                            break;
-
-                        case ARROW_CS_NUT:
-                        case ARROW_NUT:
-                        default:
-                            wlActor->freezeTimer = duration;
-                            break;
-                    }
             }
             
             wlActor = wlActor->next;

@@ -23,7 +23,6 @@ typedef struct EnArrow {
     /* 0x024C */ Actor* hitActor;
     /* 0x0250 */ Vec3f unk_250;
     /* 0x025C */ EnArrowActionFunc actionFunc;
-                 u8 counter; //Project-A
 } EnArrow; // size = 0x0260
 
 typedef enum {

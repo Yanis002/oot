@@ -87,8 +87,6 @@ void EnArrow_Init(Actor* thisx, GlobalContext* globalCtx) {
     //Project-A
     Player* player = PLAYER;
     if(player->isFreezerSpawned) player->nbEnArrow++;
-    player->isArrowShot = 0;
-    this->counter = 0;
 
     Actor_ProcessInitChain(&this->actor, sInitChain);
 
@@ -164,10 +162,11 @@ void EnArrow_Shoot(EnArrow* this, GlobalContext* globalCtx) {
     Player* player = PLAYER;
 
     if (this->actor.parent == NULL) {
-        if ((this->actor.params != ARROW_NUT) && (player->unk_A73 == 0)) {
-            Actor_Kill(&this->actor);
-            return;
-        }
+        //TODO: find out what's the purpose of this
+        // if ((this->actor.params != ARROW_NUT) && (player->unk_A73 == 0)) {
+        //     Actor_Kill(&this->actor);
+        //     return;
+        // }
 
         switch (this->actor.params) {
             case ARROW_SEED:
@@ -397,15 +396,6 @@ void EnArrow_Update(Actor* thisx, GlobalContext* globalCtx) {
     EnArrow* this = THIS;
     Player* player = PLAYER;
 
-    //Project-A
-    if(player->isFreezerSpawned){
-         if(this->counter < 7) this->counter++;
-         else {
-             this->counter = 0;
-             player->isArrowShot = 1;
-         }
-    } else player->isArrowShot = 0;
-
     if (this->isCsNut || ((this->actor.params >= ARROW_NORMAL_LIT) && (player->unk_A73 != 0)) ||
         !Player_InBlockingCsMode(globalCtx, player)) {
         this->actionFunc(this, globalCtx);
@@ -475,7 +465,7 @@ void EnArrow_Draw(Actor* thisx, GlobalContext* globalCtx) {
         func_80093D18(globalCtx->state.gfxCtx);
         SkelAnime_DrawLod(globalCtx, this->skelAnime.skeleton, this->skelAnime.jointTable, NULL, NULL, this,
                           (this->actor.projectedPos.z < MREG(95)) ? 0 : 1);
-    } else if (this->actor.speedXZ != 0.0f) {
+    } else /*if (this->actor.speedXZ != 0.0f)*/ if(this->actor.parent == NULL) {
         alpha = (Math_CosS(this->timer * 5000) * 127.5f) + 127.5f;
 
         OPEN_DISPS(globalCtx->state.gfxCtx, "../z_en_arrow.c", 1346);
