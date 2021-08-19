@@ -33,7 +33,7 @@ void Opening_SetupTitleScreen(OpeningContext* this) {
     gSaveContext.buttonStatus[0] = BTN_ENABLED;
     gSaveContext.unk_13E7 = gSaveContext.unk_13E8 = gSaveContext.unk_13EA = gSaveContext.unk_13EC = 0;
     Audio_QueueSeqCmd(NA_BGM_STOP);
-    gSaveContext.entranceIndex = 0xB1; //B1 for mkt, 171 for tot exterior, 33 for mkt entrance, 1FD for field
+    gSaveContext.entranceIndex = 0x1FD; //B1 for mkt, 171 for tot exterior, 33 for mkt entrance, 1FD for field
     gSaveContext.respawnFlag = 0;
     gSaveContext.respawn[RESPAWN_MODE_DOWN].entranceIndex = -1;
     gSaveContext.seqIndex = 0xFF;

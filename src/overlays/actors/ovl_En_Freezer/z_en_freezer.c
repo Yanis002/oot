@@ -7,7 +7,6 @@
 /*
     TO DO:
         allow NL to be used underwater
-        make water not moving during freeze
     
     WIP:
 
@@ -191,6 +190,7 @@ void EnFreezer_Freeze(GlobalContext* globalCtx, En_Freezer* this, u16 duration){
                 case ACTOR_BG_HIDAN_HAMSTEP:
                 case ACTOR_BG_HIDAN_FWBIG:
                 case ACTOR_BG_HIDAN_FSLIFT:
+                case ACTOR_BG_HIDAN_CURTAIN:
                 case ACTOR_BG_MIZU_MOVEBG: //water temple
                 case ACTOR_BG_MIZU_SHUTTER:
                 case ACTOR_BG_HAKA_MEGANEBG: //shadow temple
@@ -198,10 +198,10 @@ void EnFreezer_Freeze(GlobalContext* globalCtx, En_Freezer* this, u16 duration){
                 case ACTOR_BG_HAKA_TRAP:
                 case ACTOR_BG_JYA_ZURERUKABE: //spirit temple
                 case ACTOR_BG_JYA_1FLIFT:
+                case ACTOR_OBJ_SYOKUDAI: //torches
                 case ACTOR_MIR_RAY:
                 case ACTOR_EN_NIW:
                 case ACTOR_EN_RIVER_SOUND:
-                case ACTOR_OBJ_SYOKUDAI:
                     blActor->freezeTimer = duration;
                     break;
             } blActor = blActor->next;

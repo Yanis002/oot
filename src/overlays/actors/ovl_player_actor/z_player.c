@@ -9108,7 +9108,7 @@ void Player_Init(Actor* thisx, GlobalContext* globalCtx2) {
     s32 sp50;
     s32 sp4C;
 
-    this->isFreezerSpawned = this->nbEnArrow = this->waterChange = 0;
+    this->isFreezerSpawned = this->nbEnArrow = this->scrollChange = 0;
 
     globalCtx->shootingGalleryStatus = globalCtx->bombchuBowlingStatus = 0;
 

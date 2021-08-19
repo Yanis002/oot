@@ -74,7 +74,7 @@ void OceffWipe_Update(Actor* thisx, GlobalContext* globalCtx) {
         if(this->counter2 < 35) this->counter2++;
         else if(!(this->boolWipe2)){
             D_801614B0.a ^= 1;
-            player->waterChange = !player->waterChange;
+            player->scrollChange = !player->scrollChange;
             this->boolWipe2 = 1;
         }
 
