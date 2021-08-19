@@ -9,13 +9,10 @@
         fix NL still need magic to use (but don't actually use magic)
         fix can't use items after using NL
         allow NL to be used underwater
-        make timers freezing (might be too broken)
         make everything back to normal is link don't move for 15s
-        if possible, make link & en_freezer not being affected by color change
-        actor number restriction?
     
     WIP:
-    
+
     DONE:
         make hookshot, ocarina, DF, FW, magic arrows not being affected by the freeze
         fix bombs not drawing (Pog)
@@ -70,7 +67,7 @@ void EnFreezer_Init(Actor* thisx, GlobalContext* globalCtx) {
 
     player->isFreezerSpawned = !player->isFreezerSpawned;
     player->itemActionParam = PLAYER_AP_NONE;
-    this->counter = this->counter2 = this->isEffectSpawned = this->dayTime = this->boolTimeSky = 0;
+    this->counter = this->isEffectSpawned = this->dayTime = this->boolTimeSky = 0;
     this->skyRot.x = this->skyRot.y = this->skyRot.z = 0;
 }
 
@@ -107,6 +104,7 @@ void EnFreezer_Freeze(GlobalContext* globalCtx, En_Freezer* this, u16 duration){
             switch(wlActor->id){
                 //add a case to blacklist an actor
                 case ACTOR_EN_FREEZER:
+                case ACTOR_EN_SI:
                 case ACTOR_BG_SST_FLOOR:
                 case ACTOR_BOSS_VA:
                 case ACTOR_ITEM_B_HEART:
@@ -149,8 +147,39 @@ void EnFreezer_Freeze(GlobalContext* globalCtx, En_Freezer* this, u16 duration){
         while (blActor != NULL) {
             switch(blActor->id){
                 //add a case to freeze an actor from the blacklist
+                case ACTOR_BG_SPOT00_HANEBASI: //hyrule field
+                case ACTOR_BG_SPOT01_FUSYA: //kakariko village
+                case ACTOR_BG_SPOT03_TAKI: //zora's river
+                case ACTOR_BG_SPOT07_TAKI: //zora's domain
+                case ACTOR_BG_SPOT16_DOUGHNUT: //dmt
+                case ACTOR_BG_SPOT17_FUNEN: //dmc
+                case ACTOR_BG_SPOT18_BASKET: //goron city
+                case ACTOR_BG_SPOT18_FUTA:
+                case ACTOR_BG_YDAN_HASI: //deku tree, hasi to change
+                case ACTOR_BG_YDAN_MARUTA:
+                case ACTOR_BG_YDAN_SP:
+                case ACTOR_BG_DDAN_JD: //dodongo's cavern
+                case ACTOR_BG_BDAN_OBJECTS: //jabu-jabu's belly (watch out for water square)
+                case ACTOR_BG_MENKURI_KAITEN: //forest temple (???) & gtg rotating platform
+                case ACTOR_BG_MORI_ELEVATOR: //forest temple
+                case ACTOR_BG_MORI_HASHIRA4:
+                case ACTOR_BG_HIDAN_FIREWALL: //fire temple
+                case ACTOR_BG_HIDAN_RSEKIZOU:
+                case ACTOR_BG_HIDAN_SEKIZOU:
+                case ACTOR_BG_HIDAN_SIMA:
+                case ACTOR_BG_HIDAN_SYOKU:
+                case ACTOR_BG_HIDAN_HAMSTEP:
+                case ACTOR_BG_HIDAN_FWBIG:
+                case ACTOR_BG_HIDAN_FSLIFT:
+                case ACTOR_BG_MIZU_MOVEBG: //water temple
+                case ACTOR_BG_MIZU_SHUTTER:
+                case ACTOR_BG_HAKA_MEGANEBG: //shadow temple
+                case ACTOR_BG_HAKA_TUBO:
+                case ACTOR_BG_HAKA_TRAP:
+                case ACTOR_BG_JYA_ZURERUKABE: //spirit temple
+                case ACTOR_BG_JYA_1FLIFT:
+                case ACTOR_MIR_RAY:
                 case ACTOR_EN_NIW:
-                case ACTOR_BG_SPOT00_HANEBASI:
                 case ACTOR_EN_RIVER_SOUND:
                     blActor->freezeTimer = duration;
                     break;
