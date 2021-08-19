@@ -60,6 +60,7 @@ void OceffWipe_Destroy(Actor* thisx, GlobalContext* globalCtx) {
 
 void OceffWipe_Update(Actor* thisx, GlobalContext* globalCtx) {
     OceffWipe* this = THIS;
+    Player* player = PLAYER;
 
     //Project-A
     u8 changedValue;
@@ -73,6 +74,7 @@ void OceffWipe_Update(Actor* thisx, GlobalContext* globalCtx) {
         if(this->counter2 < 35) this->counter2++;
         else if(!(this->boolWipe2)){
             D_801614B0.a ^= 1;
+            player->waterChange = !player->waterChange;
             this->boolWipe2 = 1;
         }
 

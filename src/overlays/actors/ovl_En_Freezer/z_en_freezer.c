@@ -13,12 +13,13 @@
 
     DONE:
         make hookshot, ocarina, DF, FW, magic arrows not being affected by the freeze
-        fix bombs not drawing (Pog)
+        fix bombs not drawing
         make time freeze and skybox pausing
         fix bugs and fishes unfreezing the actors
         fix bow and slingshot
         fix NL still need magic to use (but don't actually use magic)
         fix can't use items after using NL
+        make scrolling textures stop while frozen
 */
 
 #include "z_en_freezer.h"
@@ -69,7 +70,6 @@ void EnFreezer_Init(Actor* thisx, GlobalContext* globalCtx) {
     Player* player = PLAYER;
 
     player->isFreezerSpawned = !player->isFreezerSpawned;
-   // player->itemActionParam = PLAYER_AP_NONE;
     this->counter = this->isEffectSpawned = this->dayTime = this->boolTimeSky = this->duration = 0;
     this->skyRot.x = this->skyRot.y = this->skyRot.z = 0.f;
 

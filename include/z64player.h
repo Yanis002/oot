@@ -384,6 +384,7 @@ typedef struct Player {
     //Project-A
                  u8         isFreezerSpawned;
                  u8         nbEnArrow;
+                 u8         waterChange;
 } Player; // size = 0xA94
 
 #endif

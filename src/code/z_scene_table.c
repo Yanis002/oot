@@ -829,7 +829,7 @@ SceneTableEntry gSceneTable[] = {
     UNTITLED_SCENE(enrui_scene, 0, 0, 0),
     TITLED_SCENE(market_alley_scene, g_pn_18, 0, 0, 0),
     TITLED_SCENE(market_alley_n_scene, g_pn_18, 0, 0, 0),
-    TITLED_SCENE(market_day_scene, g_pn_17, 0, 0, 0),
+    TITLED_SCENE(market_day_scene, g_pn_17, 0, 19, 0),
     TITLED_SCENE(market_night_scene, g_pn_17, 0, 0, 0),
     TITLED_SCENE(market_ruins_scene, g_pn_17, 0, 0, 0),
     UNTITLED_SCENE(shrine_scene, 0, 0, 0),
@@ -953,16 +953,28 @@ void func_80099550(GlobalContext* globalCtx) {
     CLOSE_DISPS(globalCtx->state.gfxCtx, "../z_scene_table.c", 4735);
 }
 
+//Project-A | if time's freezed, don't move water texture
+bool freezeWater(GlobalContext* globalCtx){
+    Player* player = PLAYER;
+    if(player->waterChange){
+        func_80099550(globalCtx);
+        return true;
+    } else return false;
+}
+
 u32 D_8012A2F8[] = { 0x0200BA18, 0x0200CA18 };
 
 // Scene Draw Config 19
 void func_800995DC(GlobalContext* globalCtx) {
     u32 gameplayFrames = globalCtx->gameplayFrames;
 
+    //Project-A | if time's freezed, don't move water texture
+    if(freezeWater(globalCtx)) return;
+
     OPEN_DISPS(globalCtx->state.gfxCtx, "../z_scene_table.c", 4763);
 
     gSPSegment(POLY_XLU_DISP++, 0x09,
-               Gfx_TwoTexScroll(globalCtx->state.gfxCtx, 0, 127 - (gameplayFrames % 128), (gameplayFrames * 1) % 128,
+            Gfx_TwoTexScroll(globalCtx->state.gfxCtx, 0, 127 - (gameplayFrames % 128), (gameplayFrames * 1) % 128,
                                 32, 32, 1, gameplayFrames % 128, (gameplayFrames * 1) % 128, 32, 32));
 
     gDPPipeSync(POLY_XLU_DISP++);
@@ -978,6 +990,9 @@ void func_800995DC(GlobalContext* globalCtx) {
 // Scene Draw Config 28
 void func_80099760(GlobalContext* globalCtx) {
     u32 gameplayFrames;
+
+    //Project-A | if time's freezed, don't move water texture
+    if(freezeWater(globalCtx)) return;
 
     OPEN_DISPS(globalCtx->state.gfxCtx, "../z_scene_table.c", 4845);
 
@@ -999,7 +1014,12 @@ u32 D_8012A308[] = { 0x02011F78, 0x02014778, 0x02014378, 0x02013F78, 0x02014B78,
 void func_80099878(GlobalContext* globalCtx) {
     u32 gameplayFrames;
     s32 pad;
-    Gfx* displayListHead = Graph_Alloc(globalCtx->state.gfxCtx, 6 * sizeof(Gfx));
+    Gfx* displayListHead;
+
+    //Project-A | if time's freezed, don't move water texture
+    if(freezeWater(globalCtx)) return;
+
+    displayListHead = Graph_Alloc(globalCtx->state.gfxCtx, 6 * sizeof(Gfx));
 
     OPEN_DISPS(globalCtx->state.gfxCtx, "../z_scene_table.c", 4905);
 
@@ -1036,7 +1056,12 @@ void func_80099878(GlobalContext* globalCtx) {
 // Scene Draw Config 30
 void func_80099BD8(GlobalContext* globalCtx) {
     f32 temp;
-    Gfx* displayListHead = Graph_Alloc(globalCtx->state.gfxCtx, 18 * sizeof(Gfx));
+    Gfx* displayListHead;
+
+    //Project-A | if time's freezed, don't move water texture
+    if(freezeWater(globalCtx)) return;
+
+    displayListHead = Graph_Alloc(globalCtx->state.gfxCtx, 18 * sizeof(Gfx));
 
     OPEN_DISPS(globalCtx->state.gfxCtx, "../z_scene_table.c", 5069);
 
@@ -1099,6 +1124,9 @@ void func_80099BD8(GlobalContext* globalCtx) {
 void func_8009A45C(GlobalContext* globalCtx) {
     u32 gameplayFrames;
 
+    //Project-A | if time's freezed, don't move water texture
+    if(freezeWater(globalCtx)) return;
+
     OPEN_DISPS(globalCtx->state.gfxCtx, "../z_scene_table.c", 5171);
 
     gameplayFrames = globalCtx->gameplayFrames;
@@ -1129,6 +1157,9 @@ void func_8009A45C(GlobalContext* globalCtx) {
 void func_8009A798(GlobalContext* globalCtx) {
     u32 gameplayFrames;
 
+    //Project-A | if time's freezed, don't move water texture
+    if(freezeWater(globalCtx)) return;
+
     OPEN_DISPS(globalCtx->state.gfxCtx, "../z_scene_table.c", 5226);
 
     gameplayFrames = globalCtx->gameplayFrames;
@@ -1157,6 +1188,9 @@ void func_8009A798(GlobalContext* globalCtx) {
 void func_8009A9DC(GlobalContext* globalCtx) {
     u32 gameplayFrames;
 
+    //Project-A | if time's freezed, don't move water texture
+    if(freezeWater(globalCtx)) return;
+
     OPEN_DISPS(globalCtx->state.gfxCtx, "../z_scene_table.c", 5278);
 
     gameplayFrames = globalCtx->gameplayFrames;
@@ -1180,6 +1214,9 @@ void func_8009A9DC(GlobalContext* globalCtx) {
 void func_8009AB98(GlobalContext* globalCtx) {
     u32 gameplayFrames;
 
+    //Project-A | if time's freezed, don't move water texture
+    if(freezeWater(globalCtx)) return;
+
     OPEN_DISPS(globalCtx->state.gfxCtx, "../z_scene_table.c", 5317);
 
     gameplayFrames = globalCtx->gameplayFrames;
@@ -1197,6 +1234,9 @@ void func_8009AB98(GlobalContext* globalCtx) {
 // Scene Draw Config 39
 void func_8009ACA8(GlobalContext* globalCtx) {
     u32 gameplayFrames;
+
+    //Project-A | if time's freezed, don't move water texture
+    if(freezeWater(globalCtx)) return;
 
     OPEN_DISPS(globalCtx->state.gfxCtx, "../z_scene_table.c", 5346);
 
@@ -1218,6 +1258,9 @@ void func_8009ACA8(GlobalContext* globalCtx) {
 // Scene Draw Config 24
 void func_8009AE30(GlobalContext* globalCtx) {
     u32 gameplayFrames;
+
+    //Project-A | if time's freezed, don't move water texture
+    if(freezeWater(globalCtx)) return;
 
     OPEN_DISPS(globalCtx->state.gfxCtx, "../z_scene_table.c", 5384);
 
@@ -1248,6 +1291,9 @@ u32 D_8012A328[] = { 0x0200BD20, 0x0200B920 };
 void func_8009AFE0(GlobalContext* globalCtx) {
     u32 gameplayFrames;
 
+    //Project-A | if time's freezed, don't move water texture
+    if(freezeWater(globalCtx)) return;
+
     OPEN_DISPS(globalCtx->state.gfxCtx, "../z_scene_table.c", 5490);
 
     gameplayFrames = globalCtx->gameplayFrames;
@@ -1267,6 +1313,9 @@ void func_8009B0FC(GlobalContext* globalCtx) {
     u32 gameplayFrames;
     s32 spB0;
     s32 spAC;
+
+    //Project-A | if time's freezed, don't move water texture
+    if(freezeWater(globalCtx)) return;
 
     OPEN_DISPS(globalCtx->state.gfxCtx, "../z_scene_table.c", 5535);
 
@@ -1338,6 +1387,9 @@ void func_8009B0FC(GlobalContext* globalCtx) {
 void func_8009B86C(GlobalContext* globalCtx) {
     u32 gameplayFrames;
 
+    //Project-A | if time's freezed, don't move water texture
+    if(freezeWater(globalCtx)) return;
+
     OPEN_DISPS(globalCtx->state.gfxCtx, "../z_scene_table.c", 5791);
 
     gameplayFrames = globalCtx->gameplayFrames;
@@ -1357,6 +1409,9 @@ void func_8009B86C(GlobalContext* globalCtx) {
 void func_8009B9BC(GlobalContext* globalCtx) {
     u32 gameplayFrames;
 
+    //Project-A | if time's freezed, don't move water texture
+    if(freezeWater(globalCtx)) return;
+
     OPEN_DISPS(globalCtx->state.gfxCtx, "../z_scene_table.c", 5822);
 
     gameplayFrames = globalCtx->gameplayFrames;
@@ -1371,6 +1426,9 @@ void func_8009B9BC(GlobalContext* globalCtx) {
 // Scene Draw Config 35
 void func_8009BAA4(GlobalContext* globalCtx) {
     u32 gameplayFrames;
+
+    //Project-A | if time's freezed, don't move water texture
+    if(freezeWater(globalCtx)) return;
 
     OPEN_DISPS(globalCtx->state.gfxCtx, "../z_scene_table.c", 5850);
 
@@ -1397,6 +1455,9 @@ void func_8009BAA4(GlobalContext* globalCtx) {
 void func_8009BC44(GlobalContext* globalCtx) {
     u32 gameplayFrames;
     s8 sp83;
+
+    //Project-A | if time's freezed, don't move water texture
+    if(freezeWater(globalCtx)) return;
 
     if (1) {} // Necessary to match
 
@@ -1456,6 +1517,9 @@ void func_8009C0AC(GlobalContext* globalCtx) {
     u32 gameplayFrames;
     s8 sp7B;
 
+    //Project-A | if time's freezed, don't move water texture
+    if(freezeWater(globalCtx)) return;
+
     if (1) {} // Necessary to match
 
     sp7B = coss((globalCtx->gameplayFrames * 1500) & 0xFFFF) >> 8;
@@ -1499,6 +1563,9 @@ u32 D_8012A338[] = { 0x0200FAC0, 0x0200F8C0 };
 void func_8009C3EC(GlobalContext* globalCtx) {
     u32 gameplayFrames;
 
+    //Project-A | if time's freezed, don't move water texture
+    if(freezeWater(globalCtx)) return;
+
     if (0) {} // Necessary to match
 
     OPEN_DISPS(globalCtx->state.gfxCtx, "../z_scene_table.c", 6042);
@@ -1527,6 +1594,9 @@ void func_8009C3EC(GlobalContext* globalCtx) {
 void func_8009C608(GlobalContext* globalCtx) {
     u32 gameplayFrames;
 
+    //Project-A | if time's freezed, don't move water texture
+    if(freezeWater(globalCtx)) return;
+
     OPEN_DISPS(globalCtx->state.gfxCtx, "../z_scene_table.c", 6151);
 
     gameplayFrames = globalCtx->gameplayFrames;
@@ -1554,6 +1624,9 @@ void func_8009C608(GlobalContext* globalCtx) {
 void func_8009C8B8(GlobalContext* globalCtx) {
     u32 gameplayFrames;
 
+    //Project-A | if time's freezed, don't move water texture
+    if(freezeWater(globalCtx)) return;
+
     OPEN_DISPS(globalCtx->state.gfxCtx, "../z_scene_table.c", 6201);
 
     gameplayFrames = globalCtx->gameplayFrames;
@@ -1578,6 +1651,9 @@ void func_8009C8B8(GlobalContext* globalCtx) {
 void func_8009CAC0(GlobalContext* globalCtx) {
     u32 gameplayFrames;
 
+    //Project-A | if time's freezed, don't move water texture
+    if(freezeWater(globalCtx)) return;
+
     OPEN_DISPS(globalCtx->state.gfxCtx, "../z_scene_table.c", 6249);
 
     gameplayFrames = globalCtx->gameplayFrames;
@@ -1599,6 +1675,9 @@ u32 D_8012A340[] = { 0x0200F8C0, 0x020100C0 };
 // Scene Draw Config 27
 void func_8009CC00(GlobalContext* globalCtx) {
     u32 gameplayFrames;
+
+    //Project-A | if time's freezed, don't move water texture
+    if(freezeWater(globalCtx)) return;
 
     if (0) {} // Necessary to match
 
@@ -1647,6 +1726,9 @@ Gfx* Gfx_TwoTexScrollPrimColor(GraphicsContext* gfxCtx, s32 tile1, u32 x1, u32 y
 void func_8009CF84(GlobalContext* globalCtx) {
     u32 gameplayFrames;
 
+    //Project-A | if time's freezed, don't move water texture
+    if(freezeWater(globalCtx)) return;
+
     OPEN_DISPS(globalCtx->state.gfxCtx, "../z_scene_table.c", 6433);
 
     gameplayFrames = globalCtx->gameplayFrames;
@@ -1668,6 +1750,9 @@ void func_8009CF84(GlobalContext* globalCtx) {
 // Scene Draw Config 41
 void func_8009D0E8(GlobalContext* globalCtx) {
     u32 gameplayFrames;
+
+    //Project-A | if time's freezed, don't move water texture
+    if(freezeWater(globalCtx)) return;
 
     OPEN_DISPS(globalCtx->state.gfxCtx, "../z_scene_table.c", 6463);
 
@@ -1740,6 +1825,9 @@ void func_8009D438(GlobalContext* globalCtx) {
 void func_8009D5B4(GlobalContext* globalCtx) {
     u32 gameplayFrames;
 
+    //Project-A | if time's freezed, don't move water texture
+    if(freezeWater(globalCtx)) return;
+
     OPEN_DISPS(globalCtx->state.gfxCtx, "../z_scene_table.c", 6595);
 
     gameplayFrames = globalCtx->gameplayFrames;
@@ -1762,6 +1850,9 @@ u32 D_8012A360[] = { 0x02014D90, 0x02014590 };
 // Scene Draw Config 22
 void func_8009D758(GlobalContext* globalCtx) {
     u32 gameplayFrames;
+
+    //Project-A | if time's freezed, don't move water texture
+    if(freezeWater(globalCtx)) return;
 
     if (0) {} // Necessary to match
 
@@ -1804,6 +1895,9 @@ void func_8009D974(GlobalContext* globalCtx) {
 void func_8009DA30(GlobalContext* globalCtx) {
     u32 gameplayFrames;
     Gfx* displayListHead;
+
+    //Project-A | if time's freezed, don't move water texture
+    if(freezeWater(globalCtx)) return;
 
     displayListHead = Graph_Alloc(globalCtx->state.gfxCtx, 3 * sizeof(Gfx));
 
@@ -1869,6 +1963,9 @@ void func_8009DD5C(GlobalContext* globalCtx) {
 void func_8009DE78(GlobalContext* globalCtx) {
     u32 gameplayFrames;
 
+    //Project-A | if time's freezed, don't move water texture
+    if(freezeWater(globalCtx)) return;
+
     OPEN_DISPS(globalCtx->state.gfxCtx, "../z_scene_table.c", 6917);
 
     gameplayFrames = globalCtx->gameplayFrames;
@@ -1897,6 +1994,9 @@ void func_8009E0B8(GlobalContext* globalCtx) {
     u8 spA3;
     u16 spA0;
     Gfx* displayListHead;
+
+    //Project-A | if time's freezed, don't move water texture
+    if(freezeWater(globalCtx)) return;
 
     spA3 = 128;
     spA0 = 500;
@@ -1951,6 +2051,9 @@ void func_8009E0B8(GlobalContext* globalCtx) {
 void func_8009E54C(GlobalContext* globalCtx) {
     u32 gameplayFrames;
 
+    //Project-A | if time's freezed, don't move water texture
+    if(freezeWater(globalCtx)) return;
+
     OPEN_DISPS(globalCtx->state.gfxCtx, "../z_scene_table.c", 7058);
 
     if ((gSaveContext.sceneSetupIndex > 3) || (LINK_IS_ADULT && !(gSaveContext.eventChkInf[6] & 0x200))) {
@@ -1978,6 +2081,9 @@ void func_8009E730(GlobalContext* globalCtx) {
     u32 gameplayFrames;
     u32 var;
 
+    //Project-A | if time's freezed, don't move water texture
+    if(freezeWater(globalCtx)) return;
+
     OPEN_DISPS(globalCtx->state.gfxCtx, "../z_scene_table.c", 7123);
 
     gameplayFrames = globalCtx->gameplayFrames;
@@ -2000,6 +2106,9 @@ void func_8009E730(GlobalContext* globalCtx) {
 // Scene Draw Config 7
 void func_8009E8C0(GlobalContext* globalCtx) {
     u32 gameplayFrames;
+
+    //Project-A | if time's freezed, don't move water texture
+    if(freezeWater(globalCtx)) return;
 
     OPEN_DISPS(globalCtx->state.gfxCtx, "../z_scene_table.c", 7161);
 
@@ -2025,6 +2134,9 @@ void func_8009E8C0(GlobalContext* globalCtx) {
 // Scene Draw Config 8
 void func_8009EAD8(GlobalContext* globalCtx) {
     u32 gameplayFrames;
+
+    //Project-A | if time's freezed, don't move water texture
+    if(freezeWater(globalCtx)) return;
 
     OPEN_DISPS(globalCtx->state.gfxCtx, "../z_scene_table.c", 7206);
 
@@ -2061,6 +2173,9 @@ void func_8009EAD8(GlobalContext* globalCtx) {
 void func_8009EE44(GlobalContext* globalCtx) {
     u32 gameplayFrames;
 
+    //Project-A | if time's freezed, don't move water texture
+    if(freezeWater(globalCtx)) return;
+
     if (0) {} // Necessary to match
 
     OPEN_DISPS(globalCtx->state.gfxCtx, "../z_scene_table.c", 7274);
@@ -2094,6 +2209,9 @@ void func_8009EE44(GlobalContext* globalCtx) {
 void func_8009F074(GlobalContext* globalCtx) {
     u32 gameplayFrames;
 
+    //Project-A | if time's freezed, don't move water texture
+    if(freezeWater(globalCtx)) return;
+
     OPEN_DISPS(globalCtx->state.gfxCtx, "../z_scene_table.c", 7323);
 
     gameplayFrames = globalCtx->gameplayFrames;
@@ -2126,6 +2244,9 @@ void func_8009F1B4(GlobalContext* globalCtx) {
 void func_8009F270(GlobalContext* globalCtx) {
     u32 gameplayFrames;
 
+    //Project-A | if time's freezed, don't move water texture
+    if(freezeWater(globalCtx)) return;
+
     OPEN_DISPS(globalCtx->state.gfxCtx, "../z_scene_table.c", 7385);
 
     gameplayFrames = globalCtx->gameplayFrames;
@@ -2149,6 +2270,9 @@ void func_8009F270(GlobalContext* globalCtx) {
 void func_8009F40C(GlobalContext* globalCtx) {
     u32 gameplayFrames;
 
+    //Project-A | if time's freezed, don't move water texture
+    if(freezeWater(globalCtx)) return;
+
     OPEN_DISPS(globalCtx->state.gfxCtx, "../z_scene_table.c", 7423);
 
     gameplayFrames = globalCtx->gameplayFrames;
@@ -2170,7 +2294,12 @@ void func_8009F40C(GlobalContext* globalCtx) {
 
 // Scene Draw Config 14
 void func_8009F5D4(GlobalContext* globalCtx) {
-    Gfx* displayListHead = Graph_Alloc(globalCtx->state.gfxCtx, 3 * sizeof(Gfx));
+    Gfx* displayListHead;
+
+    //Project-A | if time's freezed, don't move water texture
+    if(freezeWater(globalCtx)) return;
+
+    displayListHead = Graph_Alloc(globalCtx->state.gfxCtx, 3 * sizeof(Gfx));
 
     OPEN_DISPS(globalCtx->state.gfxCtx, "../z_scene_table.c", 7461);
 
@@ -2209,6 +2338,9 @@ void func_8009F7D4(GlobalContext* globalCtx) {
     s8 sp6E = coss((globalCtx->gameplayFrames * 1500) & 0xFFFF) >> 8;
     u32 gameplayFrames;
 
+    //Project-A | if time's freezed, don't move water texture
+    if(freezeWater(globalCtx)) return;
+
     OPEN_DISPS(globalCtx->state.gfxCtx, "../z_scene_table.c", 7512);
 
     gameplayFrames = globalCtx->gameplayFrames;
@@ -2233,6 +2365,9 @@ u32 D_8012A388[] = { 0x02009808, 0x02008FC8 };
 // Scene Draw Config 16
 void func_8009F9D0(GlobalContext* globalCtx) {
     u32 gameplayFrames;
+
+    //Project-A | if time's freezed, don't move water texture
+    if(freezeWater(globalCtx)) return;
 
     OPEN_DISPS(globalCtx->state.gfxCtx, "../z_scene_table.c", 7555);
 
@@ -2277,6 +2412,9 @@ void func_8009FB74(GlobalContext* globalCtx) {
 void func_8009FC90(GlobalContext* globalCtx) {
     u32 gameplayFrames;
 
+    //Project-A | if time's freezed, don't move water texture
+    if(freezeWater(globalCtx)) return;
+
     OPEN_DISPS(globalCtx->state.gfxCtx, "../z_scene_table.c", 7630);
 
     gameplayFrames = globalCtx->gameplayFrames;
@@ -2304,6 +2442,9 @@ void func_8009FE58(GlobalContext* globalCtx) {
     static s16 D_8012A3A0 = 4272;
     u32 gameplayFrames;
     f32 temp;
+
+    //Project-A | if time's freezed, don't move water texture
+    if(freezeWater(globalCtx)) return;
 
     OPEN_DISPS(globalCtx->state.gfxCtx, "../z_scene_table.c", 7712);
 
@@ -2377,6 +2518,9 @@ void func_8009FE58(GlobalContext* globalCtx) {
 void func_800A0334(GlobalContext* globalCtx) {
     u32 gameplayFrames;
 
+    //Project-A | if time's freezed, don't move water texture
+    if(freezeWater(globalCtx)) return;
+
     OPEN_DISPS(globalCtx->state.gfxCtx, "../z_scene_table.c", 7825);
 
     gameplayFrames = globalCtx->gameplayFrames;
@@ -2412,6 +2556,9 @@ void func_800A057C(GlobalContext* globalCtx) {
 // Scene Draw Config 49
 void func_800A059C(GlobalContext* globalCtx) {
     u32 gameplayFrames;
+
+    //Project-A | if time's freezed, don't move water texture
+    if(freezeWater(globalCtx)) return;
 
     OPEN_DISPS(globalCtx->state.gfxCtx, "../z_scene_table.c", 7893);
 

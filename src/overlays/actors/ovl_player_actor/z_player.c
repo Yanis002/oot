@@ -9108,7 +9108,7 @@ void Player_Init(Actor* thisx, GlobalContext* globalCtx2) {
     s32 sp50;
     s32 sp4C;
 
-    this->isFreezerSpawned = this->nbEnArrow = 0;
+    this->isFreezerSpawned = this->nbEnArrow = this->waterChange = 0;
 
     globalCtx->shootingGalleryStatus = globalCtx->bombchuBowlingStatus = 0;
 
@@ -9938,9 +9938,6 @@ void Player_UpdateCommon(Player* this, GlobalContext* globalCtx, Input* input) {
     // hours = sec / 3600;
     // minutes = (sec / 60) % 60;
     // sec %= 60;
-
-    sprintf(tmp, "Action Parameter: %d", this->itemActionParam);
-    Printf_Print(globalCtx, 0xFEFEFEFE, 0x010100, tmp);
 
     //show Player coords
     // sprintf(posStr, "AP: %d \n X: %.2f \n Y: %.2f \n Z: %.2f", this->itemActionParam, this->actor.world.pos.x, this->actor.world.pos.y, this->actor.world.pos.z);
