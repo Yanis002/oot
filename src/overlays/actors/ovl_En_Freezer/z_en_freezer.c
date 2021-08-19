@@ -6,7 +6,6 @@
 
 /*
     TO DO:
-        fix NL still need magic to use (but don't actually use magic)
         fix can't use items after using NL
         allow NL to be used underwater
         make everything back to normal is link don't move for 15s
@@ -19,6 +18,7 @@
         make time freeze and skybox pausing
         fix bugs and fishes unfreezing the actors
         fix bow and slingshot
+        fix NL still need magic to use (but don't actually use magic)
 */
 
 #include "z_en_freezer.h"
@@ -67,8 +67,9 @@ void EnFreezer_Init(Actor* thisx, GlobalContext* globalCtx) {
 
     player->isFreezerSpawned = !player->isFreezerSpawned;
     player->itemActionParam = PLAYER_AP_NONE;
-    this->counter = this->isEffectSpawned = this->dayTime = this->boolTimeSky = 0;
-    this->skyRot.x = this->skyRot.y = this->skyRot.z = 0;
+    this->counter = this->isEffectSpawned = this->dayTime = this->boolTimeSky = this->duration = 0;
+    this->skyRot.x = this->skyRot.y = this->skyRot.z = 0.f;
+    this->freezeTimer = 35;
 }
 
 void EnFreezer_Destroy(Actor* thisx, GlobalContext* globalCtx) {
@@ -87,8 +88,15 @@ void EnFreezer_Update(Actor* thisx, GlobalContext* globalCtx) {
     }
 
     if(this->counter < 35) this->counter++;
-    else if(player->isFreezerSpawned == 1) EnFreezer_Freeze(globalCtx, this, 35);
+    else if(player->isFreezerSpawned == 1) EnFreezer_Freeze(globalCtx, this, this->freezeTimer);
     else Actor_Kill(&this->actor);
+
+    // if(this->duration < 135) this->duration++;
+    // else {
+    //     this->isEffectSpawned = 0;
+    //     this->counter = 0;
+    //     this->freezeTimer = 0;
+    // }
 }
 
 void EnFreezer_Freeze(GlobalContext* globalCtx, En_Freezer* this, u16 duration){

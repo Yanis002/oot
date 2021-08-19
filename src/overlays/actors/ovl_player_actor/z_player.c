@@ -1100,7 +1100,7 @@ static u8 D_80854384[2] = { 0x1A, 0x1B };
 
 static u16 D_80854388[] = { BTN_B, BTN_CLEFT, BTN_CDOWN, BTN_CRIGHT };
 
-static u8 sMagicSpellCosts[] = { 12, 24, 24, 12, 24, 12 };
+static u8 sMagicSpellCosts[] = { 12, 24, 24, 12, 0, 12 };
 
 static u16 D_80854398[] = { NA_SE_IT_BOW_DRAW, NA_SE_IT_SLING_DRAW, NA_SE_IT_HOOKSHOT_READY };
 
