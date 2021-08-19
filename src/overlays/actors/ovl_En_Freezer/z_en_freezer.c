@@ -30,6 +30,7 @@ void EnFreezer_Init(Actor* thisx, GlobalContext* globalCtx);
 void EnFreezer_Destroy(Actor* thisx, GlobalContext* globalCtx);
 void EnFreezer_Update(Actor* thisx, GlobalContext* globalCtx);
 
+void EnFreezer_SetupFreeze(GlobalContext* globalCtx, En_Freezer* this);
 void EnFreezer_Freeze(GlobalContext* globalCtx, En_Freezer* this, u16 duration);
 
 const ActorInit En_Freezer_InitVars = {
@@ -61,6 +62,8 @@ static u8 actorCatBlacklist[] =
         ACTORCAT_BG
     };
 
+static u16 duration = 0;
+
 void EnFreezer_Init(Actor* thisx, GlobalContext* globalCtx) {
     En_Freezer* this = THIS;
     Player* player = PLAYER;
@@ -69,7 +72,11 @@ void EnFreezer_Init(Actor* thisx, GlobalContext* globalCtx) {
     player->itemActionParam = PLAYER_AP_NONE;
     this->counter = this->isEffectSpawned = this->dayTime = this->boolTimeSky = this->duration = 0;
     this->skyRot.x = this->skyRot.y = this->skyRot.z = 0.f;
-    this->freezeTimer = 35;
+
+    //set freeze duration
+    if(!gSaveContext.magicAcquired) duration = 100;
+    else if(!gSaveContext.doubleMagic) duration = 200;
+    else duration = 300;
 }
 
 void EnFreezer_Destroy(Actor* thisx, GlobalContext* globalCtx) {
@@ -88,15 +95,22 @@ void EnFreezer_Update(Actor* thisx, GlobalContext* globalCtx) {
     }
 
     if(this->counter < 35) this->counter++;
-    else if(player->isFreezerSpawned == 1) EnFreezer_Freeze(globalCtx, this, this->freezeTimer);
-    else Actor_Kill(&this->actor);
+    else if(player->isFreezerSpawned && !this->isDurationReached) EnFreezer_SetupFreeze(globalCtx, this);
+    else if(!player->isFreezerSpawned) Actor_Kill(&this->actor);
 
-    // if(this->duration < 135) this->duration++;
-    // else {
-    //     this->isEffectSpawned = 0;
-    //     this->counter = 0;
-    //     this->freezeTimer = 0;
-    // }
+    if(D_801614B0.a){
+        if(this->duration < duration) this->duration++;
+        else if(!this->isDurationReached){
+            this->isDurationReached = 1;
+            player->isFreezerSpawned = this->isEffectSpawned = this->counter = 0;
+            EnFreezer_SetupFreeze(globalCtx, this);
+        }
+    }
+}
+
+void EnFreezer_SetupFreeze(GlobalContext* globalCtx, En_Freezer* this){
+    if(!this->isDurationReached) EnFreezer_Freeze(globalCtx, this, 36);
+    else EnFreezer_Freeze(globalCtx, this, 35);
 }
 
 void EnFreezer_Freeze(GlobalContext* globalCtx, En_Freezer* this, u16 duration){
