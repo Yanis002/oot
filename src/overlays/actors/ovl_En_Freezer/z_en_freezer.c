@@ -6,9 +6,8 @@
 
 /*
     TO DO:
-        fix can't use items after using NL
         allow NL to be used underwater
-        make everything back to normal is link don't move for 15s
+        make water not moving during freeze
     
     WIP:
 
@@ -19,6 +18,7 @@
         fix bugs and fishes unfreezing the actors
         fix bow and slingshot
         fix NL still need magic to use (but don't actually use magic)
+        fix can't use items after using NL
 */
 
 #include "z_en_freezer.h"
@@ -35,7 +35,7 @@ void EnFreezer_Freeze(GlobalContext* globalCtx, En_Freezer* this, u16 duration);
 
 const ActorInit En_Freezer_InitVars = {
     ACTOR_EN_FREEZER,
-    ACTORCAT_MISC,
+    ACTORCAT_ITEMACTION,
     0x00000030, // always run update and draw
     OBJECT_GAMEPLAY_KEEP,
     sizeof(En_Freezer),
@@ -69,7 +69,7 @@ void EnFreezer_Init(Actor* thisx, GlobalContext* globalCtx) {
     Player* player = PLAYER;
 
     player->isFreezerSpawned = !player->isFreezerSpawned;
-    player->itemActionParam = PLAYER_AP_NONE;
+   // player->itemActionParam = PLAYER_AP_NONE;
     this->counter = this->isEffectSpawned = this->dayTime = this->boolTimeSky = this->duration = 0;
     this->skyRot.x = this->skyRot.y = this->skyRot.z = 0.f;
 
@@ -157,9 +157,7 @@ void EnFreezer_Freeze(GlobalContext* globalCtx, En_Freezer* this, u16 duration){
                 default:
                     wlActor->freezeTimer = duration;
                     break;
-            }
-            
-            wlActor = wlActor->next;
+            } wlActor = wlActor->next;
         }
     }
 
@@ -203,6 +201,7 @@ void EnFreezer_Freeze(GlobalContext* globalCtx, En_Freezer* this, u16 duration){
                 case ACTOR_MIR_RAY:
                 case ACTOR_EN_NIW:
                 case ACTOR_EN_RIVER_SOUND:
+                case ACTOR_OBJ_SYOKUDAI:
                     blActor->freezeTimer = duration;
                     break;
             } blActor = blActor->next;

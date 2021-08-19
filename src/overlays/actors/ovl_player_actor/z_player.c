@@ -4732,7 +4732,7 @@ s32 func_8083B040(Player* this, GlobalContext* globalCtx) {
                     if((sp2C == 4)){
                         Actor_Spawn(&globalCtx->actorCtx, globalCtx, ACTOR_EN_FREEZER, this->actor.world.pos.x,
                                     this->actor.world.pos.y, this->actor.world.pos.z, 0, 0, 0, 2);
-                        this->unk_6AD = 0;
+                        func_8008EC70(this);
                         return 1;
                     }
 
@@ -9929,7 +9929,7 @@ void Player_UpdateCommon(Player* this, GlobalContext* globalCtx, Input* input) {
     s32 pad;
     // u16 sec, minutes, hours;
     // char* timer = "00:00:00";
-    char tmp[20];
+    char tmp[30];
     char posStr[140];
     char actorNbStr[20];
     
@@ -9938,6 +9938,9 @@ void Player_UpdateCommon(Player* this, GlobalContext* globalCtx, Input* input) {
     // hours = sec / 3600;
     // minutes = (sec / 60) % 60;
     // sec %= 60;
+
+    sprintf(tmp, "Action Parameter: %d", this->itemActionParam);
+    Printf_Print(globalCtx, 0xFEFEFEFE, 0x010100, tmp);
 
     //show Player coords
     // sprintf(posStr, "AP: %d \n X: %.2f \n Y: %.2f \n Z: %.2f", this->itemActionParam, this->actor.world.pos.x, this->actor.world.pos.y, this->actor.world.pos.z);
