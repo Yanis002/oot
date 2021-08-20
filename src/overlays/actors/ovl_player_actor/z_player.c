@@ -4,6 +4,8 @@
  * Description: Link
  */
 
+// WIP documentation doc: https://docs.google.com/spreadsheets/d/1W7QQFoaVz4cEWm-jfQUfN05QriI1YBLKZXL4qLXwOFk/edit#gid=306041905
+
 #include "ultra64.h"
 #include "global.h"
 
@@ -2734,7 +2736,11 @@ void func_80835F44(GlobalContext* globalCtx, Player* this, s32 item) {
 
         if ((actionParam == PLAYER_AP_NONE) || !(this->stateFlags1 & 0x8000000) ||
             ((this->actor.bgCheckFlags & 1) &&
-             ((actionParam == PLAYER_AP_HOOKSHOT) || (actionParam == PLAYER_AP_LONGSHOT)))) {
+
+            //add a condition for underwater items
+             ((actionParam == PLAYER_AP_HOOKSHOT) || 
+              (actionParam == PLAYER_AP_LONGSHOT) || 
+              (actionParam == PLAYER_AP_NAYRUS_LOVE)))) {
 
             if ((globalCtx->bombchuBowlingStatus == 0) &&
                 (((actionParam == PLAYER_AP_STICK) && (AMMO(ITEM_STICK) == 0)) ||

@@ -2,23 +2,14 @@
 * File: z_en_freezer.c
 * Overlay: ovl_En_Freezer
 * Description: Time stop (literally)
-*/
-
-/*
-    TO DO:
-        allow NL to be used underwater
-    
-    WIP:
-
-    DONE:
-        make hookshot, ocarina, DF, FW, magic arrows not being affected by the freeze
-        fix bombs not drawing
-        make time freeze and skybox pausing
-        fix bugs and fishes unfreezing the actors
-        fix bow and slingshot
-        fix NL still need magic to use (but don't actually use magic)
-        fix can't use items after using NL
-        make scrolling textures stop while frozen
+*
+* Features:
+*        * Look at EnFreezer_Freeze() to see which actors are affected or not
+*        - Freezes time: scrolling textures, Sun, Moon and the Sky
+*        - Last for 5s if no magic bar, 10 if simple magic, 15 if double magic
+*        - Can be used underwater
+*        - Hookshot, Ocarina (+ song effects), Din's Fire, Farore's Wind and Magic Arrows' effects are not affected
+*        - This is a work in progress, more features can be added
 */
 
 #include "z_en_freezer.h"

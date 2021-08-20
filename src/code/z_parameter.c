@@ -710,7 +710,9 @@ void func_80083108(GlobalContext* globalCtx) {
 
                 for (i = 1; i < 4; i++) {
                     if (func_8008F2F8(globalCtx) == 2) {
-                        if ((gSaveContext.equips.buttonItems[i] != ITEM_HOOKSHOT) &&
+                        //add a condition for underwater items
+                        if ((gSaveContext.equips.buttonItems[i] != ITEM_NAYRUS_LOVE) &&
+                            (gSaveContext.equips.buttonItems[i] != ITEM_HOOKSHOT) &&
                             (gSaveContext.equips.buttonItems[i] != ITEM_LONGSHOT)) {
                             if (gSaveContext.buttonStatus[i] == BTN_ENABLED) {
                                 sp28 = 1;
