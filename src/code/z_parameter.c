@@ -713,6 +713,12 @@ void func_80083108(GlobalContext* globalCtx) {
                         //add a condition for underwater items
                         if ((gSaveContext.equips.buttonItems[i] != ITEM_NAYRUS_LOVE) &&
                             (gSaveContext.equips.buttonItems[i] != ITEM_HOOKSHOT) &&
+                            (gSaveContext.equips.buttonItems[i] != ITEM_BOW) &&
+                            (gSaveContext.equips.buttonItems[i] != ITEM_BOW_ARROW_ICE) &&
+                            (gSaveContext.equips.buttonItems[i] != ITEM_BOW_ARROW_LIGHT) &&
+                            (gSaveContext.equips.buttonItems[i] != ITEM_FARORES_WIND) &&
+                            (gSaveContext.equips.buttonItems[i] != ITEM_HAMMER) &&
+                            (gSaveContext.equips.buttonItems[i] != ITEM_BOMBCHU) &&
                             (gSaveContext.equips.buttonItems[i] != ITEM_LONGSHOT)) {
                             if (gSaveContext.buttonStatus[i] == BTN_ENABLED) {
                                 sp28 = 1;

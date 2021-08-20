@@ -2738,8 +2738,14 @@ void func_80835F44(GlobalContext* globalCtx, Player* this, s32 item) {
             ((this->actor.bgCheckFlags & 1) &&
 
             //add a condition for underwater items
-             ((actionParam == PLAYER_AP_HOOKSHOT) || 
-              (actionParam == PLAYER_AP_LONGSHOT) || 
+             ((actionParam == PLAYER_AP_HOOKSHOT) ||
+              (actionParam == PLAYER_AP_LONGSHOT) ||
+              (actionParam == PLAYER_AP_BOW) ||
+              (actionParam == PLAYER_AP_BOW_ICE) ||
+              (actionParam == PLAYER_AP_BOW_LIGHT) ||
+              (actionParam == PLAYER_AP_FARORES_WIND) ||
+              (actionParam == PLAYER_AP_HAMMER) ||
+              (actionParam == PLAYER_AP_BOMBCHU) ||
               (actionParam == PLAYER_AP_NAYRUS_LOVE)))) {
 
             if ((globalCtx->bombchuBowlingStatus == 0) &&
