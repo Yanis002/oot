@@ -3966,8 +3966,6 @@ s32 func_80839034(GlobalContext* globalCtx, Player* this, CollisionPoly* poly, s
     f32 linearVel;
     s32 yaw;
 
-    if (1) {}
-
     if (this->actor.category == ACTORCAT_PLAYER) {
         sp3C = 0;
 
@@ -4683,8 +4681,6 @@ void func_8083AE40(Player* this, s16 objectId) {
 
         LOG_HEX("size", size, "../z_player.c", 9090);
         ASSERT(size <= 1024 * 8, "size <= 1024 * 8", "../z_player.c", 9091);
-
-        if (gObjectTable[objectId].vromEnd) {}
 
         DmaMgr_SendRequest2(&this->giObjectDmaRequest, (u32)this->giObjectSegment, gObjectTable[objectId].vromStart,
                             size, 0, &this->giObjectLoadQueue, NULL, "../z_player.c", 9099);
@@ -9886,7 +9882,6 @@ void func_80848C74(GlobalContext* globalCtx, Player* this) {
             EffectSsFireTail_SpawnFlameOnPlayer(globalCtx, flameScale, i, flameIntensity);
         }
 
-        if (1) {}
     }
 
     if (spawnedFlame) {
@@ -10549,11 +10544,9 @@ void func_8084A0E8(GlobalContext* globalCtx, Player* this, s32 lod, Gfx* cullDLi
     CLOSE_DISPS(globalCtx->state.gfxCtx, "../z_player.c", 19328);
 }
 
-void Player_Draw(Actor* thisx, GlobalContext* globalCtx) {
-    s32 pad;
+void Player_Draw(Actor* thisx, GlobalContext* globalCtx2) {
+    GlobalContext* globalCtx = globalCtx2;
     Player* this = THIS;
-
-    if (1) {}
 
     OPEN_DISPS(globalCtx->state.gfxCtx, "../z_player.c", 19346);
 
