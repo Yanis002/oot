@@ -4738,8 +4738,9 @@ s32 func_8083B040(Player* this, GlobalContext* globalCtx) {
 
                 if (sp2C >= 0) {
                     if((sp2C == 4)){
-                        Actor_Spawn(&globalCtx->actorCtx, globalCtx, ACTOR_EN_FREEZER, this->actor.world.pos.x,
-                                    this->actor.world.pos.y, this->actor.world.pos.z, 0, 0, 0, 2);
+                        this->freezerChild = 
+                        Actor_SpawnAsChild(&globalCtx->actorCtx, &this->actor, globalCtx, ACTOR_EN_FREEZER, this->actor.world.pos.x,
+                                           this->actor.world.pos.y, this->actor.world.pos.z, 0, 0, 0, 2);
                         func_8008EC70(this);
                         return 1;
                     }
@@ -9117,6 +9118,7 @@ void Player_Init(Actor* thisx, GlobalContext* globalCtx2) {
     s32 sp4C;
 
     this->isFreezerSpawned = this->nbEnArrow = this->scrollChange = 0;
+    this->freezerChild = NULL;
 
     globalCtx->shootingGalleryStatus = globalCtx->bombchuBowlingStatus = 0;
 
@@ -9929,7 +9931,7 @@ static f32 D_8085482C[] = { 0.5f, 1.0f, 3.0f };
 
 //test quick text
 extern u8 D_8014B300;
-u8 counter = 0, counter2 = 0;
+u8 counter = 0, timeSwitch = 0;
 
 void Player_UpdateCommon(Player* this, GlobalContext* globalCtx, Input* input) {
     s32 pad;
@@ -9946,8 +9948,9 @@ void Player_UpdateCommon(Player* this, GlobalContext* globalCtx, Input* input) {
     // sec %= 60;
 
     //show Player coords
-    // sprintf(posStr, "AP: %d \n X: %.2f \n Y: %.2f \n Z: %.2f", this->itemActionParam, this->actor.world.pos.x, this->actor.world.pos.y, this->actor.world.pos.z);
-    // Printf_Print(globalCtx, 0xFEFEFEFE, 0x011700, posStr);
+    // sprintf(posStr, "X: %.2f \n Y: %.2f \n Z: %.2f", this->actor.world.pos.x, this->actor.world.pos.y, this->actor.world.pos.z);
+    sprintf(posStr, "freezer? %d", this->isFreezerSpawned);
+    Printf_Print(globalCtx, 0xFEFEFEFE, 0x011700, posStr);
 
     // //show actor count
     // sprintf(actorNbStr, "Loaded Actors: %d", globalCtx->actorCtx.total);
@@ -9998,6 +10001,34 @@ void Player_UpdateCommon(Player* this, GlobalContext* globalCtx, Input* input) {
 
     if (this->currentShield == PLAYER_SHIELD_HYLIAN) { //sp64 && (this->shieldQuad.info.acHitInfo->toucher.effect == 1)
         func_8083819C(this, globalCtx);
+    }
+
+    //Adult/Child switch
+    if((CHECK_BTN_ALL(sControlInput->cur.button, BTN_Z + BTN_R + BTN_DRIGHT))){
+        if(!timeSwitch){
+            Actor_Spawn(&globalCtx->actorCtx, globalCtx, ACTOR_OCEFF_SPOT,
+                    this->actor.world.pos.x,
+                    this->actor.world.pos.y,
+                    this->actor.world.pos.z, 0, 0, 0, 1);
+            timeSwitch = 1;
+            this->stateFlags1 = 0x2000;
+            
+        } 
+    }
+
+    if(timeSwitch){
+        if(counter < 90) counter++;
+        else{
+            globalCtx->nextEntranceIndex = gSaveContext.entranceIndex;
+            globalCtx->linkAgeOnLoad = !gSaveContext.linkAge;
+            globalCtx->sceneLoadFlag = 0x14;
+        }
+    }
+
+    //reload area
+    if((CHECK_BTN_ALL(sControlInput->cur.button, BTN_A + BTN_L))){
+        globalCtx->nextEntranceIndex = gSaveContext.entranceIndex;
+        globalCtx->sceneLoadFlag = 0x14;
     }
 
     if (this->unk_A86 < 0) {
@@ -12023,6 +12054,7 @@ void func_8084E368(Player* this, GlobalContext* globalCtx) {
 
 static s16 D_808549D4[] = { 0x0600, 0x04F6, 0x0604, 0x01F1, 0x0568, 0x05F4 };
 
+//Player_Action_PlayOcarina
 void func_8084E3C4(Player* this, GlobalContext* globalCtx) {
     if (LinkAnimation_Update(globalCtx, &this->skelAnime)) {
         func_808322A4(globalCtx, this, &gPlayerAnim_0030A8);
@@ -12039,7 +12071,7 @@ void func_8084E3C4(Player* this, GlobalContext* globalCtx) {
         return;
     }
 
-    if (globalCtx->msgCtx.unk_E3EE == 4) {
+    if (globalCtx->msgCtx.unk_E3EE == 4) { //non-warp songs
         func_8005B1A4(Gameplay_GetCamera(globalCtx, 0));
 
         if ((this->targetActor != NULL) && (this->targetActor == this->unk_6A8)) {
@@ -12054,7 +12086,7 @@ void func_8084E3C4(Player* this, GlobalContext* globalCtx) {
 
         this->stateFlags2 &= ~0x3800000;
         this->unk_6A8 = NULL;
-    } else if (globalCtx->msgCtx.unk_E3EE == 2) {
+    } else if (globalCtx->msgCtx.unk_E3EE == 2) { //warp songs
         gSaveContext.respawn[RESPAWN_MODE_RETURN].entranceIndex = D_808549D4[globalCtx->msgCtx.unk_E3EC];
         gSaveContext.respawn[RESPAWN_MODE_RETURN].playerParams = 0x5FF;
         gSaveContext.respawn[RESPAWN_MODE_RETURN].data = globalCtx->msgCtx.unk_E3EC;
@@ -12577,7 +12609,7 @@ void func_8084F88C(Player* this, GlobalContext* globalCtx) {
         if (this->unk_84F != 0) {
             if (globalCtx->sceneNum == 9) {
                 Gameplay_TriggerRespawn(globalCtx);
-                globalCtx->nextEntranceIndex = 0x0088;
+                globalCtx->nextEntranceIndex = 0x0088; //ice cavern void mechanic
             } else if (this->unk_84F < 0) {
                 Gameplay_TriggerRespawn(globalCtx);
             } else {

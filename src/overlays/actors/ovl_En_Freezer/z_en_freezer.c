@@ -12,6 +12,8 @@
 *        - This is a work in progress, more features can be added
 */
 
+// idea: nut flash for transition
+
 #include "z_en_freezer.h"
 #include "../ovl_En_Arrow/z_en_arrow.h"
 
@@ -86,7 +88,10 @@ void EnFreezer_Update(Actor* thisx, GlobalContext* globalCtx) {
 
     if(this->counter < 35) this->counter++;
     else if(player->isFreezerSpawned && !this->isDurationReached) EnFreezer_SetupFreeze(globalCtx, this);
-    else if(!player->isFreezerSpawned) Actor_Kill(&this->actor);
+    else if(!player->isFreezerSpawned){
+        player->freezerChild = NULL;
+        Actor_Kill(&this->actor);
+    }
 
     if(D_801614B0.a){
         if(this->duration < duration) this->duration++;
@@ -116,6 +121,7 @@ void EnFreezer_Freeze(GlobalContext* globalCtx, En_Freezer* this, u16 duration){
             switch(wlActor->id){
                 //add a case to blacklist an actor
                 case ACTOR_EN_FREEZER:
+                case ACTOR_BG_TOKI_SWD:
                 case ACTOR_EN_SI:
                 case ACTOR_BG_SST_FLOOR:
                 case ACTOR_BOSS_VA:
@@ -184,6 +190,7 @@ void EnFreezer_Freeze(GlobalContext* globalCtx, En_Freezer* this, u16 duration){
                 case ACTOR_BG_HIDAN_CURTAIN:
                 case ACTOR_BG_MIZU_MOVEBG: //water temple
                 case ACTOR_BG_MIZU_SHUTTER:
+                case ACTOR_BG_MIZU_WATER:
                 case ACTOR_BG_HAKA_MEGANEBG: //shadow temple
                 case ACTOR_BG_HAKA_TUBO:
                 case ACTOR_BG_HAKA_TRAP:

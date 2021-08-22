@@ -385,6 +385,7 @@ typedef struct Player {
                  u8         isFreezerSpawned;
                  u8         nbEnArrow;
                  u8         scrollChange;
+                 Actor*     freezerChild;
 } Player; // size = 0xA94
 
 #endif
