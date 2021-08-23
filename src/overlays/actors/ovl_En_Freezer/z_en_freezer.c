@@ -12,8 +12,6 @@
 *        - This is a work in progress, more features can be added
 */
 
-// idea: nut flash for transition
-
 #include "z_en_freezer.h"
 #include "../ovl_En_Arrow/z_en_arrow.h"
 
@@ -66,9 +64,7 @@ void EnFreezer_Init(Actor* thisx, GlobalContext* globalCtx) {
     player->isFreezerSpawned = !player->isFreezerSpawned;
     this->counter = this->isEffectSpawned = this->dayTime = 
     this->boolTimeSky = this->duration = this->alpha = this->fadeIn = this->fadeOut = 0;
-
     this->skyRot.x = this->skyRot.y = this->skyRot.z = 0.f;
-
     this->rgb.r = this->rgb.g = this->rgb.b = 255;
 
     //set freeze duration (frames)
@@ -86,8 +82,6 @@ void EnFreezer_Update(Actor* thisx, GlobalContext* globalCtx) {
     GraphicsContext* gfx;
     u8 i;
 
-    char s[140];
-
     if(!this->isEffectSpawned){
         this->isEffectSpawned = 1;
         Actor_Spawn(&globalCtx->actorCtx, globalCtx,
@@ -97,11 +91,11 @@ void EnFreezer_Update(Actor* thisx, GlobalContext* globalCtx) {
     }
 
     if((this->counter >= 28) && !this->fadeIn) EnFreezer_FadeIn(this);
-    else if((this->counter >= 28) && !this->fadeOut) EnFreezer_FadeOut(this);
+    else if(this->fadeIn && !this->fadeOut) EnFreezer_FadeOut(this);
 
     if(this->counter < 35) this->counter++;
     else if(player->isFreezerSpawned && !this->isDurationReached) EnFreezer_SetupFreeze(globalCtx, this);
-    else if(!player->isFreezerSpawned){
+    else if(!player->isFreezerSpawned && this->fadeOut){
         player->freezerChild = NULL;
         Actor_Kill(&this->actor);
     }
@@ -110,37 +104,11 @@ void EnFreezer_Update(Actor* thisx, GlobalContext* globalCtx) {
         if(this->duration < duration) this->duration++;
         else if(!this->isDurationReached){
             this->isDurationReached = 1;
-            player->isFreezerSpawned = this->isEffectSpawned = this->counter = 0;
+            player->isFreezerSpawned = this->isEffectSpawned = this->counter = this->fadeIn = this->fadeOut = 0;
             EnFreezer_SetupFreeze(globalCtx, this);
-        } else if(this->isDurationReached && this->fadeIn && this->fadeOut) this->fadeIn = 0;
-    }
-
+        } 
+    } 
     func_8007672C(globalCtx->state.gfxCtx, this->rgb.r, this->rgb.g, this->rgb.b, this->alpha, 3);
-
-    sprintf(s, "in: %d \n out: %d", this->fadeIn, this->fadeOut);
-    Printf_Print(globalCtx, 0xFEFEFEFE, 0x010100, s);
-}
-
-void EnFreezer_FadeIn(En_Freezer* this){
-    u8 i;
-    if(this->alpha < 255) for(i = 0; i < 16; i++){
-        this->alpha++;
-        if(this->alpha == 255){
-            this->fadeIn = 1;
-            this->fadeOut = 0;
-        }
-    }
-    else return;
-}
-
-void EnFreezer_FadeOut(En_Freezer* this){
-    u8 i;
-    if(this->alpha > 0){
-        for(i = 0; i < 8; i++){
-            this->alpha--;
-            if(this->alpha == 0) this->fadeOut = 0;
-        }
-    }
 }
 
 void EnFreezer_SetupFreeze(GlobalContext* globalCtx, En_Freezer* this){
@@ -160,26 +128,16 @@ void EnFreezer_Freeze(GlobalContext* globalCtx, En_Freezer* this, u16 duration){
         while (wlActor != NULL) {
             switch(wlActor->id){
                 //add a case to blacklist an actor
-                case ACTOR_EN_FREEZER:
-                case ACTOR_BG_TOKI_SWD:
-                case ACTOR_EN_SI:
-                case ACTOR_BG_SST_FLOOR:
-                case ACTOR_BOSS_VA:
-                case ACTOR_ITEM_B_HEART:
-                case ACTOR_EN_ELF:
-                case ACTOR_OCEFF_SPOT:
-                case ACTOR_OCEFF_WIPE:
-                case ACTOR_OCEFF_WIPE2:
-                case ACTOR_OCEFF_WIPE3:
-                case ACTOR_OCEFF_WIPE4:
-                case ACTOR_OCEFF_STORM:
-                case ACTOR_END_TITLE:
-                case ACTOR_EN_OKARINA_EFFECT:
-                case ACTOR_ARROW_FIRE:
-                case ACTOR_ARROW_ICE:
-                case ACTOR_ARROW_LIGHT:
-                case ACTOR_MAGIC_FIRE:
-                case ACTOR_MAGIC_WIND:
+                case ACTOR_EN_FREEZER:         case ACTOR_BG_TOKI_SWD:
+                case ACTOR_EN_SI:              case ACTOR_BG_SST_FLOOR:
+                case ACTOR_BOSS_VA:            case ACTOR_ITEM_B_HEART:
+                case ACTOR_EN_ELF:             case ACTOR_OCEFF_SPOT:
+                case ACTOR_OCEFF_WIPE:         case ACTOR_OCEFF_WIPE2:
+                case ACTOR_OCEFF_WIPE3:        case ACTOR_OCEFF_WIPE4:
+                case ACTOR_OCEFF_STORM:        case ACTOR_END_TITLE:
+                case ACTOR_EN_OKARINA_EFFECT:  case ACTOR_ARROW_FIRE:
+                case ACTOR_ARROW_ICE:          case ACTOR_ARROW_LIGHT:
+                case ACTOR_MAGIC_FIRE:         case ACTOR_MAGIC_WIND:
                 case ACTOR_ARMS_HOOK:
                     wlActor->freezeTimer = 0;
                     break;
@@ -203,42 +161,25 @@ void EnFreezer_Freeze(GlobalContext* globalCtx, En_Freezer* this, u16 duration){
         while (blActor != NULL) {
             switch(blActor->id){
                 //add a case to freeze an actor from the blacklist
-                case ACTOR_BG_SPOT00_HANEBASI: //hyrule field
-                case ACTOR_BG_SPOT01_FUSYA: //kakariko village
-                case ACTOR_BG_SPOT03_TAKI: //zora's river
-                case ACTOR_BG_SPOT07_TAKI: //zora's domain
-                case ACTOR_BG_SPOT16_DOUGHNUT: //dmt
-                case ACTOR_BG_SPOT17_FUNEN: //dmc
-                case ACTOR_BG_SPOT18_BASKET: //goron city
-                case ACTOR_BG_SPOT18_FUTA:
-                case ACTOR_BG_YDAN_HASI: //deku tree, hasi to change
-                case ACTOR_BG_YDAN_MARUTA:
-                case ACTOR_BG_YDAN_SP:
-                case ACTOR_BG_DDAN_JD: //dodongo's cavern
-                case ACTOR_BG_BDAN_OBJECTS: //jabu-jabu's belly (watch out for water square)
-                case ACTOR_BG_MENKURI_KAITEN: //forest temple (???) & gtg rotating platform
-                case ACTOR_BG_MORI_ELEVATOR: //forest temple
-                case ACTOR_BG_MORI_HASHIRA4:
-                case ACTOR_BG_HIDAN_FIREWALL: //fire temple
-                case ACTOR_BG_HIDAN_RSEKIZOU:
-                case ACTOR_BG_HIDAN_SEKIZOU:
-                case ACTOR_BG_HIDAN_SIMA:
-                case ACTOR_BG_HIDAN_SYOKU:
-                case ACTOR_BG_HIDAN_HAMSTEP:
-                case ACTOR_BG_HIDAN_FWBIG:
-                case ACTOR_BG_HIDAN_FSLIFT:
-                case ACTOR_BG_HIDAN_CURTAIN:
-                case ACTOR_BG_MIZU_MOVEBG: //water temple
-                case ACTOR_BG_MIZU_SHUTTER:
-                case ACTOR_BG_MIZU_WATER:
-                case ACTOR_BG_HAKA_MEGANEBG: //shadow temple
-                case ACTOR_BG_HAKA_TUBO:
-                case ACTOR_BG_HAKA_TRAP:
-                case ACTOR_BG_JYA_ZURERUKABE: //spirit temple
-                case ACTOR_BG_JYA_1FLIFT:
-                case ACTOR_OBJ_SYOKUDAI: //torches
-                case ACTOR_MIR_RAY:
-                case ACTOR_EN_NIW:
+
+                case ACTOR_BG_SPOT00_HANEBASI: case ACTOR_BG_SPOT01_FUSYA: 
+                case ACTOR_BG_SPOT03_TAKI:     case ACTOR_BG_SPOT07_TAKI: 
+                case ACTOR_BG_SPOT16_DOUGHNUT: case ACTOR_BG_SPOT17_FUNEN: 
+                case ACTOR_BG_SPOT18_BASKET:   case ACTOR_BG_SPOT18_FUTA:
+                case ACTOR_BG_YDAN_HASI:       case ACTOR_BG_YDAN_MARUTA:
+                case ACTOR_BG_YDAN_SP:         case ACTOR_BG_DDAN_JD: 
+                case ACTOR_BG_BDAN_OBJECTS:    case ACTOR_BG_MENKURI_KAITEN:
+                case ACTOR_BG_MORI_ELEVATOR:   case ACTOR_BG_MORI_HASHIRA4:
+                case ACTOR_BG_HIDAN_FIREWALL:  case ACTOR_BG_HIDAN_RSEKIZOU:
+                case ACTOR_BG_HIDAN_SEKIZOU:   case ACTOR_BG_HIDAN_SIMA:
+                case ACTOR_BG_HIDAN_SYOKU:     case ACTOR_BG_HIDAN_HAMSTEP:
+                case ACTOR_BG_HIDAN_FWBIG:     case ACTOR_BG_HIDAN_FSLIFT:
+                case ACTOR_BG_HIDAN_CURTAIN:   case ACTOR_BG_MIZU_MOVEBG: 
+                case ACTOR_BG_MIZU_SHUTTER:    case ACTOR_BG_MIZU_WATER:
+                case ACTOR_BG_HAKA_MEGANEBG:   case ACTOR_BG_HAKA_TUBO:
+                case ACTOR_BG_HAKA_TRAP:       case ACTOR_BG_JYA_ZURERUKABE: 
+                case ACTOR_BG_JYA_1FLIFT:      case ACTOR_OBJ_SYOKUDAI: 
+                case ACTOR_MIR_RAY:            case ACTOR_EN_NIW:
                 case ACTOR_EN_RIVER_SOUND:
                     blActor->freezeTimer = duration;
                     break;
@@ -255,4 +196,27 @@ void EnFreezer_Freeze(GlobalContext* globalCtx, En_Freezer* this, u16 duration){
 
     gSaveContext.dayTime = this->dayTime;
     globalCtx->skyboxCtx.rot = this->skyRot;
+}
+
+void EnFreezer_FadeIn(En_Freezer* this){
+    u8 i;
+    if(this->alpha == 255) return;
+    for(i = 0; i < 16; i++){
+        if(this->alpha < 255) this->alpha++;
+        else if(this->alpha == 255){
+            this->fadeIn = 1;
+            this->fadeOut = 0;
+        }
+    }
+}
+
+void EnFreezer_FadeOut(En_Freezer* this){
+    u8 i;
+    if(this->alpha == 0) return;
+    for(i = 0; i < 32; i++){
+        if(this->alpha > 0) this->alpha--;
+        else if(this->alpha == 0){
+            this->fadeOut = 1;
+        }
+    }
 }

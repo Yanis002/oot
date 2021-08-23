@@ -9949,8 +9949,8 @@ void Player_UpdateCommon(Player* this, GlobalContext* globalCtx, Input* input) {
 
     //show Player coords
     // sprintf(posStr, "X: %.2f \n Y: %.2f \n Z: %.2f", this->actor.world.pos.x, this->actor.world.pos.y, this->actor.world.pos.z);
-    sprintf(posStr, "freezer? %d", this->isFreezerSpawned);
-    Printf_Print(globalCtx, 0xFEFEFEFE, 0x011700, posStr);
+    // sprintf(posStr, "freezer? %d", this->isFreezerSpawned);
+    // Printf_Print(globalCtx, 0xFEFEFEFE, 0x011700, posStr);
 
     // //show actor count
     // sprintf(actorNbStr, "Loaded Actors: %d", globalCtx->actorCtx.total);
