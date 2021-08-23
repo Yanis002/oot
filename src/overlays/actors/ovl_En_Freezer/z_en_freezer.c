@@ -25,6 +25,8 @@ void EnFreezer_Update(Actor* thisx, GlobalContext* globalCtx);
 
 void EnFreezer_SetupFreeze(GlobalContext* globalCtx, En_Freezer* this);
 void EnFreezer_Freeze(GlobalContext* globalCtx, En_Freezer* this, u16 duration);
+void EnFreezer_FadeIn(En_Freezer* this);
+void EnFreezer_FadeOut(En_Freezer* this);
 
 const ActorInit En_Freezer_InitVars = {
     ACTOR_EN_FREEZER,
@@ -62,10 +64,14 @@ void EnFreezer_Init(Actor* thisx, GlobalContext* globalCtx) {
     Player* player = PLAYER;
 
     player->isFreezerSpawned = !player->isFreezerSpawned;
-    this->counter = this->isEffectSpawned = this->dayTime = this->boolTimeSky = this->duration = 0;
+    this->counter = this->isEffectSpawned = this->dayTime = 
+    this->boolTimeSky = this->duration = this->alpha = this->fadeIn = this->fadeOut = 0;
+
     this->skyRot.x = this->skyRot.y = this->skyRot.z = 0.f;
 
-    //set freeze duration
+    this->rgb.r = this->rgb.g = this->rgb.b = 255;
+
+    //set freeze duration (frames)
     if(!gSaveContext.magicAcquired) duration = 100;
     else if(!gSaveContext.doubleMagic) duration = 200;
     else duration = 300;
@@ -77,6 +83,10 @@ void EnFreezer_Destroy(Actor* thisx, GlobalContext* globalCtx) {
 void EnFreezer_Update(Actor* thisx, GlobalContext* globalCtx) {
     En_Freezer* this = THIS;
     Player* player = PLAYER;
+    GraphicsContext* gfx;
+    u8 i;
+
+    char s[140];
 
     if(!this->isEffectSpawned){
         this->isEffectSpawned = 1;
@@ -85,6 +95,9 @@ void EnFreezer_Update(Actor* thisx, GlobalContext* globalCtx) {
                     player->actor.world.pos.y,
                     player->actor.world.pos.z, 0, 0, 0, 2);
     }
+
+    if((this->counter >= 28) && !this->fadeIn) EnFreezer_FadeIn(this);
+    else if((this->counter >= 28) && !this->fadeOut) EnFreezer_FadeOut(this);
 
     if(this->counter < 35) this->counter++;
     else if(player->isFreezerSpawned && !this->isDurationReached) EnFreezer_SetupFreeze(globalCtx, this);
@@ -99,13 +112,40 @@ void EnFreezer_Update(Actor* thisx, GlobalContext* globalCtx) {
             this->isDurationReached = 1;
             player->isFreezerSpawned = this->isEffectSpawned = this->counter = 0;
             EnFreezer_SetupFreeze(globalCtx, this);
+        } else if(this->isDurationReached && this->fadeIn && this->fadeOut) this->fadeIn = 0;
+    }
+
+    func_8007672C(globalCtx->state.gfxCtx, this->rgb.r, this->rgb.g, this->rgb.b, this->alpha, 3);
+
+    sprintf(s, "in: %d \n out: %d", this->fadeIn, this->fadeOut);
+    Printf_Print(globalCtx, 0xFEFEFEFE, 0x010100, s);
+}
+
+void EnFreezer_FadeIn(En_Freezer* this){
+    u8 i;
+    if(this->alpha < 255) for(i = 0; i < 16; i++){
+        this->alpha++;
+        if(this->alpha == 255){
+            this->fadeIn = 1;
+            this->fadeOut = 0;
+        }
+    }
+    else return;
+}
+
+void EnFreezer_FadeOut(En_Freezer* this){
+    u8 i;
+    if(this->alpha > 0){
+        for(i = 0; i < 8; i++){
+            this->alpha--;
+            if(this->alpha == 0) this->fadeOut = 0;
         }
     }
 }
 
 void EnFreezer_SetupFreeze(GlobalContext* globalCtx, En_Freezer* this){
     if(!this->isDurationReached) EnFreezer_Freeze(globalCtx, this, 36);
-    else EnFreezer_Freeze(globalCtx, this, 35);
+    else EnFreezer_Freeze(globalCtx, this, 35);    
 }
 
 void EnFreezer_Freeze(GlobalContext* globalCtx, En_Freezer* this, u16 duration){
