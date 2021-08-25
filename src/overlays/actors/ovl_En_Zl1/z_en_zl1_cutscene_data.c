@@ -2,7 +2,7 @@
 #include "z64cutscene_commands.h"
 
 // clang-format off
-static CutsceneData D_80B4C5D0[] = {
+CutsceneData D_80B4C5D0[] = {
     CS_BEGIN_CUTSCENE(28, 3000),
     CS_PLAYER_ACTION_LIST(3),
         CS_PLAYER_ACTION(0x0005, 400, 1211, 0x0000, 0xC000, 0x0000, -422, 84, 1, -422, 84, 1, 1.1266861702801002e-29f, 0.0f, 1.401298464324817e-45f),
