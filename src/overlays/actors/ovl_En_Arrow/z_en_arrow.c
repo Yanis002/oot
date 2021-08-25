@@ -474,7 +474,7 @@ void EnArrow_Draw(Actor* thisx, GlobalContext* globalCtx) {
 
         if (this->actor.params == ARROW_SEED) {
             gDPSetPrimColor(POLY_XLU_DISP++, 0, 0, 255, 255, 255, 255);
-            gDPSetEnvColor(POLY_XLU_DISP++, 0, 255, 255, alpha);
+            gDPSetEnvColor(POLY_XLU_DISP++, 255, 0, 0, alpha);
             scale = 50.0f;
         } else {
             gDPSetPrimColor(POLY_XLU_DISP++, 0, 0, 12, 0, 0, 255);

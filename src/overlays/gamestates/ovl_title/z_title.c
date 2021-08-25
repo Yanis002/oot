@@ -34,6 +34,8 @@ void Title_PrintBuildInfo(Gfx** gfxp) {
 // the fade-in/fade-out + the duration of the n64 logo animation
 void Title_Calc(TitleContext* this) {
     //shoutouts to Fig
+    goto test;
+
     if ((this->coverAlpha == 0) && (this->visibleDuration != 0)) {
         this->visibleDuration--;
         this->unk_1D4--;
@@ -47,7 +49,10 @@ void Title_Calc(TitleContext* this) {
             this->addAlpha = 3;
         } else if (this->coverAlpha >= 0xFF) {
             this->coverAlpha = 0xFF;
+            
+            test:
             this->exit = 1;
+            return;
         }
     }
     this->uls &= 0x7F;

@@ -10208,7 +10208,6 @@ endseg
 
 beginseg
 	name "market_day_scene"
-    compress
 	romalign 0x1000
 	include "build/assets/scenes/misc/market_day/market_day_scene.o"
 	number 2
@@ -10216,7 +10215,6 @@ endseg
 
 beginseg
 	name "market_day_room_0"
-    compress
 	romalign 0x1000
 	include "build/assets/scenes/misc/market_day/market_day_room_0.o"
 	number 3

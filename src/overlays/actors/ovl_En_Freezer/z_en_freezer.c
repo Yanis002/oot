@@ -65,7 +65,7 @@ void EnFreezer_Init(Actor* thisx, GlobalContext* globalCtx) {
     this->counter = this->isEffectSpawned = this->dayTime = 
     this->boolTimeSky = this->duration = this->alpha = this->fadeIn = this->fadeOut = 0;
     this->skyRot.x = this->skyRot.y = this->skyRot.z = 0.f;
-    this->rgb.r = this->rgb.g = this->rgb.b = 255;
+    this->rgb.r = this->rgb.g = this->rgb.b = 150;
 
     //set freeze duration (frames)
     if(!gSaveContext.magicAcquired) duration = 100;
@@ -107,7 +107,8 @@ void EnFreezer_Update(Actor* thisx, GlobalContext* globalCtx) {
             player->isFreezerSpawned = this->isEffectSpawned = this->counter = this->fadeIn = this->fadeOut = 0;
             EnFreezer_SetupFreeze(globalCtx, this);
         } 
-    } 
+    }
+    //Kankyo_FillScreen()
     func_8007672C(globalCtx->state.gfxCtx, this->rgb.r, this->rgb.g, this->rgb.b, this->alpha, 3);
 }
 
@@ -201,7 +202,7 @@ void EnFreezer_Freeze(GlobalContext* globalCtx, En_Freezer* this, u16 duration){
 void EnFreezer_FadeIn(En_Freezer* this){
     u8 i;
     if(this->alpha == 255) return;
-    for(i = 0; i < 16; i++){
+    for(i = 0; i < 32; i++){
         if(this->alpha < 255) this->alpha++;
         else if(this->alpha == 255){
             this->fadeIn = 1;
@@ -213,7 +214,7 @@ void EnFreezer_FadeIn(En_Freezer* this){
 void EnFreezer_FadeOut(En_Freezer* this){
     u8 i;
     if(this->alpha == 0) return;
-    for(i = 0; i < 32; i++){
+    for(i = 0; i < 64; i++){
         if(this->alpha > 0) this->alpha--;
         else if(this->alpha == 0){
             this->fadeOut = 1;
