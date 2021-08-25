@@ -90,6 +90,10 @@ void ObjTsubo_SpawnCollectible(ObjTsubo* this, GlobalContext* globalCtx) {
         Item_DropCollectible(globalCtx, &this->actor.world.pos,
                              (dropParams | (((this->actor.params >> 9) & 0x3F) << 8)));
     }
+
+    if((this->actor.home.rot.z & 0xF)){ 
+        Actor_Spawn(&globalCtx->actorCtx, globalCtx, ACTOR_EN_RR, this->actor.world.pos.x, this->actor.world.pos.y, this->actor.world.pos.z, 0, 0, 0, 0xFFFF);
+    }
 }
 
 void ObjTsubo_ApplyGravity(ObjTsubo* this) {

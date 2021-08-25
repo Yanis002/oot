@@ -54,6 +54,8 @@ const ActorInit En_Tubo_Trap_InitVars = {
     (ActorFunc)EnTuboTrap_Draw,
 };
 
+static u8 likelike = 0;
+
 void EnTuboTrap_Init(Actor* thisx, GlobalContext* globalCtx) {
     EnTuboTrap* this = THIS;
 
@@ -219,6 +221,7 @@ void EnTuboTrap_HandleImpact(EnTuboTrap* this, GlobalContext* globalCtx) {
         Actor_Kill(&this->actor);
         return;
     }
+
 }
 
 void EnTuboTrap_WaitForProximity(EnTuboTrap* this, GlobalContext* globalCtx) {
@@ -284,6 +287,13 @@ void EnTuboTrap_Update(Actor* thisx, GlobalContext* globalCtx) {
     Collider_UpdateCylinder(&this->actor, &this->collider);
     CollisionCheck_SetAC(globalCtx, &globalCtx->colChkCtx, &this->collider.base);
     CollisionCheck_SetAT(globalCtx, &globalCtx->colChkCtx, &this->collider.base);
+
+    likelike = this->actor.params & 0xFF;
+
+    if(!this->actor.draw && likelike){ 
+        Actor_Spawn(&globalCtx->actorCtx, globalCtx, ACTOR_EN_RR, this->actor.world.pos.x, this->actor.world.pos.y, this->actor.world.pos.z, 0, 0, 0, 0xFFFF);
+        likelike = 1;
+    }
 }
 
 void EnTuboTrap_Draw(Actor* thisx, GlobalContext* globalCtx) {

@@ -181,7 +181,7 @@ void EnFreezer_Freeze(GlobalContext* globalCtx, En_Freezer* this, u16 duration){
                 case ACTOR_BG_HAKA_TRAP:       case ACTOR_BG_JYA_ZURERUKABE: 
                 case ACTOR_BG_JYA_1FLIFT:      case ACTOR_OBJ_SYOKUDAI: 
                 case ACTOR_MIR_RAY:            case ACTOR_EN_NIW:
-                case ACTOR_EN_RIVER_SOUND:
+                case ACTOR_EN_RIVER_SOUND:     case ACTOR_EN_SIOFUKI:
                     blActor->freezeTimer = duration;
                     break;
             } blActor = blActor->next;
