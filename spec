@@ -1582,11 +1582,7 @@ beginseg
     name "ovl_Boss_Tw"
     compress
     include "build/src/overlays/actors/ovl_Boss_Tw/z_boss_tw.o"
-#ifdef NON_MATCHING
     include "build/src/overlays/actors/ovl_Boss_Tw/ovl_Boss_Tw_reloc.o"
-#else
-    include "build/data/overlays/actors/z_boss_tw.reloc.o"
-#endif
 endseg
 
 beginseg
@@ -2527,8 +2523,11 @@ beginseg
     name "ovl_En_Ganon_Mant"
     compress
     include "build/src/overlays/actors/ovl_En_Ganon_Mant/z_en_ganon_mant.o"
-    include "build/data/overlays/actors/z_en_ganon_mant.data.o"
+#ifdef NON_MATCHING
+    include "build/src/overlays/actors/ovl_En_Ganon_Mant/ovl_En_Ganon_Mant_reloc.o"
+#else
     include "build/data/overlays/actors/z_en_ganon_mant.reloc.o"
+#endif
 endseg
 
 beginseg
