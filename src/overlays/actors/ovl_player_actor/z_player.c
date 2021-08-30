@@ -9982,7 +9982,7 @@ void Player_UpdateCommon(Player* this, GlobalContext* globalCtx, Input* input) {
 
     //file select
     if(CHECK_BTN_ALL(sControlInput->cur.button, BTN_L + BTN_B + BTN_A)){
-        func_800F68BC(0);
+        Audio_SetCutsceneFlag(0);
         Audio_PlaySoundGeneral(NA_SE_SY_PIECE_OF_HEART, &D_801333D4, 4, &D_801333E0, &D_801333E0, &D_801333E8);
         gSaveContext.gameMode = 2;
         globalCtx->sceneLoadFlag = 20;
