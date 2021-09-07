@@ -159,7 +159,7 @@ void EnArrow_Destroy(Actor* thisx, GlobalContext* globalCtx) {
 }
 
 void EnArrow_Shoot(EnArrow* this, GlobalContext* globalCtx) {
-    Player* player = PLAYER;
+    Player* player = GET_PLAYER(globalCtx);
 
     if (this->actor.parent == NULL) {
         //TODO: find out what's the purpose of this
@@ -394,7 +394,7 @@ void func_809B4640(EnArrow* this, GlobalContext* globalCtx) {
 void EnArrow_Update(Actor* thisx, GlobalContext* globalCtx) {
     s32 pad;
     EnArrow* this = THIS;
-    Player* player = PLAYER;
+    Player* player = GET_PLAYER(globalCtx);
 
     if (this->isCsNut || ((this->actor.params >= ARROW_NORMAL_LIT) && (player->unk_A73 != 0)) ||
         !Player_InBlockingCsMode(globalCtx, player)) {

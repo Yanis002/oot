@@ -119,8 +119,7 @@ void func_800645A0(GlobalContext* globalCtx, CutsceneContext* csCtx) {
     }
 
     if ((gSaveContext.cutsceneTrigger != 0) && (csCtx->state == CS_STATE_IDLE)) {
-        // Translates to: "CUTSCENE START REQUEST ANNOUNCEMENT!"
-        osSyncPrintf("\nデモ開始要求 発令！");
+        osSyncPrintf("\nデモ開始要求 発令！"); // "Cutscene start request announcement!"
         gSaveContext.cutsceneIndex = 0xFFFD;
         gSaveContext.cutsceneTrigger = 1;
     }
@@ -161,7 +160,7 @@ void func_800647C0(GlobalContext* globalCtx, CutsceneContext* csCtx) {
 
 // Command 3: Misc. Actions
 void func_80064824(GlobalContext* globalCtx, CutsceneContext* csCtx, CsCmdBase* cmd) {
-    Player* player = PLAYER;
+    Player* player = GET_PLAYER(globalCtx);
     f32 temp;
     u8 sp3F;
 
@@ -267,7 +266,7 @@ void func_80064824(GlobalContext* globalCtx, CutsceneContext* csCtx, CsCmdBase* 
             break;
         case 16:
             if (sp3F != 0) {
-                D_8015FCCA = Quake_Add(ACTIVE_CAM, 6);
+                D_8015FCCA = Quake_Add(GET_ACTIVE_CAM(globalCtx), 6);
                 Quake_SetSpeed(D_8015FCCA, 0x7FFF);
                 Quake_SetQuakeValues(D_8015FCCA, 4, 0, 1000, 0);
                 Quake_SetCountdown(D_8015FCCA, 800);
@@ -440,7 +439,7 @@ void func_80065134(GlobalContext* globalCtx, CutsceneContext* csCtx, CsCmdDayTim
 
 // Command 0x3E8: Code Execution (& Terminates Cutscene?)
 void Cutscene_Command_Terminator(GlobalContext* globalCtx, CutsceneContext* csCtx, CsCmdBase* cmd) {
-    Player* player = PLAYER;
+    Player* player = GET_PLAYER(globalCtx);
     s32 temp = 0;
 
     if ((gSaveContext.gameMode != 0) && (gSaveContext.gameMode != 3) && (globalCtx->sceneNum != SCENE_SPOT00) &&
@@ -460,8 +459,7 @@ void Cutscene_Command_Terminator(GlobalContext* globalCtx, CutsceneContext* csCt
         Audio_SetCutsceneFlag(0);
         gSaveContext.unk_1410 = 1;
 
-        // Translates to: "FUTURE FORK DESIGNATION=No. [%d]"
-        osSyncPrintf("\n分岐先指定！！=[%d]番", cmd->base);
+        osSyncPrintf("\n分岐先指定！！=[%d]番", cmd->base); // "Future fork designation=No. [%d]"
 
         if ((gSaveContext.gameMode != 0) && (csCtx->frames != cmd->startFrame)) {
             gSaveContext.unk_13E7 = 1;
@@ -1297,7 +1295,7 @@ s32 Cutscene_Command_CameraPositions(GlobalContext* globalCtx, CutsceneContext* 
                 Gameplay_ChangeCameraStatus(globalCtx, csCtx->unk_14, CAM_STAT_ACTIVE);
                 Camera_ResetAnim(Gameplay_GetCamera(globalCtx, csCtx->unk_14));
                 Camera_SetCSParams(Gameplay_GetCamera(globalCtx, csCtx->unk_14), csCtx->cameraFocus,
-                                   csCtx->cameraPosition, PLAYER, relativeToLink);
+                                   csCtx->cameraPosition, GET_PLAYER(globalCtx), relativeToLink);
             }
         }
     }
@@ -1334,7 +1332,7 @@ s32 Cutscene_Command_CameraFocus(GlobalContext* globalCtx, CutsceneContext* csCt
                 Gameplay_ChangeCameraStatus(globalCtx, csCtx->unk_14, CAM_STAT_ACTIVE);
                 Camera_ResetAnim(Gameplay_GetCamera(globalCtx, csCtx->unk_14));
                 Camera_SetCSParams(Gameplay_GetCamera(globalCtx, csCtx->unk_14), csCtx->cameraFocus,
-                                   csCtx->cameraPosition, PLAYER, relativeToLink);
+                                   csCtx->cameraPosition, GET_PLAYER(globalCtx), relativeToLink);
             }
         }
     }
@@ -1902,8 +1900,7 @@ void func_80068DC0(GlobalContext* globalCtx, CutsceneContext* csCtx) {
             csCtx->npcActions[i] = NULL;
         }
 
-        // Translates to: "RIGHT HERE, HUH"
-        osSyncPrintf("\n\n\n\n\nやっぱりここかいな");
+        osSyncPrintf("\n\n\n\n\nやっぱりここかいな"); // "Right here, huh"
         gSaveContext.cutsceneIndex = 0;
         gSaveContext.gameMode = 0;
 

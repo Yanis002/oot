@@ -235,7 +235,7 @@ void EnFr_Init(Actor* thisx, GlobalContext* globalCtx) {
     } else {
         if ((this->actor.params >= 6) || (this->actor.params < 0)) {
             osSyncPrintf(VT_COL(RED, WHITE));
-            // Translation: The argument is wrong!!
+            // "The argument is wrong!!"
             osSyncPrintf("%s[%d] : 引数が間違っている！！(%d)\n", "../z_en_fr.c", 370, this->actor.params);
             osSyncPrintf(VT_RST);
             ASSERT(0, "0", "../z_en_fr.c", 372);
@@ -245,7 +245,7 @@ void EnFr_Init(Actor* thisx, GlobalContext* globalCtx) {
         if (this->objBankIndex < 0) {
             Actor_Kill(&this->actor);
             osSyncPrintf(VT_COL(RED, WHITE));
-            // Translation: There is no bank!!
+            // "There is no bank!!"
             osSyncPrintf("%s[%d] : バンクが無いよ！！\n", "../z_en_fr.c", 380);
             osSyncPrintf(VT_RST);
             ASSERT(0, "0", "../z_en_fr.c", 382);
@@ -599,7 +599,7 @@ s32 EnFr_SetupJumpingUp(EnFr* this, s32 frogIndex) {
 }
 
 void EnFr_Idle(EnFr* this, GlobalContext* globalCtx) {
-    Player* player = PLAYER;
+    Player* player = GET_PLAYER(globalCtx);
 
     if (player->stateFlags2 & 0x2000000) {
         if (globalCtx->msgCtx.unk_E3EE == 4) {
@@ -979,7 +979,7 @@ void EnFr_Deactivate(EnFr* this, GlobalContext* globalCtx) {
         frogLoop1 = sEnFrPointers.frogs[frogIndex];
         if (frogLoop1 == NULL) {
             osSyncPrintf(VT_COL(RED, WHITE));
-            // Translation: There are no frogs!?
+            // "There are no frogs!?"
             osSyncPrintf("%s[%d]カエルがいない！？\n", "../z_en_fr.c", 1604);
             osSyncPrintf(VT_RST);
             return;
@@ -992,7 +992,7 @@ void EnFr_Deactivate(EnFr* this, GlobalContext* globalCtx) {
         frogLoop2 = sEnFrPointers.frogs[frogIndex];
         if (frogLoop2 == NULL) {
             osSyncPrintf(VT_COL(RED, WHITE));
-            // Translation: There are no frogs!?
+            // "There are no frogs!?"
             osSyncPrintf("%s[%d]カエルがいない！？\n", "../z_en_fr.c", 1618);
             osSyncPrintf(VT_RST);
             return;
