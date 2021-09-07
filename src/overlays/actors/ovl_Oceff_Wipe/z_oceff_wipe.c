@@ -60,7 +60,7 @@ void OceffWipe_Destroy(Actor* thisx, GlobalContext* globalCtx) {
 
 void OceffWipe_Update(Actor* thisx, GlobalContext* globalCtx) {
     OceffWipe* this = THIS;
-    Player* player = PLAYER;
+    Player* player = GET_PLAYER(globalCtx);
 
     //Project-A
     u8 changedValue;

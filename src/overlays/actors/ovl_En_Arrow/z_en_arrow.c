@@ -85,7 +85,7 @@ void EnArrow_Init(Actor* thisx, GlobalContext* globalCtx) {
     EnArrow* this = THIS;
 
     //Project-A
-    Player* player = PLAYER;
+    Player* player = GET_PLAYER(globalCtx);
     if(player->isFreezerSpawned) player->nbEnArrow++;
 
     Actor_ProcessInitChain(&this->actor, sInitChain);

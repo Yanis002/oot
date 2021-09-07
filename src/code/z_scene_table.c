@@ -958,7 +958,7 @@ void func_80099550(GlobalContext* globalCtx) {
 
 //Project-A | if time's freezed, don't move water texture
 bool freezeWater(GlobalContext* globalCtx){
-    Player* player = PLAYER;
+    Player* player = GET_PLAYER(globalCtx);
     if(player->scrollChange){
         func_80099550(globalCtx);
         return true;

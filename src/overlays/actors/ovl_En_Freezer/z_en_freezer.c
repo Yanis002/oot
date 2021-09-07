@@ -59,7 +59,7 @@ static u16 duration = 0;
 
 void EnFreezer_Init(Actor* thisx, GlobalContext* globalCtx) {
     En_Freezer* this = THIS;
-    Player* player = PLAYER;
+    Player* player = GET_PLAYER(globalCtx);
 
     player->isFreezerSpawned = !player->isFreezerSpawned;
     this->counter = this->isEffectSpawned = this->dayTime = 
@@ -78,7 +78,7 @@ void EnFreezer_Destroy(Actor* thisx, GlobalContext* globalCtx) {
 
 void EnFreezer_Update(Actor* thisx, GlobalContext* globalCtx) {
     En_Freezer* this = THIS;
-    Player* player = PLAYER;
+    Player* player = GET_PLAYER(globalCtx);
     GraphicsContext* gfx;
     u8 i;
 
@@ -119,7 +119,7 @@ void EnFreezer_SetupFreeze(GlobalContext* globalCtx, En_Freezer* this){
 
 void EnFreezer_Freeze(GlobalContext* globalCtx, En_Freezer* this, u16 duration){
     Actor *wlActor, *blActor;
-    Player* player = PLAYER;
+    Player* player = GET_PLAYER(globalCtx);
     u8 i;
 
     //process actors
