@@ -832,7 +832,7 @@ SceneTableEntry gSceneTable[] = {
 	UNTITLED_SCENE(enrui_scene, 0, 0, 0),
 	TITLED_SCENE(market_alley_scene, g_pn_18, 0, 0, 0),
 	TITLED_SCENE(market_alley_n_scene, g_pn_18, 0, 0, 0),
-	TITLED_SCENE(market_day_scene, g_pn_17, 0, 0, 0),
+	TITLED_SCENE(market_day_scene, g_pn_17, 0, 19, 0),
 	TITLED_SCENE(market_night_scene, g_pn_17, 0, 0, 0),
 	TITLED_SCENE(market_ruins_scene, g_pn_17, 0, 0, 0),
 	UNTITLED_SCENE(shrine_scene, 0, 9, 0),

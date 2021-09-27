@@ -13,7 +13,7 @@ u32 D_80009460 = 0;
 u32 gDmaMgrDmaBuffSize = 0x2000;
 u32 sDmaMgrDataExistError = 0;
 
-const char* sDmaMgrFileNames[] = {
+const char* sDmaMgrFileNames[0x5fe] = {
 	"makerom",
 	"boot",
 	"dmadata",
