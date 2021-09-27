@@ -55,14 +55,14 @@ static RestrictionFlags sRestrictionFlags[] = {
     { SCENE_ENTRA, 0x00, 0x10, 0x15 },
     { SCENE_ENTRA_N, 0x00, 0x10, 0x15 },
     { SCENE_ENRUI, 0x00, 0x10, 0xD5 },
-    { SCENE_MARKET_DAY, 0x00, 0x10, 0x15 },
-    { SCENE_MARKET_NIGHT, 0x00, 0x10, 0x15 },
-    { SCENE_MARKET_RUINS, 0x00, 0x10, 0xD5 },
+    { SCENE_MARKET_DAY, 0x00, 0x00, 0x10 }, //Project-A
+    { SCENE_MARKET_NIGHT, 0x00, 0x00, 0x10 }, //Project-A
+    { SCENE_MARKET_RUINS, 0x00, 0x00, 0x10 }, //Project-A
     { SCENE_MARKET_ALLEY, 0x00, 0x10, 0x15 },
     { SCENE_MARKET_ALLEY_N, 0x00, 0x10, 0x15 },
-    { SCENE_SHRINE, 0x00, 0x10, 0x15 },
-    { SCENE_SHRINE_N, 0x00, 0x10, 0x15 },
-    { SCENE_SHRINE_R, 0x00, 0x10, 0xD5 },
+    { SCENE_SHRINE, 0x00, 0x00, 0x10 }, //Project-A
+    { SCENE_SHRINE_N, 0x00, 0x00, 0x10 }, //Project-A
+    { SCENE_SHRINE_R, 0x00, 0x00, 0x10 }, //Project-A
     { SCENE_LINK_HOME, 0x10, 0x10, 0x15 },
     { SCENE_KAKARIKO, 0x10, 0x10, 0x15 },
     { SCENE_KAKARIKO3, 0x10, 0x10, 0x15 },
@@ -710,7 +710,16 @@ void func_80083108(GlobalContext* globalCtx) {
 
                 for (i = 1; i < 4; i++) {
                     if (func_8008F2F8(globalCtx) == 2) {
-                        if ((gSaveContext.equips.buttonItems[i] != ITEM_HOOKSHOT) &&
+                        //add a condition for underwater items
+                        if ((gSaveContext.equips.buttonItems[i] != ITEM_NAYRUS_LOVE) &&
+                            (gSaveContext.equips.buttonItems[i] != ITEM_HOOKSHOT) &&
+                            (gSaveContext.equips.buttonItems[i] != ITEM_BOW) &&
+                            (gSaveContext.equips.buttonItems[i] != ITEM_BOW_ARROW_ICE) &&
+                            (gSaveContext.equips.buttonItems[i] != ITEM_BOW_ARROW_LIGHT) &&
+                            (gSaveContext.equips.buttonItems[i] != ITEM_FARORES_WIND) &&
+                            (gSaveContext.equips.buttonItems[i] != ITEM_HAMMER) &&
+                            (gSaveContext.equips.buttonItems[i] != ITEM_BOMBCHU) &&
+                            (gSaveContext.equips.buttonItems[i] != ITEM_HOOKSHOT) &&
                             (gSaveContext.equips.buttonItems[i] != ITEM_LONGSHOT)) {
                             if (gSaveContext.buttonStatus[i] == BTN_ENABLED) {
                                 sp28 = 1;
@@ -1747,9 +1756,9 @@ u8 Item_Give(GlobalContext* globalCtx, u8 item) {
             }
         }
     } else if ((item >= ITEM_WEIRD_EGG) && (item <= ITEM_CLAIM_CHECK)) {
-        if (item == ITEM_SAW) {
-            gSaveContext.itemGetInf[1] |= 0x8000;
-        }
+        /*if (item == ITEM_SAW) {
+            gSaveContext.itemGetInf[1] |= 0x8000; //deku upgrade glitch
+        }*/
 
         temp = INV_CONTENT(item);
         INV_CONTENT(item) = item;
@@ -4156,3 +4165,37 @@ void Interface_Update(GlobalContext* globalCtx) {
         }
     }
 }
+
+/* Project-A */
+
+// //Use that to print a string in-game
+// void Printf_Print(GlobalContext* globalCtx, u32 rgba, u32 xyz, const char* string){
+//     ColorPos colorPos;
+
+//     colorPos.rgba = rgba;
+//     colorPos.xyz = xyz;
+
+//     Printf_Process(globalCtx, colorPos, string);
+// }
+
+// //Actual print process
+// void Printf_Process(GlobalContext* globalCtx, ColorPos colorPos, const char* string){
+//     GfxPrint printer;
+
+//     GfxPrint_Init(&printer);
+//     GfxPrint_Open(&printer, globalCtx->state.gfxCtx->polyOpa.p);
+
+//     GfxPrint_SetColor(&printer, 
+//                       ((colorPos.rgba >> 0x10) >> 0x08), //r
+//                       ((colorPos.rgba >> 0x10) & 0xFF),  //g
+//                       ((colorPos.rgba >> 0x08) & 0xFF),  //b
+//                       (colorPos.rgba & 0xFF));           //a
+
+//     GfxPrint_SetPos(&printer,
+//                     (colorPos.xyz >> 0x10),              //x
+//                     ((colorPos.xyz >> 0x08) & 0xFF));    //y
+
+//     GfxPrint_Printf(&printer, string);
+//     globalCtx->state.gfxCtx->polyOpa.p = GfxPrint_Close(&printer);
+//     GfxPrint_Destroy(&printer);
+// }

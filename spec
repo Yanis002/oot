@@ -3855,6 +3855,20 @@ beginseg
 endseg
 
 beginseg
+    name "ovl_Obj_Mure4"
+    compress
+    include "build/src/overlays/actors/ovl_Obj_Mure4/z_shot_sun.o"
+    include "build/src/overlays/actors/ovl_Obj_Mure4/ovl_Shot_Sun_reloc.o"
+endseg
+
+beginseg
+    name "ovl_Shot_Sun"
+    compress
+    include "build/src/overlays/actors/ovl_Shot_Sun/z_shot_sun.o"
+    include "build/src/overlays/actors/ovl_Shot_Sun/ovl_Shot_Sun_reloc.o"
+endseg
+
+beginseg
     name "gameplay_keep"
     compress
     romalign 0x1000

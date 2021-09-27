@@ -832,7 +832,7 @@ void Sram_InitSram(GameState* gameState, SramContext* sramCtx) {
     for (i = 0; i < ARRAY_COUNTU(sZeldaMagic) - 3; i++) {
         if (sZeldaMagic[i + 3] != sramCtx->readBuff[i + 3]) {
             osSyncPrintf("ＳＲＡＭ破壊！！！！！！\n"); // "SRAM destruction! ! ! ! ! !"
-            gSaveContext.language = sramCtx->readBuff[2];
+            gSaveContext.language = sramCtx->readBuff[2]; //change language here
             MemCopy(sramCtx->readBuff, sZeldaMagic, sizeof(sZeldaMagic));
             sramCtx->readBuff[2] = gSaveContext.language;
             Sram_Write16Bytes(sramCtx);

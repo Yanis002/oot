@@ -2444,4 +2444,10 @@ void Opening_Destroy(GameState* thisx);
 void func_80811A20(GameState* thisx); // FileChoose_Init
 void func_80811A18(GameState* thisx); // FileChoose_Destroy
 
+/* Project-A */
+
+//All-in-one in-game printf function
+// void Printf_Process(GlobalContext* globalCtx, ColorPos printMetadata, const char* string);
+// void Printf_Print(GlobalContext* globalCtx, u32 rgba, u32 xyz, const char* string);
+
 #endif

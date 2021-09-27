@@ -698,4 +698,8 @@ DECLARE_ROM_SEGMENT(testroom_room_2)
 DECLARE_ROM_SEGMENT(testroom_room_3)
 DECLARE_ROM_SEGMENT(testroom_room_4)
 
+/* Project-A */
+DECLARE_OVERLAY_SEGMENT(Obj_Mure4)
+DECLARE_OVERLAY_SEGMENT(En_Freezer)
+
 #endif
