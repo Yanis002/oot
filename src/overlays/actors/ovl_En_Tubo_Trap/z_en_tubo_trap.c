@@ -33,13 +33,13 @@ static ColliderCylinderInit sCylinderInit = {
     },
     {
         ELEMTYPE_UNK0,
-        { 0xFFCFFFFF, 0x00, 0x04 },
+        { 0xFFCFFFFF, 0x02, 0x00 }, //something, 0x00, 0x08
         { 0xFFCFFFFF, 0x00, 0x00 },
         TOUCH_ON | TOUCH_SFX_NORMAL,
         BUMP_ON,
         OCELEM_NONE,
     },
-    { 9, 23, 0, { 0 } },
+    { 11, 25, 0, { 0 } },
 };
 
 const ActorInit En_Tubo_Trap_InitVars = {
@@ -54,6 +54,8 @@ const ActorInit En_Tubo_Trap_InitVars = {
     (ActorFunc)EnTuboTrap_Draw,
 };
 
+static u8 likelike = 0;
+
 void EnTuboTrap_Init(Actor* thisx, GlobalContext* globalCtx) {
     EnTuboTrap* this = THIS;
 
@@ -62,7 +64,7 @@ void EnTuboTrap_Init(Actor* thisx, GlobalContext* globalCtx) {
     osSyncPrintf(VT_FGCOL(GREEN) "☆☆☆☆☆ 壷トラップ ☆☆☆☆☆ %x\n" VT_RST, this->actor.params); // "Urn Trap"
     Collider_InitCylinder(globalCtx, &this->collider);
     Collider_SetCylinder(globalCtx, &this->collider, &this->actor, &sCylinderInit);
-    Actor_SetScale(&this->actor, 0.1f);
+    Actor_SetScale(&this->actor, 0.15f); //0.1f
     this->actionFunc = EnTuboTrap_WaitForProximity;
 }
 
@@ -219,6 +221,7 @@ void EnTuboTrap_HandleImpact(EnTuboTrap* this, GlobalContext* globalCtx) {
         Actor_Kill(&this->actor);
         return;
     }
+
 }
 
 void EnTuboTrap_WaitForProximity(EnTuboTrap* this, GlobalContext* globalCtx) {
@@ -284,6 +287,13 @@ void EnTuboTrap_Update(Actor* thisx, GlobalContext* globalCtx) {
     Collider_UpdateCylinder(&this->actor, &this->collider);
     CollisionCheck_SetAC(globalCtx, &globalCtx->colChkCtx, &this->collider.base);
     CollisionCheck_SetAT(globalCtx, &globalCtx->colChkCtx, &this->collider.base);
+
+    likelike = this->actor.params & 0xFF;
+
+    if(!this->actor.draw && likelike){ 
+        Actor_Spawn(&globalCtx->actorCtx, globalCtx, ACTOR_EN_RR, this->actor.world.pos.x, this->actor.world.pos.y, this->actor.world.pos.z, 0, 0, 0, 0xFFFF);
+        likelike = 1;
+    }
 }
 
 void EnTuboTrap_Draw(Actor* thisx, GlobalContext* globalCtx) {

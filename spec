@@ -3857,15 +3857,15 @@ endseg
 beginseg
     name "ovl_Obj_Mure4"
     compress
-    include "build/src/overlays/actors/ovl_Obj_Mure4/z_shot_sun.o"
-    include "build/src/overlays/actors/ovl_Obj_Mure4/ovl_Shot_Sun_reloc.o"
+    include "build/src/overlays/actors/ovl_Obj_Mure4/z_obj_mure4.o"
+    include "build/src/overlays/actors/ovl_Obj_Mure4/ovl_Obj_Mure4_reloc.o"
 endseg
 
 beginseg
-    name "ovl_Shot_Sun"
+    name "ovl_En_Freezer"
     compress
-    include "build/src/overlays/actors/ovl_Shot_Sun/z_shot_sun.o"
-    include "build/src/overlays/actors/ovl_Shot_Sun/ovl_Shot_Sun_reloc.o"
+    include "build/src/overlays/actors/ovl_En_Freezer/z_en_freezer.o"
+    include "build/src/overlays/actors/ovl_En_Freezer/ovl_En_Freezer_reloc.o"
 endseg
 
 beginseg

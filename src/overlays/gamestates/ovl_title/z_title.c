@@ -33,7 +33,30 @@ void Title_PrintBuildInfo(Gfx** gfxp) {
 // Note: In other rom versions this function also updates unk_1D4, coverAlpha, addAlpha, visibleDuration to calculate
 // the fade-in/fade-out + the duration of the n64 logo animation
 void Title_Calc(TitleContext* this) {
-    this->exit = 1;
+    //shoutouts to Fig
+    goto test;
+
+    if ((this->coverAlpha == 0) && (this->visibleDuration != 0)) {
+        this->visibleDuration--;
+        this->unk_1D4--;
+        if (this->unk_1D4 == 0) {
+            this->unk_1D4 = 400;
+        }
+    } else {
+        this->coverAlpha += this->addAlpha;
+        if (this->coverAlpha <= 0) {
+            this->coverAlpha = 0;
+            this->addAlpha = 3;
+        } else if (this->coverAlpha >= 0xFF) {
+            this->coverAlpha = 0xFF;
+            
+            test:
+            this->exit = 1;
+            return;
+        }
+    }
+    this->uls &= 0x7F;
+    this->ult++;
 }
 
 void Title_SetupView(TitleContext* this, f32 x, f32 y, f32 z) {

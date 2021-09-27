@@ -84,6 +84,10 @@ void EnArrow_Init(Actor* thisx, GlobalContext* globalCtx) {
     };
     EnArrow* this = THIS;
 
+    //Project-A
+    Player* player = GET_PLAYER(globalCtx);
+    if(player->isFreezerSpawned) player->nbEnArrow++;
+
     Actor_ProcessInitChain(&this->actor, sInitChain);
 
     if (this->actor.params == ARROW_CS_NUT) {
@@ -158,10 +162,11 @@ void EnArrow_Shoot(EnArrow* this, GlobalContext* globalCtx) {
     Player* player = GET_PLAYER(globalCtx);
 
     if (this->actor.parent == NULL) {
-        if ((this->actor.params != ARROW_NUT) && (player->unk_A73 == 0)) {
-            Actor_Kill(&this->actor);
-            return;
-        }
+        //TODO: find out what's the purpose of this
+        // if ((this->actor.params != ARROW_NUT) && (player->unk_A73 == 0)) {
+        //     Actor_Kill(&this->actor);
+        //     return;
+        // }
 
         switch (this->actor.params) {
             case ARROW_SEED:
@@ -460,7 +465,7 @@ void EnArrow_Draw(Actor* thisx, GlobalContext* globalCtx) {
         func_80093D18(globalCtx->state.gfxCtx);
         SkelAnime_DrawLod(globalCtx, this->skelAnime.skeleton, this->skelAnime.jointTable, NULL, NULL, this,
                           (this->actor.projectedPos.z < MREG(95)) ? 0 : 1);
-    } else if (this->actor.speedXZ != 0.0f) {
+    } else /*if (this->actor.speedXZ != 0.0f)*/ if(this->actor.parent == NULL) {
         alpha = (Math_CosS(this->timer * 5000) * 127.5f) + 127.5f;
 
         OPEN_DISPS(globalCtx->state.gfxCtx, "../z_en_arrow.c", 1346);
@@ -469,7 +474,7 @@ void EnArrow_Draw(Actor* thisx, GlobalContext* globalCtx) {
 
         if (this->actor.params == ARROW_SEED) {
             gDPSetPrimColor(POLY_XLU_DISP++, 0, 0, 255, 255, 255, 255);
-            gDPSetEnvColor(POLY_XLU_DISP++, 0, 255, 255, alpha);
+            gDPSetEnvColor(POLY_XLU_DISP++, 255, 0, 0, alpha);
             scale = 50.0f;
         } else {
             gDPSetPrimColor(POLY_XLU_DISP++, 0, 0, 12, 0, 0, 255);

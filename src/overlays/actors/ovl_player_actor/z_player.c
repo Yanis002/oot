@@ -4,6 +4,8 @@
  * Description: Link
  */
 
+// WIP documentation doc: https://docs.google.com/spreadsheets/d/1W7QQFoaVz4cEWm-jfQUfN05QriI1YBLKZXL4qLXwOFk/edit#gid=306041905
+
 #include "ultra64.h"
 #include "global.h"
 
@@ -488,6 +490,9 @@ static s32 D_8085360C = 0;
 static s16 D_80853610 = 0;
 static s32 D_80853614 = 0;
 static s32 D_80853618 = 0;
+
+/* Project-A */
+static u8 switchPrint = false;
 
 static u16 D_8085361C[] = {
     NA_SE_VO_LI_SWEAT,
@@ -1097,7 +1102,7 @@ static u8 D_80854384[2] = { 0x1A, 0x1B };
 
 static u16 D_80854388[] = { BTN_B, BTN_CLEFT, BTN_CDOWN, BTN_CRIGHT };
 
-static u8 sMagicSpellCosts[] = { 12, 24, 24, 12, 24, 12 };
+static u8 sMagicSpellCosts[] = { 12, 24, 24, 12, 0, 12 };
 
 static u16 D_80854398[] = { NA_SE_IT_BOW_DRAW, NA_SE_IT_SLING_DRAW, NA_SE_IT_HOOKSHOT_READY };
 
@@ -2696,8 +2701,32 @@ void func_80835F44(GlobalContext* globalCtx, Player* this, s32 item) {
     s8 actionParam;
     s32 temp;
     s32 nextType;
+    Actor* actor;
 
     actionParam = Player_ItemToActionParam(item);
+
+    if(this->isFreezerSpawned){
+        actor = globalCtx->actorCtx.actorLists[ACTORCAT_ITEMACTION].head;
+        switch(actor->id){ 
+            case ACTOR_EN_ARROW:
+                if((this->nbEnArrow >= 10) && 
+                  ((actionParam == PLAYER_AP_NUT) || 
+                   (actionParam == PLAYER_AP_BOW) || 
+                   (actionParam == PLAYER_AP_SLINGSHOT))){
+                    this->itemActionParam = PLAYER_AP_NONE;
+                    func_80078884(NA_SE_SY_ERROR);
+                    return;
+                }
+                break;
+        }
+
+        switch(actionParam){
+            case PLAYER_AP_BOTTLE_BUG:
+            case PLAYER_AP_BOTTLE_FISH:
+                func_80078884(NA_SE_SY_ERROR);
+                return;
+        }
+    } else this->nbEnArrow = 0;
 
     if (((this->heldItemActionParam == this->itemActionParam) &&
          (!(this->stateFlags1 & 0x400000) || (Player_ActionToSword(actionParam) != 0) ||
@@ -2707,7 +2736,17 @@ void func_80835F44(GlobalContext* globalCtx, Player* this, s32 item) {
 
         if ((actionParam == PLAYER_AP_NONE) || !(this->stateFlags1 & 0x8000000) ||
             ((this->actor.bgCheckFlags & 1) &&
-             ((actionParam == PLAYER_AP_HOOKSHOT) || (actionParam == PLAYER_AP_LONGSHOT)))) {
+
+            //add a condition for underwater items
+             ((actionParam == PLAYER_AP_HOOKSHOT) ||
+              (actionParam == PLAYER_AP_LONGSHOT) ||
+              (actionParam == PLAYER_AP_BOW) ||
+              (actionParam == PLAYER_AP_BOW_ICE) ||
+              (actionParam == PLAYER_AP_BOW_LIGHT) ||
+              (actionParam == PLAYER_AP_FARORES_WIND) ||
+              (actionParam == PLAYER_AP_HAMMER) ||
+              (actionParam == PLAYER_AP_BOMBCHU) ||
+              (actionParam == PLAYER_AP_NAYRUS_LOVE)))) {
 
             if ((globalCtx->bombchuBowlingStatus == 0) &&
                 (((actionParam == PLAYER_AP_STICK) && (AMMO(ITEM_STICK) == 0)) ||
@@ -2715,6 +2754,7 @@ void func_80835F44(GlobalContext* globalCtx, Player* this, s32 item) {
                  (temp = Player_ActionToExplosive(this, actionParam),
                   ((temp >= 0) && ((AMMO(sExplosiveInfos[temp].itemId) == 0) ||
                                    (globalCtx->actorCtx.actorLists[ACTORCAT_EXPLOSIVE].length >= 3)))))) {
+                                       //^ bomb limit
                 func_80078884(NA_SE_SY_ERROR);
                 return;
             }
@@ -2743,6 +2783,7 @@ void func_80835F44(GlobalContext* globalCtx, Player* this, s32 item) {
             }
 
             temp = Player_ActionToMagicSpell(this, actionParam);
+
             if (temp >= 0) {
                 if (((actionParam == PLAYER_AP_FARORES_WIND) && (gSaveContext.respawn[RESPAWN_MODE_TOP].data > 0)) ||
                     ((gSaveContext.unk_13F4 != 0) && (gSaveContext.unk_13F0 == 0) &&
@@ -2791,7 +2832,6 @@ void func_80835F44(GlobalContext* globalCtx, Player* this, s32 item) {
                 }
                 return;
             }
-
             D_80853614 = D_80853618 = true;
         }
     }
@@ -3569,11 +3609,14 @@ s32 func_8083816C(s32 arg0) {
 }
 
 void func_8083819C(Player* this, GlobalContext* globalCtx) {
-    if (this->currentShield == PLAYER_SHIELD_DEKU) {
-        Actor_Spawn(&globalCtx->actorCtx, globalCtx, ACTOR_ITEM_SHIELD, this->actor.world.pos.x,
-                    this->actor.world.pos.y, this->actor.world.pos.z, 0, 0, 0, 1);
+    if (this->currentShield == PLAYER_SHIELD_HYLIAN) {//PLAYER_SHIELD_DEKU
+        /*Actor_Spawn(&globalCtx->actorCtx, globalCtx, ACTOR_ITEM_SHIELD, this->actor.world.pos.x,
+                    this->actor.world.pos.y, this->actor.world.pos.z, 0, 0, 0, 1);*/       
         Inventory_DeleteEquipment(globalCtx, EQUIP_SHIELD);
         func_8010B680(globalCtx, 0x305F, NULL); // "Your shield is gone!"
+        Player_InflictDamage(globalCtx, -(gSaveContext.healthCapacity * 0.99));
+        this->shockTimer = 80;
+        Rupees_ChangeBy(-42);
     }
 }
 
@@ -3697,9 +3740,9 @@ s32 func_808382DC(Player* this, GlobalContext* globalCtx) {
                     }
                 }
 
-                if (sp64 && (this->shieldQuad.info.acHitInfo->toucher.effect == 1)) {
+                /* if (sp64 && (this->currentShield == PLAYER_SHIELD_HYLIAN)) { //sp64 && (this->shieldQuad.info.acHitInfo->toucher.effect == 1)
                     func_8083819C(this, globalCtx);
-                }
+                }*/
 
                 return 0;
             }
@@ -4707,7 +4750,16 @@ s32 func_8083B040(Player* this, GlobalContext* globalCtx) {
         if (!func_8083ADD4(globalCtx, this)) {
             if (this->unk_6AD == 4) {
                 sp2C = Player_ActionToMagicSpell(this, this->itemActionParam);
+
                 if (sp2C >= 0) {
+                    if((sp2C == 4)){
+                        this->freezerChild = 
+                        Actor_SpawnAsChild(&globalCtx->actorCtx, &this->actor, globalCtx, ACTOR_EN_FREEZER, this->actor.world.pos.x,
+                                           this->actor.world.pos.y, this->actor.world.pos.z, 0, 0, 0, 2);
+                        func_8008EC70(this);
+                        return 1;
+                    }
+
                     if ((sp2C != 3) || (gSaveContext.respawn[RESPAWN_MODE_TOP].data <= 0)) {
                         func_8083AF44(globalCtx, this, sp2C);
                     } else {
@@ -5735,23 +5787,30 @@ void func_8083DDC8(Player* this, GlobalContext* globalCtx) {
 
 void func_8083DF68(Player* this, f32 arg1, s16 arg2) {
     Math_AsymStepToF(&this->linearVelocity, arg1, REG(19) / 100.0f, 1.5f);
+
+    //fast bunny hood (shoutouts to Ticamus)
+    if (this->currentMask == PLAYER_MASK_BUNNY) {
+        if (this->func_674 == func_80842180) {
+            this->linearVelocity = arg1 * 1.7;
+            //osSyncPrintf("%08x\n", arg1);
+        }
+    }
+
     Math_ScaledStepToS(&this->currentYaw, arg2, REG(27));
 }
 
 void func_8083DFE0(Player* this, f32* arg1, s16* arg2) {
     s16 yawDiff = this->currentYaw - *arg2;
 
+    //credits: ticamus
     if (this->swordState == 0) {
-        this->linearVelocity = CLAMP(this->linearVelocity, -(R_RUN_SPEED_LIMIT / 100.0f), (R_RUN_SPEED_LIMIT / 100.0f));
-    }
-
-    if (ABS(yawDiff) > 0x6000) {
-        if (Math_StepToF(&this->linearVelocity, 0.0f, 1.0f)) {
-            this->currentYaw = *arg2;
+        if (this->currentMask == PLAYER_MASK_BUNNY) {
+            this->linearVelocity =
+                CLAMP(this->linearVelocity, -(R_RUN_SPEED_LIMIT / 75.0f), (R_RUN_SPEED_LIMIT / 75.0f));
+        } else {
+            this->linearVelocity =
+                CLAMP(this->linearVelocity, -(R_RUN_SPEED_LIMIT / 100.0f), (R_RUN_SPEED_LIMIT / 100.0f));
         }
-    } else {
-        Math_AsymStepToF(&this->linearVelocity, *arg1, 0.05f, 0.1f);
-        Math_ScaledStepToS(&this->currentYaw, *arg2, 200);
     }
 }
 
@@ -7896,6 +7955,13 @@ static FallImpactInfo D_80854600[] = {
     { -16, 255, 140, 150, NA_SE_VO_LI_LAND_DAMAGE_S },
 };
 
+//progressive fall damages
+s8 calculateFallDamage(u16 totalHealth) {
+    s8 fallDamage = totalHealth * 136 / (864 - totalHealth);
+
+    return (fallDamage + 3) & ~3;
+}
+
 s32 func_80843E64(GlobalContext* globalCtx, Player* this) {
     s32 sp34;
 
@@ -7912,6 +7978,8 @@ s32 func_80843E64(GlobalContext* globalCtx, Player* this) {
     if (sp34 >= 400) {
         s32 impactIndex;
         FallImpactInfo* impactInfo;
+        u8 fallDamages = -8;
+        u16 totalHealth = gSaveContext.healthCapacity;
 
         if (this->fallDistance < 800) {
             impactIndex = 0;
@@ -7919,9 +7987,12 @@ s32 func_80843E64(GlobalContext* globalCtx, Player* this) {
             impactIndex = 1;
         }
 
+        if(totalHealth < 0x40) fallDamages = 0x08;
+        else fallDamages = calculateFallDamage(totalHealth);
+        
         impactInfo = &D_80854600[impactIndex];
 
-        if (Player_InflictDamage(globalCtx, impactInfo->damage)) {
+        if (Player_InflictDamage(globalCtx, -fallDamages)) {//if (Player_InflictDamage(globalCtx, impactInfo->damage)) 
             return -1;
         }
 
@@ -9052,6 +9123,9 @@ void Player_Init(Actor* thisx, GlobalContext* globalCtx2) {
     s32 sp50;
     s32 sp4C;
 
+    this->isFreezerSpawned = this->nbEnArrow = this->scrollChange = 0;
+    this->freezerChild = NULL;
+
     globalCtx->shootingGalleryStatus = globalCtx->bombchuBowlingStatus = 0;
 
     globalCtx->playerInit = Player_InitCommon;
@@ -9793,7 +9867,7 @@ void func_80848C74(GlobalContext* globalCtx, Player* this) {
         sp58 = 0;
     }
 
-    func_8083819C(this, globalCtx);
+    //func_8083819C(this, globalCtx);
 
     for (i = 0; i < 18; i++, timerPtr++) {
         timerStep = sp58 + sp54;
@@ -9861,10 +9935,107 @@ static Vec3f D_80854814 = { 0.0f, 0.0f, 200.0f };
 static f32 D_80854820[] = { 2.0f, 4.0f, 7.0f };
 static f32 D_8085482C[] = { 0.5f, 1.0f, 3.0f };
 
+//test quick text
+extern u8 D_8014B300;
+u8 counter = 0, timeSwitch = 0;
+
 void Player_UpdateCommon(Player* this, GlobalContext* globalCtx, Input* input) {
     s32 pad;
-
+    // u16 sec, minutes, hours;
+    // char* timer = "00:00:00";
+    char tmp[30];
+    char posStr[140];
+    char actorNbStr[20];
+    
     sControlInput = input;
+    // sec = __osViIntrCount / 60;
+    // hours = sec / 3600;
+    // minutes = (sec / 60) % 60;
+    // sec %= 60;
+
+    //show Player coords
+    // sprintf(posStr, "X: %.2f \n Y: %.2f \n Z: %.2f", this->actor.world.pos.x, this->actor.world.pos.y, this->actor.world.pos.z);
+    // sprintf(posStr, "freezer? %d", this->isFreezerSpawned);
+    // Printf_Print(globalCtx, 0xFEFEFEFE, 0x011700, posStr);
+
+    // //show actor count
+    // sprintf(actorNbStr, "Loaded Actors: %d", globalCtx->actorCtx.total);
+    // Printf_Print(globalCtx, 0xFEFEFEFE, 0x010100, actorNbStr);
+
+    // //show commands
+    // Printf_Print(globalCtx, 0xFEFEFEFE, 0x081C00, "L+D-Pad Down for commands");
+    // if((CHECK_BTN_ALL(sControlInput->cur.button, BTN_L)) && (CHECK_BTN_ALL(sControlInput->press.button, BTN_DDOWN))){
+    //     switchPrint ^= 1;
+    // }
+
+    // if(switchPrint){
+    //         Printf_Print(globalCtx, 0xFEFEFEFE, 0x010800, "L+B+A for file select \n L+R+C-Up for Paella \n L+R+C-Left for StalZone \n L+D-Pad Right for no clip mode \n (A/B for Up/down) \n D-Pad Right to cancel cutscenes \n L + D-Pad Up for debug camera");
+    // }
+
+    //display timer
+    // if(CHECK_BTN_ALL(sControlInput->cur.button, BTN_L + BTN_R + BTN_CDOWN)){
+    //     //timer format
+    //     if(hours < 10){
+    //         timer = strcpy(timer, "0");
+    //         timer = strcat(timer, itoa(hours, tmp));
+    //     } else timer = strcpy(timer, itoa(hours, tmp));
+    //     if(minutes < 10) timer = strcat(timer, ":0"); else timer = strcat(timer, ":");
+    //     timer = strcat(timer, itoa(minutes, tmp));
+    //     if(sec < 10) timer = strcat(timer, ":0"); else timer = strcat(timer, ":");
+    //     timer = strcat(timer, itoa(sec, tmp));
+    //     Printf_Print(globalCtx, 0xFFFFFFFE, 0x010100, timer);
+    // }
+
+    //file select
+    if(CHECK_BTN_ALL(sControlInput->cur.button, BTN_L + BTN_B + BTN_A)){
+        Audio_SetCutsceneFlag(0);
+        Audio_PlaySoundGeneral(NA_SE_SY_PIECE_OF_HEART, &D_801333D4, 4, &D_801333E0, &D_801333E0, &D_801333E8);
+        gSaveContext.gameMode = 2;
+        globalCtx->sceneLoadFlag = 20;
+        globalCtx->fadeTransition = 2;
+    }
+
+    //paella
+    if(CHECK_BTN_ALL(sControlInput->cur.button, BTN_L + BTN_R + BTN_CUP))
+    {
+        Audio_QueueSeqCmd(0x61);
+        Audio_PlaySoundGeneral(NA_SE_EN_TWINROBA_FIGHT, &D_801333D4, 4, &D_801333E0, &D_801333E0, &D_801333E8);
+    }
+
+    //StalZone
+    if(CHECK_BTN_ALL(sControlInput->cur.button, BTN_L + BTN_R + BTN_CLEFT)) Audio_QueueSeqCmd(0x38);
+
+    if (this->currentShield == PLAYER_SHIELD_HYLIAN) { //sp64 && (this->shieldQuad.info.acHitInfo->toucher.effect == 1)
+        func_8083819C(this, globalCtx);
+    }
+
+    //Adult/Child switch
+    if((CHECK_BTN_ALL(sControlInput->cur.button, BTN_Z + BTN_R + BTN_DRIGHT))){
+        if(!timeSwitch){
+            Actor_Spawn(&globalCtx->actorCtx, globalCtx, ACTOR_OCEFF_SPOT,
+                    this->actor.world.pos.x,
+                    this->actor.world.pos.y,
+                    this->actor.world.pos.z, 0, 0, 0, 1);
+            timeSwitch = 1;
+            this->stateFlags1 = 0x2000;
+            
+        } 
+    }
+
+    if(timeSwitch){
+        if(counter < 90) counter++;
+        else{
+            globalCtx->nextEntranceIndex = gSaveContext.entranceIndex;
+            globalCtx->linkAgeOnLoad = !gSaveContext.linkAge;
+            globalCtx->sceneLoadFlag = 0x14;
+        }
+    }
+
+    //reload area
+    if((CHECK_BTN_ALL(sControlInput->cur.button, BTN_A + BTN_L))){
+        globalCtx->nextEntranceIndex = gSaveContext.entranceIndex;
+        globalCtx->sceneLoadFlag = 0x14;
+    }
 
     if (this->unk_A86 < 0) {
         this->unk_A86++;
@@ -9976,6 +10147,9 @@ void Player_UpdateCommon(Player* this, GlobalContext* globalCtx, Input* input) {
 
         if (this->currentMask == PLAYER_MASK_BUNNY) {
             func_8085002C(this);
+
+            //test quick text
+            D_8014B300 = 1;
         }
 
         if (func_8002DD6C(this) != 0) {
