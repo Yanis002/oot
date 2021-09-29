@@ -41,7 +41,7 @@ EntranceCutscene sEntranceCutsceneTable[] = {
     { 0x0538, 2, 0xBB, gForestBarrierCs }, { 0x053C, 2, 0xBC, gWaterBarrierCs }, { 0x0540, 2, 0xBD, gShadowBarrierCs },
     { 0x0544, 2, 0xBE, gFireBarrierCs },   { 0x0548, 2, 0xBF, gLightBarrierCs }, { 0x054C, 2, 0xAD, gSpiritBarrierCs },
     { 0x008D, 0, 0xC0, 0x02002BB0 },       { 0x03B4, 0, 0xC7, 0x020055C0 },      { 0x0246, 2, 0xB9, 0x020076D0 },
-    { 0x05E8, 2, 0xC6, 0x0200C9D0 },       { 0x0171, 2, 0x0F, gToTExteriorCs },  //{ 0x00B1, 2, 0x0E, gMarketCs},
+    { 0x05E8, 2, 0xC6, 0x0200C9D0 },       { 0x0171, 2, 0x0F, gToTExteriorCs },  { 0x00B1, 2, 0x0E, gMarketCs},
 };
 
 // Unused, seems to be an early list of dungeon entrance cutscene locations

@@ -10474,19 +10474,17 @@ beginseg
 endseg
 
 beginseg
-    name "entra_scene"
-    compress
-    romalign 0x1000
-    include "build/assets/scenes/overworld/entra/entra_scene.o"
-    number 2
+	name "entra_scene"
+	romalign 0x1000
+	include "build/assets/scenes/overworld/entra/entra_scene.o"
+	number 2
 endseg
 
 beginseg
-    name "entra_room_0"
-    compress
-    romalign 0x1000
-    include "build/assets/scenes/overworld/entra/entra_room_0.o"
-    number 3
+	name "entra_room_0"
+	romalign 0x1000
+	include "build/assets/scenes/overworld/entra/entra_room_0.o"
+	number 3
 endseg
 
 beginseg
@@ -11411,6 +11409,7 @@ endseg
 
 beginseg
 	name "shrine_scene"
+    compress
 	romalign 0x1000
 	include "build/assets/scenes/misc/shrine/shrine_scene.o"
 	number 2
@@ -11418,6 +11417,7 @@ endseg
 
 beginseg
 	name "shrine_room_0"
+    compress
 	romalign 0x1000
 	include "build/assets/scenes/misc/shrine/shrine_room_0.o"
 	number 3
