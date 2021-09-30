@@ -180,7 +180,7 @@ s32 func_80AA08C4(EnMa1* this, GlobalContext* globalCtx) {
     if (!LINK_IS_CHILD) {
         return 0;
     }
-    if (((globalCtx->sceneNum == SCENE_MARKET_NIGHT) || (globalCtx->sceneNum == SCENE_MARKET_DAY)) &&
+    if (((globalCtx->sceneNum == SCENE_MARKET_NIGHT) || (globalCtx->sceneNum == SCENE_MARKET_DAY) || (globalCtx->sceneNum == SCENE_ENTRA)) &&
         !(gSaveContext.eventChkInf[1] & 0x10) && !(gSaveContext.infTable[8] & 0x800)) {
         return 1;
     }

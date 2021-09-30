@@ -827,7 +827,7 @@ SceneTableEntry gSceneTable[] = {
 	UNTITLED_SCENE(HAKAdan_bs_scene, 0, 24, 0),
 	UNTITLED_SCENE(ganon_boss_scene, 0, 0, 0),
 	UNTITLED_SCENE(ganon_final_scene, 0, 38, 0),
-	UNTITLED_SCENE(entra_scene, 0, 0, 0),
+	UNTITLED_SCENE(entra_scene, 0, 19, 0),
 	UNTITLED_SCENE(entra_n_scene, 0, 0, 0),
 	UNTITLED_SCENE(enrui_scene, 0, 0, 0),
 	TITLED_SCENE(market_alley_scene, g_pn_18, 0, 0, 0),
