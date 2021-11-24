@@ -358,7 +358,7 @@ s16 EnGo2_GetStateGoronDmtBombFlower(GlobalContext* globalCtx, EnGo2* this) {
                 // Ask question to DMT Goron by bomb flower
                 if (this->actor.textId == 0x300A) {
                     if (globalCtx->msgCtx.choiceIndex == 0) {
-                        this->actor.textId = CUR_UPG_VALUE(UPG_STRENGTH) ? 0x300B : 0x300C;
+                        this->actor.textId = CUR_UPG_VALUE(UPG_STRENGTH) != 0 ? 0x300B : 0x300C;
                     } else {
                         this->actor.textId = 0x300D;
                     }
@@ -456,7 +456,7 @@ u16 EnGo2_GetTextIdGoronCityLowestFloor(GlobalContext* globalCtx, EnGo2* this) {
     } else if (CHECK_QUEST_ITEM(QUEST_GORON_RUBY)) {
         return 0x3027;
     } else {
-        return CUR_UPG_VALUE(UPG_STRENGTH)
+        return CUR_UPG_VALUE(UPG_STRENGTH) != 0
                    ? 0x302C
                    : !Flags_GetSwitch(globalCtx, 0x1B) ? 0x3017 : gSaveContext.infTable[15] & 0x100 ? 0x3019 : 0x3018;
     }
@@ -1127,9 +1127,9 @@ s32 EnGo2_IsCameraModified(EnGo2* this, GlobalContext* globalCtx) {
 
     if ((this->actor.params & 0x1F) == GORON_DMT_BIGGORON) {
         if (EnGo2_IsWakingUp(this)) {
-            Camera_ChangeSetting(camera, CAM_SET_TEPPEN);
+            Camera_ChangeSetting(camera, CAM_SET_DIRECTED_YAW);
             func_8005AD1C(camera, 4);
-        } else if (!EnGo2_IsWakingUp(this) && (camera->setting == CAM_SET_TEPPEN)) {
+        } else if (!EnGo2_IsWakingUp(this) && (camera->setting == CAM_SET_DIRECTED_YAW)) {
             Camera_ChangeSetting(camera, CAM_SET_DUNGEON1);
             func_8005ACFC(camera, 4);
         }
@@ -1884,7 +1884,7 @@ void EnGo2_GoronFireGenericAction(EnGo2* this, GlobalContext* globalCtx) {
                 player->actor.world.pos.z =
                     (f32)((Math_CosS(this->actor.world.rot.y) * -30.0f) + this->actor.world.pos.z);
                 func_8002DF54(globalCtx, &this->actor, 8);
-                func_800F5C64(0x51);
+                func_800F5C64(NA_BGM_APPEAR);
             }
             break;
         case 2: // Walking away

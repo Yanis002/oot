@@ -32,16 +32,16 @@ void Audio_InitNoteSub(Note* note, NoteSubEu* sub, NoteSubAttributes* attrs) {
     sub->bitField0.s.usesHeadsetPanEffects = sp24.usesHeadsetPanEffects;
     if (stereoHeadsetEffects && gAudioContext.soundMode == 1) {
         smallPanIndex = pan >> 1;
-        if (smallPanIndex > 0x3f) {
-            smallPanIndex = 0x3f;
+        if (smallPanIndex > 0x3F) {
+            smallPanIndex = 0x3F;
         }
 
         sub->headsetPanLeft = gHeadsetPanQuantization[smallPanIndex];
-        sub->headsetPanRight = gHeadsetPanQuantization[0x3f - smallPanIndex];
+        sub->headsetPanRight = gHeadsetPanQuantization[0x3F - smallPanIndex];
         sub->bitField1.s.usesHeadsetPanEffects2 = true;
 
         volLeft = gHeadsetPanVolume[pan];
-        volRight = gHeadsetPanVolume[0x7f - pan];
+        volRight = gHeadsetPanVolume[0x7F - pan];
     } else if (stereoHeadsetEffects && gAudioContext.soundMode == 0) {
         strongLeft = strongRight = 0;
         sub->headsetPanRight = 0;
@@ -49,7 +49,7 @@ void Audio_InitNoteSub(Note* note, NoteSubEu* sub, NoteSubAttributes* attrs) {
         sub->bitField1.s.usesHeadsetPanEffects2 = false;
 
         volLeft = gStereoPanVolume[pan];
-        volRight = gStereoPanVolume[0x7f - pan];
+        volRight = gStereoPanVolume[0x7F - pan];
         if (pan < 0x20) {
             strongLeft = 1;
         } else if (pan > 0x60) {
@@ -79,20 +79,20 @@ void Audio_InitNoteSub(Note* note, NoteSubEu* sub, NoteSubAttributes* attrs) {
     } else if (gAudioContext.soundMode == 3) {
         sub->bitField0.s.stereoHeadsetEffects = false;
         sub->bitField0.s.usesHeadsetPanEffects = false;
-        volLeft = 0.707f;
+        volLeft = 0.707f; // approx 1/sqrt(2)
         volRight = 0.707f;
     } else {
         sub->bitField0.s.stereoStrongRight = sp24.strongRight;
         sub->bitField0.s.stereoStrongLeft = sp24.strongLeft;
         volLeft = gDefaultPanVolume[pan];
-        volRight = gDefaultPanVolume[0x7f - pan];
+        volRight = gDefaultPanVolume[0x7F - pan];
     }
 
     vel = 0.0f > vel ? 0.0f : vel;
     vel = 1.0f < vel ? 1.0f : vel;
 
-    sub->targetVolLeft = (s32)((vel * volLeft) * 4095.999f);
-    sub->targetVolRight = (s32)((vel * volRight) * 4095.999f);
+    sub->targetVolLeft = (s32)((vel * volLeft) * (0x1000 - 0.001f));
+    sub->targetVolRight = (s32)((vel * volRight) * (0x1000 - 0.001f));
 
     sub->unk_2 = attrs->unk_1;
     sub->filter = attrs->filter;
@@ -169,7 +169,7 @@ void Audio_ProcessNotes(void) {
         noteSubEu2 = &gAudioContext.noteSubsEu[gAudioContext.noteSubEuOffset + i];
         playbackState = &note->playbackState;
         if (playbackState->parentLayer != NO_LAYER) {
-            if ((u32)playbackState->parentLayer < 0x7FFFFFFFU) {
+            if ((u32)playbackState->parentLayer < 0x7FFFFFFF) {
                 continue;
             }
 
@@ -349,7 +349,7 @@ Drum* Audio_GetDrum(s32 bankId, s32 drumId) {
         gAudioContext.audioErrorFlags = ((bankId << 8) + drumId) + 0x4000000;
         return NULL;
     }
-    if ((u32)gAudioContext.ctlEntries[bankId].drums < 0x80000000U) {
+    if ((u32)gAudioContext.ctlEntries[bankId].drums < 0x80000000) {
         return NULL;
     }
     drum = gAudioContext.ctlEntries[bankId].drums[drumId];
@@ -378,7 +378,7 @@ AudioBankSound* Audio_GetSfx(s32 bankId, s32 sfxId) {
         return NULL;
     }
 
-    if ((u32)gAudioContext.ctlEntries[bankId].soundEffects < 0x80000000U) {
+    if ((u32)gAudioContext.ctlEntries[bankId].soundEffects < 0x80000000) {
         return NULL;
     }
 
@@ -570,7 +570,7 @@ void Audio_InitSyntheticWave(Note* note, SequenceChannelLayer* seqLayer) {
     s32 waveSampleCountIndex;
     s32 waveId = seqLayer->instOrWave;
 
-    if (waveId == 0xff) {
+    if (waveId == 0xFF) {
         waveId = seqLayer->seqChannel->instOrWave;
     }
 
@@ -761,7 +761,7 @@ void Audio_NoteInitForLayer(Note* note, SequenceChannelLayer* seqLayer) {
     Audio_NoteInit(note);
     instId = seqLayer->instOrWave;
 
-    if (instId == 0xff) {
+    if (instId == 0xFF) {
         instId = seqLayer->seqChannel->instOrWave;
     }
     sub->sound.audioBankSound = seqLayer->sound;
