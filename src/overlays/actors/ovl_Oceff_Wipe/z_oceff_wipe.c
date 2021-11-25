@@ -28,18 +28,11 @@ const ActorInit Oceff_Wipe_InitVars = {
     (ActorFunc)OceffWipe_Draw,
 };
 
-#include "z_oceff_wipe_gfx.c"
-
-static u8 sOceffWipeAlphaIndices[] = {
-    0x01, 0x10, 0x22, 0x01, 0x20, 0x12, 0x01, 0x20, 0x12, 0x01,
-    0x10, 0x22, 0x01, 0x20, 0x12, 0x01, 0x12, 0x21, 0x01, 0x02,
-};
-
 void OceffWipe_Init(Actor* thisx, GlobalContext* globalCtx) {
     OceffWipe* this = THIS;
 
     Actor_SetScale(&this->actor, 0.1f);
-    this->counter = 0;
+    this->timer = 0;
     this->actor.world.pos = GET_ACTIVE_CAM(globalCtx)->eye;
     osSyncPrintf(VT_FGCOL(CYAN) " WIPE arg_data = %d\n" VT_RST, this->actor.params);
 
@@ -84,6 +77,13 @@ void OceffWipe_Update(Actor* thisx, GlobalContext* globalCtx) {
     if (this->counter < changedValue) this->counter++; 
     else Actor_Kill(&this->actor);
 }
+
+#include "overlays/ovl_Oceff_Wipe/ovl_Oceff_Wipe.c"
+
+static u8 sAlphaIndices[] = {
+    0x01, 0x10, 0x22, 0x01, 0x20, 0x12, 0x01, 0x20, 0x12, 0x01,
+    0x10, 0x22, 0x01, 0x20, 0x12, 0x01, 0x12, 0x21, 0x01, 0x02,
+};
 
 void OceffWipe_Draw(Actor* thisx, GlobalContext* globalCtx) {
     u32 scroll = globalCtx->state.frames & 0xFF;
@@ -143,8 +143,8 @@ void OceffWipe_Draw(Actor* thisx, GlobalContext* globalCtx) {
     //fade out
     for (i = 0; i < 20; i++) {
         vtxPtr = sFrustumVtx;
-        vtxPtr[i * 2 + 0].v.cn[3] = alphaTable[((sOceffWipeAlphaIndices[i] & 0xF0) >> 4)];
-        vtxPtr[i * 2 + 1].v.cn[3] = alphaTable[sOceffWipeAlphaIndices[i] & 0xF];
+        vtxPtr[i * 2 + 0].v.cn[3] = alphaTable[(sAlphaIndices[i] & 0xF0) >> 4];
+        vtxPtr[i * 2 + 1].v.cn[3] = alphaTable[sAlphaIndices[i] & 0xF];
     }
 
     //???
@@ -168,8 +168,7 @@ void OceffWipe_Draw(Actor* thisx, GlobalContext* globalCtx) {
         gDPSetEnvColor(POLY_XLU_DISP++, 100, 0, 255, 128);
     }
 
-    //in-game display
-    gSPDisplayList(POLY_XLU_DISP++, sTextureDL);
+    gSPDisplayList(POLY_XLU_DISP++, sMaterialDL);
     gSPDisplayList(POLY_XLU_DISP++, Gfx_TwoTexScroll(globalCtx->state.gfxCtx, 0, 0 - scroll, scroll * (-2), 32, 32, 1,
                                                      0 - scroll, scroll * (-2), 32, 32));
     gSPDisplayList(POLY_XLU_DISP++, sFrustumDL);

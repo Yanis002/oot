@@ -5829,7 +5829,7 @@ s32 Camera_Demo5(Camera* camera) {
     Actor_GetFocus(&camera->targetPosRot, camera->target);
     OLib_Vec3fDiffToVecSphGeo(&playerTargetGeo, &camera->targetPosRot.pos, &camera->playerPosRot.pos);
     D_8011D3AC = camera->target->category;
-    func_8002F374(camera->globalCtx, camera->target, &sp78.yaw, &sp78.pitch);
+    Actor_GetScreenPos(camera->globalCtx, camera->target, &sp78.yaw, &sp78.pitch);
     eyeTargetDist = OLib_Vec3fDist(&camera->targetPosRot.pos, &camera->eye);
     OLib_Vec3fDiffToVecSphGeo(&eyePlayerGeo, &playerhead.pos, &camera->eyeNext);
     sp4A = eyePlayerGeo.yaw - playerTargetGeo.yaw;
@@ -7129,7 +7129,7 @@ s32 Camera_CheckWater(Camera* camera) {
             camera->unk_150 = 0x50;
         }
 
-        func_800F6828(0x20);
+        Audio_SetExtraFilter(0x20);
 
         if (PREG(81)) {
             Quake_RemoveFromIdx(*quakeId);
@@ -7164,7 +7164,7 @@ s32 Camera_CheckWater(Camera* camera) {
             camera->unk_150 = 0;
             camera->unk_152 = 0;
         }
-        func_800F6828(0);
+        Audio_SetExtraFilter(0);
     }
     //! @bug: doesn't always return a value, but sometimes does.
 }

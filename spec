@@ -13,6 +13,7 @@ beginseg
     name "boot"
     address 0x80000460
     include "build/src/boot/boot_main.o"
+    include "build/data/unk_80009410.data.o"
     include "build/src/boot/idle.o"
     include "build/src/boot/viconfig.o"
     include "build/src/boot/z_std_dma.o"
@@ -133,7 +134,8 @@ endseg
 
 beginseg
     name "link_animetion"
-    include "build/baserom/link_animetion.o"
+    include "build/assets/misc/link_animetion/link_animetion.o"
+    number 7
 endseg
 
 beginseg
@@ -243,25 +245,29 @@ endseg
 beginseg
     name "nes_message_data_static"
     romalign 0x1000
-    include "build/baserom/nes_message_data_static.o"
+    include "build/assets/text/nes_message_data_static.o"
+    number 7
 endseg
 
 beginseg
     name "ger_message_data_static"
     romalign 0x1000
-    include "build/baserom/ger_message_data_static.o"
+    include "build/assets/text/ger_message_data_static.o"
+    number 7
 endseg
 
 beginseg
     name "fra_message_data_static"
     romalign 0x1000
-    include "build/baserom/fra_message_data_static.o"
+    include "build/assets/text/fra_message_data_static.o"
+    number 7
 endseg
 
 beginseg
     name "staff_message_data_static"
     romalign 0x1000
-    include "build/baserom/staff_message_data_static.o"
+    include "build/assets/text/staff_message_data_static.o"
+    number 7
 endseg
 
 beginseg
@@ -359,6 +365,7 @@ beginseg
     include "build/src/code/z_ss_sram.o"
     include "build/src/code/code_800A9F30.o"
     include "build/data/z_text.data.o"
+    include "build/data/unk_8012ABC0.data.o"
     include "build/src/code/z_view.o"
     include "build/src/code/z_vimode.o"
     include "build/src/code/code_800ACE70.o"
@@ -399,7 +406,6 @@ beginseg
     include "build/src/code/sys_matrix.o"
     include "build/src/code/sys_ucode.o"
     include "build/src/code/code_800D2E30.o"
-    include "build/data/code_800D2E30.data.o"
     include "build/src/code/code_800D31A0.o"
     include "build/src/code/irqmgr.o"
     include "build/src/code/debug_malloc.o"
@@ -408,8 +414,9 @@ beginseg
     include "build/src/code/fault_drawer.o"
     include "build/asm/code_800D71F0.o"
     include "build/src/code/ucode_disas.o"
+    pad_text // audio library aligned to 32 bytes?
+    include "build/src/code/audio_data.o"
     include "build/src/code/audio_synthesis.o"
-    include "build/data/audio_synthesis.data.o"
     include "build/src/code/audio_heap.o"
     include "build/src/code/audio_load.o"
     include "build/src/code/code_800E4FE0.o"
@@ -417,7 +424,6 @@ beginseg
     include "build/src/libultra_code_O2/osAiSetNextBuffer.o"
     include "build/src/code/audio_playback.o"
     include "build/src/code/audio_effects.o"
-    include "build/data/audio_effects.data.o"
     include "build/src/code/audio_seqplayer.o"
     include "build/src/code/code_800EC960.o"
     include "build/src/code/audio_sound_params.o"
@@ -425,7 +431,7 @@ beginseg
     include "build/data/code_800F7260.bss.o"
     include "build/src/code/code_800F9280.o"
     include "build/data/code_800F9280.data.o"
-    include "build/src/code/audio_rodata.o"
+    include "build/src/code/audio_init_params.o"
     include "build/src/code/logseverity.o"
     include "build/src/code/gfxprint.o"
     include "build/src/code/code_800FBCE0.o"
@@ -512,9 +518,7 @@ beginseg
     include "build/src/code/code_801067F0.o"
     include "build/src/code/code_80106860.o"
     include "build/src/code/code_801068B0.o"
-    include "build/data/z_message_PAL.rodata.o"
-    include "build/src/code/z_message_PAL.o"
-    include "build/data/z_message_PAL.bss.o"
+    include_data_with_rodata "build/src/code/z_message_PAL.o"
     include "build/src/code/z_game_over.o"
     include "build/src/code/z_construct.o"
     include "build/data/rsp.text.o"
@@ -555,13 +559,11 @@ endseg
 beginseg
     name "ovl_file_choose"
     compress
+    include "build/src/overlays/gamestates/ovl_file_choose/z_file_nameset_data.o"
+    include "build/src/overlays/gamestates/ovl_file_choose/z_file_copy_erase.o"
     include "build/src/overlays/gamestates/ovl_file_choose/z_file_nameset_PAL.o"
-    include "build/data/overlays/gamestates/z_file_nameset_PAL.data.o"
-    include "build/data/overlays/gamestates/z_file_nameset_PAL.rodata.o"
-    include "build/data/overlays/gamestates/z_file_nameset_PAL.bss.o"
     include "build/src/overlays/gamestates/ovl_file_choose/z_file_choose.o"
-    include "build/data/overlays/gamestates/z_file_choose.rodata.o"
-    include "build/data/overlays/gamestates/z_file_choose.reloc.o"
+    include "build/src/overlays/gamestates/ovl_file_choose/ovl_file_choose_reloc.o"
 endseg
 
 beginseg
@@ -7796,14 +7798,16 @@ beginseg
     name "elf_message_field"
     compress
     romalign 0x1000
-    include "build/baserom/elf_message_field.o"
+    include "build/src/elf_message/elf_message_field.o"
+    number 0
 endseg
 
 beginseg
     name "elf_message_ydan"
     compress
     romalign 0x1000
-    include "build/baserom/elf_message_ydan.o"
+    include "build/src/elf_message/elf_message_ydan.o"
+    number 0
 endseg
 
 beginseg

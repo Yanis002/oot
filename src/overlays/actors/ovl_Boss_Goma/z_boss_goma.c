@@ -1837,7 +1837,7 @@ void BossGoma_UpdateHit(BossGoma* this, GlobalContext* globalCtx) {
             } else if (this->actionFunc != BossGoma_FloorStunned && this->patienceTimer != 0 &&
                        (acHitInfo->toucher.dmgFlags & 0x00000005)) {
                 Audio_PlayActorSound2(&this->actor, NA_SE_EN_GOMA_DAM2);
-                Audio_StopSfx(NA_SE_EN_GOMA_CRY1);
+                Audio_StopSfxById(NA_SE_EN_GOMA_CRY1);
                 this->invincibilityFrames = 10;
                 BossGoma_SetupFloorStunned(this);
                 this->sfxFaintTimer = 100;
@@ -2002,7 +2002,7 @@ s32 BossGoma_OverrideLimbDraw(GlobalContext* globalCtx, s32 limbIndex, Gfx** dLi
                     gDPSetEnvColor(POLY_OPA_DISP++, 255, 255, 255, 255);
                 }
 
-                Matrix_JointPosition(pos, rot);
+                Matrix_TranslateRotateZYX(pos, rot);
 
                 if (*dList != NULL) {
                     Matrix_Push();
@@ -2021,7 +2021,7 @@ s32 BossGoma_OverrideLimbDraw(GlobalContext* globalCtx, s32 limbIndex, Gfx** dLi
         case BOSSGOMA_LIMB_TAIL3:
         case BOSSGOMA_LIMB_TAIL2:
         case BOSSGOMA_LIMB_TAIL1:
-            Matrix_JointPosition(pos, rot);
+            Matrix_TranslateRotateZYX(pos, rot);
 
             if (*dList != NULL) {
                 Matrix_Push();
