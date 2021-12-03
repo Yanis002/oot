@@ -32,7 +32,7 @@ void OceffWipe_Init(Actor* thisx, GlobalContext* globalCtx) {
     OceffWipe* this = THIS;
 
     Actor_SetScale(&this->actor, 0.1f);
-    this->timer = 0;
+    // this->timer = 0;
     this->actor.world.pos = GET_ACTIVE_CAM(globalCtx)->eye;
     osSyncPrintf(VT_FGCOL(CYAN) " WIPE arg_data = %d\n" VT_RST, this->actor.params);
 

@@ -3367,6 +3367,18 @@ beginseg
 endseg
 
 beginseg
+    name "ovl_Obj_Mure4"
+    include "build/src/overlays/actors/ovl_Obj_Mure4/z_obj_mure4.o"
+    include "build/src/overlays/actors/ovl_Obj_Mure4/ovl_Obj_Mure4_reloc.o"
+endseg
+
+beginseg
+    name "ovl_En_Freezer"
+    include "build/src/overlays/actors/ovl_En_Freezer/z_en_freezer.o"
+    include "build/src/overlays/actors/ovl_En_Freezer/ovl_En_Freezer_reloc.o"
+endseg
+
+beginseg
     name "gameplay_keep"
     romalign 0x1000
     include "build/assets/objects/gameplay_keep/gameplay_keep.o"
