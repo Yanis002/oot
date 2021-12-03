@@ -34,10 +34,10 @@ diff_count = args.count
 if args.make:
     check_call(["make", "-j4", "COMPARE=0"])
 
-baseimg = f"baserom.z64"
+baseimg = f"baserom_non_mq.z64"
 basemap = f"expected/build/z64.map"
 
-myimg = f"zelda_ocarina_mq_dbg.z64"
+myimg = f"zelda_ocarina_dbg.z64"
 mymap = f"build/z64.map"
 
 if not os.path.isfile(baseimg):

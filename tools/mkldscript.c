@@ -158,6 +158,8 @@ static void write_ld_script(FILE *fout)
                       seg->name, seg->name, seg->name, seg->name);
         if (seg->fields & (1 << STMT_align))
             fprintf(fout, "        . = ALIGN(0x%X);\n", seg->align);
+        if (seg->fields & (1 << STMT_bssalign))
+            fprintf(fout, "        . = ALIGN(0x%X);\n", seg->bssalign);
         for (j = 0; j < seg->includesCount; j++)
             fprintf(fout, "            %s (.sbss)\n", seg->includes[j].fpath);
         for (j = 0; j < seg->includesCount; j++)

@@ -93,7 +93,7 @@ endif
 #### Files ####
 
 # ROM image
-ROM := zelda_ocarina_mq_dbg.z64
+ROM := zelda_ocarina_dbg.z64
 ELF := $(ROM:.z64=.elf)
 # description of ROM segments
 SPEC := spec

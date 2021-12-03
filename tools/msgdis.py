@@ -259,11 +259,11 @@ textbox_ypos = {
 }
 
 # message entry tables vrom addresses
-nes_message_entry_table_addr = 0x00BC24C0
-ger_message_entry_table_addr = 0x00BC66E8
-fra_message_entry_table_addr = 0x00BC87F8
-staff_message_entry_table_addr = 0x00BCA908
-staff_message_entry_table_addr_end = 0x00BCAA90
+nes_message_entry_table_addr = 0x00BC24E0
+ger_message_entry_table_addr = 0x00BC6708
+fra_message_entry_table_addr = 0x00BC8818
+staff_message_entry_table_addr = 0x00BCA928
+staff_message_entry_table_addr_end = 0x00BCAAB0
 
 nes_message_entry_table = []
 ger_message_entry_table = []
@@ -282,7 +282,7 @@ def read_tables():
     global staff_message_entry_table
 
     baserom = None
-    with open("baserom.z64","rb") as infile:
+    with open("baserom_non_mq.z64","rb") as infile:
         baserom = infile.read()
 
     nes_message_entry_table = as_message_table_entry(baserom[nes_message_entry_table_addr:ger_message_entry_table_addr])

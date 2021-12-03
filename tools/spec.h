@@ -7,6 +7,7 @@ enum
     STMT_after,
     STMT_align,
     STMT_beginseg,
+    STMT_bssalign,
     STMT_endseg,
     STMT_entry,
     STMT_flags,
@@ -43,6 +44,7 @@ struct Segment
     uint32_t address;
     uint32_t stack;
     uint32_t align;
+    uint32_t bssalign;
     uint32_t romalign;
     uint32_t increment;
     uint32_t entry;

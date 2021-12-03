@@ -983,7 +983,7 @@ void* D_8012A2F8[] = {
 void func_800995DC(GlobalContext* globalCtx) {
     u32 gameplayFrames = globalCtx->gameplayFrames;
 
-    OPEN_DISPS(globalCtx->state.gfxCtx, "../z_scene_table.c", 4763);
+    OPEN_DISPS(globalCtx->state.gfxCtx, "../z_scene_table.c", 4810);
 
     gSPSegment(POLY_XLU_DISP++, 0x09,
                Gfx_TwoTexScroll(globalCtx->state.gfxCtx, 0, 127 - (gameplayFrames % 128), (gameplayFrames * 1) % 128,
@@ -996,7 +996,7 @@ void func_800995DC(GlobalContext* globalCtx) {
 
     gSPSegment(POLY_OPA_DISP++, 0x08, SEGMENTED_TO_VIRTUAL(D_8012A2F8[gSaveContext.nightFlag]));
 
-    CLOSE_DISPS(globalCtx->state.gfxCtx, "../z_scene_table.c", 4783);
+    CLOSE_DISPS(globalCtx->state.gfxCtx, "../z_scene_table.c", 4830);
 }
 
 // Scene Draw Config 28
@@ -1031,7 +1031,7 @@ void func_80099878(GlobalContext* globalCtx) {
     s32 pad;
     Gfx* displayListHead = Graph_Alloc(globalCtx->state.gfxCtx, 6 * sizeof(Gfx));
 
-    OPEN_DISPS(globalCtx->state.gfxCtx, "../z_scene_table.c", 4905);
+    OPEN_DISPS(globalCtx->state.gfxCtx, "../z_scene_table.c", 5001);
 
     gameplayFrames = globalCtx->gameplayFrames;
     gSPSegment(POLY_OPA_DISP++, 0x08, SEGMENTED_TO_VIRTUAL(gDCEntranceTextures[gSaveContext.nightFlag]));
@@ -1060,7 +1060,7 @@ void func_80099878(GlobalContext* globalCtx) {
     gDPSetEnvColor(displayListHead++, 255, 255, 255, globalCtx->roomCtx.unk_74[1]);
     gSPEndDisplayList(displayListHead);
 
-    CLOSE_DISPS(globalCtx->state.gfxCtx, "../z_scene_table.c", 4956);
+    CLOSE_DISPS(globalCtx->state.gfxCtx, "../z_scene_table.c", 5052);
 }
 
 // Scene Draw Config 30
@@ -1249,7 +1249,7 @@ void func_8009ACA8(GlobalContext* globalCtx) {
 void func_8009AE30(GlobalContext* globalCtx) {
     u32 gameplayFrames;
 
-    OPEN_DISPS(globalCtx->state.gfxCtx, "../z_scene_table.c", 5384);
+    OPEN_DISPS(globalCtx->state.gfxCtx, "../z_scene_table.c", 5432);
 
     gameplayFrames = globalCtx->gameplayFrames;
 
@@ -1269,7 +1269,7 @@ void func_8009AE30(GlobalContext* globalCtx) {
     gDPPipeSync(POLY_XLU_DISP++);
     gDPSetEnvColor(POLY_XLU_DISP++, 128, 128, 128, 128);
 
-    CLOSE_DISPS(globalCtx->state.gfxCtx, "../z_scene_table.c", 5416);
+    CLOSE_DISPS(globalCtx->state.gfxCtx, "../z_scene_table.c", 5464);
 }
 
 void* sThievesHideoutEntranceTextures[] = {
@@ -1304,7 +1304,7 @@ void func_8009B0FC(GlobalContext* globalCtx) {
     s32 spB0;
     s32 spAC;
 
-    OPEN_DISPS(globalCtx->state.gfxCtx, "../z_scene_table.c", 5535);
+    OPEN_DISPS(globalCtx->state.gfxCtx, "../z_scene_table.c", 5671);
 
     if (1) {} // Necessary to match
 
@@ -1312,7 +1312,7 @@ void func_8009B0FC(GlobalContext* globalCtx) {
     spAC = globalCtx->roomCtx.unk_74[1] & 0xFF;
     gameplayFrames = globalCtx->gameplayFrames;
 
-    gSPSegment(POLY_XLU_DISP++, 0x08, SEGMENTED_TO_VIRTUAL(D_8012A330[gSaveContext.nightFlag]));
+    gSPSegment(POLY_XLU_DISP++, 0x06, SEGMENTED_TO_VIRTUAL(D_8012A330[gSaveContext.nightFlag]));
 
     if (spB0 == 1) {
         gSPSegment(POLY_OPA_DISP++, 0x08,
@@ -1367,7 +1367,7 @@ void func_8009B0FC(GlobalContext* globalCtx) {
 
     { s32 pad[2]; }
 
-    CLOSE_DISPS(globalCtx->state.gfxCtx, "../z_scene_table.c", 5644);
+    CLOSE_DISPS(globalCtx->state.gfxCtx, "../z_scene_table.c", 5776);
 }
 
 // Scene Draw Config 29
@@ -1540,7 +1540,7 @@ void func_8009C3EC(GlobalContext* globalCtx) {
 
     if (0) {} // Necessary to match
 
-    OPEN_DISPS(globalCtx->state.gfxCtx, "../z_scene_table.c", 6042);
+    OPEN_DISPS(globalCtx->state.gfxCtx, "../z_scene_table.c", 6102);
 
     gameplayFrames = globalCtx->gameplayFrames;
     gSPSegment(POLY_XLU_DISP++, 0x08, SEGMENTED_TO_VIRTUAL(sIceCavernEntranceTextures[gSaveContext.nightFlag]));
@@ -1559,7 +1559,7 @@ void func_8009C3EC(GlobalContext* globalCtx) {
     gDPPipeSync(POLY_XLU_DISP++);
     gDPSetEnvColor(POLY_XLU_DISP++, 128, 128, 128, 128);
 
-    CLOSE_DISPS(globalCtx->state.gfxCtx, "../z_scene_table.c", 6076);
+    CLOSE_DISPS(globalCtx->state.gfxCtx, "../z_scene_table.c", 6136);
 }
 
 // Scene Draw Config 42
@@ -1644,7 +1644,7 @@ void func_8009CC00(GlobalContext* globalCtx) {
 
     if (0) {} // Necessary to match
 
-    OPEN_DISPS(globalCtx->state.gfxCtx, "../z_scene_table.c", 6290);
+    OPEN_DISPS(globalCtx->state.gfxCtx, "../z_scene_table.c", 6345);
 
     gameplayFrames = globalCtx->gameplayFrames;
     gSPSegment(POLY_XLU_DISP++, 0x08, SEGMENTED_TO_VIRTUAL(sGTGEntranceTextures[gSaveContext.nightFlag]));
@@ -1663,7 +1663,7 @@ void func_8009CC00(GlobalContext* globalCtx) {
     gDPPipeSync(POLY_XLU_DISP++);
     gDPSetEnvColor(POLY_XLU_DISP++, 128, 128, 128, 128);
 
-    CLOSE_DISPS(globalCtx->state.gfxCtx, "../z_scene_table.c", 6320);
+    CLOSE_DISPS(globalCtx->state.gfxCtx, "../z_scene_table.c", 6375);
 }
 
 Gfx* Gfx_TwoTexScrollPrimColor(GraphicsContext* gfxCtx, s32 tile1, u32 x1, u32 y1, s32 width1, s32 height1, s32 tile2,
@@ -1819,7 +1819,7 @@ void func_8009D758(GlobalContext* globalCtx) {
 
     if (0) {} // Necessary to match
 
-    OPEN_DISPS(globalCtx->state.gfxCtx, "../z_scene_table.c", 6640);
+    OPEN_DISPS(globalCtx->state.gfxCtx, "../z_scene_table.c", 6695);
 
     gameplayFrames = globalCtx->gameplayFrames;
     gSPSegment(POLY_XLU_DISP++, 0x08, SEGMENTED_TO_VIRTUAL(sForestTempleEntranceTextures[gSaveContext.nightFlag]));
@@ -1838,7 +1838,7 @@ void func_8009D758(GlobalContext* globalCtx) {
     gDPPipeSync(POLY_XLU_DISP++);
     gDPSetEnvColor(POLY_XLU_DISP++, 128, 128, 128, 128);
 
-    CLOSE_DISPS(globalCtx->state.gfxCtx, "../z_scene_table.c", 6671);
+    CLOSE_DISPS(globalCtx->state.gfxCtx, "../z_scene_table.c", 6726);
 }
 
 void* sSpiritTempleEntranceTextures[] = {
@@ -1848,13 +1848,13 @@ void* sSpiritTempleEntranceTextures[] = {
 
 // Scene Draw Config 25
 void func_8009D974(GlobalContext* globalCtx) {
-    OPEN_DISPS(globalCtx->state.gfxCtx, "../z_scene_table.c", 6752);
+    OPEN_DISPS(globalCtx->state.gfxCtx, "../z_scene_table.c", 6786);
 
     { s32 pad[2]; }
 
     gSPSegment(POLY_XLU_DISP++, 0x08, SEGMENTED_TO_VIRTUAL(sSpiritTempleEntranceTextures[gSaveContext.nightFlag]));
 
-    CLOSE_DISPS(globalCtx->state.gfxCtx, "../z_scene_table.c", 6762);
+    CLOSE_DISPS(globalCtx->state.gfxCtx, "../z_scene_table.c", 6796);
 }
 
 // Scene Draw Config 1
@@ -2349,7 +2349,7 @@ void func_8009FB74(GlobalContext* globalCtx) {
 void func_8009FC90(GlobalContext* globalCtx) {
     u32 gameplayFrames;
 
-    OPEN_DISPS(globalCtx->state.gfxCtx, "../z_scene_table.c", 7630);
+    OPEN_DISPS(globalCtx->state.gfxCtx, "../z_scene_table.c", 7667);
 
     gameplayFrames = globalCtx->gameplayFrames;
     gSPSegment(POLY_OPA_DISP++, 0x08,
@@ -2366,7 +2366,7 @@ void func_8009FC90(GlobalContext* globalCtx) {
     gDPPipeSync(POLY_XLU_DISP++);
     gDPSetEnvColor(POLY_XLU_DISP++, 128, 128, 128, 64);
 
-    CLOSE_DISPS(globalCtx->state.gfxCtx, "../z_scene_table.c", 7653);
+    CLOSE_DISPS(globalCtx->state.gfxCtx, "../z_scene_table.c", 7690);
 }
 
 f32 D_8012A398 = 0.0f;

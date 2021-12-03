@@ -9,10 +9,10 @@ def get_str_hash(byte_array):
 
 
 # If the baserom exists and is correct, we don't need to change anything
-if path.exists("baserom.z64"):
-    with open("baserom.z64", mode="rb") as file:
+if path.exists("baserom_non_mq.z64"):
+    with open("baserom_non_mq.z64", mode="rb") as file:
         fileContent = bytearray(file.read())
-        if get_str_hash(fileContent) == "f0b7f35375f9cc8ca1b2d59d78e35405":
+        if get_str_hash(fileContent) == "9c1d795429220f5389045693a011b8f6":
             print("Found valid baserom - exiting early")
             sys.exit(0)
 
@@ -22,7 +22,7 @@ romFileExtensions = ["z64", "n64", "v64"]
 def find_baserom_original():
     for romFileExtLower in romFileExtensions:
         for romFileExt in (romFileExtLower, romFileExtLower.upper()):
-            romFileNameCandidate = "baserom_original." + romFileExt
+            romFileNameCandidate = "baserom_original_non_mq." + romFileExt
             if path.exists(romFileNameCandidate):
                 return romFileNameCandidate
     return None
@@ -30,7 +30,7 @@ def find_baserom_original():
 romFileName = find_baserom_original()
 
 if romFileName is None:
-    print("Error: Could not find baserom_original.z64/baserom_original.n64/baserom_original.v64.")
+    print("Error: Could not find baserom_original_non_mq.z64/baserom_original_non_mq.n64/baserom_original_non_mq.v64.")
     sys.exit(1)
 
 # Read in the original ROM
@@ -78,8 +78,8 @@ for i in range(0x35CF000, len(fileContent)):
 
 # Check to see if the ROM is a "vanilla" Debug ROM
 str_hash = get_str_hash(bytearray(fileContent))
-if str_hash != "f0b7f35375f9cc8ca1b2d59d78e35405":
-    print("Error: Expected a hash of f0b7f35375f9cc8ca1b2d59d78e35405 but got " + str_hash + ". " +
+if str_hash != "9c1d795429220f5389045693a011b8f6":
+    print("Error: Expected a hash of 9c1d795429220f5389045693a011b8f6 but got " + str_hash + ". " +
           "The baserom has probably been tampered, find a new one")
 
     if str_hash == "32fe2770c0f9b1a9cd2a4d449348c1cb":
@@ -89,8 +89,8 @@ if str_hash != "f0b7f35375f9cc8ca1b2d59d78e35405":
     sys.exit(1)
 
 # Write out our new ROM
-print("Writing new ROM 'baserom.z64'.")
-with open("baserom.z64", mode="wb") as file:
+print("Writing new ROM 'baserom_non_mq.z64'.")
+with open("baserom_non_mq.z64", mode="wb") as file:
     file.write(bytes(fileContent))
 
 print("Done!")

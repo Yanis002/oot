@@ -127,6 +127,7 @@ static const char *const stmtNames[] =
     [STMT_after]     = "after",
     [STMT_align]     = "align",
     [STMT_beginseg]  = "beginseg",
+    [STMT_bssalign]  = "bssalign",
     [STMT_endseg]    = "endseg",
     [STMT_entry]     = "entry",
     [STMT_flags]     = "flags",
@@ -216,6 +217,12 @@ void parse_rom_spec(char *spec, struct Segment **segments, int *segment_count)
                     if (!parse_number(args, &currSeg->align))
                         util_fatal_error("line %i: expected number after 'align'", lineNum);
                     if (!is_pow_of_2(currSeg->align))
+                        util_fatal_error("line %i: alignment is not a power of two", lineNum);
+                    break;
+                case STMT_bssalign:
+                    if (!parse_number(args, &currSeg->bssalign))
+                        util_fatal_error("line %i: expected number after 'bssalign'", lineNum);
+                    if (!is_pow_of_2(currSeg->bssalign))
                         util_fatal_error("line %i: alignment is not a power of two", lineNum);
                     break;
                 case STMT_romalign:

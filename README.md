@@ -29,7 +29,7 @@ The only build currently supported is Master Quest (Debug), but other versions a
 
 It builds the following ROM:
 
-* zelda_ocarina_mq_dbg.z64 `md5: f0b7f35375f9cc8ca1b2d59d78e35405`
+* zelda_ocarina_dbg.z64 `md5: 9c1d795429220f5389045693a011b8f6`
 
 **Note: This repository does not include any of the assets necessary to build the ROM. A prior copy of the game is required to extract the needed assets.**
 
