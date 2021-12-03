@@ -9939,7 +9939,7 @@ static f32 D_80854820[] = { 2.0f, 4.0f, 7.0f };
 static f32 D_8085482C[] = { 0.5f, 1.0f, 3.0f };
 
 //test quick text
-// extern u8 D_8014B300;
+extern u8 sTextboxSkipped;
 u8 counter = 0, timeSwitch = 0;
 
 void Player_UpdateCommon(Player* this, GlobalContext* globalCtx, Input* input) {
@@ -10152,8 +10152,8 @@ void Player_UpdateCommon(Player* this, GlobalContext* globalCtx, Input* input) {
             func_8085002C(this);
 
             //test quick text
-            // D_8014B300 = 1;
-        }
+            sTextboxSkipped = true;
+        } else sTextboxSkipped = false;
 
         if (func_8002DD6C(this) != 0) {
             func_8084FF7C(this);
