@@ -29,8 +29,6 @@
 
 #include "z_obj_mure4.h"
 
-#define THIS ((ObjMure4*)thisx)
-
 void ObjMure4_Init(Actor* thisx, GlobalContext* globalCtx);
 void ObjMure4_Destroy(Actor* thisx, GlobalContext* globalCtx);
 void ObjMure4_Update(Actor* thisx, GlobalContext* globalCtx);
@@ -64,7 +62,7 @@ static u16 type = 0x0, spawnParams = 0x0, params = 0x0;
 
 //constructor
 void ObjMure4_Init(Actor* thisx, GlobalContext* globalCtx){
-    ObjMure4* this = THIS;
+    ObjMure4* this = (ObjMure4*)thisx;
     u16 i;
 
     //initialize global and Mure4 struct vars
@@ -83,7 +81,7 @@ void ObjMure4_Init(Actor* thisx, GlobalContext* globalCtx){
 
 //destructor
 void ObjMure4_Destroy(Actor* thisx, GlobalContext* globalCtx){
-    ObjMure4* this = THIS;
+    ObjMure4* this = (ObjMure4*)thisx;
 
     ObjMure4_Kill(this, globalCtx);
     Actor_Kill(&this->actor);

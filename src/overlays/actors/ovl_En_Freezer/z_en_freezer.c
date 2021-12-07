@@ -15,8 +15,6 @@
 #include "z_en_freezer.h"
 #include "../ovl_En_Arrow/z_en_arrow.h"
 
-#define THIS ((En_Freezer*)thisx)
-
 void EnFreezer_Init(Actor* thisx, GlobalContext* globalCtx);
 void EnFreezer_Destroy(Actor* thisx, GlobalContext* globalCtx);
 void EnFreezer_Update(Actor* thisx, GlobalContext* globalCtx);
@@ -58,7 +56,7 @@ static u8 actorCatBlacklist[] =
 static u16 duration = 0;
 
 void EnFreezer_Init(Actor* thisx, GlobalContext* globalCtx) {
-    En_Freezer* this = THIS;
+    En_Freezer* this = (En_Freezer*)thisx;
     Player* player = GET_PLAYER(globalCtx);
 
     player->isFreezerSpawned = !player->isFreezerSpawned;
@@ -77,7 +75,7 @@ void EnFreezer_Destroy(Actor* thisx, GlobalContext* globalCtx) {
 }
 
 void EnFreezer_Update(Actor* thisx, GlobalContext* globalCtx) {
-    En_Freezer* this = THIS;
+    En_Freezer* this = (En_Freezer*)thisx;
     Player* player = GET_PLAYER(globalCtx);
     GraphicsContext* gfx;
     u8 i;
