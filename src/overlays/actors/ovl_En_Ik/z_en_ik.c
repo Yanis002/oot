@@ -9,9 +9,7 @@
 #include "objects/object_ik/object_ik.h"
 #include "vt.h"
 
-#define FLAGS 0x00000010
-
-#define THIS ((EnIk*)thisx)
+#define FLAGS ACTOR_FLAG_4
 
 typedef void (*EnIkDrawFunc)(struct EnIk*, GlobalContext*);
 
@@ -168,7 +166,7 @@ static DamageTable sDamageTable = {
 };
 
 void EnIk_Destroy(Actor* thisx, GlobalContext* globalCtx) {
-    EnIk* this = THIS;
+    EnIk* this = (EnIk*)thisx;
 
     if (Actor_FindNearby(globalCtx, &this->actor, ACTOR_EN_IK, ACTORCAT_ENEMY, 8000.0f) == NULL) {
         func_800F5B58();
@@ -185,13 +183,13 @@ void EnIk_SetupAction(EnIk* this, EnIkActionFunc actionFunc) {
 
 //global infos like health (but not damage dealt)
 void func_80A74398(Actor* thisx, GlobalContext* globalCtx) {
-    EnIk* this = THIS;
+    EnIk* this = (EnIk*)thisx;
     s32 pad;
     EffectBlureInit1 blureInit;
 
     thisx->update = func_80A75FA0;
     thisx->draw = func_80A76798;
-    thisx->flags |= 0x400;
+    thisx->flags |= ACTOR_FLAG_10;
 
     Collider_InitCylinder(globalCtx, &this->bodyCollider);
     Collider_SetCylinder(globalCtx, &this->bodyCollider, thisx, &sCylinderInit);
@@ -301,7 +299,7 @@ void func_80A747C0(EnIk* this, GlobalContext* globalCtx) {
         Audio_PlayActorSound2(&this->actor, NA_SE_EN_IRONNACK_WAKEUP);
     }
     if (SkelAnime_Update(&this->skelAnime)) {
-        this->actor.flags |= 5;
+        this->actor.flags |= ACTOR_FLAG_0 | ACTOR_FLAG_2;
         func_80A74AAC(this);
     }
 }
@@ -309,7 +307,7 @@ void func_80A747C0(EnIk* this, GlobalContext* globalCtx) {
 void func_80A7489C(EnIk* this) {
     f32 frames = Animation_GetLastFrame(&object_ik_Anim_00DD50);
 
-    this->actor.flags |= 5;
+    this->actor.flags |= ACTOR_FLAG_0 | ACTOR_FLAG_2;
     this->unk_2F8 = 4;
     this->actor.speedXZ = 0.0f;
     Animation_Change(&this->skelAnime, &object_ik_Anim_00DD50, 0.0f, 0.0f, frames, ANIMMODE_LOOP, 4.0f);
@@ -748,7 +746,7 @@ void func_80A75C38(EnIk* this, GlobalContext* globalCtx) {
 
 //damages from ik to player
 void func_80A75FA0(Actor* thisx, GlobalContext* globalCtx) {
-    EnIk* this = THIS;
+    EnIk* this = (EnIk*)thisx;
     s32 pad;
     Player* player = GET_PLAYER(globalCtx);
     u8 prevInvincibilityTimer;
@@ -810,7 +808,7 @@ Gfx* func_80A761B0(GraphicsContext* gfxCtx, u8 primR, u8 primG, u8 primB, u8 env
 }
 
 s32 EnIk_OverrideLimbDraw3(GlobalContext* globalCtx, s32 limbIndex, Gfx** dList, Vec3f* pos, Vec3s* rot, void* thisx) {
-    EnIk* this = THIS;
+    EnIk* this = (EnIk*)thisx;
 
     if (limbIndex == 12) {
         if (this->actor.params != 0) {
@@ -857,7 +855,7 @@ static Vec3f D_80A784D0[] = {
 void EnIk_PostLimbDraw3(GlobalContext* globalCtx, s32 limbIndex, Gfx** dList, Vec3s* rot, void* thisx) {
     Vec3f spF4;
     Vec3f spE8;
-    EnIk* this = THIS;
+    EnIk* this = (EnIk*)thisx;
 
     OPEN_DISPS(globalCtx->state.gfxCtx, "../z_en_ik_inFight.c", 1201);
 
@@ -933,7 +931,7 @@ void EnIk_PostLimbDraw3(GlobalContext* globalCtx, s32 limbIndex, Gfx** dList, Ve
 }
 
 void func_80A76798(Actor* thisx, GlobalContext* globalCtx) {
-    EnIk* this = THIS;
+    EnIk* this = (EnIk*)thisx;
 
     OPEN_DISPS(globalCtx->state.gfxCtx, "../z_en_ik_inFight.c", 1309);
 
@@ -1062,7 +1060,7 @@ void func_80A770C0(EnIk* this, GlobalContext* globalCtx, s32 actionIdx) {
 }
 
 f32 EnIk_curFrame(Actor* thisx) {
-    EnIk* this = THIS;
+    EnIk* this = (EnIk*)thisx;
 
     return this->skelAnime.curFrame;
 }
@@ -1156,7 +1154,7 @@ void func_80A774F8(EnIk* this, GlobalContext* globalCtx) {
 }
 
 s32 EnIk_OverrideLimbDraw2(GlobalContext* globalCtx, s32 limbIndex, Gfx** dList, Vec3f* pos, Vec3s* rot, void* thisx) {
-    EnIk* this = THIS;
+    EnIk* this = (EnIk*)thisx;
 
     if ((limbIndex == 13) || (limbIndex == 26) || (limbIndex == 27)) {
         if (EnIk_curFrame(&this->actor) >= 30.0f) {
@@ -1174,7 +1172,7 @@ void EnIk_PostLimbDraw2(GlobalContext* globalCtx, s32 limbIndex, Gfx** dList, Ve
 
     switch (limbIndex) {
         case 13: {
-            EnIk* this = THIS;
+            EnIk* this = (EnIk*)thisx;
 
             if (EnIk_curFrame(&this->actor) < 30.0f) {
                 gSPMatrix(POLY_XLU_DISP++, Matrix_NewMtx(gfxCtx, "../z_en_ik_inAwake.c", 267),
@@ -1193,7 +1191,7 @@ void EnIk_PostLimbDraw2(GlobalContext* globalCtx, s32 limbIndex, Gfx** dList, Ve
             gSPDisplayList(POLY_XLU_DISP++, object_ik_DL_016EE8);
             break;
         case 26: {
-            EnIk* this = THIS;
+            EnIk* this = (EnIk*)thisx;
 
             if (EnIk_curFrame(&this->actor) < 30.0f) {
                 gSPMatrix(POLY_XLU_DISP++, Matrix_NewMtx(gfxCtx, "../z_en_ik_inAwake.c", 288),
@@ -1202,7 +1200,7 @@ void EnIk_PostLimbDraw2(GlobalContext* globalCtx, s32 limbIndex, Gfx** dList, Ve
             }
         } break;
         case 27: {
-            EnIk* this = THIS;
+            EnIk* this = (EnIk*)thisx;
 
             if (EnIk_curFrame(&this->actor) < 30.0f) {
                 gSPMatrix(POLY_XLU_DISP++, Matrix_NewMtx(gfxCtx, "../z_en_ik_inAwake.c", 297),
@@ -1297,7 +1295,7 @@ static EnIkActionFunc sActionFuncs[] = {
 };
 
 void EnIk_Update(Actor* thisx, GlobalContext* globalCtx) {
-    EnIk* this = THIS;
+    EnIk* this = (EnIk*)thisx;
 
     if (this->action < 0 || this->action >= ARRAY_COUNT(sActionFuncs) || sActionFuncs[this->action] == NULL) {
         osSyncPrintf(VT_FGCOL(RED) "メインモードがおかしい!!!!!!!!!!!!!!!!!!!!!!!!!\n" VT_RST);
@@ -1308,7 +1306,7 @@ void EnIk_Update(Actor* thisx, GlobalContext* globalCtx) {
 }
 
 s32 EnIk_OverrideLimbDraw1(GlobalContext* globalCtx, s32 limbIndex, Gfx** dList, Vec3f* pos, Vec3s* rot, void* thisx) {
-    EnIk* this = THIS;
+    EnIk* this = (EnIk*)thisx;
     f32 curFrame;
 
     switch (limbIndex) {
@@ -1390,7 +1388,7 @@ void func_80A77EDC(EnIk* this, GlobalContext* globalCtx) {
 static EnIkDrawFunc sDrawFuncs[] = { func_80A77ED0, func_80A77EDC, func_80A77844 };
 
 void EnIk_Draw(Actor* thisx, GlobalContext* globalCtx) {
-    EnIk* this = THIS;
+    EnIk* this = (EnIk*)thisx;
 
     if (this->drawMode < 0 || this->drawMode >= ARRAY_COUNT(sDrawFuncs) || sDrawFuncs[this->drawMode] == NULL) {
         osSyncPrintf(VT_FGCOL(RED) "描画モードがおかしい!!!!!!!!!!!!!!!!!!!!!!!!!\n" VT_RST);
@@ -1417,14 +1415,14 @@ void func_80A780D0(EnIk* this, GlobalContext* globalCtx) {
 void func_80A78160(EnIk* this, GlobalContext* globalCtx) {
     this->actor.update = func_80A75FA0;
     this->actor.draw = func_80A76798;
-    this->actor.flags |= 5;
+    this->actor.flags |= ACTOR_FLAG_0 | ACTOR_FLAG_2;
     gSaveContext.eventChkInf[3] |= 0x800;
     Actor_SetScale(&this->actor, 0.012f);
     func_80A7489C(this);
 }
 
 void func_80A781CC(Actor* thisx, GlobalContext* globalCtx) {
-    EnIk* this = THIS;
+    EnIk* this = (EnIk*)thisx;
 
     if (!Gameplay_InCsMode(globalCtx)) {
         this->actor.update = EnIk_Update;
@@ -1438,7 +1436,7 @@ void func_80A781CC(Actor* thisx, GlobalContext* globalCtx) {
 }
 
 void EnIk_Init(Actor* thisx, GlobalContext* globalCtx) {
-    EnIk* this = THIS;
+    EnIk* this = (EnIk*)thisx;
     s32 flag = this->actor.params & 0xFF00;
 
     if (((this->actor.params & 0xFF) == 0 && (gSaveContext.eventChkInf[3] & 0x1000)) ||
