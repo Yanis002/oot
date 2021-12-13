@@ -252,11 +252,14 @@ void ObjTimeblock_Normal(ObjTimeblock* this, GlobalContext* globalCtx) {
     }
 }
 
+// this function is used for alt behavior
+// sets unk_174 and unk_176 to the same value (???)
 void func_80BA06AC(ObjTimeblock* this, GlobalContext* globalCtx) {
     s32 switchFlag = this->dyna.actor.params & 0x3F;
 
     this->unk_172 = globalCtx->msgCtx.lastPlayedSong;
 
+    // on the first frame update unk_174
     if (this->demoEffectFirstPartTimer > 0 && --this->demoEffectFirstPartTimer == 0) {
         this->unk_174 = (Flags_GetSwitch(globalCtx, switchFlag)) ? true : false;
     }
@@ -270,6 +273,7 @@ void ObjTimeblock_SetupAltBehaviorVisible(ObjTimeblock* this) {
 }
 
 void ObjTimeblock_AltBehaviorVisible(ObjTimeblock* this, GlobalContext* globalCtx) {
+    // if you played SoT
     if (this->songObserverFunc(this, globalCtx) && this->demoEffectTimer <= 0) {
         this->demoEffectFirstPartTimer = 12;
         ObjTimeblock_SpawnDemoEffect(this, globalCtx);
