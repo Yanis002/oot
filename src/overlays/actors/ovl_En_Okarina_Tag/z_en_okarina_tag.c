@@ -80,20 +80,20 @@ void EnOkarinaTag_Init(Actor* thisx, GlobalContext* globalCtx) {
         Actor_Kill(&this->actor);
     } else {
         switch (this->type) {
-            case 7:
+            case 7: // puzzle
                 this->actionFunc = func_80ABEF2C;
                 break;
-            case 2:
+            case 2: // SoS
                 if (LINK_IS_ADULT) {
                     Actor_Kill(&this->actor);
                     break;
                 }
-            case 1:
-            case 4:
-            case 6:
+            case 1: // ZL in ZR
+            case 4: // SoT
+            case 6: // ZL in RFT
                 this->actionFunc = func_80ABF28C;
                 break;
-            case 5:
+            case 5: // SS in RFT
                 this->actor.textId = 0x5021;
                 this->actionFunc = func_80ABF708;
                 break;

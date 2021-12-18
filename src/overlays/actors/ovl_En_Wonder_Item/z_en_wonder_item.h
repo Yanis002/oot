@@ -30,16 +30,16 @@ typedef struct EnWonderItem {
 } EnWonderItem; // size = 0x01D0
 
 typedef enum {
-    /* 0 */ WONDERITEM_MULTITAG_FREE,
-    /* 1 */ WONDERITEM_TAG_POINT_FREE,
-    /* 2 */ WONDERITEM_PROXIMITY_DROP,
-    /* 3 */ WONDERITEM_INTERACT_SWITCH,
-    /* 4 */ WONDERITEM_UNUSED,
-    /* 5 */ WONDERITEM_MULTITAG_ORDERED,
-    /* 6 */ WONDERITEM_TAG_POINT_ORDERED,
-    /* 7 */ WONDERITEM_PROXIMITY_SWITCH,
-    /* 8 */ WONDERITEM_BOMB_SOLDIER,
-    /* 9 */ WONDERITEM_ROLL_DROP
+    /* 0 */ WONDERITEM_MULTITAG_FREE,       // drop collectible when every TAG_POINT_FREE points are triggered
+    /* 1 */ WONDERITEM_TAG_POINT_FREE,      // sets points that'll be used to give the collectible (see 0x0)
+    /* 2 */ WONDERITEM_PROXIMITY_DROP,      // use autocollect, drop collectible if in range, sets switch flag
+    /* 3 */ WONDERITEM_INTERACT_SWITCH,     // drop collectible, set switch flag (mq cows)
+    /* 4 */ WONDERITEM_UNUSED,              // does nothing
+    /* 5 */ WONDERITEM_MULTITAG_ORDERED,    // drops collectible if the points are triggered in order
+    /* 6 */ WONDERITEM_TAG_POINT_ORDERED,   // sets points, triggering each in order will give the collectible (see 0x5)
+    /* 7 */ WONDERITEM_PROXIMITY_SWITCH,    // sets switch flag if in range
+    /* 8 */ WONDERITEM_BOMB_SOLDIER,        // spawn bomb guard
+    /* 9 */ WONDERITEM_ROLL_DROP            // use autocollect, use zrot for drop count (0xFF), drop collectible if player rolls
 } EnWonderItemMode;
 
 typedef enum {

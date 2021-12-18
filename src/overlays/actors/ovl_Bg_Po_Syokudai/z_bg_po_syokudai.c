@@ -96,6 +96,7 @@ void BgPoSyokudai_Init(Actor* thisx, GlobalContext* globalCtx) {
     this->collider.dim.pos.y = thisx->world.pos.y;
     this->collider.dim.pos.z = thisx->world.pos.z;
 
+    // if current torch is meg's and joelle, beth and amy are beaten and meg isn't beaten yet, spawn meg
     if (this->flameColor == POE_FLAME_PURPLE && Flags_GetSwitch(globalCtx, POE_TORCH_FLAG + POE_FLAME_GREEN) &&
         Flags_GetSwitch(globalCtx, POE_TORCH_FLAG + POE_FLAME_BLUE) &&
         Flags_GetSwitch(globalCtx, POE_TORCH_FLAG + POE_FLAME_RED) && !Flags_GetSwitch(globalCtx, thisx->params)) {
@@ -104,7 +105,8 @@ void BgPoSyokudai_Init(Actor* thisx, GlobalContext* globalCtx) {
                     thisx->params);
         globalCtx->envCtx.unk_BF = 0x4;
 
-    } else if (!Flags_GetSwitch(globalCtx, POE_TORCH_FLAG + POE_FLAME_PURPLE) && !Flags_GetSwitch(globalCtx, 0x1B)) {
+    } // else, if meg isn't beaten and the elevator is on, spawn the poe with 0x1000 
+    else if (!Flags_GetSwitch(globalCtx, POE_TORCH_FLAG + POE_FLAME_PURPLE) && !Flags_GetSwitch(globalCtx, 0x1B)) {
 
         Actor_Spawn(&globalCtx->actorCtx, globalCtx, ACTOR_EN_PO_SISTERS, thisx->world.pos.x,
                     thisx->world.pos.y + 52.0f, thisx->world.pos.z, 0, 0, 0,

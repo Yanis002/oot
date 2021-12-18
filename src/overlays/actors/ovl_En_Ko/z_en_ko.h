@@ -33,18 +33,18 @@ typedef struct EnKo {
 } EnKo; // size = 0x0324
 
 typedef enum {
-    ENKO_TYPE_CHILD_0,
-    ENKO_TYPE_CHILD_1,
-    ENKO_TYPE_CHILD_2,
-    ENKO_TYPE_CHILD_3,
-    ENKO_TYPE_CHILD_4,
+    ENKO_TYPE_CHILD_0, // boy trying to lift a rock
+    ENKO_TYPE_CHILD_1, // standing girl near stone jump/fado
+    ENKO_TYPE_CHILD_2, // boxing boy
+    ENKO_TYPE_CHILD_3, // lost woods blocking boy
+    ENKO_TYPE_CHILD_4, // grass-cutter boy
     ENKO_TYPE_CHILD_5, // Shop Awning
-    ENKO_TYPE_CHILD_6,
-    ENKO_TYPE_CHILD_7,
-    ENKO_TYPE_CHILD_8,
-    ENKO_TYPE_CHILD_9,
-    ENKO_TYPE_CHILD_10,
-    ENKO_TYPE_CHILD_11,
+    ENKO_TYPE_CHILD_6, // standing girl near mido's house
+    ENKO_TYPE_CHILD_7, // know-it-all bro teaching about HUD icons
+    ENKO_TYPE_CHILD_8, // know-it-all bro teaching about map and items
+    ENKO_TYPE_CHILD_9, // sitting girl in house
+    ENKO_TYPE_CHILD_10, // standing girl in shop
+    ENKO_TYPE_CHILD_11, // know-it-all bro teaching about c-up
     ENKO_TYPE_CHILD_FADO,
     ENKO_TYPE_CHILD_MAX
 } KokiriChildren;

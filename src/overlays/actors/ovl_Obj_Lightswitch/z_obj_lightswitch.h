@@ -9,10 +9,10 @@ struct ObjLightswitch;
 typedef void (*ObjLightswitchActionFunc)(struct ObjLightswitch*, GlobalContext*);
 
 typedef enum {
-    /* 0 */ OBJLIGHTSWITCH_TYPE_STAY_ON, // doesn't turn off unless the switch flag is cleared some other way
-    /* 1 */ OBJLIGHTSWITCH_TYPE_1,       // turns on and off
-    /* 2 */ OBJLIGHTSWITCH_TYPE_2,       // turns on and off
-    /* 3 */ OBJLIGHTSWITCH_TYPE_BURN     // disappears when turned on
+    /* 0 */ OBJLIGHTSWITCH_TYPE_STAY_ON, // Equivalent: Obj_Switch Once subtype
+    /* 1 */ OBJLIGHTSWITCH_TYPE_1,       // Equivalent: Obj_Switch Toggle subtype
+    /* 2 */ OBJLIGHTSWITCH_TYPE_2,       // Equivalent: Obj_Switch Reset subtype
+    /* 3 */ OBJLIGHTSWITCH_TYPE_BURN     // burns when turned on (sets switch flag)
 } ObjLightswitch_Type;
 
 typedef struct ObjLightswitch {

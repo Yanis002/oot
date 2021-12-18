@@ -298,6 +298,7 @@ void func_80AD9568(EnPoSisters* this) {
     this->actionFunc = func_80ADA9E8;
 }
 
+// poe hit by player
 void func_80AD95D8(EnPoSisters* this) {
     Animation_MorphToPlayOnce(&this->skelAnime, &gPoeSistersDamagedAnim, -3.0f);
     if (this->collider.base.ac != NULL) {

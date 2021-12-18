@@ -94,7 +94,7 @@ void Demo6K_Init(Actor* thisx, GlobalContext* globalCtx) {
     this->timer2 = 0;
 
     switch (params) {
-        case 0:
+        case 0: // multi-color particles from rainbow bridge cutscene?
             this->drawFunc = func_809688C4;
             this->initActionFunc = func_80967AD0;
             Actor_SetScale(&this->actor, 1.0f);
@@ -106,12 +106,12 @@ void Demo6K_Init(Actor* thisx, GlobalContext* globalCtx) {
 
             this->unk_170 = 0.0f;
             break;
-        case 1:
+        case 1: // particles that goes where the actor was spawned, used with case 2
             this->drawFunc = func_80967FFC;
             this->initActionFunc = func_80966E04;
             Actor_SetScale(&this->actor, 0.228f);
             break;
-        case 2:
+        case 2: // white "black hole" effect, used in ganon sealing cs
             this->drawFunc = func_80968298;
             this->initActionFunc = func_80966F84;
             Actor_SetScale(&this->actor, 0.1f);
@@ -120,48 +120,48 @@ void Demo6K_Init(Actor* thisx, GlobalContext* globalCtx) {
             this->unk_16C = 0.0f;
             this->unk_170 = 0.0f;
             break;
-        case 3:
-        case 4:
-        case 5:
-        case 6:
-        case 7:
-        case 8:
+        case 3: // red ball used by sages in ganon's castle
+        case 4: // green ball used by sages in ganon's castle
+        case 5: // yellow ball used by sages in ganon's castle
+        case 6: // purple ball used by sages in ganon's castle
+        case 7: // orange ball used by sages in ganon's castle
+        case 8: // blue ball used by sages in ganon's castle
             this->drawFunc = func_8096865C;
             this->initActionFunc = func_8096712C;
             Actor_SetScale(&this->actor, 0.0f);
             this->unk_293 = params - 3;
             break;
-        case 9:
-        case 10:
+        case 9: // koume/kotake red ball
+        case 10: // koume/kotake blue ball
             this->drawFunc = func_8096865C;
             Actor_SetScale(&this->actor, 0.0f);
             this->initActionFunc = func_809674E0;
             break;
-        case 11:
+        case 11: // nabooru caught orange effect
             this->drawFunc = func_8096865C;
             Actor_SetScale(&this->actor, 0.0f);
             this->initActionFunc = func_8096784C;
             this->actor.velocity.x = this->actor.velocity.y = this->actor.velocity.z = 0.0f;
             Audio_PlayActorSound2(&this->actor, NA_SE_EV_NABALL_VANISH);
             break;
-        case 12:
+        case 12: // ganondorf ball attack charging
             Actor_SetScale(&this->actor, 0.0f);
             this->initActionFunc = func_80967F10;
             this->drawFunc = func_80968B70;
             Actor_ChangeCategory(globalCtx, &globalCtx->actorCtx, &this->actor, ACTORCAT_ITEMACTION);
             break;
-        case 13:
+        case 13: // ganondorf actual ball attack (from zelda fleeing cs)
             Actor_SetScale(&this->actor, 0.14f);
             Demo6K_SetupAction(this, func_80967DBC);
             this->actor.draw = func_80968FB0;
             this->unk_293 = 0;
             break;
-        case 14:
-        case 15:
-        case 16:
-        case 17:
-        case 18:
-        case 19:
+        case 14: // red light ball, creating particles
+        case 15: // green light ball, creating particles
+        case 16: // yellow light ball, creating particles
+        case 17: // purple light ball, creating particles
+        case 18: // orange light ball, creating particles
+        case 19: // Blue Light Ball, creating particles
             this->actor.flags |= ACTOR_FLAG_5;
             this->drawFunc = func_8096865C;
             this->initActionFunc = func_80967410;

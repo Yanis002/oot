@@ -722,18 +722,21 @@ void EnZl3_PostLimbDraw(GlobalContext* globalCtx, s32 limbIndex, Gfx** dList, Ve
     }
 }
 
+// EnZl3_GetSwitchFlagFromParams
 s32 func_80B54DB4(EnZl3* this) {
     s32 params = this->actor.params >> 8;
 
     return params & 0xFF;
 }
 
+// EnZl3_GetPathFromParams
 s32 func_80B54DC4(EnZl3* this) {
     s32 params = this->actor.params >> 4;
 
     return params & 0xF;
 }
 
+// EnZl3_GetActorType
 s32 func_80B54DD4(EnZl3* this) {
     s32 params = this->actor.params;
 
@@ -796,7 +799,7 @@ void func_80B54FB4(EnZl3* this, GlobalContext* globalCtx) {
     EnZl3_setMouthIndex(this, 2);
     this->action = 1;
     this->drawConfig = 1;
-    func_80B54F18(this, globalCtx);
+    func_80B54F18(this, globalCtx); // spawns purple crystal
     this->actor.shape.rot.z = 0;
     this->unk_3C4 = this->actor.world.rot.z;
     this->actor.world.rot.z = this->actor.shape.rot.z;
@@ -1565,6 +1568,7 @@ void func_80B56EB8(EnZl3* this, GlobalContext* globalCtx) {
     Flags_SetSwitch(globalCtx, func_80B54DB4(this));
 }
 
+// EnZl3_GetSwitchFlagFromParams #2
 s32 func_80B56EE4(EnZl3* this, GlobalContext* globalCtx) {
     return Flags_GetSwitch(globalCtx, func_80B54DB4(this));
 }
@@ -2601,13 +2605,13 @@ void func_80B59B6C(EnZl3* this, GlobalContext* globalCtx) {
 
     switch (sp2C) {
         case 0:
-            func_80B54FB4(this, globalCtx);
+            func_80B54FB4(this, globalCtx); // zelda from ganondorf fight
             break;
         case 1:
-            func_80B55780(this, globalCtx);
+            func_80B55780(this, globalCtx); // zelda from ganon fight
             break;
         case 3:
-            func_80B59828(this, globalCtx);
+            func_80B59828(this, globalCtx); // zelda from collapse
             break;
         default:
             osSyncPrintf(VT_FGCOL(RED) " En_Oa3 の arg_data がおかしい!!!!!!!!!!!!!!!!!!!!!!!!!\n" VT_RST);
@@ -2657,6 +2661,7 @@ void EnZl3_Init(Actor* thisx, GlobalContext* globalCtx) {
     ActorShape* shape = &this->actor.shape;
     s32 pad;
 
+    // Princess Zelda's En_Zl3_Actor_ct will pass !!!!!!!!!!!!!!!!!!!!!!!!!
     osSyncPrintf("ゼルダ姫のEn_Zl3_Actor_ct通すよ!!!!!!!!!!!!!!!!!!!!!!!!!\n");
     ActorShape_Init(shape, 0.0f, ActorShadow_DrawCircle, 30.0f);
     shape->shadowAlpha = 0;
