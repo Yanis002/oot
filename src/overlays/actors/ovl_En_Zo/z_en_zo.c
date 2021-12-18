@@ -352,7 +352,7 @@ u16 func_80B61024(GlobalContext* globalCtx, Actor* thisx) {
     }
 
     switch (thisx->params & 0x3F) {
-        case 8:
+        case 8: // zora from shop
             if (gSaveContext.eventChkInf[3] & 1) {
                 return 0x402A;
             }

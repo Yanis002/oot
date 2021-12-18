@@ -17,10 +17,10 @@ typedef struct ObjTimeblock {
     /* 0x016E */ s16 songEndTimer;
     /* 0x0170 */ s16 demoEffectFirstPartTimer;
     /* 0x0172 */ u16 unk_172;
-    /* 0x0174 */ u8 unk_174;
-    /* 0x0175 */ u8 unk_175;
+    /* 0x0174 */ u8 unk_174; // is switch flag set
+    /* 0x0175 */ u8 unk_175; // default visibility (1 for adult, 0 for child)
     /* 0x0176 */ u8 unk_176;
-    /* 0x0177 */ u8 unk_177;
+    /* 0x0177 */ u8 unk_177; // is age parameter inverted
     /* 0x0178 */ u8 isVisible;
 } ObjTimeblock; // size = 0x017C
 

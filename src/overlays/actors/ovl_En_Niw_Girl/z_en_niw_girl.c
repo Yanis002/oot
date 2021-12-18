@@ -77,13 +77,16 @@ void EnNiwGirl_Init(Actor* thisx, GlobalContext* globalCtx) {
         &globalCtx->actorCtx, &this->actor, globalCtx, ACTOR_EN_NIW, this->actor.world.pos.x + vec2.x,
         this->actor.world.pos.y + vec2.y, this->actor.world.pos.z + vec2.z, 0, this->actor.world.rot.y, 0, 0xA);
     if (this->chasedEnNiw != NULL) {
+        // I'm going to get rid of it! Punpun 
         osSyncPrintf(VT_FGCOL(GREEN) "☆☆☆☆☆ シツレイしちゃうわね！プンプン ☆☆☆☆☆ %d\n" VT_RST, this->actor.params);
+        // Kyahahahaha, Mate 
         osSyncPrintf(VT_FGCOL(YELLOW) "☆☆☆☆☆ きゃははははは、まてー ☆☆☆☆☆ %d\n" VT_RST, this->path);
         osSyncPrintf("\n\n");
         this->actor.colChkInfo.mass = MASS_IMMOVABLE;
         this->actionFunc = EnNiwGirl_Talk;
     } else {
         osSyncPrintf("\n\n");
+        // For some reason, it can be set. 
         osSyncPrintf(VT_FGCOL(GREEN) "☆☆☆☆☆ なぜか、セットできむぅあせん ☆☆☆☆☆ %d\n" VT_RST, this->actor.params);
         osSyncPrintf(VT_FGCOL(YELLOW) "☆☆☆☆☆ んんがくく ☆☆☆☆☆ %d\n" VT_RST, this->path);
         osSyncPrintf("\n\n");

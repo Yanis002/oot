@@ -4,6 +4,8 @@
  * Description: Song of Time Block
  */
 
+/* Alternative Behavior: block disappears when Song of Time is played and appears again if the Switch Flag is cleared*/
+
 #include "z_obj_timeblock.h"
 #include "objects/object_timeblock/object_timeblock.h"
 
@@ -64,16 +66,21 @@ static Color_RGB8 sPrimColors[] = {
 
 u32 ObjTimeblock_CalculateIsVisible(ObjTimeblock* this) {
     if (!((this->dyna.actor.params >> 10) & 1)) {
+        // if it's not the alternative behavior
         if (this->unk_177 == 0) {
+            // if you opt for the normal behavior, return the default visibility
             return this->unk_175;
         } else {
+            // age behavior inverted
+            // get default visibility
             u8 temp = ((this->dyna.actor.params >> 15) & 1) ? true : false;
 
             if (this->unk_177 == 1) {
+                // age inverted behavior -> invert the switch flag to get the intended behavior
                 return this->unk_174 ^ temp;
             } else {
+                // if the flag is a temp room one (>0x38)
                 u8 linkIsYoung = (LINK_AGE_IN_YEARS == YEARS_CHILD) ? true : false;
-
                 return this->unk_174 ^ temp ^ linkIsYoung;
             }
         }
@@ -271,6 +278,7 @@ void ObjTimeblock_SetupAltBehaviorVisible(ObjTimeblock* this) {
 
 void ObjTimeblock_AltBehaviorVisible(ObjTimeblock* this, GlobalContext* globalCtx) {
     if (this->songObserverFunc(this, globalCtx) && this->demoEffectTimer <= 0) {
+        // executed when you play SoT
         this->demoEffectFirstPartTimer = 12;
         ObjTimeblock_SpawnDemoEffect(this, globalCtx);
         this->demoEffectTimer = 160;
@@ -287,6 +295,7 @@ void ObjTimeblock_AltBehaviorVisible(ObjTimeblock* this, GlobalContext* globalCt
     }
 
     if (!this->isVisible && this->demoEffectTimer <= 0) {
+        // when the block vanished after SoT
         ObjTimeblock_SetupAltBehaviourNotVisible(this);
     }
 }
