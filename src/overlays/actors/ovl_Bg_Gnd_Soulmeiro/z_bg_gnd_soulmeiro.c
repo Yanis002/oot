@@ -190,9 +190,9 @@ void BgGndSoulmeiro_Update(Actor* thisx, GlobalContext* globalCtx) {
 
 void BgGndSoulmeiro_Draw(Actor* thisx, GlobalContext* globalCtx) {
     static Gfx* dLists[] = {
-        gSpiritTrialWebDL,
-        gSpiritTrialLightSourceDL,
-        gSpiritTrialLightFloorDL,
+        gSpiritTrialWebDL,          // Type 0
+        gSpiritTrialLightSourceDL,  // Type 1
+        gSpiritTrialLightFloorDL,   // Type 2
     };
     s32 params = thisx->params & 0xFF;
 

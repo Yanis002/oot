@@ -1,7 +1,7 @@
 /*
  * File: z_obj_warp2block.c
  * Overlay: ovl_Obj_Warp2Block
- * Description: Navi Infospot (Green, Time Block)
+ * Description: Exchangeable Time Blocks
  */
 
 #include "z_obj_warp2block.h"
@@ -47,8 +47,8 @@ typedef struct {
 } Warp2BlockSpawnData; // size = 0x0C
 
 static Warp2BlockSpawnData sSpawnData[] = {
-    { 1.0f, 60.0f, 0x0018 },
-    { 0.6f, 40.0f, 0x0019 },
+    { 1.0f, 60.0f, 0x0018 }, // large
+    { 0.6f, 40.0f, 0x0019 }, // small
 };
 
 static f32 sDistances[] = { 60.0f, 100.0f, 140.0f, 180.0f, 220.0f, 260.0f, 300.0f, 300.0f };
@@ -220,6 +220,7 @@ void ObjWarp2block_Init(Actor* thisx, GlobalContext* globalCtx2) {
         ObjWarp2block_SetInactive(this);
     }
 
+    // Block of Time (Warp 2)
     osSyncPrintf("時のブロック(ワープ２) (<arg> %04xH <type> color:%d range:%d)\n", this->dyna.actor.params & 0xFFFF,
                  this->dyna.actor.home.rot.z & 7, (this->dyna.actor.params >> 0xB) & 7);
 }
@@ -264,6 +265,7 @@ void func_80BA24F8(ObjWarp2block* this, GlobalContext* globalCtx) {
     this->unk_174++;
     if (this->unk_174 > 60) {
         osSyncPrintf(VT_COL(RED, WHITE));
+        // Error: Time block (Warp 2) is not set in pairs
         osSyncPrintf("Error : 時のブロック(ワープ２)が対でセットされていません(%s %d)\n", "../z_obj_warp2block.c", 505);
         osSyncPrintf(VT_RST);
         Actor_Kill(&this->dyna.actor);

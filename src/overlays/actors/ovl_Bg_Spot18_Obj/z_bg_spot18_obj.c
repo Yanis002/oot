@@ -96,6 +96,7 @@ s32 func_808B8910(BgSpot18Obj* this, GlobalContext* globalCtx) {
     } else if (LINK_AGE_IN_YEARS == YEARS_CHILD) {
         age = 0;
     } else {
+        // Error: Link age unknown
         osSyncPrintf("Error : リンク年齢不詳 (%s %d)(arg_data 0x%04x)\n", "../z_bg_spot18_obj.c", 182,
                      this->dyna.actor.params);
         return 0;
@@ -105,14 +106,17 @@ s32 func_808B8910(BgSpot18Obj* this, GlobalContext* globalCtx) {
         case 0:
         case 1:
             if (D_808B90F0[this->dyna.actor.params & 0xF][age] == 0) {
+                // Object that does not appear 
                 osSyncPrintf("出現しない Object (0x%04x)\n", this->dyna.actor.params);
             }
             return D_808B90F0[this->dyna.actor.params & 0xF][age];
         case 2:
+            // Obj appearance judgment is not set 
             osSyncPrintf("Error : Obj出現判定が設定されていない(%s %d)(arg_data 0x%04x)\n", "../z_bg_spot18_obj.c", 202,
                          this->dyna.actor.params);
             break;
         default:
+            // Obj appearance judgment failure 
             osSyncPrintf("Error : Obj出現判定失敗(%s %d)(arg_data 0x%04x)\n", "../z_bg_spot18_obj.c", 210,
                          this->dyna.actor.params);
     }

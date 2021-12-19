@@ -14,7 +14,7 @@ typedef enum {
     /* 0x0 */ STA_GIANT_BIRD_STATUE,
     /* 0x1 */ STA_BOMBABLE_SKULL_WALL,
     /* 0x2 */ STA_BOMBABLE_RUBBLE,
-    /* 0x3 */ STA_UNKNOWN
+    /* 0x3 */ STA_UNKNOWN // debris
 } ShadowTempleAssetsType;
 
 void BgHakaZou_Init(Actor* thisx, GlobalContext* globalCtx);

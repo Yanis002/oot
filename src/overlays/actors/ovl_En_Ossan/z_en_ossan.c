@@ -147,11 +147,11 @@ static char* sShopkeeperPrintName[] = {
     "夜の店      ", // "Night Shop"
     "路地裏の店  ", // "Back Alley Shop"
     "盾の店      ", // "Shield Shop"
-    "大人の店    ", // "Adult Shop"
-    "タロンの店  ", // "Talon Shop"
+    "大人の店    ", // "Adult Shop", unused?
+    "タロンの店  ", // "Talon Shop", unused?
     "ゾーラの店  ", // "Zora Shop"
     "ゴロン夜の店", // "Goron Night Shop"
-    "インゴーの店", // "Ingo Store"
+    "インゴーの店", // "Ingo Store", unused?
     "お面屋      ", // "Mask Shop"
 };
 
@@ -166,12 +166,12 @@ static s16 sShopkeeperObjectIds[][3] = {
     { OBJECT_DS2, OBJECT_ID_MAX, OBJECT_ID_MAX },
     { OBJECT_RS, OBJECT_ID_MAX, OBJECT_ID_MAX },
     { OBJECT_DS2, OBJECT_ID_MAX, OBJECT_ID_MAX },
-    { OBJECT_OSSAN, OBJECT_ID_MAX, OBJECT_ID_MAX },
-    { OBJECT_OSSAN, OBJECT_ID_MAX, OBJECT_ID_MAX },
+    { OBJECT_OSSAN, OBJECT_ID_MAX, OBJECT_ID_MAX }, // unused?
+    { OBJECT_OSSAN, OBJECT_ID_MAX, OBJECT_ID_MAX }, // unused?
     { OBJECT_OSSAN, OBJECT_ID_MAX, OBJECT_ID_MAX },
     { OBJECT_ZO, OBJECT_ID_MAX, OBJECT_MASTERZOORA },
     { OBJECT_OF1D_MAP, OBJECT_ID_MAX, OBJECT_MASTERGOLON },
-    { OBJECT_OSSAN, OBJECT_ID_MAX, OBJECT_ID_MAX },
+    { OBJECT_OSSAN, OBJECT_ID_MAX, OBJECT_ID_MAX }, // unused?
     { OBJECT_OS, OBJECT_ID_MAX, OBJECT_ID_MAX },
 };
 

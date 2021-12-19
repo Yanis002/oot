@@ -6,11 +6,11 @@
 
 // BgBdanSwitch.actor.params & 0xFF
 typedef enum {
-    /* 0x00 */ BLUE,
-    /* 0x01 */ YELLOW_HEAVY,
-    /* 0x02 */ YELLOW,
-    /* 0x03 */ YELLOW_TALL_1,
-    /* 0x04 */ YELLOW_TALL_2
+    /* 0x00 */ BLUE,            // Equivalents: Type: Floor Switch - Behavior: "Reset" subtype (obj_switch)
+    /* 0x01 */ YELLOW_HEAVY,    // Equivalents: Type: Floor Switch - Behavior: "Once" subtype (obj_switch) # Needs Ruto to press it
+    /* 0x02 */ YELLOW,          // Equivalents: Type: Floor Switch - Behavior: "Once" subtype (obj_switch)
+    /* 0x03 */ YELLOW_TALL_1,   // Equivalents: Type: Crystal Switch - Behavior: "Once" subtype (obj_switch)
+    /* 0x04 */ YELLOW_TALL_2    // Equivalents: Type: Crystal Switch - Behavior: "Toggle" subtype (obj_switch)
 } BgBdanSwitchType;
 
 struct BgBdanSwitch;

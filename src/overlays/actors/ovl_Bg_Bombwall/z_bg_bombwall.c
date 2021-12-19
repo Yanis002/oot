@@ -148,7 +148,7 @@ void BgBombwall_Init(Actor* thisx, GlobalContext* globalCtx) {
         this->unk_2A2 |= 1;
         func_8086ED50(this, globalCtx);
     }
-
+    // field keep general purpose bomb wall 
     osSyncPrintf("(field keep 汎用爆弾壁)(arg_data 0x%04x)(angY %d)\n", this->dyna.actor.params,
                  this->dyna.actor.shape.rot.y);
 }

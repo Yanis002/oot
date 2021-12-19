@@ -61,6 +61,7 @@ void DemoGeff_Init(Actor* thisx, GlobalContext* globalCtx) {
     DemoGeff* this = (DemoGeff*)thisx;
 
     if (this->actor.params < 0 || this->actor.params >= 9) {
+        // Demo_Geff_Actor_ct: arg_data is wrong
         osSyncPrintf(VT_FGCOL(RED) "Demo_Geff_Actor_ct:arg_dataがおかしい!!!!!!!!!!!!\n" VT_RST);
         Actor_Kill(&this->actor);
         return;
@@ -177,6 +178,7 @@ void func_80978370(DemoGeff* this, GlobalContext* globalCtx) {
     s16 params = this->actor.params;
     DemoGeffInitFunc initFunc = sInitFuncs[params];
     if (initFunc == NULL) {
+        // Demo_Geff_main_init: Initialization process is wrong 
         osSyncPrintf(VT_FGCOL(RED) " Demo_Geff_main_init:初期化処理がおかしいarg_data = %d!\n" VT_RST, params);
         Actor_Kill(&this->actor);
         return;
@@ -193,6 +195,7 @@ void func_809783D4(DemoGeff* this, GlobalContext* globalCtx) {
     s32 pad;
 
     if (objBankIndex < 0) {
+        // Demo_Geff_main_bank: Unable to read the bank
         osSyncPrintf(VT_FGCOL(RED) "Demo_Geff_main_bank:バンクを読めない arg_data = %d!\n" VT_RST, params);
         Actor_Kill(thisx);
         return;
@@ -207,6 +210,7 @@ void DemoGeff_Update(Actor* thisx, GlobalContext* globalCtx) {
     DemoGeff* this = (DemoGeff*)thisx;
 
     if (this->action < 0 || this->action >= 2 || sActionFuncs[this->action] == NULL) {
+        // The main mode is strange!!!!!!!!!!!!!!!!!!!!!!!!!
         osSyncPrintf(VT_FGCOL(RED) "メインモードがおかしい!!!!!!!!!!!!!!!!!!!!!!!!!\n" VT_RST);
         return;
     }
@@ -221,6 +225,7 @@ void DemoGeff_Draw(Actor* thisx, GlobalContext* globalCtx) {
     s32 drawConfig = this->drawConfig;
 
     if (drawConfig < 0 || drawConfig >= 2 || sDrawFuncs[drawConfig] == NULL) {
+        // The drawing mode is strange!!!!!!!!!!!!!!!!!!!!!!!!! 
         osSyncPrintf(VT_FGCOL(RED) "描画モードがおかしい!!!!!!!!!!!!!!!!!!!!!!!!!\n" VT_RST);
         return;
     }
