@@ -76,8 +76,8 @@ static ColliderCylinderInitType1 sCylinderInit = {
 
 static DemoImActionFunc sActionFuncs[] = {
     func_809856F8, func_80985718, func_80985738, func_80985770, func_809857B0, func_809857F0, func_80985830,
-    func_80985C10, func_80985C40, func_80985C94, func_809863BC, func_809863DC, func_80986430, func_80986494,
-    func_809864D4, func_809868E8, func_80986908, func_80986948, func_80986D40, func_80986DC8, func_80986E20,
+    func_80985C10, func_80985C40, func_80985C94, func_809863BC,/**/ func_809863DC, func_80986430, func_80986494,
+    func_809864D4, func_809868E8, func_80986908, func_80986948, func_80986D40, func_80986DC8, func_80986E20, /**/
     func_80986E40, func_80986EAC, func_80986F08, func_80986F28, func_80986F88, func_80986FA8, func_80987288,
     func_809872A8, func_809872F0, func_80987330,
 };
@@ -1109,22 +1109,22 @@ void DemoIm_Init(Actor* thisx, GlobalContext* globalCtx) {
     thisx->flags &= ~ACTOR_FLAG_0;
 
     switch (this->actor.params) {
-        case 2:
+        case 2: // chamber after ganon
             func_80985860(this, globalCtx);
             break;
-        case 3:
+        case 3: // escort
             func_80985E60(this, globalCtx);
             break;
-        case 4:
+        case 4: // hyrule field after zl
             func_8098652C(this, globalCtx);
             break;
-        case 5:
+        case 5: // first time escort
             func_809869B0(this, globalCtx);
             break;
-        case 6:
+        case 6: // credits
             func_80987018(this, globalCtx);
             break;
-        default:
+        default: // shadow medallion
             func_80985310(this, globalCtx);
     }
 }

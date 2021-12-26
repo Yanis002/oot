@@ -1431,7 +1431,7 @@ void EnNb_Init(Actor* thisx, GlobalContext* globalCtx) {
                        NB_LIMB_MAX);
 
     switch (EnNb_GetType(this)) {
-        case NB_TYPE_DEMO02:
+        case NB_TYPE_DEMO02: // chamber after ganon and ganon's castle
             EnNb_SetupLightArrowOrSealingCs(this, globalCtx);
             break;
         case NB_TYPE_KIDNAPPED:

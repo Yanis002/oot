@@ -159,6 +159,7 @@ void EnMm2_Init(Actor* thisx, GlobalContext* globalCtx2) {
     }
     if (this->actor.params == 1) {
         if (!(gSaveContext.infTable[23] & 0x8000) || !(gSaveContext.eventInf[1] & 1)) {
+            // Marathon has not started
             osSyncPrintf(VT_FGCOL(CYAN) " マラソン 開始されていない \n" VT_RST "\n");
             Actor_Kill(&this->actor);
         }

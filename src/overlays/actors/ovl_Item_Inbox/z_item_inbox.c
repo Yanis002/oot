@@ -1,7 +1,7 @@
 /*
  * File: z_item_inbox.c
  * Overlay: ovl_Item_Inbox
- * Description: Zelda's magic effect when opening gates in castle collapse
+ * Description: Draw a GI
  */
 
 #include "z_item_inbox.h"

@@ -2333,13 +2333,14 @@ void EnXc_Init(Actor* thisx, GlobalContext* globalCtx) {
         case SHEIK_TYPE_SERENADE:
             EnXc_SetupSerenadeAction(this, globalCtx);
             break;
-        case SHEIK_TYPE_9:
+        case SHEIK_TYPE_9: // first time adult cs
             EnXc_InitTempleOfTime(this, globalCtx);
             break;
         case SHEIK_TYPE_0:
             EnXc_DoNothing(this, globalCtx);
             break;
         default:
+            // En_Oa2's arg_data is wrong 
             osSyncPrintf(VT_FGCOL(RED) " En_Oa2 の arg_data がおかしい!!!!!!!!!!!!!!!!!!!!!!!!!\n" VT_RST);
             EnXc_DoNothing(this, globalCtx);
     }

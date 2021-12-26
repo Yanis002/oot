@@ -122,7 +122,7 @@ void EnOkuta_Init(Actor* thisx, GlobalContext* globalCtx) {
 
     Actor_ProcessInitChain(thisx, sInitChain);
     this->numShots = (thisx->params >> 8) & 0xFF;
-    thisx->params &= 0xFF;
+    thisx->params &= 0xFF; // 0 = octorock, 0x10 = projectile
     if (thisx->params == 0) {
         SkelAnime_Init(globalCtx, &this->skelAnime, &gOctorokSkel, &gOctorokAppearAnim, this->jointTable,
                        this->morphTable, 38);

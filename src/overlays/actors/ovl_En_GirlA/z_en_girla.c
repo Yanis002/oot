@@ -407,6 +407,7 @@ void EnGirlA_Init(Actor* thisx, GlobalContext* globalCtx) {
 
     EnGirlA_TryChangeShopItem(this);
     EnGirlA_InitItem(this, globalCtx);
+    // Initial setting 
     osSyncPrintf("%s(%2d)初期設定\n", sShopItemDescriptions[this->actor.params], this->actor.params);
 }
 

@@ -107,9 +107,9 @@ void EnKarebaba_Init(Actor* thisx, GlobalContext* globalCtx) {
     this->boundFloor = NULL;
 
     if (this->actor.params == 0) {
-        EnKarebaba_SetupGrow(this);
+        EnKarebaba_SetupGrow(this); // normal babas
     } else {
-        EnKarebaba_SetupIdle(this);
+        EnKarebaba_SetupIdle(this); // straight babas
     }
 }
 

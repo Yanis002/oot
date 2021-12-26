@@ -772,16 +772,16 @@ void EnRu2_Init(Actor* thisx, GlobalContext* globalCtx) {
     SkelAnime_InitFlex(globalCtx, &this->skelAnime, &gAdultRutoSkel, NULL, this->jointTable, this->morphTable, 23);
 
     switch (func_80AF26A0(this)) {
-        case 2:
+        case 2: // chamber after ganon, ganon's castle
             func_80AF2E1C(this, globalCtx);
             break;
-        case 3:
+        case 3: // credits
             func_80AF3394(this, globalCtx);
             break;
-        case 4:
+        case 4: // water temple meeting
             func_80AF3744(this, globalCtx);
             break;
-        default:
+        default: // gives medallion
             func_80AF2994(this, globalCtx);
             break;
     }
