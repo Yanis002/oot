@@ -1,3 +1,15 @@
+# Hookshot as child
+
+This loads the adult object when link is child to use some of the data inside it
+
+This fixes the hookshot softlock when it is used as child
+
+This also includes fixes of crashes that happen due to breaking assumptions made by player code on the current link object if using hookshot (it rightly assumes adult object)
+
+It does look funny because it means using the adult hand with child, so it looks a bit bigger and there's part of the glove
+
+changes in func_80091880 are untested idk what this callback is for
+
 # The Legend of Zelda: Ocarina of Time
 
 [![Build Status][jenkins-badge]][jenkins] [![Decompilation Progress][progress-badge]][progress] [![Contributors][contributors-badge]][contributors] [![Discord Channel][discord-badge]][discord]
