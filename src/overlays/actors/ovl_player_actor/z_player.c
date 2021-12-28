@@ -2850,7 +2850,8 @@ s32 func_80836670(Player* this, GlobalContext* globalCtx) {
         this->actor.bgCheckFlags &= ~1;
         this->hoverBootsTimer = 0;
         this->unk_6AE |= 0x43;
-        func_80832698(this, NA_SE_VO_LI_LASH);
+        if (LINK_IS_CHILD) func_8002F7DC(&this->actor, NA_SE_VO_LI_SWORD_N_KID);
+        else func_80832698(this, NA_SE_VO_LI_LASH);
         return 1;
     }
 
