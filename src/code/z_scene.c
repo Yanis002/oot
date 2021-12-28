@@ -193,6 +193,9 @@ void func_80098508(GlobalContext* globalCtx, SceneCmd* cmd) {
 
     gActorOverlayTable[linkEntry->id].initInfo->objectId = linkObjectId;
     Object_Spawn(&globalCtx->objectCtx, linkObjectId);
+    if (LINK_IS_CHILD) {
+        Object_Spawn(&globalCtx->objectCtx, OBJECT_LINK_BOY);
+    }
 }
 
 // Scene Command 0x01: Actor List

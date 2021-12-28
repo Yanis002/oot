@@ -149,6 +149,16 @@ void SkelAnime_DrawFlexLimbLod(GlobalContext* globalCtx, s32 limbIndex, void** s
             Matrix_ToMtx(*mtx, "../z_skelanime.c", 945);
             {
                 OPEN_DISPS(globalCtx->state.gfxCtx, "../z_skelanime.c", 946);
+
+                gDPNoOpString(POLY_OPA_DISP++, "limbIndex =", 0);
+                gDPNoOpWord(POLY_OPA_DISP++, limbIndex, 0);
+
+                gDPNoOpString(POLY_OPA_DISP++, "limbDList =", 0);
+                gDPNoOpWord(POLY_OPA_DISP++, limbDList, 0);
+
+                gDPNoOpString(POLY_OPA_DISP++, "newDList =", 0);
+                gDPNoOpWord(POLY_OPA_DISP++, newDList, 0);
+
                 gSPMatrix(POLY_OPA_DISP++, *mtx, G_MTX_LOAD);
                 gSPDisplayList(POLY_OPA_DISP++, newDList);
                 CLOSE_DISPS(globalCtx->state.gfxCtx, "../z_skelanime.c", 949);

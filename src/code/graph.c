@@ -257,6 +257,8 @@ void Graph_Update(GraphicsContext* gfxCtx, GameState* gameState) {
     gameState->unk_A0 = 0;
     Graph_InitTHGA(gfxCtx);
 
+    gDPNoOpWord(gfxCtx->work.p++, 0x04210421, 0x0421); // 042104210421
+
     OPEN_DISPS(gfxCtx, "../graph.c", 966);
 
     gDPNoOpString(WORK_DISP++, "WORK_DISP 開始", 0);

@@ -2158,6 +2158,8 @@ void Actor_Draw(GlobalContext* globalCtx, Actor* actor) {
     Fault_AddClient(&faultClient, Actor_FaultPrint, actor, "Actor_draw");
 
     OPEN_DISPS(globalCtx->state.gfxCtx, "../z_actor.c", 6035);
+    gDPNoOpString(POLY_OPA_DISP++, "Actor_Draw OPA", __LINE__);
+    gDPNoOpString(POLY_XLU_DISP++, "Actor_Draw XLU", __LINE__);
 
     lights = LightContext_NewLights(&globalCtx->lightCtx, globalCtx->state.gfxCtx);
 
