@@ -8,6 +8,7 @@
 #include "objects/object_d_elevator/object_d_elevator.h"
 
 #define FLAGS 0
+#define POS_HIGH(pos, params) ((pos + ((params >> 0xC) & 0xF) * 80.0f))
 
 void ObjElevator_Init(Actor* thisx, GlobalContext* globalCtx);
 void ObjElevator_Destroy(Actor* thisx, GlobalContext* globalCtx);
@@ -67,6 +68,8 @@ void ObjElevator_Init(Actor* thisx, GlobalContext* globalCtx) {
     Actor_ProcessInitChain(thisx, sInitChain);
     temp_f0 = (thisx->params >> 8) & 0xF;
     this->unk_16C = temp_f0 + temp_f0;
+    this->timer = 40;
+    this->mode = 0;
     func_80B92C5C(this);
     osSyncPrintf("(Dungeon Elevator)(arg_data 0x%04x)\n", thisx->params);
 }
@@ -85,10 +88,14 @@ void func_80B92C80(ObjElevator* this, GlobalContext* globalCtx) {
     f32 sub;
     Actor* thisx = &this->dyna.actor;
 
-    if ((this->dyna.unk_160 & 2) && !(this->unk_170 & 2)) {
+    if (this->mode || ((this->dyna.unk_160 & 2) && !(this->unk_170 & 2))) {
+        if(this->mode){
+            this->mode = 0;
+            this->timer = 40;
+        }
         sub = thisx->world.pos.y - thisx->home.pos.y;
         if (fabsf(sub) < 0.1f) {
-            this->unk_168 = thisx->home.pos.y + ((thisx->params >> 0xC) & 0xF) * 80.0f;
+            this->unk_168 = POS_HIGH(thisx->home.pos.y, thisx->params);
         } else {
             this->unk_168 = thisx->home.pos.y;
         }
@@ -118,6 +125,26 @@ void ObjElevator_Update(Actor* thisx, GlobalContext* globalCtx) {
         this->actionFunc(this, globalCtx);
     }
     this->unk_170 = this->dyna.unk_160;
+
+    if(thisx->world.pos.y == POS_HIGH(thisx->home.pos.y, thisx->params)){
+        this->timer--;
+    }
+
+    switch(this->timer){
+        case 0:
+            func_80B92C5C(this);
+            this->mode = 1;
+            Audio_PlayActorSound2(thisx, NA_SE_SY_TRE_BOX_APPEAR);
+            break;
+        case 30:
+        case 20:
+        case 10:
+            Audio_PlayActorSound2(thisx, NA_SE_EV_FOOT_SWITCH);
+            break;
+    }
+
+    if(this->timer == 0){
+    }
 }
 
 void ObjElevator_Draw(Actor* thisx, GlobalContext* globalCtx) {

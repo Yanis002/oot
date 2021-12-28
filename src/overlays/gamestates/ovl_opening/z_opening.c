@@ -35,8 +35,8 @@ void Opening_SetupTitleScreen(OpeningContext* this) {
     gSaveContext.entranceIndex = 0x33; //B1 for mkt, 171 for tot exterior, 33 for mkt entrance, 1FD for field, 82 for spirit
     gSaveContext.respawnFlag = 0;
     gSaveContext.respawn[RESPAWN_MODE_DOWN].entranceIndex = -1;
-    gSaveContext.seqIndex = 0xFF;
-    gSaveContext.nightSeqIndex = 0xFF;
+    // gSaveContext.seqIndex = 0xFF;
+    // gSaveContext.nightSeqIndex = 0xFF;
     gSaveContext.showTitleCard = true;
     gWeatherMode = 0;
     this->state.running = false;

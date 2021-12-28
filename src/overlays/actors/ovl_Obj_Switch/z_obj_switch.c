@@ -253,6 +253,8 @@ void ObjSwitch_SetOn(ObjSwitch* this, GlobalContext* globalCtx) {
             OnePointCutscene_AttentionSetSfx(globalCtx, &this->dyna.actor, NA_SE_SY_TRE_BOX_APPEAR);
         }
 
+        Audio_PlaySoundGeneral(NA_SE_SY_TRE_BOX_APPEAR, &D_801333D4, 4, &D_801333E0, &D_801333E0, &D_801333E8);
+
         this->cooldownOn = true;
     }
 }
@@ -555,7 +557,7 @@ void ObjSwitch_EyeClosed(ObjSwitch* this, GlobalContext* globalCtx) {
             }
             break;
         case OBJSWITCH_SUBTYPE_EYE_1:
-            if (ObjSwitch_EyeIsHit(this) || (this->dyna.actor.params >> 7 & 1)) {
+            if (ObjSwitch_EyeIsHit(this) || (this->dyna.actor.params >> 7 & 1) || (!Flags_GetSwitch(globalCtx, (this->dyna.actor.params >> 8 & 0x3F)))) {
                 ObjSwitch_EyeOpeningInit(this);
                 ObjSwitch_SetOff(this, globalCtx);
                 this->dyna.actor.params &= ~0x80;
