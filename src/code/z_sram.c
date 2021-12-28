@@ -213,9 +213,9 @@ static SavePlayerData sDebugSavePlayerData = {
 };
 
 static ItemEquips sDebugSaveEquips = {
-    { ITEM_SWORD_MASTER, ITEM_BOW, ITEM_BOMB, ITEM_OCARINA_FAIRY }, // buttonItems
+    { ITEM_SWORD_MASTER, ITEM_HAMMER, ITEM_HOOKSHOT, ITEM_OCARINA_FAIRY }, // buttonItems
     { SLOT_BOW, SLOT_BOMB, SLOT_OCARINA },                          // cButtonSlots
-    0x1122,                                                         // equipment
+    0x1232,                                                         // equipment
 };
 
 static Inventory sDebugSaveInventory = {
