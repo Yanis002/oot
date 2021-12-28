@@ -927,27 +927,27 @@ s32 func_80090014(GlobalContext* globalCtx, s32 limbIndex, Gfx** dList, Vec3f* p
     if (!func_8008FCC8(globalCtx, limbIndex, dList, pos, rot, thisx)) {
         if (limbIndex == PLAYER_LIMB_L_HAND) {
             Gfx** dLists = this->leftHandDLists;
-
-            if ((D_80160014 == 4) && (gSaveContext.swordHealth <= 0.0f)) {
-                dLists += 4;
-            } else if ((D_80160014 == 6) && (this->stateFlags1 & 0x2000000)) {
-                dLists = &D_80125E08[gSaveContext.linkAge];
-                D_80160014 = 0;
-            } else if ((this->leftHandType == 0) && (this->actor.speedXZ > 2.0f) && !(this->stateFlags1 & 0x8000000)) {
-                dLists = &D_80125E18[gSaveContext.linkAge];
-                D_80160014 = 1;
+            if (LINK_IS_CHILD && this->leftHandType == 5 && this->heldItemActionParam == PLAYER_AP_HAMMER){
+                *dList = gLinkChildLeftHandHoldingHammerNearDL;
             }
-
-            *dList = dLists[sDListsLodOffset];
+            else {
+                if ((D_80160014 == 4) && (gSaveContext.swordHealth <= 0.0f)) {
+                    dLists += 4;
+                } else if ((D_80160014 == 6) && (this->stateFlags1 & 0x2000000)) {
+                    dLists = &D_80125E08[gSaveContext.linkAge];
+                    D_80160014 = 0;
+                } else if ((this->leftHandType == 0) && (this->actor.speedXZ > 2.0f) && !(this->stateFlags1 & 0x8000000)) {
+                    dLists = &D_80125E18[gSaveContext.linkAge];
+                    D_80160014 = 1;
+                }
+                *dList = dLists[sDListsLodOffset]; 
+            }
         } else if (limbIndex == PLAYER_LIMB_R_HAND) {
             Gfx** dLists = this->rightHandDLists;
-
-            osSyncPrintf("rightHandType = %d\n", this->rightHandType);
 
             if (LINK_IS_CHILD && this->rightHandType == 15) {
                 Gfx* dlistHead = Graph_Alloc(globalCtx->state.gfxCtx, 4 * sizeof(Gfx));
                 s32 objBankIndexLinkBoy = Object_GetIndex(&globalCtx->objectCtx, OBJECT_LINK_BOY);
-
                 *dList = dlistHead;
 
                 if (objBankIndexLinkBoy >= 0) {
@@ -1284,7 +1284,7 @@ void func_80090D20(GlobalContext* globalCtx, s32 limbIndex, Gfx** dList, Vec3s* 
             Matrix_Scale(1.0f, this->unk_85C, 1.0f, MTXMODE_APPLY);
 
             gSPMatrix(POLY_OPA_DISP++, Matrix_NewMtx(globalCtx->state.gfxCtx, "../z_player_lib.c", 2653),
-                      G_MTX_NOPUSH | G_MTX_LOAD | G_MTX_MODELVIEW);
+                    G_MTX_NOPUSH | G_MTX_LOAD | G_MTX_MODELVIEW);
             gSPDisplayList(POLY_OPA_DISP++, gLinkChildLinkDekuStickDL);
 
             CLOSE_DISPS(globalCtx->state.gfxCtx, "../z_player_lib.c", 2656);
@@ -1305,7 +1305,7 @@ void func_80090D20(GlobalContext* globalCtx, s32 limbIndex, Gfx** dList, Vec3s* 
             OPEN_DISPS(globalCtx->state.gfxCtx, "../z_player_lib.c", 2710);
 
             gSPMatrix(POLY_XLU_DISP++, Matrix_NewMtx(globalCtx->state.gfxCtx, "../z_player_lib.c", 2712),
-                      G_MTX_NOPUSH | G_MTX_LOAD | G_MTX_MODELVIEW);
+                    G_MTX_NOPUSH | G_MTX_LOAD | G_MTX_MODELVIEW);
             gDPSetEnvColor(POLY_XLU_DISP++, bottleColor->r, bottleColor->g, bottleColor->b, 0);
             gSPDisplayList(POLY_XLU_DISP++, sBottleDLists[((void)0, gSaveContext.linkAge)]);
 
@@ -1507,24 +1507,6 @@ s32 func_80091880(GlobalContext* globalCtx, s32 limbIndex, Gfx** dList, Vec3f* p
 
     dLists = &sPlayerDListGroups[type][(void)0, gSaveContext.linkAge];
     *dList = dLists[dListOffset];
-
-    if (limbIndex == PLAYER_LIMB_R_HAND)
-        osSyncPrintf("modelGroup = %d", modelGroup);
-
-    if (limbIndex == PLAYER_LIMB_R_HAND && LINK_IS_CHILD && modelGroup == 9) {
-        Gfx* dlistHead = Graph_Alloc(globalCtx->state.gfxCtx, 4 * sizeof(Gfx));
-        s32 objBankIndexLinkBoy = Object_GetIndex(&globalCtx->objectCtx, OBJECT_LINK_BOY);
-        Player* this = GET_PLAYER(globalCtx);
-
-        *dList = dlistHead;
-
-        if (objBankIndexLinkBoy >= 0) {
-            gSPSegment(dlistHead++, 6, globalCtx->objectCtx.status[objBankIndexLinkBoy].segment);
-            gSPDisplayList(dlistHead++, gLinkAdultRightHandHoldingHookshotNearDL);
-            gSPSegment(dlistHead++, 6, globalCtx->objectCtx.status[this->actor.objBankIndex].segment);
-        }
-        gSPEndDisplayList(dlistHead++);
-    }
 
     return 0;
 }
