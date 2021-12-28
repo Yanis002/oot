@@ -41,7 +41,7 @@ static ColliderJntSphElementInit sJntSphElementsInit[1] = {
         {
             ELEMTYPE_UNK4,
             { 0x00000000, 0x00, 0x00 },
-            { 0x0001F820, 0x00, 0x00 },
+            { 0xEFC1FFFE, 0x00, 0x00 },
             TOUCH_NONE,
             BUMP_ON,
             OCELEM_NONE,
@@ -134,7 +134,8 @@ s32 BgMoriHashigo_SpawnLadder(BgMoriHashigo* this, GlobalContext* globalCtx) {
 
 s32 BgMoriHashigo_InitClasp(BgMoriHashigo* this, GlobalContext* globalCtx) {
     Actor_ProcessInitChain(&this->dyna.actor, sInitChainClasp);
-    this->dyna.actor.flags |= ACTOR_FLAG_0;
+    // target
+    // this->dyna.actor.flags |= ACTOR_FLAG_0;
     Actor_SetFocus(&this->dyna.actor, 55.0f);
     BgMoriHashigo_InitCollider(this, globalCtx);
     if ((this->dyna.actor.params == HASHIGO_CLASP) && !BgMoriHashigo_SpawnLadder(this, globalCtx)) {
@@ -227,7 +228,7 @@ void BgMoriHashigo_SetupLadderWait(BgMoriHashigo* this) {
 void BgMoriHashigo_LadderWait(BgMoriHashigo* this, GlobalContext* globalCtx) {
     BgMoriHashigo* clasp = (BgMoriHashigo*)this->dyna.actor.parent;
 
-    if (clasp->hitTimer > 0) {
+    if (clasp->hitTimer > 0 || Flags_GetSwitch(globalCtx, 0x1E)) {
         BgMoriHashigo_SetupLadderFall(this);
     }
 }
@@ -275,6 +276,11 @@ void BgMoriHashigo_Update(Actor* thisx, GlobalContext* globalCtx) {
     if (this->actionFunc != NULL) {
         this->actionFunc(this, globalCtx);
     }
+
+    Actor_UpdateBgCheckInfo(globalCtx, &this->dyna.actor, 0.0f, 0.0f, 0.0f, 0x1C);
+    if(this->dyna.actor.bgCheckFlags & 1){
+        this->actionFunc = BgMoriHashigo_SetupLadderFall;
+    }
 }
 
 void BgMoriHashigo_Draw(Actor* thisx, GlobalContext* globalCtx) {
@@ -290,9 +296,9 @@ void BgMoriHashigo_Draw(Actor* thisx, GlobalContext* globalCtx) {
               G_MTX_NOPUSH | G_MTX_LOAD | G_MTX_MODELVIEW);
 
     switch (this->dyna.actor.params) {
-        case HASHIGO_CLASP:
-            gSPDisplayList(POLY_OPA_DISP++, gMoriHashigoClaspDL);
-            break;
+        // case HASHIGO_CLASP:
+        //     gSPDisplayList(POLY_OPA_DISP++, gMoriHashigoClaspDL);
+        //     break;
         case HASHIGO_LADDER:
             gSPDisplayList(POLY_OPA_DISP++, gMoriHashigoLadderDL);
             break;
