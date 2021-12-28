@@ -10025,8 +10025,7 @@ void Player_UpdateCommon(Player* this, GlobalContext* globalCtx, Input* input) {
                     this->actor.world.pos.y,
                     this->actor.world.pos.z, 0, 0, 0, 1);
             timeSwitch = 1;
-            this->stateFlags1 = 0x2000;
-            
+            // this->stateFlags1 = 0x2000;
         } 
     }
 

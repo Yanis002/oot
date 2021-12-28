@@ -664,21 +664,24 @@ void ObjOshihiki_Draw(Actor* thisx, GlobalContext* globalCtx) {
     gSPMatrix(POLY_OPA_DISP++, Matrix_NewMtx(globalCtx->state.gfxCtx, "../z_obj_oshihiki.c", 1308),
               G_MTX_NOPUSH | G_MTX_LOAD | G_MTX_MODELVIEW);
 
-    switch (globalCtx->sceneNum) {
-        case SCENE_YDAN:
-        case SCENE_DDAN:
-        case SCENE_BMORI1:
-        case SCENE_HIDAN:
-        case SCENE_MIZUSIN:
-        case SCENE_JYASINZOU:
-        case SCENE_HAKADAN:
-        case SCENE_MEN:
-            gDPSetEnvColor(POLY_OPA_DISP++, this->color.r, this->color.g, this->color.b, 255);
-            break;
-        default:
-            gDPSetEnvColor(POLY_OPA_DISP++, mREG(13), mREG(14), mREG(15), 255);
-            break;
-    }
+    // Project-A
+    // switch (globalCtx->sceneNum) {
+    //     case SCENE_YDAN:
+    //     case SCENE_DDAN:
+    //     case SCENE_BMORI1:
+    //     case SCENE_HIDAN:
+    //     case SCENE_MIZUSIN:
+    //     case SCENE_JYASINZOU:
+    //     case SCENE_HAKADAN:
+    //     case SCENE_MEN:
+    //         gDPSetEnvColor(POLY_OPA_DISP++, this->color.r, this->color.g, this->color.b, 255);
+    //         break;
+    //     default:
+    //         gDPSetEnvColor(POLY_OPA_DISP++, mREG(13), mREG(14), mREG(15), 255);
+    //         break;
+    // }
+
+    gDPSetEnvColor(POLY_OPA_DISP++, this->color.r, this->color.g, this->color.b, 255);
 
     gSPDisplayList(POLY_OPA_DISP++, gPushBlockDL);
     CLOSE_DISPS(globalCtx->state.gfxCtx, "../z_obj_oshihiki.c", 1334);
