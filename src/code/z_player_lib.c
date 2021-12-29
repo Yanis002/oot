@@ -946,7 +946,11 @@ s32 func_80090014(GlobalContext* globalCtx, s32 limbIndex, Gfx** dList, Vec3f* p
             Gfx** dLists = this->rightHandDLists;
 
             if (LINK_IS_CHILD && this->rightHandType == 15) {
-                *dList = gLinkChildRightHandHoldingHookshotHandDL;
+                if (!(this->itemActionParam == PLAYER_AP_LONGSHOT)){
+                    *dList = gLinkChildRightHandHoldingHookshotHandDL;
+                } else {
+                    *dList = gLinkChildRightHandHoldingLongshotHandDL;
+                }
             } else {
                 if (D_80160018 == 10) {
                     dLists += this->currentShield * 4;
