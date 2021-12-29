@@ -48,9 +48,11 @@ graphs/
 *.fbx
 !*_custom*
 .extracted-assets.json
+assets_custom/
 
 # Docs
 !docs/tutorial/
 
 # Per-user configuration
 .python-version
+assets_custom.py

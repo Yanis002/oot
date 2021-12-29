@@ -1151,7 +1151,7 @@ void Player_DrawHookshotReticle(GlobalContext* globalCtx, Player* this, f32 arg2
     Vec3f sp68;
     f32 sp64;
     f32 sp60;
-    s32 objBankIndexLinkBoy;
+    s32 objBankIndexGameplayKeep;
 
     D_801260C8.z = 0.0f;
     Matrix_MultVec3f(&D_801260C8, &sp8C);
@@ -1174,10 +1174,10 @@ void Player_DrawHookshotReticle(GlobalContext* globalCtx, Player* this, f32 arg2
 
         gSPMatrix(OVERLAY_DISP++, Matrix_NewMtx(globalCtx->state.gfxCtx, "../z_player_lib.c", 2587),
                   G_MTX_NOPUSH | G_MTX_LOAD | G_MTX_MODELVIEW);
-        objBankIndexLinkBoy = Object_GetIndex(&globalCtx->objectCtx, OBJECT_LINK_BOY);
-        if (objBankIndexLinkBoy >= 0) {
-            gSPSegment(OVERLAY_DISP++, 0x06, globalCtx->objectCtx.status[objBankIndexLinkBoy].segment);
-            gSPDisplayList(OVERLAY_DISP++, gLinkAdultHookshotReticleDL);
+        objBankIndexGameplayKeep = Object_GetIndex(&globalCtx->objectCtx, OBJECT_GAMEPLAY_KEEP);
+        if (objBankIndexGameplayKeep >= 0) {
+            gSPSegment(OVERLAY_DISP++, 0x06, globalCtx->objectCtx.status[objBankIndexGameplayKeep].segment);
+            gSPDisplayList(OVERLAY_DISP++, gLinkHookshotReticleDL);
         }
 
         CLOSE_DISPS(globalCtx->state.gfxCtx, "../z_player_lib.c", 2592);
