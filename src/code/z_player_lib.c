@@ -1000,11 +1000,10 @@ s32 func_800902F0(GlobalContext* globalCtx, s32 limbIndex, Gfx** dList, Vec3f* p
         } else if (limbIndex == PLAYER_LIMB_R_FOREARM) {
             *dList = D_80125F30[(void)0, gSaveContext.linkAge];
         } else if (limbIndex == PLAYER_LIMB_R_HAND) {
-            if (Player_HoldsHookshot(this) && LINK_IS_CHILD) {
-                *dList = gLinkChildRightHandHoldingHookshotFPSDL;
-            } else {
-                *dList = sHoldingFirstPersonWeaponDLs[(void)0, gSaveContext.linkAge];
-            }
+            if (Player_HoldsHookshot(this)) {
+                if (LINK_IS_CHILD) *dList = gLinkChildRightHandHoldingHookshotFPSDL;
+                else *dList = gLinkAdultRightHandHoldingHookshotFarDL;
+            } else *dList = sHoldingFirstPersonWeaponDLs[(void)0, gSaveContext.linkAge];
         } else {
             *dList = NULL;
         }
