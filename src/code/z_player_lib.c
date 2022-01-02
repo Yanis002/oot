@@ -684,6 +684,8 @@ Color_RGB8 sGauntletColors[] = {
 Gfx* sBootDListGroups[][2] = {
     { gLinkAdultLeftIronBootDL, gLinkAdultRightIronBootDL },
     { gLinkAdultLeftHoverBootDL, gLinkAdultRightHoverBootDL },
+    { gLinkChildLeftIronBootDL, gLinkChildRightIronBootDL },
+    { gLinkChildLeftHoverBootDL, gLinkChildRightHoverBootDL },
 };
 
 void func_8008F470(GlobalContext* globalCtx, void** skeleton, Vec3s* jointTable, s32 dListCount, s32 lod, s32 tunic,
@@ -731,17 +733,18 @@ void func_8008F470(GlobalContext* globalCtx, void** skeleton, Vec3s* jointTable,
                 gSPDisplayList(POLY_OPA_DISP++,
                                (D_80160018 == 8) ? gLinkAdultRightGauntletPlate2DL : gLinkAdultRightGauntletPlate3DL);
             }
-
-            if (boots != 0) {
-                Gfx** bootDLists = sBootDListGroups[boots - 1];
-
-                gSPDisplayList(POLY_OPA_DISP++, bootDLists[0]);
-                gSPDisplayList(POLY_OPA_DISP++, bootDLists[1]);
-            }
         } else {
             if (Player_GetStrength() > PLAYER_STR_NONE) {
                 gSPDisplayList(POLY_OPA_DISP++, gLinkChildGoronBraceletDL);
             }
+        }
+
+        if (boots != 0) {
+            u8 bootIndex = LINK_IS_ADULT ? (boots - 1) : (boots - 1) + 2;
+            Gfx** bootDLists = sBootDListGroups[bootIndex];
+
+            gSPDisplayList(POLY_OPA_DISP++, bootDLists[0]);
+            gSPDisplayList(POLY_OPA_DISP++, bootDLists[1]);
         }
     }
 
@@ -989,9 +992,8 @@ s32 func_800902F0(GlobalContext* globalCtx, s32 limbIndex, Gfx** dList, Vec3f* p
     Player* this = (Player*)thisx;
 
     if (!func_8008FCC8(globalCtx, limbIndex, dList, pos, rot, thisx)) {
-        if (this->unk_6AD != 2) {
-            *dList = NULL;
-        } else if (limbIndex == PLAYER_LIMB_L_FOREARM) {
+        if (this->unk_6AD != 2) *dList = NULL;
+        else if (limbIndex == PLAYER_LIMB_L_FOREARM) {
             *dList = sArmOutDLs[(void)0, gSaveContext.linkAge];
         } else if (limbIndex == PLAYER_LIMB_L_HAND) {
             *dList = sHandOutDLs[(void)0, gSaveContext.linkAge];
@@ -1004,9 +1006,7 @@ s32 func_800902F0(GlobalContext* globalCtx, s32 limbIndex, Gfx** dList, Vec3f* p
                 if (LINK_IS_CHILD) *dList = gLinkChildRightHandHoldingHookshotFPSDL;
                 else *dList = gLinkAdultRightHandHoldingHookshotFarDL;
             } else *dList = sHoldingFirstPersonWeaponDLs[(void)0, gSaveContext.linkAge];
-        } else {
-            *dList = NULL;
-        }
+        } else *dList = NULL;
         return false;
     }
 }

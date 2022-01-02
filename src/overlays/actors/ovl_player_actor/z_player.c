@@ -9869,6 +9869,13 @@ void Player_UpdateCommon(Player* this, GlobalContext* globalCtx, Input* input) {
 
     sControlInput = input;
 
+    // Adult/Child switch
+    if((CHECK_BTN_ALL(sControlInput->cur.button, BTN_L + BTN_DUP))){
+        globalCtx->nextEntranceIndex = gSaveContext.entranceIndex;
+        globalCtx->linkAgeOnLoad = !gSaveContext.linkAge;
+        globalCtx->sceneLoadFlag = 0x14; 
+    }
+
     if (this->unk_A86 < 0) {
         this->unk_A86++;
         if (this->unk_A86 == 0) {
