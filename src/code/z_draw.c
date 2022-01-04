@@ -78,6 +78,10 @@
 #include "objects/object_gi_sword_1/object_gi_sword_1.h"
 #include "objects/object_st/object_st.h"
 
+/* TEST */
+// #include "objects/object_gi_test/object_gi_test.h"
+#include "objects/gameplay_keep/gameplay_keep.h"
+
 // "Get Item" Model Draw Functions
 void GetItem_DrawMaskOrBombchu(GlobalContext* globalCtx, s16 drawId);
 void GetItem_DrawSoldOut(GlobalContext* globalCtx, s16 drawId);
@@ -367,6 +371,9 @@ DrawItemTableEntry sDrawItemTable[] = {
     { GetItem_DrawOpa0, { gGiKokiriSwordDL } },
     // gold skulltula token, OBJECT_ST
     { GetItem_DrawSkullToken, { object_st_DL_004DB0, object_st_DL_004EB8 } },
+    
+    /* TEST */
+    { GetItem_DrawOpa0, { gGiTPoggers1DL } },
 };
 
 /**
