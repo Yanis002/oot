@@ -1,5 +1,7 @@
 # The Legend of Zelda: Ocarina of Time
 
+You'll need to get vanilla scenes in C and add "nmq" after the scene names (every single file and line of code containing the scene's name)
+
 [![Build Status][jenkins-badge]][jenkins] [![Decompilation Progress][progress-badge]][progress] [![Contributors][contributors-badge]][contributors] [![Discord Channel][discord-badge]][discord]
 
 [jenkins]: https://jenkins.deco.mp/job/OOT/job/master
