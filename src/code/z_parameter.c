@@ -91,27 +91,39 @@ static RestrictionFlags sRestrictionFlags[] = {
     { SCENE_FACE_SHOP, 0x10, 0x10, 0x15 },
     { SCENE_MEN, 0x00, 0x03, 0x10 },
     { SCENE_YDAN, 0x00, 0x00, 0x00 },
+    { SCENE_MEN_NMQ, 0x00, 0x03, 0x10 },
+    { SCENE_YDAN_NMQ, 0x00, 0x00, 0x00 },
     { SCENE_YDAN_BOSS, 0x00, 0x45, 0x50 },
     { SCENE_DDAN, 0x00, 0x00, 0x00 },
+    { SCENE_DDAN_NMQ, 0x00, 0x00, 0x00 },
     { SCENE_DDAN_BOSS, 0x00, 0x45, 0x50 },
     { SCENE_BDAN, 0x00, 0x00, 0x00 },
+    { SCENE_BDAN_NMQ, 0x00, 0x00, 0x00 },
     { SCENE_BDAN_BOSS, 0x00, 0x45, 0x50 },
     { SCENE_BMORI1, 0x00, 0x00, 0x00 },
+    { SCENE_BMORI1_NMQ, 0x00, 0x00, 0x00 },
     { SCENE_MORIBOSSROOM, 0x00, 0x45, 0x50 },
     { SCENE_HAKADANCH, 0x00, 0x00, 0x00 },
     { SCENE_HAKADAN, 0x00, 0x00, 0x00 },
+    { SCENE_HAKADANCH_NMQ, 0x00, 0x00, 0x00 },
+    { SCENE_HAKADAN_NMQ, 0x00, 0x00, 0x00 },
     { SCENE_HAKADAN_BS, 0x00, 0x45, 0x50 },
     { SCENE_HIDAN, 0x00, 0x00, 0x00 },
+    { SCENE_HIDAN_NMQ, 0x00, 0x00, 0x00 },
     { SCENE_FIRE_BS, 0x00, 0x45, 0x50 },
     { SCENE_MIZUSIN, 0x00, 0x00, 0x00 },
+    { SCENE_MIZUSIN_NMQ, 0x00, 0x00, 0x00 },
     { SCENE_MIZUSIN_BS, 0x00, 0x45, 0x50 },
     { SCENE_JYASINZOU, 0x00, 0x00, 0x00 },
+    { SCENE_JYASINZOU_NMQ, 0x00, 0x00, 0x00 },
     { SCENE_JYASINBOSS, 0x00, 0x45, 0x50 },
     { SCENE_GANON, 0x00, 0x00, 0x00 },
     { SCENE_GANON_BOSS, 0x00, 0x45, 0x50 },
     { SCENE_ICE_DOUKUTO, 0x00, 0x00, 0xC0 },
+    { SCENE_ICE_DOUKUTO_NMQ, 0x00, 0x00, 0xC0 },
     { SCENE_HAKASITARELAY, 0x00, 0x03, 0x14 },
     { SCENE_GANONTIKA, 0x00, 0x03, 0x10 },
+    { SCENE_GANONTIKA_NMQ, 0x00, 0x03, 0x10 },
     { SCENE_GANON_DEMO, 0x00, 0x45, 0x50 },
     { SCENE_GANON_SONOGO, 0x00, 0x05, 0x50 },
     { SCENE_GANONTIKA_SONOGO, 0x00, 0x05, 0x50 },
@@ -3054,6 +3066,15 @@ void Interface_Draw(GlobalContext* globalCtx) {
             case SCENE_MEN:
             case SCENE_GERUDOWAY:
             case SCENE_GANONTIKA:
+            case SCENE_BMORI1_NMQ:
+            case SCENE_HIDAN_NMQ:
+            case SCENE_MIZUSIN_NMQ:
+            case SCENE_JYASINZOU_NMQ:
+            case SCENE_HAKADAN_NMQ:
+            case SCENE_HAKADANCH_NMQ:
+            case SCENE_ICE_DOUKUTO_NMQ:
+            case SCENE_MEN_NMQ:
+            case SCENE_GANONTIKA_NMQ:
             case SCENE_GANON_SONOGO:
             case SCENE_GANONTIKA_SONOGO:
             case SCENE_TAKARAYA:

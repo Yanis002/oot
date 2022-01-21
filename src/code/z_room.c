@@ -534,8 +534,11 @@ u32 func_80096FE8(GlobalContext* globalCtx, RoomContext* roomCtx) {
     roomCtx->unk_30 = 0;
     roomCtx->status = 0;
 
+    // osSyncPrintf("respawnFlag: %d\n true: %d\n false: %d\n", gSaveContext.respawnFlag, ((void)0, gSaveContext.respawn[gSaveContext.respawnFlag - 1].roomIndex), globalCtx->setupEntranceList[globalCtx->curSpawn].room);
+    osSyncPrintf("globalCtx->curSpawn: %d\n", globalCtx->curSpawn);
     frontRoom = gSaveContext.respawnFlag > 0 ? ((void)0, gSaveContext.respawn[gSaveContext.respawnFlag - 1].roomIndex)
                                              : globalCtx->setupEntranceList[globalCtx->curSpawn].room;
+                                             
     func_8009728C(globalCtx, roomCtx, frontRoom);
 
     return maxRoomSize;
@@ -550,6 +553,8 @@ s32 func_8009728C(GlobalContext* globalCtx, RoomContext* roomCtx, s32 roomNum) {
         roomCtx->curRoom.segment = NULL;
         roomCtx->status = 1;
 
+        osSyncPrintf("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\n%X", globalCtx->loadedScene->sceneFile.vromStart);
+        osSyncPrintf("roomNum: %d, globalCtx->numRooms: %d\n", roomNum, globalCtx->numRooms);
         ASSERT(roomNum < globalCtx->numRooms, "read_room_ID < game_play->room_rom_address.num", "../z_room.c", 1009);
 
         size = globalCtx->roomList[roomNum].vromEnd - globalCtx->roomList[roomNum].vromStart;

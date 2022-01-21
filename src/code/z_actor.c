@@ -3294,6 +3294,7 @@ void Actor_SetTextWithPrefix(GlobalContext* globalCtx, Actor* actor, s16 baseTex
 
     switch (globalCtx->sceneNum) {
         case SCENE_YDAN:
+        case SCENE_YDAN_NMQ:
         case SCENE_YDAN_BOSS:
         case SCENE_MORIBOSSROOM:
         case SCENE_KOKIRI_HOME:
@@ -3305,7 +3306,7 @@ void Actor_SetTextWithPrefix(GlobalContext* globalCtx, Actor* actor, s16 baseTex
         case SCENE_SPOT04:
         case SCENE_SPOT05:
         case SCENE_SPOT10:
-        case 112:
+        // case 112:
             prefix = 0x1000;
             break;
         case SCENE_MALON_STABLE:
@@ -3314,6 +3315,7 @@ void Actor_SetTextWithPrefix(GlobalContext* globalCtx, Actor* actor, s16 baseTex
             prefix = 0x2000;
             break;
         case SCENE_HIDAN:
+        case SCENE_HIDAN_NMQ:
         case SCENE_DDAN_BOSS:
         case SCENE_FIRE_BS:
         case SCENE_SPOT16:
@@ -3322,6 +3324,7 @@ void Actor_SetTextWithPrefix(GlobalContext* globalCtx, Actor* actor, s16 baseTex
             prefix = 0x3000;
             break;
         case SCENE_BDAN:
+        case SCENE_BDAN_NMQ:
         case SCENE_BDAN_BOSS:
         case SCENE_SPOT03:
         case SCENE_SPOT07:
@@ -3329,6 +3332,7 @@ void Actor_SetTextWithPrefix(GlobalContext* globalCtx, Actor* actor, s16 baseTex
             prefix = 0x4000;
             break;
         case SCENE_HAKADAN:
+        case SCENE_HAKADAN_NMQ:
         case SCENE_HAKADAN_BS:
         case SCENE_KAKARIKO:
         case SCENE_KAKARIKO3:
@@ -3341,6 +3345,7 @@ void Actor_SetTextWithPrefix(GlobalContext* globalCtx, Actor* actor, s16 baseTex
             prefix = 0x5000;
             break;
         case SCENE_JYASINZOU:
+        case SCENE_JYASINZOU_NMQ:
         case SCENE_JYASINBOSS:
         case SCENE_LABO:
         case SCENE_TENT:

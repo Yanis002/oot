@@ -2450,13 +2450,15 @@ void KaleidoScope_UpdateDungeonMap(GlobalContext* globalCtx) {
     KaleidoScope_LoadDungeonMap(globalCtx);
     Map_SetFloorPalettesData(globalCtx, pauseCtx->dungeonMapSlot - 3);
 
-    if ((globalCtx->sceneNum >= SCENE_YDAN) && (globalCtx->sceneNum <= SCENE_TAKARAYA)) {
+    if ((globalCtx->sceneNum >= SCENE_YDAN) && (globalCtx->sceneNum <= SCENE_TAKARAYA) ||
+        (globalCtx->sceneNum >= SCENE_YDAN_NMQ) && (globalCtx->sceneNum <= SCENE_MEN_NMQ)) {
         if ((VREG(30) + 3) == pauseCtx->cursorPoint[PAUSE_MAP]) {
             KaleidoScope_OverridePalIndexCI4(interfaceCtx->mapSegment, 2040, interfaceCtx->mapPaletteIndex, 14);
         }
     }
 
-    if ((globalCtx->sceneNum >= SCENE_YDAN) && (globalCtx->sceneNum <= SCENE_TAKARAYA)) {
+    if ((globalCtx->sceneNum >= SCENE_YDAN) && (globalCtx->sceneNum <= SCENE_TAKARAYA) ||
+        (globalCtx->sceneNum >= SCENE_YDAN_NMQ) && (globalCtx->sceneNum <= SCENE_MEN_NMQ)) {
         if ((VREG(30) + 3) == pauseCtx->cursorPoint[PAUSE_MAP]) {
             KaleidoScope_OverridePalIndexCI4(interfaceCtx->mapSegment + 0x800, 2040, interfaceCtx->mapPaletteIndex, 14);
         }
@@ -2558,6 +2560,16 @@ void KaleidoScope_Update(GlobalContext* globalCtx) {
                 case SCENE_HAKADAN:
                 case SCENE_HAKADANCH:
                 case SCENE_ICE_DOUKUTO:
+                case SCENE_YDAN_NMQ:
+                case SCENE_DDAN_NMQ:
+                case SCENE_BDAN_NMQ:
+                case SCENE_BMORI1_NMQ:
+                case SCENE_HIDAN_NMQ:
+                case SCENE_MIZUSIN_NMQ:
+                case SCENE_JYASINZOU_NMQ:
+                case SCENE_HAKADAN_NMQ:
+                case SCENE_HAKADANCH_NMQ:
+                case SCENE_ICE_DOUKUTO_NMQ:
                 case SCENE_YDAN_BOSS:
                 case SCENE_DDAN_BOSS:
                 case SCENE_BDAN_BOSS:
@@ -3444,6 +3456,16 @@ void KaleidoScope_Update(GlobalContext* globalCtx) {
                 case SCENE_HAKADAN:
                 case SCENE_HAKADANCH:
                 case SCENE_ICE_DOUKUTO:
+                case SCENE_YDAN_NMQ:
+                case SCENE_DDAN_NMQ:
+                case SCENE_BDAN_NMQ:
+                case SCENE_BMORI1_NMQ:
+                case SCENE_HIDAN_NMQ:
+                case SCENE_MIZUSIN_NMQ:
+                case SCENE_JYASINZOU_NMQ:
+                case SCENE_HAKADAN_NMQ:
+                case SCENE_HAKADANCH_NMQ:
+                case SCENE_ICE_DOUKUTO_NMQ:
                 case SCENE_YDAN_BOSS:
                 case SCENE_DDAN_BOSS:
                 case SCENE_BDAN_BOSS:

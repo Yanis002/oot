@@ -27,6 +27,11 @@
 #include "scenes/dungeons/jyasinboss/jyasinboss_scene.h"
 #include "scenes/dungeons/ice_doukutu/ice_doukutu_scene.h"
 
+#include "scenes/dungeons/bdan_nmq/bdan_nmq_scene.h"
+#include "scenes/dungeons/ydan_nmq/ydan_nmq_scene.h"
+#include "scenes/dungeons/ganontika_nmq/ganontika_nmq_scene.h"
+#include "scenes/dungeons/ice_doukutu_nmq/ice_doukutu_nmq_scene.h"
+
 #include "scenes/misc/hakaana_ouke/hakaana_ouke_scene.h"
 
 u16 D_8011E1C0 = 0;
@@ -86,6 +91,15 @@ EntranceCutscene sEntranceCutsceneTable[] = {
     { 0x03B4, 0, 0xC7, gGerudoFortressFirstCaptureCs },
     { 0x0246, 2, 0xB9, gDeathMountainCraterIntroCs },
     { 0x05E8, 2, 0xC6, gKokiriForestDekuSproutCs },
+    // non-mq dungeons
+    { 0x0000, 2, 0xA8, gNMQDekuTreeIntroCs },
+    { 0x0028, 2, 0xB5, gNMQJabuJabuIntroCs },
+    { 0x0538, 2, 0xBB, gNMQForestBarrierCs },
+    { 0x053C, 2, 0xBC, gNMQWaterBarrierCs },
+    { 0x0540, 2, 0xBD, gNMQShadowBarrierCs },
+    { 0x0544, 2, 0xBE, gNMQFireBarrierCs },
+    { 0x0548, 2, 0xBF, gNMQLightBarrierCs },
+    { 0x054C, 2, 0xAD, gNMQSpiritBarrierCs },
 };
 
 // Unused, seems to be an early list of dungeon entrance cutscene locations

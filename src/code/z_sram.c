@@ -327,6 +327,18 @@ void Sram_OpenSave(SramContext* sramCtx) {
         case SCENE_MEN:
         case SCENE_GERUDOWAY:
         case SCENE_GANONTIKA:
+        case SCENE_YDAN_NMQ:
+        case SCENE_DDAN_NMQ:
+        case SCENE_BDAN_NMQ:
+        case SCENE_BMORI1_NMQ:
+        case SCENE_HIDAN_NMQ:
+        case SCENE_MIZUSIN_NMQ:
+        case SCENE_JYASINZOU_NMQ:
+        case SCENE_HAKADAN_NMQ:
+        case SCENE_HAKADANCH_NMQ:
+        case SCENE_ICE_DOUKUTO_NMQ:
+        case SCENE_MEN_NMQ:
+        case SCENE_GANONTIKA_NMQ:
             gSaveContext.entranceIndex = dungeonEntrances[gSaveContext.savedSceneNum];
             break;
         case SCENE_YDAN_BOSS:

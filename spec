@@ -10383,6 +10383,1630 @@ beginseg
 endseg
 
 beginseg
+    name "ydan_nmq_scene"
+    romalign 0x1000
+    include "build/assets/scenes/dungeons/ydan_nmq/ydan_nmq_scene.o"
+    number 2
+endseg
+
+beginseg
+    name "ydan_nmq_room_0"
+    romalign 0x1000
+    include "build/assets/scenes/dungeons/ydan_nmq/ydan_nmq_room_0.o"
+    number 3
+endseg
+
+beginseg
+    name "ydan_nmq_room_1"
+    romalign 0x1000
+    include "build/assets/scenes/dungeons/ydan_nmq/ydan_nmq_room_1.o"
+    number 3
+endseg
+
+beginseg
+    name "ydan_nmq_room_2"
+    romalign 0x1000
+    include "build/assets/scenes/dungeons/ydan_nmq/ydan_nmq_room_2.o"
+    number 3
+endseg
+
+beginseg
+    name "ydan_nmq_room_3"
+    romalign 0x1000
+    include "build/assets/scenes/dungeons/ydan_nmq/ydan_nmq_room_3.o"
+    number 3
+endseg
+
+beginseg
+    name "ydan_nmq_room_4"
+    romalign 0x1000
+    include "build/assets/scenes/dungeons/ydan_nmq/ydan_nmq_room_4.o"
+    number 3
+endseg
+
+beginseg
+    name "ydan_nmq_room_5"
+    romalign 0x1000
+    include "build/assets/scenes/dungeons/ydan_nmq/ydan_nmq_room_5.o"
+    number 3
+endseg
+
+beginseg
+    name "ydan_nmq_room_6"
+    romalign 0x1000
+    include "build/assets/scenes/dungeons/ydan_nmq/ydan_nmq_room_6.o"
+    number 3
+endseg
+
+beginseg
+    name "ydan_nmq_room_7"
+    romalign 0x1000
+    include "build/assets/scenes/dungeons/ydan_nmq/ydan_nmq_room_7.o"
+    number 3
+endseg
+
+beginseg
+    name "ydan_nmq_room_8"
+    romalign 0x1000
+    include "build/assets/scenes/dungeons/ydan_nmq/ydan_nmq_room_8.o"
+    number 3
+endseg
+
+beginseg
+    name "ydan_nmq_room_9"
+    romalign 0x1000
+    include "build/assets/scenes/dungeons/ydan_nmq/ydan_nmq_room_9.o"
+    number 3
+endseg
+
+beginseg
+    name "ydan_nmq_room_10"
+    romalign 0x1000
+    include "build/assets/scenes/dungeons/ydan_nmq/ydan_nmq_room_10.o"
+    number 3
+endseg
+
+beginseg
+    name "ydan_nmq_room_11"
+    romalign 0x1000
+    include "build/assets/scenes/dungeons/ydan_nmq/ydan_nmq_room_11.o"
+    number 3
+endseg
+
+beginseg
+    name "ddan_nmq_scene"
+    romalign 0x1000
+    include "build/assets/scenes/dungeons/ddan_nmq/ddan_nmq_scene.o"
+    number 2
+endseg
+
+beginseg
+    name "ddan_nmq_room_0"
+    romalign 0x1000
+    include "build/assets/scenes/dungeons/ddan_nmq/ddan_nmq_room_0.o"
+    number 3
+endseg
+
+beginseg
+    name "ddan_nmq_room_1"
+    romalign 0x1000
+    include "build/assets/scenes/dungeons/ddan_nmq/ddan_nmq_room_1.o"
+    number 3
+endseg
+
+beginseg
+    name "ddan_nmq_room_2"
+    romalign 0x1000
+    include "build/assets/scenes/dungeons/ddan_nmq/ddan_nmq_room_2.o"
+    number 3
+endseg
+
+beginseg
+    name "ddan_nmq_room_3"
+    romalign 0x1000
+    include "build/assets/scenes/dungeons/ddan_nmq/ddan_nmq_room_3.o"
+    number 3
+endseg
+
+beginseg
+    name "ddan_nmq_room_4"
+    romalign 0x1000
+    include "build/assets/scenes/dungeons/ddan_nmq/ddan_nmq_room_4.o"
+    number 3
+endseg
+
+beginseg
+    name "ddan_nmq_room_5"
+    romalign 0x1000
+    include "build/assets/scenes/dungeons/ddan_nmq/ddan_nmq_room_5.o"
+    number 3
+endseg
+
+beginseg
+    name "ddan_nmq_room_6"
+    romalign 0x1000
+    include "build/assets/scenes/dungeons/ddan_nmq/ddan_nmq_room_6.o"
+    number 3
+endseg
+
+beginseg
+    name "ddan_nmq_room_7"
+    romalign 0x1000
+    include "build/assets/scenes/dungeons/ddan_nmq/ddan_nmq_room_7.o"
+    number 3
+endseg
+
+beginseg
+    name "ddan_nmq_room_8"
+    romalign 0x1000
+    include "build/assets/scenes/dungeons/ddan_nmq/ddan_nmq_room_8.o"
+    number 3
+endseg
+
+beginseg
+    name "ddan_nmq_room_9"
+    romalign 0x1000
+    include "build/assets/scenes/dungeons/ddan_nmq/ddan_nmq_room_9.o"
+    number 3
+endseg
+
+beginseg
+    name "ddan_nmq_room_10"
+    romalign 0x1000
+    include "build/assets/scenes/dungeons/ddan_nmq/ddan_nmq_room_10.o"
+    number 3
+endseg
+
+beginseg
+    name "ddan_nmq_room_11"
+    romalign 0x1000
+    include "build/assets/scenes/dungeons/ddan_nmq/ddan_nmq_room_11.o"
+    number 3
+endseg
+
+beginseg
+    name "ddan_nmq_room_12"
+    romalign 0x1000
+    include "build/assets/scenes/dungeons/ddan_nmq/ddan_nmq_room_12.o"
+    number 3
+endseg
+
+beginseg
+    name "ddan_nmq_room_13"
+    romalign 0x1000
+    include "build/assets/scenes/dungeons/ddan_nmq/ddan_nmq_room_13.o"
+    number 3
+endseg
+
+beginseg
+    name "ddan_nmq_room_14"
+    romalign 0x1000
+    include "build/assets/scenes/dungeons/ddan_nmq/ddan_nmq_room_14.o"
+    number 3
+endseg
+
+beginseg
+    name "ddan_nmq_room_15"
+    romalign 0x1000
+    include "build/assets/scenes/dungeons/ddan_nmq/ddan_nmq_room_15.o"
+    number 3
+endseg
+
+beginseg
+    name "ddan_nmq_room_16"
+    romalign 0x1000
+    include "build/assets/scenes/dungeons/ddan_nmq/ddan_nmq_room_16.o"
+    number 3
+endseg
+
+beginseg
+    name "bdan_nmq_scene"
+    romalign 0x1000
+    include "build/assets/scenes/dungeons/bdan_nmq/bdan_nmq_scene.o"
+    number 2
+endseg
+
+beginseg
+    name "bdan_nmq_room_0"
+    romalign 0x1000
+    include "build/assets/scenes/dungeons/bdan_nmq/bdan_nmq_room_0.o"
+    number 3
+endseg
+
+beginseg
+    name "bdan_nmq_room_1"
+    romalign 0x1000
+    include "build/assets/scenes/dungeons/bdan_nmq/bdan_nmq_room_1.o"
+    number 3
+endseg
+
+beginseg
+    name "bdan_nmq_room_2"
+    romalign 0x1000
+    include "build/assets/scenes/dungeons/bdan_nmq/bdan_nmq_room_2.o"
+    number 3
+endseg
+
+beginseg
+    name "bdan_nmq_room_3"
+    romalign 0x1000
+    include "build/assets/scenes/dungeons/bdan_nmq/bdan_nmq_room_3.o"
+    number 3
+endseg
+
+beginseg
+    name "bdan_nmq_room_4"
+    romalign 0x1000
+    include "build/assets/scenes/dungeons/bdan_nmq/bdan_nmq_room_4.o"
+    number 3
+endseg
+
+beginseg
+    name "bdan_nmq_room_5"
+    romalign 0x1000
+    include "build/assets/scenes/dungeons/bdan_nmq/bdan_nmq_room_5.o"
+    number 3
+endseg
+
+beginseg
+    name "bdan_nmq_room_6"
+    romalign 0x1000
+    include "build/assets/scenes/dungeons/bdan_nmq/bdan_nmq_room_6.o"
+    number 3
+endseg
+
+beginseg
+    name "bdan_nmq_room_7"
+    romalign 0x1000
+    include "build/assets/scenes/dungeons/bdan_nmq/bdan_nmq_room_7.o"
+    number 3
+endseg
+
+beginseg
+    name "bdan_nmq_room_8"
+    romalign 0x1000
+    include "build/assets/scenes/dungeons/bdan_nmq/bdan_nmq_room_8.o"
+    number 3
+endseg
+
+beginseg
+    name "bdan_nmq_room_9"
+    romalign 0x1000
+    include "build/assets/scenes/dungeons/bdan_nmq/bdan_nmq_room_9.o"
+    number 3
+endseg
+
+beginseg
+    name "bdan_nmq_room_10"
+    romalign 0x1000
+    include "build/assets/scenes/dungeons/bdan_nmq/bdan_nmq_room_10.o"
+    number 3
+endseg
+
+beginseg
+    name "bdan_nmq_room_11"
+    romalign 0x1000
+    include "build/assets/scenes/dungeons/bdan_nmq/bdan_nmq_room_11.o"
+    number 3
+endseg
+
+beginseg
+    name "bdan_nmq_room_12"
+    romalign 0x1000
+    include "build/assets/scenes/dungeons/bdan_nmq/bdan_nmq_room_12.o"
+    number 3
+endseg
+
+beginseg
+    name "bdan_nmq_room_13"
+    romalign 0x1000
+    include "build/assets/scenes/dungeons/bdan_nmq/bdan_nmq_room_13.o"
+    number 3
+endseg
+
+beginseg
+    name "bdan_nmq_room_14"
+    romalign 0x1000
+    include "build/assets/scenes/dungeons/bdan_nmq/bdan_nmq_room_14.o"
+    number 3
+endseg
+
+beginseg
+    name "bdan_nmq_room_15"
+    romalign 0x1000
+    include "build/assets/scenes/dungeons/bdan_nmq/bdan_nmq_room_15.o"
+    number 3
+endseg
+
+beginseg
+    name "Bmori1_nmq_scene"
+    romalign 0x1000
+    include "build/assets/scenes/dungeons/Bmori1_nmq/Bmori1_nmq_scene.o"
+    number 2
+endseg
+
+beginseg
+    name "Bmori1_nmq_room_0"
+    romalign 0x1000
+    include "build/assets/scenes/dungeons/Bmori1_nmq/Bmori1_nmq_room_0.o"
+    number 3
+endseg
+
+beginseg
+    name "Bmori1_nmq_room_1"
+    romalign 0x1000
+    include "build/assets/scenes/dungeons/Bmori1_nmq/Bmori1_nmq_room_1.o"
+    number 3
+endseg
+
+beginseg
+    name "Bmori1_nmq_room_2"
+    romalign 0x1000
+    include "build/assets/scenes/dungeons/Bmori1_nmq/Bmori1_nmq_room_2.o"
+    number 3
+endseg
+
+beginseg
+    name "Bmori1_nmq_room_3"
+    romalign 0x1000
+    include "build/assets/scenes/dungeons/Bmori1_nmq/Bmori1_nmq_room_3.o"
+    number 3
+endseg
+
+beginseg
+    name "Bmori1_nmq_room_4"
+    romalign 0x1000
+    include "build/assets/scenes/dungeons/Bmori1_nmq/Bmori1_nmq_room_4.o"
+    number 3
+endseg
+
+beginseg
+    name "Bmori1_nmq_room_5"
+    romalign 0x1000
+    include "build/assets/scenes/dungeons/Bmori1_nmq/Bmori1_nmq_room_5.o"
+    number 3
+endseg
+
+beginseg
+    name "Bmori1_nmq_room_6"
+    romalign 0x1000
+    include "build/assets/scenes/dungeons/Bmori1_nmq/Bmori1_nmq_room_6.o"
+    number 3
+endseg
+
+beginseg
+    name "Bmori1_nmq_room_7"
+    romalign 0x1000
+    include "build/assets/scenes/dungeons/Bmori1_nmq/Bmori1_nmq_room_7.o"
+    number 3
+endseg
+
+beginseg
+    name "Bmori1_nmq_room_8"
+    romalign 0x1000
+    include "build/assets/scenes/dungeons/Bmori1_nmq/Bmori1_nmq_room_8.o"
+    number 3
+endseg
+
+beginseg
+    name "Bmori1_nmq_room_9"
+    romalign 0x1000
+    include "build/assets/scenes/dungeons/Bmori1_nmq/Bmori1_nmq_room_9.o"
+    number 3
+endseg
+
+beginseg
+    name "Bmori1_nmq_room_10"
+    romalign 0x1000
+    include "build/assets/scenes/dungeons/Bmori1_nmq/Bmori1_nmq_room_10.o"
+    number 3
+endseg
+
+beginseg
+    name "Bmori1_nmq_room_11"
+    romalign 0x1000
+    include "build/assets/scenes/dungeons/Bmori1_nmq/Bmori1_nmq_room_11.o"
+    number 3
+endseg
+
+beginseg
+    name "Bmori1_nmq_room_12"
+    romalign 0x1000
+    include "build/assets/scenes/dungeons/Bmori1_nmq/Bmori1_nmq_room_12.o"
+    number 3
+endseg
+
+beginseg
+    name "Bmori1_nmq_room_13"
+    romalign 0x1000
+    include "build/assets/scenes/dungeons/Bmori1_nmq/Bmori1_nmq_room_13.o"
+    number 3
+endseg
+
+beginseg
+    name "Bmori1_nmq_room_14"
+    romalign 0x1000
+    include "build/assets/scenes/dungeons/Bmori1_nmq/Bmori1_nmq_room_14.o"
+    number 3
+endseg
+
+beginseg
+    name "Bmori1_nmq_room_15"
+    romalign 0x1000
+    include "build/assets/scenes/dungeons/Bmori1_nmq/Bmori1_nmq_room_15.o"
+    number 3
+endseg
+
+beginseg
+    name "Bmori1_nmq_room_16"
+    romalign 0x1000
+    include "build/assets/scenes/dungeons/Bmori1_nmq/Bmori1_nmq_room_16.o"
+    number 3
+endseg
+
+beginseg
+    name "Bmori1_nmq_room_17"
+    romalign 0x1000
+    include "build/assets/scenes/dungeons/Bmori1_nmq/Bmori1_nmq_room_17.o"
+    number 3
+endseg
+
+beginseg
+    name "Bmori1_nmq_room_18"
+    romalign 0x1000
+    include "build/assets/scenes/dungeons/Bmori1_nmq/Bmori1_nmq_room_18.o"
+    number 3
+endseg
+
+beginseg
+    name "Bmori1_nmq_room_19"
+    romalign 0x1000
+    include "build/assets/scenes/dungeons/Bmori1_nmq/Bmori1_nmq_room_19.o"
+    number 3
+endseg
+
+beginseg
+    name "Bmori1_nmq_room_20"
+    romalign 0x1000
+    include "build/assets/scenes/dungeons/Bmori1_nmq/Bmori1_nmq_room_20.o"
+    number 3
+endseg
+
+beginseg
+    name "Bmori1_nmq_room_21"
+    romalign 0x1000
+    include "build/assets/scenes/dungeons/Bmori1_nmq/Bmori1_nmq_room_21.o"
+    number 3
+endseg
+
+beginseg
+    name "Bmori1_nmq_room_22"
+    romalign 0x1000
+    include "build/assets/scenes/dungeons/Bmori1_nmq/Bmori1_nmq_room_22.o"
+    number 3
+endseg
+
+beginseg
+    name "HIDAN_nmq_scene"
+    romalign 0x1000
+    include "build/assets/scenes/dungeons/HIDAN_nmq/HIDAN_nmq_scene.o"
+    number 2
+endseg
+
+beginseg
+    name "HIDAN_nmq_room_0"
+    romalign 0x1000
+    include "build/assets/scenes/dungeons/HIDAN_nmq/HIDAN_nmq_room_0.o"
+    number 3
+endseg
+
+beginseg
+    name "HIDAN_nmq_room_1"
+    romalign 0x1000
+    include "build/assets/scenes/dungeons/HIDAN_nmq/HIDAN_nmq_room_1.o"
+    number 3
+endseg
+
+beginseg
+    name "HIDAN_nmq_room_2"
+    romalign 0x1000
+    include "build/assets/scenes/dungeons/HIDAN_nmq/HIDAN_nmq_room_2.o"
+    number 3
+endseg
+
+beginseg
+    name "HIDAN_nmq_room_3"
+    romalign 0x1000
+    include "build/assets/scenes/dungeons/HIDAN_nmq/HIDAN_nmq_room_3.o"
+    number 3
+endseg
+
+beginseg
+    name "HIDAN_nmq_room_4"
+    romalign 0x1000
+    include "build/assets/scenes/dungeons/HIDAN_nmq/HIDAN_nmq_room_4.o"
+    number 3
+endseg
+
+beginseg
+    name "HIDAN_nmq_room_5"
+    romalign 0x1000
+    include "build/assets/scenes/dungeons/HIDAN_nmq/HIDAN_nmq_room_5.o"
+    number 3
+endseg
+
+beginseg
+    name "HIDAN_nmq_room_6"
+    romalign 0x1000
+    include "build/assets/scenes/dungeons/HIDAN_nmq/HIDAN_nmq_room_6.o"
+    number 3
+endseg
+
+beginseg
+    name "HIDAN_nmq_room_7"
+    romalign 0x1000
+    include "build/assets/scenes/dungeons/HIDAN_nmq/HIDAN_nmq_room_7.o"
+    number 3
+endseg
+
+beginseg
+    name "HIDAN_nmq_room_8"
+    romalign 0x1000
+    include "build/assets/scenes/dungeons/HIDAN_nmq/HIDAN_nmq_room_8.o"
+    number 3
+endseg
+
+beginseg
+    name "HIDAN_nmq_room_9"
+    romalign 0x1000
+    include "build/assets/scenes/dungeons/HIDAN_nmq/HIDAN_nmq_room_9.o"
+    number 3
+endseg
+
+beginseg
+    name "HIDAN_nmq_room_10"
+    romalign 0x1000
+    include "build/assets/scenes/dungeons/HIDAN_nmq/HIDAN_nmq_room_10.o"
+    number 3
+endseg
+
+beginseg
+    name "HIDAN_nmq_room_11"
+    romalign 0x1000
+    include "build/assets/scenes/dungeons/HIDAN_nmq/HIDAN_nmq_room_11.o"
+    number 3
+endseg
+
+beginseg
+    name "HIDAN_nmq_room_12"
+    romalign 0x1000
+    include "build/assets/scenes/dungeons/HIDAN_nmq/HIDAN_nmq_room_12.o"
+    number 3
+endseg
+
+beginseg
+    name "HIDAN_nmq_room_13"
+    romalign 0x1000
+    include "build/assets/scenes/dungeons/HIDAN_nmq/HIDAN_nmq_room_13.o"
+    number 3
+endseg
+
+beginseg
+    name "HIDAN_nmq_room_14"
+    romalign 0x1000
+    include "build/assets/scenes/dungeons/HIDAN_nmq/HIDAN_nmq_room_14.o"
+    number 3
+endseg
+
+beginseg
+    name "HIDAN_nmq_room_15"
+    romalign 0x1000
+    include "build/assets/scenes/dungeons/HIDAN_nmq/HIDAN_nmq_room_15.o"
+    number 3
+endseg
+
+beginseg
+    name "HIDAN_nmq_room_16"
+    romalign 0x1000
+    include "build/assets/scenes/dungeons/HIDAN_nmq/HIDAN_nmq_room_16.o"
+    number 3
+endseg
+
+beginseg
+    name "HIDAN_nmq_room_17"
+    romalign 0x1000
+    include "build/assets/scenes/dungeons/HIDAN_nmq/HIDAN_nmq_room_17.o"
+    number 3
+endseg
+
+beginseg
+    name "HIDAN_nmq_room_18"
+    romalign 0x1000
+    include "build/assets/scenes/dungeons/HIDAN_nmq/HIDAN_nmq_room_18.o"
+    number 3
+endseg
+
+beginseg
+    name "HIDAN_nmq_room_19"
+    romalign 0x1000
+    include "build/assets/scenes/dungeons/HIDAN_nmq/HIDAN_nmq_room_19.o"
+    number 3
+endseg
+
+beginseg
+    name "HIDAN_nmq_room_20"
+    romalign 0x1000
+    include "build/assets/scenes/dungeons/HIDAN_nmq/HIDAN_nmq_room_20.o"
+    number 3
+endseg
+
+beginseg
+    name "HIDAN_nmq_room_21"
+    romalign 0x1000
+    include "build/assets/scenes/dungeons/HIDAN_nmq/HIDAN_nmq_room_21.o"
+    number 3
+endseg
+
+beginseg
+    name "HIDAN_nmq_room_22"
+    romalign 0x1000
+    include "build/assets/scenes/dungeons/HIDAN_nmq/HIDAN_nmq_room_22.o"
+    number 3
+endseg
+
+beginseg
+    name "HIDAN_nmq_room_23"
+    romalign 0x1000
+    include "build/assets/scenes/dungeons/HIDAN_nmq/HIDAN_nmq_room_23.o"
+    number 3
+endseg
+
+beginseg
+    name "HIDAN_nmq_room_24"
+    romalign 0x1000
+    include "build/assets/scenes/dungeons/HIDAN_nmq/HIDAN_nmq_room_24.o"
+    number 3
+endseg
+
+beginseg
+    name "HIDAN_nmq_room_25"
+    romalign 0x1000
+    include "build/assets/scenes/dungeons/HIDAN_nmq/HIDAN_nmq_room_25.o"
+    number 3
+endseg
+
+beginseg
+    name "HIDAN_nmq_room_26"
+    romalign 0x1000
+    include "build/assets/scenes/dungeons/HIDAN_nmq/HIDAN_nmq_room_26.o"
+    number 3
+endseg
+
+beginseg
+    name "MIZUsin_nmq_scene"
+    romalign 0x1000
+    include "build/assets/scenes/dungeons/MIZUsin_nmq/MIZUsin_nmq_scene.o"
+    number 2
+endseg
+
+beginseg
+    name "MIZUsin_nmq_room_0"
+    romalign 0x1000
+    include "build/assets/scenes/dungeons/MIZUsin_nmq/MIZUsin_nmq_room_0.o"
+    number 3
+endseg
+
+beginseg
+    name "MIZUsin_nmq_room_1"
+    romalign 0x1000
+    include "build/assets/scenes/dungeons/MIZUsin_nmq/MIZUsin_nmq_room_1.o"
+    number 3
+endseg
+
+beginseg
+    name "MIZUsin_nmq_room_2"
+    romalign 0x1000
+    include "build/assets/scenes/dungeons/MIZUsin_nmq/MIZUsin_nmq_room_2.o"
+    number 3
+endseg
+
+beginseg
+    name "MIZUsin_nmq_room_3"
+    romalign 0x1000
+    include "build/assets/scenes/dungeons/MIZUsin_nmq/MIZUsin_nmq_room_3.o"
+    number 3
+endseg
+
+beginseg
+    name "MIZUsin_nmq_room_4"
+    romalign 0x1000
+    include "build/assets/scenes/dungeons/MIZUsin_nmq/MIZUsin_nmq_room_4.o"
+    number 3
+endseg
+
+beginseg
+    name "MIZUsin_nmq_room_5"
+    romalign 0x1000
+    include "build/assets/scenes/dungeons/MIZUsin_nmq/MIZUsin_nmq_room_5.o"
+    number 3
+endseg
+
+beginseg
+    name "MIZUsin_nmq_room_6"
+    romalign 0x1000
+    include "build/assets/scenes/dungeons/MIZUsin_nmq/MIZUsin_nmq_room_6.o"
+    number 3
+endseg
+
+beginseg
+    name "MIZUsin_nmq_room_7"
+    romalign 0x1000
+    include "build/assets/scenes/dungeons/MIZUsin_nmq/MIZUsin_nmq_room_7.o"
+    number 3
+endseg
+
+beginseg
+    name "MIZUsin_nmq_room_8"
+    romalign 0x1000
+    include "build/assets/scenes/dungeons/MIZUsin_nmq/MIZUsin_nmq_room_8.o"
+    number 3
+endseg
+
+beginseg
+    name "MIZUsin_nmq_room_9"
+    romalign 0x1000
+    include "build/assets/scenes/dungeons/MIZUsin_nmq/MIZUsin_nmq_room_9.o"
+    number 3
+endseg
+
+beginseg
+    name "MIZUsin_nmq_room_10"
+    romalign 0x1000
+    include "build/assets/scenes/dungeons/MIZUsin_nmq/MIZUsin_nmq_room_10.o"
+    number 3
+endseg
+
+beginseg
+    name "MIZUsin_nmq_room_11"
+    romalign 0x1000
+    include "build/assets/scenes/dungeons/MIZUsin_nmq/MIZUsin_nmq_room_11.o"
+    number 3
+endseg
+
+beginseg
+    name "MIZUsin_nmq_room_12"
+    romalign 0x1000
+    include "build/assets/scenes/dungeons/MIZUsin_nmq/MIZUsin_nmq_room_12.o"
+    number 3
+endseg
+
+beginseg
+    name "MIZUsin_nmq_room_13"
+    romalign 0x1000
+    include "build/assets/scenes/dungeons/MIZUsin_nmq/MIZUsin_nmq_room_13.o"
+    number 3
+endseg
+
+beginseg
+    name "MIZUsin_nmq_room_14"
+    romalign 0x1000
+    include "build/assets/scenes/dungeons/MIZUsin_nmq/MIZUsin_nmq_room_14.o"
+    number 3
+endseg
+
+beginseg
+    name "MIZUsin_nmq_room_15"
+    romalign 0x1000
+    include "build/assets/scenes/dungeons/MIZUsin_nmq/MIZUsin_nmq_room_15.o"
+    number 3
+endseg
+
+beginseg
+    name "MIZUsin_nmq_room_16"
+    romalign 0x1000
+    include "build/assets/scenes/dungeons/MIZUsin_nmq/MIZUsin_nmq_room_16.o"
+    number 3
+endseg
+
+beginseg
+    name "MIZUsin_nmq_room_17"
+    romalign 0x1000
+    include "build/assets/scenes/dungeons/MIZUsin_nmq/MIZUsin_nmq_room_17.o"
+    number 3
+endseg
+
+beginseg
+    name "MIZUsin_nmq_room_18"
+    romalign 0x1000
+    include "build/assets/scenes/dungeons/MIZUsin_nmq/MIZUsin_nmq_room_18.o"
+    number 3
+endseg
+
+beginseg
+    name "MIZUsin_nmq_room_19"
+    romalign 0x1000
+    include "build/assets/scenes/dungeons/MIZUsin_nmq/MIZUsin_nmq_room_19.o"
+    number 3
+endseg
+
+beginseg
+    name "MIZUsin_nmq_room_20"
+    romalign 0x1000
+    include "build/assets/scenes/dungeons/MIZUsin_nmq/MIZUsin_nmq_room_20.o"
+    number 3
+endseg
+
+beginseg
+    name "MIZUsin_nmq_room_21"
+    romalign 0x1000
+    include "build/assets/scenes/dungeons/MIZUsin_nmq/MIZUsin_nmq_room_21.o"
+    number 3
+endseg
+
+beginseg
+    name "MIZUsin_nmq_room_22"
+    romalign 0x1000
+    include "build/assets/scenes/dungeons/MIZUsin_nmq/MIZUsin_nmq_room_22.o"
+    number 3
+endseg
+
+beginseg
+    name "jyasinzou_nmq_scene"
+    romalign 0x1000
+    include "build/assets/scenes/dungeons/jyasinzou_nmq/jyasinzou_nmq_scene.o"
+    number 2
+endseg
+
+beginseg
+    name "jyasinzou_nmq_room_0"
+    romalign 0x1000
+    include "build/assets/scenes/dungeons/jyasinzou_nmq/jyasinzou_nmq_room_0.o"
+    number 3
+endseg
+
+beginseg
+    name "jyasinzou_nmq_room_1"
+    romalign 0x1000
+    include "build/assets/scenes/dungeons/jyasinzou_nmq/jyasinzou_nmq_room_1.o"
+    number 3
+endseg
+
+beginseg
+    name "jyasinzou_nmq_room_2"
+    romalign 0x1000
+    include "build/assets/scenes/dungeons/jyasinzou_nmq/jyasinzou_nmq_room_2.o"
+    number 3
+endseg
+
+beginseg
+    name "jyasinzou_nmq_room_3"
+    romalign 0x1000
+    include "build/assets/scenes/dungeons/jyasinzou_nmq/jyasinzou_nmq_room_3.o"
+    number 3
+endseg
+
+beginseg
+    name "jyasinzou_nmq_room_4"
+    romalign 0x1000
+    include "build/assets/scenes/dungeons/jyasinzou_nmq/jyasinzou_nmq_room_4.o"
+    number 3
+endseg
+
+beginseg
+    name "jyasinzou_nmq_room_5"
+    romalign 0x1000
+    include "build/assets/scenes/dungeons/jyasinzou_nmq/jyasinzou_nmq_room_5.o"
+    number 3
+endseg
+
+beginseg
+    name "jyasinzou_nmq_room_6"
+    romalign 0x1000
+    include "build/assets/scenes/dungeons/jyasinzou_nmq/jyasinzou_nmq_room_6.o"
+    number 3
+endseg
+
+beginseg
+    name "jyasinzou_nmq_room_7"
+    romalign 0x1000
+    include "build/assets/scenes/dungeons/jyasinzou_nmq/jyasinzou_nmq_room_7.o"
+    number 3
+endseg
+
+beginseg
+    name "jyasinzou_nmq_room_8"
+    romalign 0x1000
+    include "build/assets/scenes/dungeons/jyasinzou_nmq/jyasinzou_nmq_room_8.o"
+    number 3
+endseg
+
+beginseg
+    name "jyasinzou_nmq_room_9"
+    romalign 0x1000
+    include "build/assets/scenes/dungeons/jyasinzou_nmq/jyasinzou_nmq_room_9.o"
+    number 3
+endseg
+
+beginseg
+    name "jyasinzou_nmq_room_10"
+    romalign 0x1000
+    include "build/assets/scenes/dungeons/jyasinzou_nmq/jyasinzou_nmq_room_10.o"
+    number 3
+endseg
+
+beginseg
+    name "jyasinzou_nmq_room_11"
+    romalign 0x1000
+    include "build/assets/scenes/dungeons/jyasinzou_nmq/jyasinzou_nmq_room_11.o"
+    number 3
+endseg
+
+beginseg
+    name "jyasinzou_nmq_room_12"
+    romalign 0x1000
+    include "build/assets/scenes/dungeons/jyasinzou_nmq/jyasinzou_nmq_room_12.o"
+    number 3
+endseg
+
+beginseg
+    name "jyasinzou_nmq_room_13"
+    romalign 0x1000
+    include "build/assets/scenes/dungeons/jyasinzou_nmq/jyasinzou_nmq_room_13.o"
+    number 3
+endseg
+
+beginseg
+    name "jyasinzou_nmq_room_14"
+    romalign 0x1000
+    include "build/assets/scenes/dungeons/jyasinzou_nmq/jyasinzou_nmq_room_14.o"
+    number 3
+endseg
+
+beginseg
+    name "jyasinzou_nmq_room_15"
+    romalign 0x1000
+    include "build/assets/scenes/dungeons/jyasinzou_nmq/jyasinzou_nmq_room_15.o"
+    number 3
+endseg
+
+beginseg
+    name "jyasinzou_nmq_room_16"
+    romalign 0x1000
+    include "build/assets/scenes/dungeons/jyasinzou_nmq/jyasinzou_nmq_room_16.o"
+    number 3
+endseg
+
+beginseg
+    name "jyasinzou_nmq_room_17"
+    romalign 0x1000
+    include "build/assets/scenes/dungeons/jyasinzou_nmq/jyasinzou_nmq_room_17.o"
+    number 3
+endseg
+
+beginseg
+    name "jyasinzou_nmq_room_18"
+    romalign 0x1000
+    include "build/assets/scenes/dungeons/jyasinzou_nmq/jyasinzou_nmq_room_18.o"
+    number 3
+endseg
+
+beginseg
+    name "jyasinzou_nmq_room_19"
+    romalign 0x1000
+    include "build/assets/scenes/dungeons/jyasinzou_nmq/jyasinzou_nmq_room_19.o"
+    number 3
+endseg
+
+beginseg
+    name "jyasinzou_nmq_room_20"
+    romalign 0x1000
+    include "build/assets/scenes/dungeons/jyasinzou_nmq/jyasinzou_nmq_room_20.o"
+    number 3
+endseg
+
+beginseg
+    name "jyasinzou_nmq_room_21"
+    romalign 0x1000
+    include "build/assets/scenes/dungeons/jyasinzou_nmq/jyasinzou_nmq_room_21.o"
+    number 3
+endseg
+
+beginseg
+    name "jyasinzou_nmq_room_22"
+    romalign 0x1000
+    include "build/assets/scenes/dungeons/jyasinzou_nmq/jyasinzou_nmq_room_22.o"
+    number 3
+endseg
+
+beginseg
+    name "jyasinzou_nmq_room_23"
+    romalign 0x1000
+    include "build/assets/scenes/dungeons/jyasinzou_nmq/jyasinzou_nmq_room_23.o"
+    number 3
+endseg
+
+beginseg
+    name "jyasinzou_nmq_room_24"
+    romalign 0x1000
+    include "build/assets/scenes/dungeons/jyasinzou_nmq/jyasinzou_nmq_room_24.o"
+    number 3
+endseg
+
+beginseg
+    name "jyasinzou_nmq_room_25"
+    romalign 0x1000
+    include "build/assets/scenes/dungeons/jyasinzou_nmq/jyasinzou_nmq_room_25.o"
+    number 3
+endseg
+
+beginseg
+    name "jyasinzou_nmq_room_26"
+    romalign 0x1000
+    include "build/assets/scenes/dungeons/jyasinzou_nmq/jyasinzou_nmq_room_26.o"
+    number 3
+endseg
+
+beginseg
+    name "jyasinzou_nmq_room_27"
+    romalign 0x1000
+    include "build/assets/scenes/dungeons/jyasinzou_nmq/jyasinzou_nmq_room_27.o"
+    number 3
+endseg
+
+beginseg
+    name "jyasinzou_nmq_room_28"
+    romalign 0x1000
+    include "build/assets/scenes/dungeons/jyasinzou_nmq/jyasinzou_nmq_room_28.o"
+    number 3
+endseg
+
+beginseg
+    name "HAKAdan_nmq_scene"
+    romalign 0x1000
+    include "build/assets/scenes/dungeons/HAKAdan_nmq/HAKAdan_nmq_scene.o"
+    number 2
+endseg
+
+beginseg
+    name "HAKAdan_nmq_room_0"
+    romalign 0x1000
+    include "build/assets/scenes/dungeons/HAKAdan_nmq/HAKAdan_nmq_room_0.o"
+    number 3
+endseg
+
+beginseg
+    name "HAKAdan_nmq_room_1"
+    romalign 0x1000
+    include "build/assets/scenes/dungeons/HAKAdan_nmq/HAKAdan_nmq_room_1.o"
+    number 3
+endseg
+
+beginseg
+    name "HAKAdan_nmq_room_2"
+    romalign 0x1000
+    include "build/assets/scenes/dungeons/HAKAdan_nmq/HAKAdan_nmq_room_2.o"
+    number 3
+endseg
+
+beginseg
+    name "HAKAdan_nmq_room_3"
+    romalign 0x1000
+    include "build/assets/scenes/dungeons/HAKAdan_nmq/HAKAdan_nmq_room_3.o"
+    number 3
+endseg
+
+beginseg
+    name "HAKAdan_nmq_room_4"
+    romalign 0x1000
+    include "build/assets/scenes/dungeons/HAKAdan_nmq/HAKAdan_nmq_room_4.o"
+    number 3
+endseg
+
+beginseg
+    name "HAKAdan_nmq_room_5"
+    romalign 0x1000
+    include "build/assets/scenes/dungeons/HAKAdan_nmq/HAKAdan_nmq_room_5.o"
+    number 3
+endseg
+
+beginseg
+    name "HAKAdan_nmq_room_6"
+    romalign 0x1000
+    include "build/assets/scenes/dungeons/HAKAdan_nmq/HAKAdan_nmq_room_6.o"
+    number 3
+endseg
+
+beginseg
+    name "HAKAdan_nmq_room_7"
+    romalign 0x1000
+    include "build/assets/scenes/dungeons/HAKAdan_nmq/HAKAdan_nmq_room_7.o"
+    number 3
+endseg
+
+beginseg
+    name "HAKAdan_nmq_room_8"
+    romalign 0x1000
+    include "build/assets/scenes/dungeons/HAKAdan_nmq/HAKAdan_nmq_room_8.o"
+    number 3
+endseg
+
+beginseg
+    name "HAKAdan_nmq_room_9"
+    romalign 0x1000
+    include "build/assets/scenes/dungeons/HAKAdan_nmq/HAKAdan_nmq_room_9.o"
+    number 3
+endseg
+
+beginseg
+    name "HAKAdan_nmq_room_10"
+    romalign 0x1000
+    include "build/assets/scenes/dungeons/HAKAdan_nmq/HAKAdan_nmq_room_10.o"
+    number 3
+endseg
+
+beginseg
+    name "HAKAdan_nmq_room_11"
+    romalign 0x1000
+    include "build/assets/scenes/dungeons/HAKAdan_nmq/HAKAdan_nmq_room_11.o"
+    number 3
+endseg
+
+beginseg
+    name "HAKAdan_nmq_room_12"
+    romalign 0x1000
+    include "build/assets/scenes/dungeons/HAKAdan_nmq/HAKAdan_nmq_room_12.o"
+    number 3
+endseg
+
+beginseg
+    name "HAKAdan_nmq_room_13"
+    romalign 0x1000
+    include "build/assets/scenes/dungeons/HAKAdan_nmq/HAKAdan_nmq_room_13.o"
+    number 3
+endseg
+
+beginseg
+    name "HAKAdan_nmq_room_14"
+    romalign 0x1000
+    include "build/assets/scenes/dungeons/HAKAdan_nmq/HAKAdan_nmq_room_14.o"
+    number 3
+endseg
+
+beginseg
+    name "HAKAdan_nmq_room_15"
+    romalign 0x1000
+    include "build/assets/scenes/dungeons/HAKAdan_nmq/HAKAdan_nmq_room_15.o"
+    number 3
+endseg
+
+beginseg
+    name "HAKAdan_nmq_room_16"
+    romalign 0x1000
+    include "build/assets/scenes/dungeons/HAKAdan_nmq/HAKAdan_nmq_room_16.o"
+    number 3
+endseg
+
+beginseg
+    name "HAKAdan_nmq_room_17"
+    romalign 0x1000
+    include "build/assets/scenes/dungeons/HAKAdan_nmq/HAKAdan_nmq_room_17.o"
+    number 3
+endseg
+
+beginseg
+    name "HAKAdan_nmq_room_18"
+    romalign 0x1000
+    include "build/assets/scenes/dungeons/HAKAdan_nmq/HAKAdan_nmq_room_18.o"
+    number 3
+endseg
+
+beginseg
+    name "HAKAdan_nmq_room_19"
+    romalign 0x1000
+    include "build/assets/scenes/dungeons/HAKAdan_nmq/HAKAdan_nmq_room_19.o"
+    number 3
+endseg
+
+beginseg
+    name "HAKAdan_nmq_room_20"
+    romalign 0x1000
+    include "build/assets/scenes/dungeons/HAKAdan_nmq/HAKAdan_nmq_room_20.o"
+    number 3
+endseg
+
+beginseg
+    name "HAKAdan_nmq_room_21"
+    romalign 0x1000
+    include "build/assets/scenes/dungeons/HAKAdan_nmq/HAKAdan_nmq_room_21.o"
+    number 3
+endseg
+
+beginseg
+    name "HAKAdan_nmq_room_22"
+    romalign 0x1000
+    include "build/assets/scenes/dungeons/HAKAdan_nmq/HAKAdan_nmq_room_22.o"
+    number 3
+endseg
+
+beginseg
+    name "HAKAdanCH_nmq_scene"
+    romalign 0x1000
+    include "build/assets/scenes/dungeons/HAKAdanCH_nmq/HAKAdanCH_nmq_scene.o"
+    number 2
+endseg
+
+beginseg
+    name "HAKAdanCH_nmq_room_0"
+    romalign 0x1000
+    include "build/assets/scenes/dungeons/HAKAdanCH_nmq/HAKAdanCH_nmq_room_0.o"
+    number 3
+endseg
+
+beginseg
+    name "HAKAdanCH_nmq_room_1"
+    romalign 0x1000
+    include "build/assets/scenes/dungeons/HAKAdanCH_nmq/HAKAdanCH_nmq_room_1.o"
+    number 3
+endseg
+
+beginseg
+    name "HAKAdanCH_nmq_room_2"
+    romalign 0x1000
+    include "build/assets/scenes/dungeons/HAKAdanCH_nmq/HAKAdanCH_nmq_room_2.o"
+    number 3
+endseg
+
+beginseg
+    name "HAKAdanCH_nmq_room_3"
+    romalign 0x1000
+    include "build/assets/scenes/dungeons/HAKAdanCH_nmq/HAKAdanCH_nmq_room_3.o"
+    number 3
+endseg
+
+beginseg
+    name "HAKAdanCH_nmq_room_4"
+    romalign 0x1000
+    include "build/assets/scenes/dungeons/HAKAdanCH_nmq/HAKAdanCH_nmq_room_4.o"
+    number 3
+endseg
+
+beginseg
+    name "HAKAdanCH_nmq_room_5"
+    romalign 0x1000
+    include "build/assets/scenes/dungeons/HAKAdanCH_nmq/HAKAdanCH_nmq_room_5.o"
+    number 3
+endseg
+
+beginseg
+    name "HAKAdanCH_nmq_room_6"
+    romalign 0x1000
+    include "build/assets/scenes/dungeons/HAKAdanCH_nmq/HAKAdanCH_nmq_room_6.o"
+    number 3
+endseg
+
+beginseg
+    name "ice_doukutu_nmq_scene"
+    romalign 0x1000
+    include "build/assets/scenes/dungeons/ice_doukutu_nmq/ice_doukutu_nmq_scene.o"
+    number 2
+endseg
+
+beginseg
+    name "ice_doukutu_nmq_room_0"
+    romalign 0x1000
+    include "build/assets/scenes/dungeons/ice_doukutu_nmq/ice_doukutu_nmq_room_0.o"
+    number 3
+endseg
+
+beginseg
+    name "ice_doukutu_nmq_room_1"
+    romalign 0x1000
+    include "build/assets/scenes/dungeons/ice_doukutu_nmq/ice_doukutu_nmq_room_1.o"
+    number 3
+endseg
+
+beginseg
+    name "ice_doukutu_nmq_room_2"
+    romalign 0x1000
+    include "build/assets/scenes/dungeons/ice_doukutu_nmq/ice_doukutu_nmq_room_2.o"
+    number 3
+endseg
+
+beginseg
+    name "ice_doukutu_nmq_room_3"
+    romalign 0x1000
+    include "build/assets/scenes/dungeons/ice_doukutu_nmq/ice_doukutu_nmq_room_3.o"
+    number 3
+endseg
+
+beginseg
+    name "ice_doukutu_nmq_room_4"
+    romalign 0x1000
+    include "build/assets/scenes/dungeons/ice_doukutu_nmq/ice_doukutu_nmq_room_4.o"
+    number 3
+endseg
+
+beginseg
+    name "ice_doukutu_nmq_room_5"
+    romalign 0x1000
+    include "build/assets/scenes/dungeons/ice_doukutu_nmq/ice_doukutu_nmq_room_5.o"
+    number 3
+endseg
+
+beginseg
+    name "ice_doukutu_nmq_room_6"
+    romalign 0x1000
+    include "build/assets/scenes/dungeons/ice_doukutu_nmq/ice_doukutu_nmq_room_6.o"
+    number 3
+endseg
+
+beginseg
+    name "ice_doukutu_nmq_room_7"
+    romalign 0x1000
+    include "build/assets/scenes/dungeons/ice_doukutu_nmq/ice_doukutu_nmq_room_7.o"
+    number 3
+endseg
+
+beginseg
+    name "ice_doukutu_nmq_room_8"
+    romalign 0x1000
+    include "build/assets/scenes/dungeons/ice_doukutu_nmq/ice_doukutu_nmq_room_8.o"
+    number 3
+endseg
+
+beginseg
+    name "ice_doukutu_nmq_room_9"
+    romalign 0x1000
+    include "build/assets/scenes/dungeons/ice_doukutu_nmq/ice_doukutu_nmq_room_9.o"
+    number 3
+endseg
+
+beginseg
+    name "ice_doukutu_nmq_room_10"
+    romalign 0x1000
+    include "build/assets/scenes/dungeons/ice_doukutu_nmq/ice_doukutu_nmq_room_10.o"
+    number 3
+endseg
+
+beginseg
+    name "ice_doukutu_nmq_room_11"
+    romalign 0x1000
+    include "build/assets/scenes/dungeons/ice_doukutu_nmq/ice_doukutu_nmq_room_11.o"
+    number 3
+endseg
+
+beginseg
+    name "men_nmq_scene"
+    romalign 0x1000
+    include "build/assets/scenes/dungeons/men_nmq/men_nmq_scene.o"
+    number 2
+endseg
+
+beginseg
+    name "men_nmq_room_0"
+    romalign 0x1000
+    include "build/assets/scenes/dungeons/men_nmq/men_nmq_room_0.o"
+    number 3
+endseg
+
+beginseg
+    name "men_nmq_room_1"
+    romalign 0x1000
+    include "build/assets/scenes/dungeons/men_nmq/men_nmq_room_1.o"
+    number 3
+endseg
+
+beginseg
+    name "men_nmq_room_2"
+    romalign 0x1000
+    include "build/assets/scenes/dungeons/men_nmq/men_nmq_room_2.o"
+    number 3
+endseg
+
+beginseg
+    name "men_nmq_room_3"
+    romalign 0x1000
+    include "build/assets/scenes/dungeons/men_nmq/men_nmq_room_3.o"
+    number 3
+endseg
+
+beginseg
+    name "men_nmq_room_4"
+    romalign 0x1000
+    include "build/assets/scenes/dungeons/men_nmq/men_nmq_room_4.o"
+    number 3
+endseg
+
+beginseg
+    name "men_nmq_room_5"
+    romalign 0x1000
+    include "build/assets/scenes/dungeons/men_nmq/men_nmq_room_5.o"
+    number 3
+endseg
+
+beginseg
+    name "men_nmq_room_6"
+    romalign 0x1000
+    include "build/assets/scenes/dungeons/men_nmq/men_nmq_room_6.o"
+    number 3
+endseg
+
+beginseg
+    name "men_nmq_room_7"
+    romalign 0x1000
+    include "build/assets/scenes/dungeons/men_nmq/men_nmq_room_7.o"
+    number 3
+endseg
+
+beginseg
+    name "men_nmq_room_8"
+    romalign 0x1000
+    include "build/assets/scenes/dungeons/men_nmq/men_nmq_room_8.o"
+    number 3
+endseg
+
+beginseg
+    name "men_nmq_room_9"
+    romalign 0x1000
+    include "build/assets/scenes/dungeons/men_nmq/men_nmq_room_9.o"
+    number 3
+endseg
+
+beginseg
+    name "men_nmq_room_10"
+    romalign 0x1000
+    include "build/assets/scenes/dungeons/men_nmq/men_nmq_room_10.o"
+    number 3
+endseg
+
+beginseg
+    name "ganontika_nmq_scene"
+    romalign 0x1000
+    include "build/assets/scenes/dungeons/ganontika_nmq/ganontika_nmq_scene.o"
+    number 2
+endseg
+
+beginseg
+    name "ganontika_nmq_room_0"
+    romalign 0x1000
+    include "build/assets/scenes/dungeons/ganontika_nmq/ganontika_nmq_room_0.o"
+    number 3
+endseg
+
+beginseg
+    name "ganontika_nmq_room_1"
+    romalign 0x1000
+    include "build/assets/scenes/dungeons/ganontika_nmq/ganontika_nmq_room_1.o"
+    number 3
+endseg
+
+beginseg
+    name "ganontika_nmq_room_2"
+    romalign 0x1000
+    include "build/assets/scenes/dungeons/ganontika_nmq/ganontika_nmq_room_2.o"
+    number 3
+endseg
+
+beginseg
+    name "ganontika_nmq_room_3"
+    romalign 0x1000
+    include "build/assets/scenes/dungeons/ganontika_nmq/ganontika_nmq_room_3.o"
+    number 3
+endseg
+
+beginseg
+    name "ganontika_nmq_room_4"
+    romalign 0x1000
+    include "build/assets/scenes/dungeons/ganontika_nmq/ganontika_nmq_room_4.o"
+    number 3
+endseg
+
+beginseg
+    name "ganontika_nmq_room_5"
+    romalign 0x1000
+    include "build/assets/scenes/dungeons/ganontika_nmq/ganontika_nmq_room_5.o"
+    number 3
+endseg
+
+beginseg
+    name "ganontika_nmq_room_6"
+    romalign 0x1000
+    include "build/assets/scenes/dungeons/ganontika_nmq/ganontika_nmq_room_6.o"
+    number 3
+endseg
+
+beginseg
+    name "ganontika_nmq_room_7"
+    romalign 0x1000
+    include "build/assets/scenes/dungeons/ganontika_nmq/ganontika_nmq_room_7.o"
+    number 3
+endseg
+
+beginseg
+    name "ganontika_nmq_room_8"
+    romalign 0x1000
+    include "build/assets/scenes/dungeons/ganontika_nmq/ganontika_nmq_room_8.o"
+    number 3
+endseg
+
+beginseg
+    name "ganontika_nmq_room_9"
+    romalign 0x1000
+    include "build/assets/scenes/dungeons/ganontika_nmq/ganontika_nmq_room_9.o"
+    number 3
+endseg
+
+beginseg
+    name "ganontika_nmq_room_10"
+    romalign 0x1000
+    include "build/assets/scenes/dungeons/ganontika_nmq/ganontika_nmq_room_10.o"
+    number 3
+endseg
+
+beginseg
+    name "ganontika_nmq_room_11"
+    romalign 0x1000
+    include "build/assets/scenes/dungeons/ganontika_nmq/ganontika_nmq_room_11.o"
+    number 3
+endseg
+
+beginseg
+    name "ganontika_nmq_room_12"
+    romalign 0x1000
+    include "build/assets/scenes/dungeons/ganontika_nmq/ganontika_nmq_room_12.o"
+    number 3
+endseg
+
+beginseg
+    name "ganontika_nmq_room_13"
+    romalign 0x1000
+    include "build/assets/scenes/dungeons/ganontika_nmq/ganontika_nmq_room_13.o"
+    number 3
+endseg
+
+beginseg
+    name "ganontika_nmq_room_14"
+    romalign 0x1000
+    include "build/assets/scenes/dungeons/ganontika_nmq/ganontika_nmq_room_14.o"
+    number 3
+endseg
+
+beginseg
+    name "ganontika_nmq_room_15"
+    romalign 0x1000
+    include "build/assets/scenes/dungeons/ganontika_nmq/ganontika_nmq_room_15.o"
+    number 3
+endseg
+
+beginseg
+    name "ganontika_nmq_room_16"
+    romalign 0x1000
+    include "build/assets/scenes/dungeons/ganontika_nmq/ganontika_nmq_room_16.o"
+    number 3
+endseg
+
+beginseg
+    name "ganontika_nmq_room_17"
+    romalign 0x1000
+    include "build/assets/scenes/dungeons/ganontika_nmq/ganontika_nmq_room_17.o"
+    number 3
+endseg
+
+beginseg
+    name "ganontika_nmq_room_18"
+    romalign 0x1000
+    include "build/assets/scenes/dungeons/ganontika_nmq/ganontika_nmq_room_18.o"
+    number 3
+endseg
+
+beginseg
+    name "ganontika_nmq_room_19"
+    romalign 0x1000
+    include "build/assets/scenes/dungeons/ganontika_nmq/ganontika_nmq_room_19.o"
+    number 3
+endseg
+
+beginseg
     name "bump_texture_static"
     romalign 0x1000
     include "build/baserom/bump_texture_static.o"

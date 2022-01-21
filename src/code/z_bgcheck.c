@@ -1494,6 +1494,8 @@ void BgCheck_Allocate(CollisionContext* colCtx, GlobalContext* globalCtx, Collis
     static BgCheckSceneSubdivisionEntry sceneSubdivisionList[] = {
         { SCENE_HAKADAN, { 23, 7, 14 }, -1 },
         { SCENE_BMORI1, { 38, 1, 38 }, -1 },
+        { SCENE_HAKADAN_NMQ, { 23, 7, 14 }, -1 },
+        { SCENE_BMORI1_NMQ, { 38, 1, 38 }, -1 },
     };
     u32 tblMax;
     u32 memSize;

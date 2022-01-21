@@ -143,6 +143,16 @@ void MapMark_Draw(GlobalContext* globalCtx) {
         case SCENE_HAKADAN:
         case SCENE_HAKADANCH:
         case SCENE_ICE_DOUKUTO:
+        case SCENE_YDAN_NMQ:
+        case SCENE_DDAN_NMQ:
+        case SCENE_BDAN_NMQ:
+        case SCENE_BMORI1_NMQ:
+        case SCENE_HIDAN_NMQ:
+        case SCENE_MIZUSIN_NMQ:
+        case SCENE_JYASINZOU_NMQ:
+        case SCENE_HAKADAN_NMQ:
+        case SCENE_HAKADANCH_NMQ:
+        case SCENE_ICE_DOUKUTO_NMQ:
         case SCENE_YDAN_BOSS:
         case SCENE_DDAN_BOSS:
         case SCENE_BDAN_BOSS:

@@ -50,11 +50,21 @@ static Color_RGB8 sColors[][4] = {
     { { 135, 125, 95 }, { 135, 125, 95 }, { 135, 125, 95 }, { 135, 125, 95 } },     // shadow temple
     { { 255, 255, 255 }, { 255, 255, 255 }, { 255, 255, 255 }, { 255, 255, 255 } }, // ganons castle
     { { 232, 210, 176 }, { 232, 210, 176 }, { 232, 210, 176 }, { 232, 210, 176 } }, // gerudo training grounds
+    { { 110, 86, 40 }, { 110, 86, 40 }, { 110, 86, 40 }, { 110, 86, 40 } },         // deku tree non-mq
+    { { 106, 120, 110 }, { 104, 80, 20 }, { 0, 0, 0 }, { 0, 0, 0 } },               // dodongos cavern non-mq
+    { { 142, 99, 86 }, { 72, 118, 96 }, { 0, 0, 0 }, { 0, 0, 0 } },                 // forest temple non-mq
+    { { 210, 150, 80 }, { 210, 170, 80 }, { 0, 0, 0 }, { 0, 0, 0 } },               // fire temple non-mq
+    { { 102, 144, 182 }, { 176, 167, 100 }, { 100, 167, 100 }, { 117, 97, 96 } },   // water temple non-mq
+    { { 232, 210, 176 }, { 232, 210, 176 }, { 232, 210, 176 }, { 232, 210, 176 } }, // spirit temple non-mq
+    { { 135, 125, 95 }, { 135, 125, 95 }, { 135, 125, 95 }, { 135, 125, 95 } },     // shadow temple non-mq
+    { { 232, 210, 176 }, { 232, 210, 176 }, { 232, 210, 176 }, { 232, 210, 176 } }, // gerudo training grounds non-mq
 };
 
 static s16 sScenes[] = {
     SCENE_YDAN,      SCENE_DDAN,    SCENE_BMORI1, SCENE_HIDAN, SCENE_MIZUSIN,
     SCENE_JYASINZOU, SCENE_HAKADAN, SCENE_GANON,  SCENE_MEN,
+    SCENE_YDAN_NMQ,      SCENE_DDAN_NMQ,    SCENE_BMORI1_NMQ, SCENE_HIDAN_NMQ, SCENE_MIZUSIN_NMQ,
+    SCENE_JYASINZOU_NMQ, SCENE_HAKADAN_NMQ,  SCENE_MEN_NMQ,
 };
 
 static InitChainEntry sInitChain[] = {
@@ -673,6 +683,14 @@ void ObjOshihiki_Draw(Actor* thisx, GlobalContext* globalCtx) {
         case SCENE_JYASINZOU:
         case SCENE_HAKADAN:
         case SCENE_MEN:
+        case SCENE_YDAN_NMQ:
+        case SCENE_DDAN_NMQ:
+        case SCENE_BMORI1_NMQ:
+        case SCENE_HIDAN_NMQ:
+        case SCENE_MIZUSIN_NMQ:
+        case SCENE_JYASINZOU_NMQ:
+        case SCENE_HAKADAN_NMQ:
+        case SCENE_MEN_NMQ:
             gDPSetEnvColor(POLY_OPA_DISP++, this->color.r, this->color.g, this->color.b, 255);
             break;
         default:

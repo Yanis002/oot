@@ -52,6 +52,10 @@ static EnDoorInfo sDoorInfo[] = {
     { SCENE_MIZUSIN, 2, OBJECT_MIZU_OBJECTS },
     { SCENE_HAKADAN, 3, OBJECT_HAKA_DOOR },
     { SCENE_HAKADANCH, 3, OBJECT_HAKA_DOOR },
+    { SCENE_HIDAN_NMQ, 1, OBJECT_HIDAN_OBJECTS },
+    { SCENE_MIZUSIN_NMQ, 2, OBJECT_MIZU_OBJECTS },
+    { SCENE_HAKADAN_NMQ, 3, OBJECT_HAKA_DOOR },
+    { SCENE_HAKADANCH_NMQ, 3, OBJECT_HAKA_DOOR },
     // KEEP objects should remain last and in this order
     { -1, 0, OBJECT_GAMEPLAY_KEEP },
     { -1, 4, OBJECT_GAMEPLAY_FIELD_KEEP },
@@ -269,11 +273,21 @@ void EnDoor_Open(EnDoor* this, GlobalContext* globalCtx) {
             this->actionFunc = EnDoor_Idle;
             this->playerIsOpening = 0;
         } else if (Animation_OnFrame(&this->skelAnime, sDoorAnimOpenFrames[this->animStyle])) {
-            Audio_PlayActorSound2(&this->actor,
-                                  (globalCtx->sceneNum == SCENE_HAKADAN || globalCtx->sceneNum == SCENE_HAKADANCH ||
-                                   globalCtx->sceneNum == SCENE_HIDAN)
-                                      ? NA_SE_EV_IRON_DOOR_OPEN
-                                      : NA_SE_OC_DOOR_OPEN);
+            u16 sfxID;
+            switch(globalCtx->sceneNum){
+                case SCENE_HAKADAN:
+                case SCENE_HAKADANCH:
+                case SCENE_HIDAN:
+                case SCENE_HAKADAN_NMQ:
+                case SCENE_HAKADANCH_NMQ:
+                case SCENE_HIDAN_NMQ:
+                    sfxID = NA_SE_EV_IRON_DOOR_OPEN;
+                    break;
+                default:
+                    sfxID = NA_SE_OC_DOOR_OPEN;
+                    break;
+            }
+            Audio_PlayActorSound2(&this->actor, sfxID);
             if (this->skelAnime.playSpeed < 1.5f) {
                 numEffects = (s32)(Rand_ZeroOne() * 30.0f) + 50;
                 for (i = 0; i < numEffects; i++) {
@@ -281,11 +295,21 @@ void EnDoor_Open(EnDoor* this, GlobalContext* globalCtx) {
                 }
             }
         } else if (Animation_OnFrame(&this->skelAnime, sDoorAnimCloseFrames[this->animStyle])) {
-            Audio_PlayActorSound2(&this->actor,
-                                  (globalCtx->sceneNum == SCENE_HAKADAN || globalCtx->sceneNum == SCENE_HAKADANCH ||
-                                   globalCtx->sceneNum == SCENE_HIDAN)
-                                      ? NA_SE_EV_IRON_DOOR_CLOSE
-                                      : NA_SE_EV_DOOR_CLOSE);
+            u16 sfxID;
+            switch(globalCtx->sceneNum){
+                case SCENE_HAKADAN:
+                case SCENE_HAKADANCH:
+                case SCENE_HIDAN:
+                case SCENE_HAKADAN_NMQ:
+                case SCENE_HAKADANCH_NMQ:
+                case SCENE_HIDAN_NMQ:
+                    sfxID = NA_SE_EV_IRON_DOOR_CLOSE;
+                    break;
+                default:
+                    sfxID = NA_SE_EV_DOOR_CLOSE;
+                    break;
+            }
+            Audio_PlayActorSound2(&this->actor, sfxID);
         }
     }
 }

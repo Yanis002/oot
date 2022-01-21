@@ -3627,12 +3627,14 @@ s32 func_808382DC(Player* this, GlobalContext* globalCtx) {
                 // Special case for getting crushed in Forest Temple's Checkboard Ceiling Hall or Shadow Temple's
                 // Falling Spike Trap Room, to respawn the player in a specific place
                 if (((globalCtx->sceneNum == SCENE_BMORI1) && (globalCtx->roomCtx.curRoom.num == 15)) ||
-                    ((globalCtx->sceneNum == SCENE_HAKADAN) && (globalCtx->roomCtx.curRoom.num == 10))) {
+                    ((globalCtx->sceneNum == SCENE_HAKADAN) && (globalCtx->roomCtx.curRoom.num == 10)) ||
+                    ((globalCtx->sceneNum == SCENE_BMORI1_NMQ) && (globalCtx->roomCtx.curRoom.num == 15)) ||
+                    ((globalCtx->sceneNum == SCENE_HAKADAN_NMQ) && (globalCtx->roomCtx.curRoom.num == 10))) {
                     static SpecialRespawnInfo checkboardCeilingRespawn = { { 1992.0f, 403.0f, -3432.0f }, 0 };
                     static SpecialRespawnInfo fallingSpikeTrapRespawn = { { 1200.0f, -1343.0f, 3850.0f }, 0 };
                     SpecialRespawnInfo* respawnInfo;
 
-                    if (globalCtx->sceneNum == SCENE_BMORI1) {
+                    if ((globalCtx->sceneNum == SCENE_BMORI1) || (globalCtx->sceneNum == SCENE_BMORI1_NMQ)) {
                         respawnInfo = &checkboardCeilingRespawn;
                     } else {
                         respawnInfo = &fallingSpikeTrapRespawn;
@@ -4031,7 +4033,8 @@ s32 func_80839034(GlobalContext* globalCtx, Player* this, CollisionPoly* poly, u
                 if ((this->actor.world.pos.y < -4000.0f) ||
                     (((this->unk_A7A == 5) || (this->unk_A7A == 12)) &&
                      ((D_80853600 < 100.0f) || (this->fallDistance > 400.0f) ||
-                      ((globalCtx->sceneNum != SCENE_HAKADAN) && (this->fallDistance > 200.0f)))) ||
+                      (((globalCtx->sceneNum != SCENE_HAKADAN) || (globalCtx->sceneNum != SCENE_HAKADAN_NMQ)) &&
+                        (this->fallDistance > 200.0f)))) ||
                     ((globalCtx->sceneNum == SCENE_GANON_FINAL) && (this->fallDistance > 320.0f))) {
 
                     if (this->actor.bgCheckFlags & 1) {

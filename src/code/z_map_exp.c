@@ -64,6 +64,16 @@ void Map_SetFloorPalettesData(GlobalContext* globalCtx, s16 floor) {
         case SCENE_HAKADAN:
         case SCENE_HAKADANCH:
         case SCENE_ICE_DOUKUTO:
+        case SCENE_YDAN_NMQ:
+        case SCENE_DDAN_NMQ:
+        case SCENE_BDAN_NMQ:
+        case SCENE_BMORI1_NMQ:
+        case SCENE_HIDAN_NMQ:
+        case SCENE_MIZUSIN_NMQ:
+        case SCENE_JYASINZOU_NMQ:
+        case SCENE_HAKADAN_NMQ:
+        case SCENE_HAKADANCH_NMQ:
+        case SCENE_ICE_DOUKUTO_NMQ:
         case SCENE_YDAN_BOSS:
         case SCENE_DDAN_BOSS:
         case SCENE_BDAN_BOSS:
@@ -145,6 +155,16 @@ void Map_InitData(GlobalContext* globalCtx, s16 room) {
         case SCENE_HAKADAN:
         case SCENE_HAKADANCH:
         case SCENE_ICE_DOUKUTO:
+        case SCENE_YDAN_NMQ:
+        case SCENE_DDAN_NMQ:
+        case SCENE_BDAN_NMQ:
+        case SCENE_BMORI1_NMQ:
+        case SCENE_HIDAN_NMQ:
+        case SCENE_MIZUSIN_NMQ:
+        case SCENE_JYASINZOU_NMQ:
+        case SCENE_HAKADAN_NMQ:
+        case SCENE_HAKADANCH_NMQ:
+        case SCENE_ICE_DOUKUTO_NMQ:
         case SCENE_YDAN_BOSS:
         case SCENE_DDAN_BOSS:
         case SCENE_BDAN_BOSS:
@@ -189,6 +209,16 @@ void Map_InitRoomData(GlobalContext* globalCtx, s16 room) {
             case SCENE_HAKADAN:
             case SCENE_HAKADANCH:
             case SCENE_ICE_DOUKUTO:
+            case SCENE_YDAN_NMQ:
+            case SCENE_DDAN_NMQ:
+            case SCENE_BDAN_NMQ:
+            case SCENE_BMORI1_NMQ:
+            case SCENE_HIDAN_NMQ:
+            case SCENE_MIZUSIN_NMQ:
+            case SCENE_JYASINZOU_NMQ:
+            case SCENE_HAKADAN_NMQ:
+            case SCENE_HAKADANCH_NMQ:
+            case SCENE_ICE_DOUKUTO_NMQ:
             case SCENE_YDAN_BOSS:
             case SCENE_DDAN_BOSS:
             case SCENE_BDAN_BOSS:
@@ -225,6 +255,7 @@ void Map_Destroy(GlobalContext* globalCtx) {
 void Map_Init(GlobalContext* globalCtx) {
     s32 mapIndex = gSaveContext.mapIndex;
     InterfaceContext* interfaceCtx = &globalCtx->interfaceCtx;
+    s16 sceneNum = globalCtx->sceneNum;
 
     gMapData = &gMapDataTable;
 
@@ -237,7 +268,24 @@ void Map_Init(GlobalContext* globalCtx) {
                  interfaceCtx->mapSegment, globalCtx);
     ASSERT(interfaceCtx->mapSegment != NULL, "parameter->mapSegment != NULL", "../z_map_exp.c", 459);
 
-    switch (globalCtx->sceneNum) {
+    switch(globalCtx->sceneNum){
+        case SCENE_YDAN_NMQ:
+        case SCENE_DDAN_NMQ:
+        case SCENE_BDAN_NMQ:
+        case SCENE_BMORI1_NMQ:
+        case SCENE_HIDAN_NMQ:
+        case SCENE_MIZUSIN_NMQ:
+        case SCENE_JYASINZOU_NMQ:
+        case SCENE_HAKADAN_NMQ:
+        case SCENE_HAKADANCH_NMQ:
+        case SCENE_ICE_DOUKUTO_NMQ:
+        case SCENE_MEN_NMQ:
+        case SCENE_GANONTIKA_NMQ:
+            sceneNum = globalCtx->sceneNum - SCENE_YDAN_NMQ;
+            break;
+    }
+
+    switch (sceneNum) {
         case SCENE_SPOT00:
         case SCENE_SPOT01:
         case SCENE_SPOT02:
@@ -278,6 +326,18 @@ void Map_Init(GlobalContext* globalCtx) {
         case SCENE_HAKADAN:
         case SCENE_HAKADANCH:
         case SCENE_ICE_DOUKUTO:
+        case SCENE_YDAN_NMQ:
+        case SCENE_DDAN_NMQ:
+        case SCENE_BDAN_NMQ:
+        case SCENE_BMORI1_NMQ:
+        case SCENE_HIDAN_NMQ:
+        case SCENE_MIZUSIN_NMQ:
+        case SCENE_JYASINZOU_NMQ:
+        case SCENE_HAKADAN_NMQ:
+        case SCENE_HAKADANCH_NMQ:
+        case SCENE_ICE_DOUKUTO_NMQ:
+        case SCENE_MEN_NMQ:
+        case SCENE_GANONTIKA_NMQ:
         case SCENE_GANON:
         case SCENE_MEN:
         case SCENE_GERUDOWAY:
@@ -293,10 +353,9 @@ void Map_Init(GlobalContext* globalCtx) {
         case SCENE_MIZUSIN_BS:
         case SCENE_JYASINBOSS:
         case SCENE_HAKADAN_BS:
-            mapIndex =
-                (globalCtx->sceneNum >= SCENE_YDAN_BOSS) ? globalCtx->sceneNum - SCENE_YDAN_BOSS : globalCtx->sceneNum;
+            mapIndex = (sceneNum >= SCENE_YDAN_BOSS) ? sceneNum - SCENE_YDAN_BOSS : sceneNum;
             R_MAP_INDEX = gSaveContext.mapIndex = mapIndex;
-            if ((globalCtx->sceneNum <= SCENE_ICE_DOUKUTO) || (globalCtx->sceneNum >= SCENE_YDAN_BOSS)) {
+            if ((sceneNum <= SCENE_ICE_DOUKUTO) || (sceneNum >= SCENE_YDAN_BOSS)) {
                 R_COMPASS_SCALE_X = gMapData->dgnCompassInfo[mapIndex][0];
                 R_COMPASS_SCALE_Y = gMapData->dgnCompassInfo[mapIndex][1];
                 R_COMPASS_OFFSET_X = gMapData->dgnCompassInfo[mapIndex][2];
@@ -377,6 +436,16 @@ void Minimap_Draw(GlobalContext* globalCtx) {
             case SCENE_HAKADAN:
             case SCENE_HAKADANCH:
             case SCENE_ICE_DOUKUTO:
+            case SCENE_YDAN_NMQ:
+            case SCENE_DDAN_NMQ:
+            case SCENE_BDAN_NMQ:
+            case SCENE_BMORI1_NMQ:
+            case SCENE_HIDAN_NMQ:
+            case SCENE_MIZUSIN_NMQ:
+            case SCENE_JYASINZOU_NMQ:
+            case SCENE_HAKADAN_NMQ:
+            case SCENE_HAKADANCH_NMQ:
+            case SCENE_ICE_DOUKUTO_NMQ:
                 if (!R_MINIMAP_DISABLED) {
                     func_80094520(globalCtx->state.gfxCtx);
                     gDPSetCombineLERP(OVERLAY_DISP++, 1, 0, PRIMITIVE, 0, TEXEL0, 0, PRIMITIVE, 0, 1, 0, PRIMITIVE, 0,
@@ -523,6 +592,16 @@ void Map_Update(GlobalContext* globalCtx) {
             case SCENE_HAKADAN:
             case SCENE_HAKADANCH:
             case SCENE_ICE_DOUKUTO:
+            case SCENE_YDAN_NMQ:
+            case SCENE_DDAN_NMQ:
+            case SCENE_BDAN_NMQ:
+            case SCENE_BMORI1_NMQ:
+            case SCENE_HIDAN_NMQ:
+            case SCENE_MIZUSIN_NMQ:
+            case SCENE_JYASINZOU_NMQ:
+            case SCENE_HAKADAN_NMQ:
+            case SCENE_HAKADANCH_NMQ:
+            case SCENE_ICE_DOUKUTO_NMQ:
                 interfaceCtx->mapPalette[30] = 0;
                 if (CHECK_DUNGEON_ITEM(DUNGEON_MAP, mapIndex)) {
                     interfaceCtx->mapPalette[31] = 1;

@@ -6,6 +6,7 @@
 
 #include "z_bg_breakwall.h"
 #include "scenes/dungeons/ddan/ddan_scene.h"
+#include "scenes/dungeons/ddan_nmq/ddan_nmq_scene.h"
 #include "objects/object_bwall/object_bwall.h"
 #include "objects/object_kingdodongo/object_kingdodongo.h"
 
@@ -229,6 +230,7 @@ void BgBreakwall_Wait(BgBreakwall* this, GlobalContext* globalCtx) {
     if (this->collider.base.acFlags & 2) {
         Vec3f effectPos;
         s32 wallType = ((this->dyna.actor.params >> 13) & 3) & 0xFF;
+        void *dcCS = (globalCtx->sceneNum == SCENE_DDAN_NMQ) ? &gNMQDcOpeningCs : &gDcOpeningCs;
 
         DynaPoly_DeleteBgActor(globalCtx, &globalCtx->colCtx.dyna, this->dyna.bgId);
         effectPos.y = effectPos.z = effectPos.x = 0.0f;
@@ -251,7 +253,7 @@ void BgBreakwall_Wait(BgBreakwall* this, GlobalContext* globalCtx) {
 
         if ((wallType == BWALL_DC_ENTRANCE) && (!(Flags_GetEventChkInf(0xB0)))) {
             Flags_SetEventChkInf(0xB0);
-            Cutscene_SetSegment(globalCtx, gDcOpeningCs);
+            Cutscene_SetSegment(globalCtx, dcCS);
             gSaveContext.cutsceneTrigger = 1;
             Audio_PlaySoundGeneral(NA_SE_SY_CORRECT_CHIME, &D_801333D4, 4, &D_801333E0, &D_801333E0, &D_801333E8);
             func_8002DF54(globalCtx, NULL, 0x31);

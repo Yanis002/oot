@@ -12,6 +12,7 @@
 #include "scenes/overworld/spot17/spot17_scene.h"
 #include "scenes/indoors/tokinoma/tokinoma_scene.h"
 #include "scenes/dungeons/ice_doukutu/ice_doukutu_scene.h"
+#include "scenes/dungeons/ice_doukutu_nmq/ice_doukutu_nmq_scene.h"
 #include "vt.h"
 
 #define FLAGS ACTOR_FLAG_4
@@ -346,10 +347,11 @@ s32 EnXc_SerenadeCS(EnXc* this, GlobalContext* globalCtx) {
     if (this->actor.params == SHEIK_TYPE_SERENADE) {
         Player* player = GET_PLAYER(globalCtx);
         s32 stateFlags = player->stateFlags1;
+        void *serenadeCS = (globalCtx->sceneNum == SCENE_ICE_DOUKUTO_NMQ) ? &gNMQIceCavernSerenadeCs : &gIceCavernSerenadeCs;
 
         if (CHECK_OWNED_EQUIP(EQUIP_BOOTS, 1) && !(gSaveContext.eventChkInf[5] & 4) &&
             !(stateFlags & PLAYER_STATE1_29) && !Gameplay_InCsMode(globalCtx)) {
-            Cutscene_SetSegment(globalCtx, &gIceCavernSerenadeCs);
+            Cutscene_SetSegment(globalCtx, serenadeCS);
             gSaveContext.cutsceneTrigger = 1;
             gSaveContext.eventChkInf[5] |= 4; // Learned Serenade of Water Flag
             Item_Give(globalCtx, ITEM_SONG_SERENADE);
