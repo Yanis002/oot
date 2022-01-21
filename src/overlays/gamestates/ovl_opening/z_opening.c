@@ -33,7 +33,7 @@ void Opening_SetupTitleScreen(OpeningContext* this) {
     gSaveContext.unk_13E7 = gSaveContext.unk_13E8 = gSaveContext.unk_13EA = gSaveContext.unk_13EC = 0;
     Audio_QueueSeqCmd(NA_BGM_STOP);
     gSaveContext.sceneSetupIndex = 0;
-    gSaveContext.entranceIndex = 0x62D; //entrance ID de là où tu veux spawn
+    gSaveContext.entranceIndex = 0x61E; //entrance ID de là où tu veux spawn
     gSaveContext.respawnFlag = 0;
     gSaveContext.respawn[RESPAWN_MODE_DOWN].entranceIndex = -1;
     gSaveContext.showTitleCard = true;

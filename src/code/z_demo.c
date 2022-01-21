@@ -92,14 +92,14 @@ EntranceCutscene sEntranceCutsceneTable[] = {
     { 0x0246, 2, 0xB9, gDeathMountainCraterIntroCs },
     { 0x05E8, 2, 0xC6, gKokiriForestDekuSproutCs },
     // non-mq dungeons
-    { 0x0000, 2, 0xA8, gNMQDekuTreeIntroCs },
-    { 0x0028, 2, 0xB5, gNMQJabuJabuIntroCs },
-    { 0x0538, 2, 0xBB, gNMQForestBarrierCs },
-    { 0x053C, 2, 0xBC, gNMQWaterBarrierCs },
-    { 0x0540, 2, 0xBD, gNMQShadowBarrierCs },
-    { 0x0544, 2, 0xBE, gNMQFireBarrierCs },
-    { 0x0548, 2, 0xBF, gNMQLightBarrierCs },
-    { 0x054C, 2, 0xAD, gNMQSpiritBarrierCs },
+    { 0x0616, 2, 0xA8, gNMQDekuTreeIntroCs },
+    { 0x0626, 2, 0xB5, gNMQJabuJabuIntroCs },
+    { 0x0679, 2, 0xBB, gNMQForestBarrierCs },
+    { 0x067D, 2, 0xBC, gNMQWaterBarrierCs },
+    { 0x0681, 2, 0xBD, gNMQShadowBarrierCs },
+    { 0x0685, 2, 0xBE, gNMQFireBarrierCs },
+    { 0x0689, 2, 0xBF, gNMQLightBarrierCs },
+    { 0x068D, 2, 0xAD, gNMQSpiritBarrierCs },
 };
 
 // Unused, seems to be an early list of dungeon entrance cutscene locations

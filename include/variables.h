@@ -100,7 +100,7 @@ extern void (*gSceneCmdHandlers[26])(GlobalContext*, SceneCmd*);
 extern s16 gLinkObjectIds[2];
 extern u32 gObjectTableSize;
 extern RomFile gObjectTable[OBJECT_ID_MAX];
-extern EntranceInfo gEntranceTable[1604];
+extern EntranceInfo gEntranceTable[1680];
 extern SceneTableEntry gSceneTable[SCENE_ID_MAX];
 extern u16 gSramSlotOffsets[];
 // 4 16-colors palettes
