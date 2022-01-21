@@ -255,7 +255,8 @@ void Map_Destroy(GlobalContext* globalCtx) {
 void Map_Init(GlobalContext* globalCtx) {
     s32 mapIndex = gSaveContext.mapIndex;
     InterfaceContext* interfaceCtx = &globalCtx->interfaceCtx;
-    s16 sceneNum = globalCtx->sceneNum;
+    s16 sceneNum = ((globalCtx->sceneNum >= SCENE_YDAN_NMQ) && (globalCtx->sceneNum <= SCENE_GANONTIKA_NMQ)) 
+        ? (globalCtx->sceneNum - SCENE_YDAN_NMQ) : &globalCtx->sceneNum;
 
     gMapData = &gMapDataTable;
 
@@ -267,23 +268,6 @@ void Map_Init(GlobalContext* globalCtx) {
     osSyncPrintf("\n\n\nＭＡＰ テクスチャ初期化   scene_data_ID=%d\nmapSegment=%x\n\n", globalCtx->sceneNum,
                  interfaceCtx->mapSegment, globalCtx);
     ASSERT(interfaceCtx->mapSegment != NULL, "parameter->mapSegment != NULL", "../z_map_exp.c", 459);
-
-    switch(globalCtx->sceneNum){
-        case SCENE_YDAN_NMQ:
-        case SCENE_DDAN_NMQ:
-        case SCENE_BDAN_NMQ:
-        case SCENE_BMORI1_NMQ:
-        case SCENE_HIDAN_NMQ:
-        case SCENE_MIZUSIN_NMQ:
-        case SCENE_JYASINZOU_NMQ:
-        case SCENE_HAKADAN_NMQ:
-        case SCENE_HAKADANCH_NMQ:
-        case SCENE_ICE_DOUKUTO_NMQ:
-        case SCENE_MEN_NMQ:
-        case SCENE_GANONTIKA_NMQ:
-            sceneNum = globalCtx->sceneNum - SCENE_YDAN_NMQ;
-            break;
-    }
 
     switch (sceneNum) {
         case SCENE_SPOT00:

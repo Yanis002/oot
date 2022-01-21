@@ -51,10 +51,19 @@ static MapMarkDataOverlay sMapMarkDataOvl = {
     gMapMarkDataTable,
 };
 
+static MapMarkDataOverlay sMapMarkDataOvlNonMQ = {
+    NULL,
+    (u32)_ovl_map_mark_dataSegmentRomStart,
+    (u32)_ovl_map_mark_dataSegmentRomEnd,
+    _ovl_map_mark_dataSegmentStart,
+    _ovl_map_mark_dataSegmentEnd,
+    gMapMarkDataTableNonMQ,
+};
+
 static MapMarkData** sLoadedMarkDataTable;
 
 void MapMark_Init(GlobalContext* globalCtx) {
-    MapMarkDataOverlay* overlay = &sMapMarkDataOvl;
+    MapMarkDataOverlay* overlay = ((globalCtx->sceneNum >= SCENE_YDAN_NMQ) && (globalCtx->sceneNum <= SCENE_GANONTIKA_NMQ)) ? &sMapMarkDataOvlNonMQ : &sMapMarkDataOvl;
     u32 overlaySize = (u32)overlay->vramEnd - (u32)overlay->vramStart;
 
     overlay->loadedRamAddr = GameState_Alloc(&globalCtx->state, overlaySize, "../z_map_mark.c", 235);
@@ -62,7 +71,8 @@ void MapMark_Init(GlobalContext* globalCtx) {
 
     Overlay_Load(overlay->vromStart, overlay->vromEnd, overlay->vramStart, overlay->vramEnd, overlay->loadedRamAddr);
 
-    sLoadedMarkDataTable = gMapMarkDataTable;
+    sLoadedMarkDataTable = ((globalCtx->sceneNum >= SCENE_YDAN_NMQ) && (globalCtx->sceneNum <= SCENE_GANONTIKA_NMQ)) ? gMapMarkDataTableNonMQ : gMapMarkDataTable;
+
     sLoadedMarkDataTable = (void*)(u32)((overlay->vramTable != NULL)
                                             ? (void*)((u32)overlay->vramTable -
                                                       (s32)((u32)overlay->vramStart - (u32)overlay->loadedRamAddr))
@@ -71,6 +81,7 @@ void MapMark_Init(GlobalContext* globalCtx) {
 
 void MapMark_ClearPointers(GlobalContext* globalCtx) {
     sMapMarkDataOvl.loadedRamAddr = NULL;
+    sMapMarkDataOvlNonMQ.loadedRamAddr = NULL;
     sLoadedMarkDataTable = NULL;
 }
 

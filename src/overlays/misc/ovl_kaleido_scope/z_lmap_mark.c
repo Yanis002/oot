@@ -33,11 +33,12 @@ static const u32 sLineBytesImageSizes[] = { 0, 1, 2, 2 };
 #define G_IM_SIZ_MARK_LINE_BYTES sLineBytesImageSizes[markInfo->imageSize]
 
 extern PauseMapMarksData gPauseMapMarkDataTable[];
+extern PauseMapMarksData gPauseMapMarkDataTableNonMQ[];
 
 void PauseMapMark_Init(GlobalContext* globalCtx) {
     gBossMarkState = 0;
     gBossMarkScale = 1.0f;
-    gLoadedPauseMarkDataTable = gPauseMapMarkDataTable;
+    gLoadedPauseMarkDataTable = ((globalCtx->sceneNum >= SCENE_YDAN_NMQ) && (globalCtx->sceneNum <= SCENE_GANONTIKA_NMQ)) ? gPauseMapMarkDataTableNonMQ : gPauseMapMarkDataTable;
 }
 
 void PauseMapMark_Clear(GlobalContext* globalCtx) {
