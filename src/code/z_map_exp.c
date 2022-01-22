@@ -255,8 +255,7 @@ void Map_Destroy(GlobalContext* globalCtx) {
 void Map_Init(GlobalContext* globalCtx) {
     s32 mapIndex = gSaveContext.mapIndex;
     InterfaceContext* interfaceCtx = &globalCtx->interfaceCtx;
-    s16 sceneNum = ((globalCtx->sceneNum >= SCENE_YDAN_NMQ) && (globalCtx->sceneNum <= SCENE_GANONTIKA_NMQ)) 
-        ? (globalCtx->sceneNum - SCENE_YDAN_NMQ) : &globalCtx->sceneNum;
+    s16 sceneNum = ((globalCtx->sceneNum >= SCENE_YDAN_NMQ) && (globalCtx->sceneNum <= SCENE_GANONTIKA_NMQ)) ? (globalCtx->sceneNum - SCENE_YDAN_NMQ) : globalCtx->sceneNum;
 
     gMapData = &gMapDataTable;
 
@@ -269,7 +268,7 @@ void Map_Init(GlobalContext* globalCtx) {
                  interfaceCtx->mapSegment, globalCtx);
     ASSERT(interfaceCtx->mapSegment != NULL, "parameter->mapSegment != NULL", "../z_map_exp.c", 459);
 
-    switch (sceneNum) {
+    switch (globalCtx->sceneNum) {
         case SCENE_SPOT00:
         case SCENE_SPOT01:
         case SCENE_SPOT02:
