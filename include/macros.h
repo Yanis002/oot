@@ -41,6 +41,8 @@
 #define IS_DAY (gSaveContext.nightFlag == 0)
 #define IS_NIGHT (gSaveContext.nightFlag == 1)
 
+#define IS_NON_MQ 1 //1 for NQ, 0 for MQ
+
 #define SLOT(item) gItemSlots[item]
 #define INV_CONTENT(item) gSaveContext.inventory.items[SLOT(item)]
 #define AMMO(item) gSaveContext.inventory.ammo[SLOT(item)]

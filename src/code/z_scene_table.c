@@ -1026,6 +1026,76 @@ Gfx sDefaultDisplayList[] = {
 void func_800994A0(GlobalContext* globalCtx) {
     s16 computedEntranceIndex;
 
+    if (IS_NON_MQ == true){
+        switch(globalCtx->nextEntranceIndex){
+            case 0x0000: // deku tree
+                globalCtx->nextEntranceIndex = 0x0616;
+                break;
+            case 0x0004: // dc
+                globalCtx->nextEntranceIndex = 0x061E;
+                break;
+            case 0x0028: // jabu
+                globalCtx->nextEntranceIndex = 0x0626;
+                break;
+            case 0x0169: // forest
+                globalCtx->nextEntranceIndex = 0x062E;
+                break;
+            case 0x0165: // fire
+                globalCtx->nextEntranceIndex = 0x063A;
+                break;
+            case 0x0010: // water
+                globalCtx->nextEntranceIndex = 0x0642;
+                break;
+            case 0x0082: // spirit main
+                globalCtx->nextEntranceIndex = 0x064A;
+                break;
+            case 0x03F0: // spirit right hand
+                globalCtx->nextEntranceIndex = 0x0652;
+                break;
+            case 0x03F4: // spirit left hand
+                globalCtx->nextEntranceIndex = 0x0656;
+                break;
+            case 0x0037: // shadow
+                globalCtx->nextEntranceIndex = 0x065A;
+                break;
+            case 0x0098: // botw
+                globalCtx->nextEntranceIndex = 0x0662;
+                break;
+            case 0x0088: // ic
+                globalCtx->nextEntranceIndex = 0x0666;
+                break;
+            case 0x0008: // gtg
+                globalCtx->nextEntranceIndex = 0x066E;
+                break;
+            case 0x0467: // trials
+                globalCtx->nextEntranceIndex = 0x0671;
+                break;
+            case 0x0534: // tower
+                globalCtx->nextEntranceIndex = 0x0675;
+                break;
+            case 0x0538: // forest
+                globalCtx->nextEntranceIndex = 0x0679;
+                break;
+            case 0x053C: // water
+                globalCtx->nextEntranceIndex = 0x067D;
+                break;
+            case 0x0540: // shadow
+                globalCtx->nextEntranceIndex = 0x0681;
+                break;
+            case 0x0544: // fire
+                globalCtx->nextEntranceIndex = 0x0685;
+                break;
+            case 0x0548: // light
+                globalCtx->nextEntranceIndex = 0x0689;
+                break;
+            case 0x054C: // spirit
+                globalCtx->nextEntranceIndex = 0x068D;
+                break;
+            default:
+                break;
+        }
+    }
+
     if (!IS_DAY) {
         if (!LINK_IS_ADULT) {
             computedEntranceIndex = globalCtx->nextEntranceIndex + 1;
