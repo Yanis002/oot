@@ -360,6 +360,7 @@ void FileChoose_CopyConfirm(GameState* thisx) {
     SramContext* sramCtx = &this->sramCtx;
     Input* input = &this->state.input[0];
     u16 dayTime;
+    u8 questType = NORMAL_QUEST;
 
     if (((this->buttonIndex != FS_BTN_CONFIRM_YES) && CHECK_BTN_ANY(input->press.button, BTN_A | BTN_START)) ||
         CHECK_BTN_ALL(input->press.button, BTN_B)) {
@@ -369,8 +370,11 @@ void FileChoose_CopyConfirm(GameState* thisx) {
         Audio_PlaySoundGeneral(NA_SE_SY_FSEL_CLOSE, &D_801333D4, 4, &D_801333E0, &D_801333E0, &D_801333E8);
     } else if (CHECK_BTN_ANY(input->press.button, BTN_A | BTN_START)) {
         dayTime = gSaveContext.dayTime;
+        questType = gSaveContext.questType;
         Sram_CopySave(this, sramCtx);
         gSaveContext.dayTime = dayTime;
+        gSaveContext.questType = questType;
+        osSyncPrintf("Copied to File %d! \nOld Quest Type: %d\n New Quest Type: %d\n", this->copyDestFileIndex + 1, questType, gSaveContext.questType);
         this->fileInfoAlpha[this->copyDestFileIndex] = this->nameAlpha[this->copyDestFileIndex] = 0;
         this->nextTitleLabel = FS_TITLE_COPY_COMPLETE;
         this->actionTimer = 8;

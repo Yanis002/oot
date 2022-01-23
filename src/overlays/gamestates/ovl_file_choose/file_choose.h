@@ -66,7 +66,10 @@ typedef enum {
     /* 37 */ CM_OPTIONS_MENU,
     /* 38 */ CM_START_OPTIONS,
     /* 39 */ CM_OPTIONS_TO_MAIN,
-    /* 40 */ CM_UNUSED_DELAY
+    /* 40 */ CM_UNUSED_DELAY,
+    // non-mq
+             CM_NAME_TO_QUEST,
+             CM_QUEST_MENU
 } ConfigMode;
 
 typedef enum {

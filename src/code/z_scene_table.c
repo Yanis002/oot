@@ -1026,7 +1026,7 @@ Gfx sDefaultDisplayList[] = {
 void func_800994A0(GlobalContext* globalCtx) {
     s16 computedEntranceIndex;
 
-    if (IS_NON_MQ == true){
+    if (gSaveContext.questType == NORMAL_QUEST){
         switch(globalCtx->nextEntranceIndex){
             case 0x0000: // deku tree
                 globalCtx->nextEntranceIndex = 0x0616;

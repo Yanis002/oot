@@ -58,6 +58,7 @@ typedef struct {
 } SaveInfo;                    // size = 0x1338
 
 typedef struct {
+    s8 questType;
     /* 0x00 */ s32 entranceIndex;
     /* 0x04 */ s32 linkAge; // 0: Adult; 1: Child
     /* 0x08 */ s32 cutsceneIndex;
@@ -293,7 +294,7 @@ void Sram_InitDebugSave(void) {
  *  - Give and equip master sword if player is adult and doesnt have kokiri sword (bug?)
  *  - Revert any trade items that spoil
  */
-void Sram_OpenSave(SramContext* sramCtx) {
+void Sram_OpenSave(SramContext* sramCtx, FileChooseContext* fileChoose) {
     static s16 dungeonEntrances[] = {
         0x0000, 0x0004, 0x0028, 0x0169, 0x0165, 0x0010, 0x0082, 0x0037,
         0x0098, 0x0088, 0x041B, 0x0008, 0x0486, 0x0467, 0x0179, 0x056C,
@@ -301,16 +302,32 @@ void Sram_OpenSave(SramContext* sramCtx) {
     u16 i;
     u16 j;
     u8* ptr;
+    u8 fileChooseQuestType = fileChoose->questType[fileChoose->selectedFileIndex];
+    u8 beforeLoadQuestType = NORMAL_QUEST;
+    u8 afterLoadQuestType = NORMAL_QUEST;
+    u8 questType = NORMAL_QUEST;
+    osSyncPrintf(VT_FGCOL(YELLOW));
+    osSyncPrintf("Current Quest Type: %d\n", fileChooseQuestType);
 
     osSyncPrintf("個人Ｆｉｌｅ作成\n"); // "Create personal file"
     i = gSramSlotOffsets[gSaveContext.fileNum];
     osSyncPrintf("ぽいんと＝%x(%d)\n", i, gSaveContext.fileNum); // "Point="
 
+    osSyncPrintf("gSaveContext Quest Type: %d\n", gSaveContext.questType);
+    beforeLoadQuestType = gSaveContext.questType;
+
     MemCopy(&gSaveContext, sramCtx->readBuff + i, sizeof(Save));
 
-    osSyncPrintf(VT_FGCOL(YELLOW));
     osSyncPrintf("SCENE_DATA_ID = %d   SceneNo = %d\n", gSaveContext.savedSceneNum,
                  ((void)0, gSaveContext.entranceIndex));
+
+    osSyncPrintf("Saved Quest Type: %d\n", gSaveContext.questType);
+    afterLoadQuestType = gSaveContext.questType;
+
+    questType = ((fileChooseQuestType == MASTER_QUEST) || (beforeLoadQuestType == MASTER_QUEST) || (afterLoadQuestType == MASTER_QUEST)) ? MASTER_QUEST : NORMAL_QUEST;
+
+    gSaveContext.questType = questType;
+    osSyncPrintf("Loaded Quest Type: %d\n", gSaveContext.questType);
 
     switch (gSaveContext.savedSceneNum) {
         case SCENE_YDAN:
@@ -693,6 +710,7 @@ void Sram_InitSave(FileChooseContext* fileChooseCtx, SramContext* sramCtx) {
         Sram_InitDebugSave();
     }
 
+    gSaveContext.questType = fileChooseCtx->questType[fileChooseCtx->selectedFileIndex];
     gSaveContext.entranceIndex = 0xBB;
     gSaveContext.linkAge = 1;
     gSaveContext.dayTime = 0x6AAB;
@@ -786,6 +804,9 @@ void Sram_EraseSave(FileChooseContext* fileChooseCtx, SramContext* sramCtx) {
     offset = gSramSlotOffsets[fileChooseCtx->selectedFileIndex + 3];
     MemCopy(sramCtx->readBuff + offset, &gSaveContext, sizeof(Save));
     SsSram_ReadWrite(OS_K1_TO_PHYSICAL(0xA8000000) + offset, &gSaveContext, SLOT_SIZE, OS_WRITE);
+
+    fileChooseCtx->questType[fileChooseCtx->selectedFileIndex] = 0;
+    osSyncPrintf("ERASED: fileIndex: %d type: %d\n", fileChooseCtx->selectedFileIndex, fileChooseCtx->questType[fileChooseCtx->selectedFileIndex]);
 
     osSyncPrintf("ＣＬＥＡＲ終了\n");
 }

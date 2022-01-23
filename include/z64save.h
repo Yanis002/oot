@@ -61,6 +61,7 @@ typedef struct {
 } FaroresWindData; // size = 0x28
 
 typedef struct {
+    s8 questType;
     /* 0x0000 */ s32 entranceIndex; // start of `save` substruct, originally called "memory"
     /* 0x0004 */ s32 linkAge; // 0: Adult; 1: Child
     /* 0x0008 */ s32 cutsceneIndex;

@@ -1307,7 +1307,7 @@ Mtx* SkinMatrix_MtxFToNewMtx(GraphicsContext* gfxCtx, MtxF* src);
 void SkinMatrix_SetRotateAxis(MtxF* mf, s16 angle, f32 axisX, f32 axisY, f32 axisZ);
 void Sram_InitNewSave(void);
 void Sram_InitDebugSave(void);
-void Sram_OpenSave(SramContext* sramCtx);
+void Sram_OpenSave(SramContext* sramCtx, FileChooseContext* fileChoose);
 void Sram_WriteSave(SramContext* sramCtx);
 void Sram_VerifyAndLoadAllSaves(FileChooseContext* fileChoose, SramContext* sramCtx);
 void Sram_InitSave(FileChooseContext* fileChoose, SramContext* sramCtx);
@@ -2382,5 +2382,6 @@ void Opening_Init(GameState* thisx);
 void Opening_Destroy(GameState* thisx);
 void FileChoose_Init(GameState* thisx);
 void FileChoose_Destroy(GameState* thisx);
+void func_80094CBC(GraphicsContext* gfxCtx);
 
 #endif

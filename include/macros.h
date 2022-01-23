@@ -41,7 +41,10 @@
 #define IS_DAY (gSaveContext.nightFlag == 0)
 #define IS_NIGHT (gSaveContext.nightFlag == 1)
 
-#define IS_NON_MQ 1 //1 for NQ, 0 for MQ
+#define NORMAL_QUEST 0
+#define MASTER_QUEST 1
+#define IS_NORMAL_QUEST (gSaveContext.questType == 0)
+#define GET_QUEST (IS_NORMAL_QUEST ? NORMAL_QUEST : MASTER_QUEST)
 
 #define SLOT(item) gItemSlots[item]
 #define INV_CONTENT(item) gSaveContext.inventory.items[SLOT(item)]
@@ -132,6 +135,17 @@ extern GraphicsContext* __gfxCtx;
 #define CLOSE_DISPS(gfxCtx, file, line)                 \
         Graph_CloseDisps(dispRefs, gfxCtx, file, line); \
     }                                                   \
+    (void)0
+
+#define OPEN_DISPS2(gfxCtx)         \
+    {                              \
+        GraphicsContext* __gfxCtx; \
+        __gfxCtx = gfxCtx;         \
+        (void)__gfxCtx;
+
+#define CLOSE_DISPS2(gfxCtx)                                 \
+    (void)0;                                        \
+    }                                                       \
     (void)0
 
 /**

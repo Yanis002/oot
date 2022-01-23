@@ -430,13 +430,14 @@ void FileChoose_DrawNameEntry(GameState* thisx) {
                         }
 
                         if (validName) {
+                            // when the player finished typing the filename
                             Audio_PlaySoundGeneral(NA_SE_SY_FSEL_DECIDE_L, &D_801333D4, 4, &D_801333E0, &D_801333E0,
                                                    &D_801333E8);
                             gSaveContext.fileNum = this->buttonIndex;
                             dayTime = ((void)0, gSaveContext.dayTime);
                             Sram_InitSave(this, &this->sramCtx);
                             gSaveContext.dayTime = dayTime;
-                            this->configMode = CM_NAME_ENTRY_TO_MAIN;
+                            this->configMode = CM_NAME_TO_QUEST; // rotate to quest type
                             this->nameBoxAlpha[this->buttonIndex] = this->nameAlpha[this->buttonIndex] = 200;
                             this->connectorAlpha[this->buttonIndex] = 255;
                             func_800AA000(300.0f, 0xB4, 0x14, 0x64);
