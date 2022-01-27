@@ -60,7 +60,7 @@ typedef struct {
 typedef struct {
     s8 questType;
     /* 0x00 */ s32 entranceIndex;
-    /* 0x04 */ s32 linkAge; // 0: Adult; 1: Child
+    /* 0x04 */ s32 linkAge;
     /* 0x08 */ s32 cutsceneIndex;
     /* 0x0C */ u16 dayTime; // "zelda_time"
     /* 0x10 */ s32 nightFlag;
@@ -712,7 +712,7 @@ void Sram_InitSave(FileChooseContext* fileChooseCtx, SramContext* sramCtx) {
 
     gSaveContext.questType = fileChooseCtx->questType[fileChooseCtx->selectedFileIndex];
     gSaveContext.entranceIndex = 0xBB;
-    gSaveContext.linkAge = 1;
+    gSaveContext.linkAge = LINK_AGE_CHILD;
     gSaveContext.dayTime = 0x6AAB;
     gSaveContext.cutsceneIndex = 0xFFF1;
 
