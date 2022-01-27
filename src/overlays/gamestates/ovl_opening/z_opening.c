@@ -9,7 +9,7 @@
 void Opening_SetupTitleScreen(OpeningContext* this) {
     // gSaveContext.gameMode = 1;
     // this->state.running = false;
-    // gSaveContext.linkAge = 0;
+    // gSaveContext.linkAge = LINK_AGE_ADULT;
     // Sram_InitDebugSave();
     // gSaveContext.cutsceneIndex = 0xFFF3;
     // gSaveContext.sceneSetupIndex = 7;
@@ -17,13 +17,12 @@ void Opening_SetupTitleScreen(OpeningContext* this) {
 
     gSaveContext.gameMode = 0;
 
-    Sram_InitDebugSave();
     gSaveContext.unk_13F6 = gSaveContext.magic;
     gSaveContext.magic = 0;
     gSaveContext.unk_13F4 = 0;
     gSaveContext.magicLevel = gSaveContext.magic;
 
-    gSaveContext.linkAge = 1;
+    gSaveContext.linkAge = LINK_AGE_CHILD;
     gSaveContext.dayTime = 0x8000;
     gSaveContext.buttonStatus[4] = BTN_ENABLED;
     gSaveContext.buttonStatus[3] = BTN_ENABLED;

@@ -51,7 +51,7 @@ void Title_Calc(TitleContext* this) {
             this->coverAlpha = 0xFF;
             
             test:
-            this->exit = 1;
+            this->exit = true;
             return;
         }
     }
