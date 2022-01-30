@@ -42,7 +42,7 @@ void BgPoisonedWater_Init(Actor* thisx, GlobalContext* globalCtx){
     this->hueShift = (params >> 13) & 0x7;
 
     osSyncPrintf(VT_FGCOL(YELLOW));
-    osSyncPrintf("Parameters joined the game.\n Size: %d\n Damage Amount: %d\n Damage Frequency: %d\n Hue Shift: %d\n",
+    osSyncPrintf("Parameters joined the game.\nSize: %d\nDamage Amount: %d\nDamage Frequency: %d\nHue Shift: %d\n",
         this->size, this->damageAmount, this->damageFreq, this->hueShift);
     osSyncPrintf(VT_FGCOL(WHITE));
     osSyncPrintf("---- BG_POISONED_WATER INIT: END! ----\n");
