@@ -1,10 +1,14 @@
 #include <ctype.h>
+#include <stdbool.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 
 #include "wow.h"
 #include "rom.h"
+
+FILE* printer;
+int g_hlen = 8;
 
 static void compress(struct rom *rom, int start, int end)
 {
@@ -117,75 +121,84 @@ static void do_pattern(
 static void usage(void)
 {
 	/* compression examples for users to adapt to their needs */
-	fprintf(stderr, "\n");
-	fprintf(stderr, "  compressing oot debug\n");
-	fprintf(stderr, "    --in        \"path/to/in.z64\"\n");
-	fprintf(stderr, "    --out       \"path/to/out.z64\"\n");
-	fprintf(stderr, "    --mb        32\n");
-	fprintf(stderr, "    --codec     yaz\n");
-	fprintf(stderr, "    --cache     \"path/to/cache\"\n");
-	fprintf(stderr, "    --dma       \"0x12F70,1548\"\n");
-	fprintf(stderr, "    --compress  \"9-14,28-END\"\n");
-	fprintf(stderr, "    --threads   4\n");
-	fprintf(stderr, "\n");
-	fprintf(stderr, "  compressing oot ntsc 1.0\n");
-	fprintf(stderr, "    --in        \"path/to/in.z64\"\n");
-	fprintf(stderr, "    --out       \"path/to/out.z64\"\n");
-	fprintf(stderr, "    --mb        32\n");
-	fprintf(stderr, "    --codec     yaz\n");
-	fprintf(stderr, "    --cache     \"path/to/cache\"\n");
-	fprintf(stderr, "    --dma       \"0x7430,1526\"\n");
-	fprintf(stderr, "    --compress  \"10-14,27-END\"\n");
-	fprintf(stderr, "    --threads   4\n");
-	fprintf(stderr, "\n");
-	fprintf(stderr, "  compressing mm usa\n");
-	fprintf(stderr, "    --in        \"path/to/in.z64\"\n");
-	fprintf(stderr, "    --out       \"path/to/out.z64\"\n");
-	fprintf(stderr, "    --mb        32\n");
-	fprintf(stderr, "    --codec     yaz\n");
-	fprintf(stderr, "    --cache     \"path/to/cache\"\n");
-	fprintf(stderr, "    --dma       \"0x1A500,1568\"\n");
-	fprintf(stderr, "    --compress  \"10-14,23,24,31-END\"\n");
-	fprintf(stderr, "    --skip      \"1127\"\n");
-	fprintf(stderr, "    --repack    \"15-20,22\"\n");
-	fprintf(stderr, "    --threads   4\n");
-	fprintf(stderr, "\n");
-	fprintf(stderr, "  arguments\n");
-	fprintf(stderr, "    --in        uncompressed input rom\n");
-	fprintf(stderr, "\n");
-	fprintf(stderr, "    --out       compressed output rom\n");
-	fprintf(stderr, "\n");
-	fprintf(stderr, "    --mb        how many mb the compressed rom should be\n");
-	fprintf(stderr, "\n");
-	fprintf(stderr, "    --codec     currently supported codecs\n");
-	fprintf(stderr, "                   yaz\n");
-	fprintf(stderr, "                   ucl\n");
-	fprintf(stderr, "                   lzo\n");
-	fprintf(stderr, "                   aplib\n");
-	fprintf(stderr, "              * to use non-yaz codecs, find patches\n");
-	fprintf(stderr, "                and code on my z64enc repo\n");
-	fprintf(stderr, "\n");
-	fprintf(stderr, "    --cache     is optional and won't be created if\n");
-	fprintf(stderr, "                no path is specified (having a cache\n");
-	fprintf(stderr, "                makes subsequent compressions faster)\n");
-	fprintf(stderr, "              * pro-tip: linux users who don't want a\n");
-	fprintf(stderr, "                cache to persist across power cycles\n");
-	fprintf(stderr, "                can use the path \"/tmp/z64compress\"\n");
-	fprintf(stderr, "\n");
-	fprintf(stderr, "    --dma       specify dmadata address and count\n");
-	fprintf(stderr, "\n");
-	fprintf(stderr, "    --compress  enable compression on specified files\n");
-	fprintf(stderr, "\n");
-	fprintf(stderr, "    --skip      disable compression on specified files\n");
-	fprintf(stderr, "\n");
-	fprintf(stderr, "    --repack    handles Majora's Mask archives\n");
-	fprintf(stderr, "\n");
-	fprintf(stderr, "    --threads   optional multithreading;\n");
-	fprintf(stderr, "                exclude this argument to disable it\n");
-	fprintf(stderr, "\n");
-	fprintf(stderr, "  arguments are executed as they\n");
-	fprintf(stderr, "  are parsed, so order matters!\n");
-	fprintf(stderr, "\n");
+	fprintf(printer, "\n");
+	fprintf(printer, "  compressing oot debug\n");
+	fprintf(printer, "    --in           \"path/to/in.z64\"\n");
+	fprintf(printer, "    --out          \"path/to/out.z64\"\n");
+	fprintf(printer, "    --mb           32\n");
+	fprintf(printer, "    --codec        yaz\n");
+	fprintf(printer, "    --cache        \"path/to/cache\"\n");
+	fprintf(printer, "    --dma          \"0x12F70,1548\"\n");
+	fprintf(printer, "    --compress     \"9-14,28-END\"\n");
+	fprintf(printer, "    --threads      4\n");
+	fprintf(printer, "\n");
+	fprintf(printer, "  compressing oot ntsc 1.0\n");
+	fprintf(printer, "    --in           \"path/to/in.z64\"\n");
+	fprintf(printer, "    --out          \"path/to/out.z64\"\n");
+	fprintf(printer, "    --mb           32\n");
+	fprintf(printer, "    --codec        yaz\n");
+	fprintf(printer, "    --cache        \"path/to/cache\"\n");
+	fprintf(printer, "    --dma          \"0x7430,1526\"\n");
+	fprintf(printer, "    --compress     \"10-14,27-END\"\n");
+	fprintf(printer, "    --threads      4\n");
+	fprintf(printer, "\n");
+	fprintf(printer, "  compressing mm usa\n");
+	fprintf(printer, "    --in           \"path/to/in.z64\"\n");
+	fprintf(printer, "    --out          \"path/to/out.z64\"\n");
+	fprintf(printer, "    --mb           32\n");
+	fprintf(printer, "    --codec        yaz\n");
+	fprintf(printer, "    --cache        \"path/to/cache\"\n");
+	fprintf(printer, "    --dma          \"0x1A500,1568\"\n");
+	fprintf(printer, "    --compress     \"10-14,23,24,31-END\"\n");
+	fprintf(printer, "    --skip         \"1127\"\n");
+	fprintf(printer, "    --repack       \"15-20,22\"\n");
+	fprintf(printer, "    --threads      4\n");
+	fprintf(printer, "\n");
+	fprintf(printer, "  arguments\n");
+	fprintf(printer, "    --in           uncompressed input rom\n");
+	fprintf(printer, "\n");
+	fprintf(printer, "    --out          compressed output rom\n");
+	fprintf(printer, "\n");
+	fprintf(printer, "    --matching     attempt matching compression at the cost of\n");
+	fprintf(printer, "                   some optimizations and reduced performance\n");
+	fprintf(printer, "\n");
+	fprintf(printer, "    --mb           how many mb the compressed rom should be\n");
+	fprintf(printer, "\n");
+	fprintf(printer, "    --codec        currently supported codecs\n");
+	fprintf(printer, "                      yaz\n");
+	fprintf(printer, "                      ucl\n");
+	fprintf(printer, "                      lzo\n");
+	fprintf(printer, "                      zlib\n");
+	fprintf(printer, "                      aplib\n");
+	fprintf(printer, "                 * to use non-yaz codecs, find patches\n");
+	fprintf(printer, "                   and code on my z64enc repo\n");
+	fprintf(printer, "\n");
+	fprintf(printer, "    --cache        is optional and won't be created if\n");
+	fprintf(printer, "                   no path is specified (having a cache\n");
+	fprintf(printer, "                   makes subsequent compressions faster)\n");
+	fprintf(printer, "                 * pro-tip: linux users who don't want a\n");
+	fprintf(printer, "                   cache to persist across power cycles\n");
+	fprintf(printer, "                   can use the path \"/tmp/z64compress\"\n");
+	fprintf(printer, "\n");
+	fprintf(printer, "    --dma          specify dmadata address and count\n");
+	fprintf(printer, "\n");
+	fprintf(printer, "    --compress     enable compression on specified files\n");
+	fprintf(printer, "\n");
+	fprintf(printer, "    --skip         disable compression on specified files\n");
+	fprintf(printer, "\n");
+	fprintf(printer, "    --headerless   don't write file headers (for iQue)\n");
+	fprintf(printer, "\n");
+	fprintf(printer, "    --repack       handles Majora's Mask archives\n");
+	fprintf(printer, "\n");
+	fprintf(printer, "    --threads      optional multithreading;\n");
+	fprintf(printer, "                   exclude this argument to disable it\n");
+	fprintf(printer, "\n");
+	fprintf(printer, "    --only-stdout  reserve stderr for errors and print\n");
+	fprintf(printer, "                   everything else to stdout\n");
+	fprintf(printer, "\n");
+	fprintf(printer, "  arguments are executed as they\n");
+	fprintf(printer, "  are parsed, so order matters!\n");
+	fprintf(printer, "\n");
 }
 
 wow_main
@@ -198,9 +211,22 @@ wow_main
 	const char *Acache = 0;
 	int Amb = 0;
 	int Athreads = 0;
+	bool Amatching = false;
+	bool Aonly_stdout = false;
+	bool Aheaderless = false;
 	wow_main_argv;
+
+	printer = stderr;
+	for (int i = 1; i < argc; ++i)
+	{
+		if (!strcmp(argv[i], "--only-stdout"))
+		{
+			setvbuf(stdout, NULL, _IONBF, 0);
+			printer = stdout;
+		}
+	}
 	
-	fprintf(stderr, "welcome to z64compress <z64.me>\n");
+	fprintf(printer, "welcome to z64compress 1.0.2 <z64.me>\n");
 	
 	if (argc <= 1)
 	{
@@ -212,8 +238,40 @@ wow_main
 	for (int i = 1; i < argc; i += 2)
 	{
 		const char *arg = argv[i];
-		const char *next = argv[i + 1];
 		
+		/* arguments that do not require additional parameters */
+
+		if(!strcmp(arg, "--only-stdout"))
+		{
+			if (Aonly_stdout)
+				die("--only-stdout arg provided more than once");
+			// handled above
+			Aonly_stdout = true;
+			i--;
+			continue;
+		}
+		else if (!strcmp(arg, "--matching"))
+		{
+			if (Amatching)
+				die("--matching arg provided more than once");
+			Amatching = true;
+			i--;
+			continue;
+		}
+		else if (!strcmp(arg, "--headerless"))
+		{
+			if (Aheaderless)
+				die("--headerless arg provided more than once");
+			Aheaderless = true;
+			g_hlen = 0;
+			i--;
+			continue;
+		}
+		
+		/* arguments with additional parameters */
+
+		const char *next = argv[i + 1];
+
 		if (!next)
 			die("%s missing parameter", arg);
 		
@@ -260,7 +318,7 @@ wow_main
 			Adma = next;
 			if (sscanf(Adma, "%i,%i", &start, &num) != 2)
 				die("--dma bad formatting '%s'", Adma);
-			rom_dma(rom, start, num);
+			rom_dma(rom, start, num, Amatching);
 		}
 		else if (!strcmp(arg, "--mb"))
 		{
@@ -312,21 +370,20 @@ wow_main
 	
 	ARG_ZERO_TEST(Ain   , "--in"   );
 	ARG_ZERO_TEST(Aout  , "--out"  );
-	ARG_ZERO_TEST(Amb   , "--mb"   );
 	ARG_ZERO_TEST(Acodec, "--codec");
 	
 	#undef ARG_ZERO_TEST
 	
 	/* finished initializing dma settings */
-	rom_dma_ready(rom);
+	rom_dma_ready(rom, Amatching);
 	
 	/* compress rom */
-	rom_compress(rom, Amb, Athreads);
-	fprintf(stderr, "rom compressed successfully!\n");
+	rom_compress(rom, Amb, Athreads, Amatching);
+	fprintf(printer, "rom compressed successfully!\n");
 	
 	/* write compressed rom */
 	rom_save(rom, Aout);
-	fprintf(stderr, "compressed rom written successfully!\n");
+	fprintf(printer, "compressed rom written successfully!\n");
 	
 	/* cleanup */
 	rom_free(rom);
