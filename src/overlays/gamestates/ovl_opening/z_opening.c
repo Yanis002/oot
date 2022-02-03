@@ -15,6 +15,7 @@ void Opening_SetupTitleScreen(OpeningContext* this) {
     // gSaveContext.sceneSetupIndex = 7;
     // SET_NEXT_GAMESTATE(&this->state, Gameplay_Init, GlobalContext);
 
+    Sram_InitDebugSave();
     gSaveContext.gameMode = 0;
 
     gSaveContext.unk_13F6 = gSaveContext.magic;

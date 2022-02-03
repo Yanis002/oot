@@ -94,22 +94,14 @@ else
   CC_CHECK += -m32
 endif
 
-# Threads to compress and extract assets with, TODO improve later
-ifeq ($(DETECTED_OS),linux)
-  N_THREADS ?= $(shell nproc)
-else
-  N_THREADS ?= 1
-endif
-
 #### Files ####
-# GZI Patch
-GZI := tools/gzinject/patches/gz_mem_patch_dpad.gzi
 
 # ROM image
-ROMC := zelda_ocarina_mq_dbg_compressed.z64
 ROM := zelda_ocarina_mq_dbg.z64
-WAD_ORIGINAL := base.wad
-WAD := zelda_ocarina_mq_dbg.wad
+ROMC := zelda_ocarina_mq_dbg_compressed.z64
+BASE_WAD := zelda_ocarina_base.wad
+PATCHED_WAD := zelda_ocarina_mq_dbg.wad
+GZI_PATCH := tools/gzinject/patches/memory_dpad.gzi
 ELF := $(ROM:.z64=.elf)
 # description of ROM segments
 SPEC := spec
@@ -183,10 +175,21 @@ build/assets/%.o: CC := python3 tools/asm_processor/build.py $(CC) -- $(AS) $(AS
 
 #### Main Targets ###
 
-all: uncompressed
+all: $(ROM)
+ifeq ($(COMPARE),1)
+	@md5sum $(ROM)
+	@md5sum -c checksum.md5
+endif
+
+compress: $(ROMC)
+
+wad:
+	$(MAKE) compress
+	gzinject -a inject -w $(BASE_WAD) -m $(ROMC) -o $(PATCHED_WAD) -p $(GZI_PATCH)
+	$(RM) -r wadextract
 
 $(ROMC): $(ROM)
-	python3 tools/z64compress_wrapper.py --cache cache --threads $(N_THREADS) $< $@ $(ELF) build/$(SPEC)
+	python3 tools/z64compress_wrapper.py --cache cache --threads $(shell nproc) $< $@ $(ELF) build/$(SPEC)
 
 $(ROM): $(ELF)
 	$(ELF2ROM) -cic 6105 $< $@
@@ -204,7 +207,7 @@ build/undefined_syms.txt: undefined_syms.txt
 	$(CPP) $(CPPFLAGS) $< > build/undefined_syms.txt
 
 clean:
-	$(RM) -r $(ROM) $(ELF) build
+	$(RM) -r $(ROM) $(ROMC) $(PATCHED_WAD) $(ELF) build
 
 assetclean:
 	$(RM) -r $(ASSET_BIN_DIRS)
@@ -223,24 +226,11 @@ setup:
 	python3 extract_baserom.py
 	python3 extract_assets.py -j$(N_THREADS)
 
-compressed: $(ROMC)
-
-uncompressed: $(ROM)
-ifeq ($(COMPARE),1)
-	@md5sum $(ROM)
-	@md5sum -c checksum.md5
-endif
-
-wad:
-	$(MAKE) compressed
-	tools/gzinject/gzinject -a inject -w $(WAD_ORIGINAL) -m $(ROMC) -o $(WAD) -p $(GZI)
-	$(RM) -r wadextract
-
 resources: $(ASSET_FILES_OUT)
 test: $(ROM)
 	$(EMULATOR) $(EMU_FLAGS) $<
 
-.PHONY: all clean setup test distclean assetclean
+.PHONY: all clean setup test distclean assetclean compress
 
 #### Various Recipes ####
 

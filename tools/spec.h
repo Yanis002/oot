@@ -18,6 +18,7 @@ enum
     STMT_stack,
     STMT_increment,
     STMT_pad_text,
+    STMT_compress,
 };
 
 enum
@@ -25,6 +26,7 @@ enum
     FLAG_BOOT = (1 << 0),
     FLAG_OBJECT = (1 << 1),
     FLAG_RAW = (1 << 2),
+    FLAG_NOLOAD = (1 << 3),
 };
 
 struct Include
@@ -49,6 +51,7 @@ struct Segment
     uint32_t number;
     struct Include *includes;
     int includesCount;
+    bool compress;
 };
 
 void parse_rom_spec(char *spec, struct Segment **segments, int *segment_count);

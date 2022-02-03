@@ -18,11 +18,13 @@ ifneq ($(LLD),0)
 endif
 
 all: $(PROGRAMS)
-	cd ZAPD && $(MAKE)
+	$(MAKE) -C ZAPD
+	$(MAKE) -C z64compress
 
 clean:
 	$(RM) $(PROGRAMS) $(addsuffix .exe,$(PROGRAMS))
 	$(MAKE) -C ZAPD clean
+	$(MAKE) -C z64compress clean
 
 distclean: clean
 

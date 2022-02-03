@@ -54,7 +54,8 @@ graphs/
 
 # Per-user configuration
 .python-version
-common-key.bin
-*.wad
-cache/yaz
+assets_custom.py
 assets_custom/
+cache/
+*.wad
+common-key.bin

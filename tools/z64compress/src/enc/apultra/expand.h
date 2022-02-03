@@ -23,7 +23,7 @@
 /*
  * Uses the libdivsufsort library Copyright (c) 2003-2008 Yuta Mori
  *
- * Inspired by cap by Sven-Åke Dahl. https://github.com/svendahl/cap
+ * Inspired by cap by Sven-ï¿½ke Dahl. https://github.com/svendahl/cap
  * Also inspired by Charles Bloom's compression blog. http://cbloomrants.blogspot.com/
  * With ideas from LZ4 by Yann Collet. https://github.com/lz4/lz4
  * With help and support from spke <zxintrospec@gmail.com>
@@ -44,10 +44,11 @@ extern "C" {
  *
  * @param pInputData compressed data
  * @param nInputSize compressed size in bytes
+ * @param nFlags compression flags (set to 0)
  *
  * @return maximum decompressed size
  */
-size_t apultra_get_max_decompressed_size(const unsigned char *pInputData, size_t nInputSize);
+size_t apultra_get_max_decompressed_size(const unsigned char *pInputData, size_t nInputSize, const unsigned int nFlags);
 
 /**
  * Decompress data in memory
@@ -56,11 +57,12 @@ size_t apultra_get_max_decompressed_size(const unsigned char *pInputData, size_t
  * @param pOutBuffer buffer for decompressed data
  * @param nInputSize compressed size in bytes
  * @param nMaxOutBufferSize maximum capacity of decompression buffer
- * @param nFlags decompression flags (set to 0)
+ * @param nDictionarySize size of dictionary in front of input data (0 for none)
+ * @param nFlags compression flags (set to 0)
  *
  * @return actual decompressed size, or -1 for error
  */
-size_t apultra_decompress(const unsigned char *pInputData, unsigned char *pOutBuffer, size_t nInputSize, size_t nMaxOutBufferSize, const unsigned int nFlags);
+size_t apultra_decompress(const unsigned char *pInputData, unsigned char *pOutBuffer, size_t nInputSize, size_t nMaxOutBufferSize, size_t nDictionarySize, const unsigned int nFlags);
 
 #ifdef __cplusplus
 }
