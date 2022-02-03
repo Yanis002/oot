@@ -199,7 +199,7 @@ build/undefined_syms.txt: undefined_syms.txt
 	$(CPP) $(CPPFLAGS) $< > build/undefined_syms.txt
 
 clean:
-	$(RM) -r $(ROM) $(ELF) build
+	$(RM) -r $(ROM) $(ROMC) $(ELF) build
 
 assetclean:
 	$(RM) -r $(ASSET_BIN_DIRS)
@@ -209,6 +209,7 @@ assetclean:
 
 distclean: clean assetclean
 	$(RM) -r baserom/
+	$(RM) -r cache/yaz
 	$(MAKE) -C tools distclean
 
 setup:
@@ -221,7 +222,7 @@ resources: $(ASSET_FILES_OUT)
 test: $(ROM)
 	$(EMULATOR) $(EMU_FLAGS) $<
 
-.PHONY: all clean setup test distclean assetclean
+.PHONY: all clean setup test distclean assetclean compress
 
 #### Various Recipes ####
 
