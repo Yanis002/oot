@@ -207,7 +207,7 @@ build/undefined_syms.txt: undefined_syms.txt
 	$(CPP) $(CPPFLAGS) $< > build/undefined_syms.txt
 
 clean:
-	$(RM) -r $(ROM) $(ROMC) $(ELF) build
+	$(RM) -r $(ROM) $(ROMC) $(PATCHED_WAD) $(ELF) build
 
 assetclean:
 	$(RM) -r $(ASSET_BIN_DIRS)
