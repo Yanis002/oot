@@ -1,6 +1,3 @@
-/**
- * Matching dmadata layout for PAL MQ Debug
- */
 DEFINE_DMA_ENTRY(makerom)
 DEFINE_DMA_ENTRY(boot)
 DEFINE_DMA_ENTRY(dmadata)

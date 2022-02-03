@@ -56,3 +56,4 @@ graphs/
 .python-version
 assets_custom.py
 assets_custom/
+cache/

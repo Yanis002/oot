@@ -5,7 +5,7 @@ MAKEFLAGS += --no-builtin-rules
 # If COMPARE is 1, check the output md5sum after building
 COMPARE ?= 1
 # If NON_MATCHING is 1, define the NON_MATCHING C flag when building
-NON_MATCHING ?= 0
+NON_MATCHING ?= 1
 # If ORIG_COMPILER is 1, compile with QEMU_IRIX and the original compiler
 ORIG_COMPILER ?= 0
 
@@ -98,6 +98,7 @@ endif
 
 # ROM image
 ROM := zelda_ocarina_mq_dbg.z64
+ROMC := zelda_ocarina_mq_dbg_compressed.z64
 ELF := $(ROM:.z64=.elf)
 # description of ROM segments
 SPEC := spec
@@ -176,6 +177,11 @@ ifeq ($(COMPARE),1)
 	@md5sum $(ROM)
 	@md5sum -c checksum.md5
 endif
+
+compress: $(ROMC)
+
+$(ROMC): $(ROM)
+	python3 tools/z64compress_wrapper.py --cache cache --threads $(shell nproc) $< $@ $(ELF) build/$(SPEC)
 
 $(ROM): $(ELF)
 	$(ELF2ROM) -cic 6105 $< $@
