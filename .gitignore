@@ -54,11 +54,7 @@ graphs/
 
 # Per-user configuration
 .python-version
-tools/gzinject
-tools/z64compress/z64compress
-tools/z64compress/o
-tools/z64compress/bin
 common-key.bin
 *.wad
-cache/
-test-fast64.py
+cache/yaz
+assets_custom/
