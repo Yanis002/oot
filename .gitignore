@@ -59,4 +59,3 @@ assets_custom.py
 cache/
 *.wad
 common-key.bin
-tools/z64compress

@@ -83,6 +83,8 @@ static bool parse_flags(char *str, unsigned int *flags)
             f |= FLAG_OBJECT;
         else if (strcmp(str, "RAW") == 0)
             f |= FLAG_RAW;
+        else if (strcmp(str, "NOLOAD") == 0)
+            f |= FLAG_NOLOAD;
         else
             return false;
 
@@ -138,6 +140,7 @@ static const char *const stmtNames[] =
     [STMT_stack]     = "stack",
     [STMT_increment] = "increment",
     [STMT_pad_text]  = "pad_text",
+    [STMT_compress] = "compress",
 };
 
 void parse_rom_spec(char *spec, struct Segment **segments, int *segment_count)
@@ -177,6 +180,7 @@ void parse_rom_spec(char *spec, struct Segment **segments, int *segment_count)
                     util_fatal_error("line %i: duplicate '%s' statement", lineNum, stmtName);
 
                 currSeg->fields |= 1 << stmt;
+                currSeg->compress = false;
 
                 // statements valid within a segment definition
                 switch (stmt)
@@ -241,6 +245,9 @@ void parse_rom_spec(char *spec, struct Segment **segments, int *segment_count)
                     break;
                 case STMT_pad_text:
                     currSeg->includes[currSeg->includesCount - 1].linkerPadding += 0x10;
+                    break;
+                case STMT_compress:
+                    currSeg->compress = true;
                     break;
                 default:
                     fprintf(stderr, "warning: '%s' is not implemented\n", stmtName);
