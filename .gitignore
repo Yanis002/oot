@@ -55,4 +55,8 @@ graphs/
 # Per-user configuration
 .python-version
 assets_custom.py
-assets_custom/
+!assets_custom/objects/object_poisoned_water
+cache/
+*.wad
+common-key.bin
+tools/z64compress

@@ -1,5 +1,50 @@
 # The Legend of Zelda: Ocarina of Time
 
+## Poison/Healing Water Actor - Version 1.0
+
+## General Stuff
+This custom actor was made for the Hylian Modding Community Project, [more informations on Discord](https://discord.gg/nGFZ394)
+
+## Documentation
+ACTOR ID: 0x1
+OBJECT ID: 0x4
+
+PARAMETERS:
+0000 0000 0011 1111 - Switch Flag       - 0x003F, ``params & 0x3F``
+0000 0001 1100 0000 - Default Color Array Index - 0x01C0, ``(params >> 6) & 0x7``
+0000 1110 0000 0000 - Size              - 0x0E00, ``(params >> 9) & 0x3``
+1111 0000 0000 0000 - Amount of Damages - 0xF000, ``(params >> 12) & 0xF`` - 1 for 1/4 hearts
+
+Z-ROTATION:
+0000 0000 0000 1111 - Frequency (base frequency) - 0x000F, ``rot.z & 0x000F`` - 1 for 1 second
+0000 0000 1111 0000 - Divisor (increases speed)  - 0x00F0, ``rot.z & 0x00F0`` - 1 for 1 sec, 2 for 0.5 secs, ...
+0000 0001 0000 0000 - Mode: Poison to Heal if Switch Flag's set - ``(rot.z >> 8) & 0x1`` - 0: disable heal mode, 1: enable heal mode
+0000 1110 0000 0000 - Healing Water Color Index - ``(rot.z >> 9) & 0x7``
+
+## Example of Usage
+``{ Actor ID,                 X,    Y,   Z,  rX,  rY,   rZ, Params },``
+``{ ACTOR_BG_POISONED_WATER, -3, -125, 137, 0x0, 0x0, 0x31, 0x1501 },``
+
+--- Parameters: 0x1501 = 0001 0101 0000 0001 ---
+Switch Flag: 1
+Default Color Array Index: 4
+Size: 2
+Amount of Damages: 1 (corresponds to 1/4 hearts)
+
+--- Z-Rotation: 0x0031 = 0000 0000 0011 0001 ---
+Frequency (base frequency): 1 (corresponds to 1 second)
+Divisor (increases speed): 1 (keep the current frequency of damage dealing)
+Mode: Poison Only
+Healing Water Color Index: 0
+
+## Additionnal Informations
+- If you choose the poison only mode: Healing Water Color Index and Switch Flag not used
+- The divisor bits are only meant to increase the frequency, set it to 1 if you need to increase the frequency
+- In this context "Frequency" means how much time do you want between two damage dealt to the Player
+- If you deal a positive amount of damages it will heal Link
+- poisonColors[] & healColors[] are the same but that's intended to allow more customisation
+- Contact Yanis on the Hylian Modding Discord if you have any issues or questions
+
 [![Build Status][jenkins-badge]][jenkins] [![Decompilation Progress][progress-badge]][progress] [![Contributors][contributors-badge]][contributors] [![Discord Channel][discord-badge]][discord]
 
 [jenkins]: https://jenkins.deco.mp/job/OOT/job/master
