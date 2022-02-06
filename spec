@@ -3842,6 +3842,7 @@ endseg
 
 beginseg
     name "ovl_Bg_Poisoned_Water"
+    compress
     include "build/src/overlays/actors/ovl_Bg_Poisoned_Water/z_bg_poisoned_water.o"
     include "build/src/overlays/actors/ovl_Bg_Poisoned_Water/ovl_Bg_Poisoned_Water_reloc.o"
 endseg
@@ -6903,6 +6904,7 @@ endseg
 
 beginseg
     name "object_poisoned_water"
+    compress
     romalign 0x1000
     include "build/assets/objects/object_poisoned_water/object_poisoned_water.o"
     number 6
