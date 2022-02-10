@@ -192,26 +192,8 @@ wad:
 	gzinject -a inject -w $(BASE_WAD) -m $(ROMC) -o $(PATCHED_WAD) -p $(GZI_PATCH)
 	$(RM) -r wadextract
 
-$(ROMC): $(ROM)
-	python3 tools/z64compress_wrapper.py --cache cache --threads $(shell nproc) $< $@ $(ELF) build/$(SPEC)
-
-$(ROM): $(ELF)
-	$(ELF2ROM) -cic 6105 $< $@
-
-$(ELF): $(TEXTURE_FILES_OUT) $(ASSET_FILES_OUT) $(O_FILES) build/ldscript.txt build/undefined_syms.txt
-	$(LD) -T build/undefined_syms.txt -T build/ldscript.txt --no-check-sections --accept-unknown-input-arch --emit-relocs -Map build/z64.map -o $@
-
-build/$(SPEC): $(SPEC)
-	$(CPP) $(CPPFLAGS) $< > $@
-
-build/ldscript.txt: build/$(SPEC)
-	$(MKLDSCRIPT) $< $@
-
-build/undefined_syms.txt: undefined_syms.txt
-	$(CPP) $(CPPFLAGS) $< > build/undefined_syms.txt
-
 clean:
-	$(RM) -r $(ROM) $(ROMC) $(PATCHED_WAD) $(ELF) build
+	$(RM) -r $(ROM) $(ELF) build
 
 assetclean:
 	$(RM) -r $(ASSET_BIN_DIRS)
@@ -221,7 +203,6 @@ assetclean:
 
 distclean: clean assetclean
 	$(RM) -r baserom/
-	$(RM) -r cache/yaz
 	$(MAKE) -C tools distclean
 
 setup:
@@ -243,6 +224,9 @@ $(ROM): $(ELF)
 $(ELF): $(TEXTURE_FILES_OUT) $(ASSET_FILES_OUT) $(O_FILES) $(OVL_RELOC_FILES) build/ldscript.txt build/undefined_syms.txt
 	$(LD) -T build/undefined_syms.txt -T build/ldscript.txt --no-check-sections --accept-unknown-input-arch --emit-relocs -Map build/z64.map -o $@
 
+$(ROMC): $(ROM)
+	python3 tools/z64compress_wrapper.py --cache cache --threads $(shell nproc) $< $@ $(ELF) build/$(SPEC)
+
 ## Order-only prerequisites 
 # These ensure e.g. the O_FILES are built before the OVL_RELOC_FILES.
 # The intermediate phony targets avoid quadratically-many dependencies between the targets and prerequisites.
@@ -254,7 +238,6 @@ asset_files: $(TEXTURE_FILES_OUT) $(ASSET_FILES_OUT)
 $(O_FILES): | asset_files
 
 .PHONY: o_files asset_files
-
 
 build/$(SPEC): $(SPEC)
 	$(CPP) $(CPPFLAGS) $< > $@
