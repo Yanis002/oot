@@ -19,23 +19,48 @@ PARAMETERS:
 ```
 
 ```
+X-ROTATION: (useless if Z-Rot's bit 0x1000 set to 0)
+1111 1111 0000 0000 - Poison Color R - ``(rot.x >> 8) & 0xFF``
+0000 0000 1111 1111 - Poison Color G - ``rot.x & 0xFF``
+```
+
+```
+Y-ROTATION: (useless if Z-Rot's bit 0x1000 set to 0)
+1111 1111 0000 0000 - Poison Color B - ``(rot.y >> 8) & 0xFF``
+0000 0000 1111 1111 - Poison Color A (32 will set it to 128) - ``rot.y & 0xFF``
+```
+
+```
 Z-ROTATION:
 0000 0000 0000 1111 - Frequency (base frequency) - 0x000F, ``rot.z & 0x000F`` - 1 for 1 second
 0000 0000 1111 0000 - Divisor (increases speed)  - 0x00F0, ``rot.z & 0x00F0`` - 1 for 1 sec, 2 for 0.5 secs, ...
 0000 0001 0000 0000 - Mode: Poison to Heal if Switch Flag's set - ``(rot.z >> 8) & 0x1`` - 0: disable heal mode, 1: enable heal mode
 0000 1110 0000 0000 - Healing Water Color Index - ``(rot.z >> 9) & 0x7``
+0001 0000 0000 0000 - Set custom RGBA poison color (see X/Y rotations) - ``(rot.z >> 12) & 0x1``
 ```
 
 ## Example of Usage
-``{ Actor ID,                 X,    Y,   Z,  rX,  rY,   rZ, Params },``
-``{ ACTOR_BG_POISONED_WATER, -3, -125, 137, 0x0, 0x0, 0x31, 0x1501 },``
+``{ Actor ID,                 X,    Y,   Z,     rX,   rY,     rZ, Params },``
+``{ ACTOR_BG_POISONED_WATER, -3, -125, 137, 0x8000, 0x20, 0x1031, 0x1501 },``
 
 ```
 --- Parameters: 0x1501 = 0001 0101 0000 0001 ---
 Switch Flag: 1
-Default Color Array Index: 4
+Default Color Array Index: 4 (overriden by Z-Rot's custom color bit)
 Size: 2
 Amount of Damages: 1 (corresponds to 1/4 hearts)
+```
+
+```
+--- X-Rotation: 0x8000 = 1000 0000 0000 0000 ---
+Color R = 128
+Color B = 0
+```
+
+```
+--- Y-Rotation: 0x0020 = 0000 0000 0010 0000 ---
+Color B = 0
+Alpha = 32 (in-game: 128)
 ```
 
 ```
@@ -52,6 +77,10 @@ Healing Water Color Index: 0
 - In this context "Frequency" means how much time do you want between two damage dealt to the Player
 - If you deal a positive amount of damages it will heal Link
 - poisonColors[] & healColors[] are the same but that's intended to allow more customisation
+- The poisonColors[] array will be overriden by the custom color if it's enabled
+- With that mode, the Alpha set in the Y-Rot will be multiplied by 4 later in the code (see examples)
+- Small note for hexadecimal newbies: ``0x0008 == 0x8`` but ``0x8000 != 0x8``
+- If the poison color is the same as the heal color the actor will make a noise to tell the user there's an issue (NA_SE_VO_Z1_CRY_0)
 - Contact Yanis on the Hylian Modding Discord if you have any issues or questions
 
 [![Build Status][jenkins-badge]][jenkins] [![Decompilation Progress][progress-badge]][progress] [![Contributors][contributors-badge]][contributors] [![Discord Channel][discord-badge]][discord]
