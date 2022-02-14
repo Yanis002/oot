@@ -41,6 +41,7 @@ Z-ROTATION:
 
 ## Example of Usage
 ``{ Actor ID,                 X,    Y,   Z,     rX,   rY,     rZ, Params },``
+
 ``{ ACTOR_BG_POISONED_WATER, -3, -125, 137, 0x8000, 0x20, 0x1031, 0x1501 },``
 
 ```
