@@ -38,7 +38,7 @@ Amount of Damages: 1 (corresponds to 1/4 hearts)
 
 --- X-Rotation: 0x8000 = 1000 0000 0000 0000 ---
 Color R = 128
-Color B = 0
+Color G = 0
 
 --- Y-Rotation: 0x0020 = 0000 0000 0010 0000 ---
 Color B = 0
