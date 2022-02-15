@@ -10,6 +10,9 @@ ACTOR ID: 0x1
 
 OBJECT ID: 0x4
 
+In order to use this actor, copy the ``object_poisoned_water`` folder from ``assets_custom/objects`` and paste it in ``assets/objects``.
+
+
 ```
 PARAMETERS:
 0000 0000 0011 1111 - Switch Flag       - 0x003F, ``params & 0x3F``
