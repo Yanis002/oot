@@ -136,12 +136,16 @@ static ItemEquips sNewSaveEquips = {
 };
 
 static Inventory sNewSaveInventory = {
-    { 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF,
-      0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF }, // items
+    { 
+        ITEM_NONE, ITEM_NONE, ITEM_NONE, ITEM_NONE, ITEM_NONE, ITEM_NONE,
+        ITEM_NONE, ITEM_NONE, ITEM_NONE, ITEM_HOOKSHOT, ITEM_NONE, ITEM_NONE,
+        ITEM_NONE, ITEM_NONE, ITEM_NONE, ITEM_NONE, ITEM_NONE, ITEM_NONE,
+        ITEM_NONE, ITEM_NONE, ITEM_NONE, ITEM_NONE, ITEM_NONE, ITEM_NONE
+    },                                                                          // items
     { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },                         // ammo
-    0x1100,                                                                     // equipment
+    0x1733,                                                                     // equipment
     0,                                                                          // upgrades
-    0,                                                                          // questItems
+    0x01C0020,                                                                  // questItems
     { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },             // dungeonItems
     {
         0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF,
@@ -152,6 +156,22 @@ static Inventory sNewSaveInventory = {
 };
 
 static u16 sNewSaveChecksum = 0;
+
+// Sets flags to skip some cutscenes
+void Sram_SetFlags(){
+    // saria greeting cs
+    gSaveContext.infTable[0] |= 1;
+    // open door of time
+    gSaveContext.eventChkInf[4] |= 0x800;
+    // master sword chamber cs
+    gSaveContext.eventChkInf[4] |= 0x8000;
+    // first time adult ganondorf cs
+    gSaveContext.eventChkInf[4] |= 0x20;
+    // post light medallion cs
+    gSaveContext.eventChkInf[12] |= 0x20;
+    // move sheik from pedestal
+    gSaveContext.eventChkInf[5] |= 0x20;
+}
 
 /**
  *  Initialize new save.
@@ -167,6 +187,8 @@ void Sram_InitNewSave(void) {
     SAVE_PLAYER_DATA = sNewSavePlayerData;
     gSaveContext.equips = sNewSaveEquips;
     gSaveContext.inventory = sNewSaveInventory;
+
+    Sram_SetFlags();
 
     temp->checksum = sNewSaveChecksum;
     gSaveContext.horseData.scene = SCENE_SPOT00;
@@ -228,7 +250,7 @@ static Inventory sDebugSaveInventory = {
     { 50, 50, 10, 30, 1, 1, 30, 1, 50, 1, 1, 1, 1, 1, 1, 1 },       // ammo
     0x7777,                                                         // equipment
     0x125249,                                                       // upgrades
-    0x1E3FFFF,                                                      // questItems
+    0x1E3FFE0,                                                      // questItems
     { 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 }, // dungeonItems
     { 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8 },    // dungeonKeys
     0,                                                              // defenseHearts
@@ -256,6 +278,8 @@ void Sram_InitDebugSave(void) {
     SAVE_PLAYER_DATA = sDebugSavePlayerData;
     gSaveContext.equips = sDebugSaveEquips;
     gSaveContext.inventory = sDebugSaveInventory;
+
+    Sram_SetFlags();
 
     temp->checksum = sDebugSaveChecksum;
     gSaveContext.horseData.scene = SCENE_SPOT00;
@@ -681,10 +705,10 @@ void Sram_InitSave(FileChooseContext* fileChooseCtx, SramContext* sramCtx) {
         Sram_InitDebugSave();
     }
 
-    gSaveContext.entranceIndex = 0xBB;
+    gSaveContext.entranceIndex = 0x272;
     gSaveContext.linkAge = LINK_AGE_CHILD;
     gSaveContext.dayTime = 0x6AAB;
-    gSaveContext.cutsceneIndex = 0xFFF1;
+    gSaveContext.cutsceneIndex = 0xFFF0;
 
     if (fileChooseCtx->buttonIndex == 0) {
         gSaveContext.cutsceneIndex = 0;

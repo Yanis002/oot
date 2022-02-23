@@ -73,6 +73,8 @@ void BgTokiSwd_Init(Actor* thisx, GlobalContext* globalCtx) {
     BgTokiSwd_SetupAction(this, func_808BAF40);
 
     if (LINK_IS_ADULT) {
+        // give prelude when adult
+        Item_Give(globalCtx, ITEM_SONG_PRELUDE);
         this->actor.draw = NULL;
     }
 

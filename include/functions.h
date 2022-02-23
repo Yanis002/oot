@@ -1315,6 +1315,7 @@ void SkinMatrix_SetTranslateRotateZYX(MtxF* dest, s16 rotX, s16 rotY, s16 rotZ, 
 Mtx* SkinMatrix_MtxFToNewMtx(GraphicsContext* gfxCtx, MtxF* src);
 void SkinMatrix_SetRotateAxis(MtxF* mf, s16 angle, f32 axisX, f32 axisY, f32 axisZ);
 void Sram_InitNewSave(void);
+void Sram_SetFlags();
 void Sram_InitDebugSave(void);
 void Sram_OpenSave(SramContext* sramCtx);
 void Sram_WriteSave(SramContext* sramCtx);
