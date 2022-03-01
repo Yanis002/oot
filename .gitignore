@@ -48,6 +48,7 @@ graphs/
 *.fbx
 !*_custom*
 .extracted-assets.json
+assets_custom/
 
 # Docs
 !docs/tutorial/
@@ -55,7 +56,6 @@ graphs/
 # Per-user configuration
 .python-version
 assets_custom.py
-assets_custom/
 cache/
 *.wad
 z64compress/

@@ -2854,7 +2854,8 @@ s32 func_80836670(Player* this, GlobalContext* globalCtx) {
         this->actor.bgCheckFlags &= ~BGCHECKFLAG_GROUND;
         this->hoverBootsTimer = 0;
         this->unk_6AE |= 0x43;
-        func_80832698(this, NA_SE_VO_LI_LASH);
+        if (LINK_IS_CHILD) func_8002F7DC(&this->actor, NA_SE_VO_LI_SWORD_N_KID);
+        else func_80832698(this, NA_SE_VO_LI_LASH);
         return 1;
     }
 
@@ -9901,6 +9902,13 @@ void Player_UpdateCommon(Player* this, GlobalContext* globalCtx, Input* input) {
     s32 pad;
 
     sControlInput = input;
+
+    // Adult/Child switch
+    if((CHECK_BTN_ALL(sControlInput->cur.button, BTN_L + BTN_DUP))){
+        globalCtx->nextEntranceIndex = gSaveContext.entranceIndex;
+        globalCtx->linkAgeOnLoad = !gSaveContext.linkAge;
+        globalCtx->sceneLoadFlag = 0x14; 
+    }
 
     if (this->unk_A86 < 0) {
         this->unk_A86++;
