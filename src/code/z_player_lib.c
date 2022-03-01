@@ -703,8 +703,6 @@ Color_RGB8 sGauntletColors[] = {
 Gfx* sBootDListGroups[][2] = {
     { gLinkAdultLeftIronBootDL, gLinkAdultRightIronBootDL },
     { gLinkAdultLeftHoverBootDL, gLinkAdultRightHoverBootDL },
-    { gLinkChildLeftIronBootDL, gLinkChildRightIronBootDL },
-    { gLinkChildLeftHoverBootDL, gLinkChildRightHoverBootDL },
 };
 
 void func_8008F470(GlobalContext* globalCtx, void** skeleton, Vec3s* jointTable, s32 dListCount, s32 lod, s32 tunic,
