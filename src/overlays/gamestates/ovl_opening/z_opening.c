@@ -7,12 +7,14 @@
 #include "global.h"
 
 void Opening_SetupTitleScreen(OpeningContext* this) {
-    gSaveContext.gameMode = 1;
+    gSaveContext.gameMode = 0;
     this->state.running = false;
-    gSaveContext.linkAge = LINK_AGE_ADULT;
+    gSaveContext.linkAge = LINK_AGE_CHILD;
     Sram_InitDebugSave();
-    gSaveContext.cutsceneIndex = 0xFFF3;
-    gSaveContext.sceneSetupIndex = 7;
+    gSaveContext.dayTime = 0x8000;
+    gSaveContext.entranceIndex = 0x33;
+    // gSaveContext.cutsceneIndex = 0xFFF3;
+    // gSaveContext.sceneSetupIndex = 7;
     SET_NEXT_GAMESTATE(&this->state, Gameplay_Init, GlobalContext);
 }
 

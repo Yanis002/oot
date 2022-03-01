@@ -9133,20 +9133,6 @@ beginseg
 endseg
 
 beginseg
-    name "entra_scene"
-    romalign 0x1000
-    include "build/assets/scenes/overworld/entra/entra_scene.o"
-    number 2
-endseg
-
-beginseg
-    name "entra_room_0"
-    romalign 0x1000
-    include "build/assets/scenes/overworld/entra/entra_room_0.o"
-    number 3
-endseg
-
-beginseg
     name "moribossroom_scene"
     romalign 0x1000
     include "build/assets/scenes/dungeons/moribossroom/moribossroom_scene.o"
@@ -10467,4 +10453,76 @@ beginseg
     name "softsprite_matrix_static"
     romalign 0x1000
     include "build/baserom/softsprite_matrix_static.o"
+endseg
+
+beginseg
+    name "entra_scene"
+    romalign 0x1000
+    include "build/assets/scenes/overworld/entra/entra_scene_main.o"
+    include "build/assets/scenes/overworld/entra/entra_scene_col.o"
+    include "build/assets/scenes/overworld/entra/entra_scene_tex.o"
+    number 2
+endseg
+
+beginseg
+    name "entra_room_0"
+    romalign 0x1000
+    include "build/assets/scenes/overworld/entra/entra_room_0_main.o"
+    include "build/assets/scenes/overworld/entra/entra_room_0_model_info.o"
+    include "build/assets/scenes/overworld/entra/entra_room_0_model.o"
+    number 3
+endseg
+
+beginseg
+    name "entra_room_1"
+    romalign 0x1000
+    include "build/assets/scenes/overworld/entra/entra_room_1_main.o"
+    include "build/assets/scenes/overworld/entra/entra_room_1_model_info.o"
+    include "build/assets/scenes/overworld/entra/entra_room_1_model.o"
+    number 3
+endseg
+
+beginseg
+    name "entra_room_2"
+    romalign 0x1000
+    include "build/assets/scenes/overworld/entra/entra_room_2_main.o"
+    include "build/assets/scenes/overworld/entra/entra_room_2_model_info.o"
+    include "build/assets/scenes/overworld/entra/entra_room_2_model.o"
+    number 3
+endseg
+
+beginseg
+    name "entra_room_3"
+    romalign 0x1000
+    include "build/assets/scenes/overworld/entra/entra_room_3_main.o"
+    include "build/assets/scenes/overworld/entra/entra_room_3_model_info.o"
+    include "build/assets/scenes/overworld/entra/entra_room_3_model.o"
+    number 3
+endseg
+
+beginseg
+    name "entra_room_4"
+    romalign 0x1000
+    include "build/assets/scenes/overworld/entra/entra_room_4_main.o"
+    include "build/assets/scenes/overworld/entra/entra_room_4_model_info.o"
+    include "build/assets/scenes/overworld/entra/entra_room_4_model.o"
+    number 3
+endseg
+
+beginseg
+    name "entra_room_5"
+    romalign 0x1000
+    include "build/assets/scenes/overworld/entra/entra_room_5_main.o"
+    include "build/assets/scenes/overworld/entra/entra_room_5_model_info.o"
+    include "build/assets/scenes/overworld/entra/entra_room_5_model.o"
+    number 3
+endseg
+
+beginseg
+    name "entra_room_6"
+    romalign 0x1000
+    include "build/assets/scenes/overworld/entra/entra_room_6_main.o"
+    include "build/assets/scenes/overworld/entra/entra_room_6_model_info.o"
+    include "build/assets/scenes/overworld/entra/entra_room_6_model.o"
+    number 3
 endseg

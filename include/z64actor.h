@@ -108,8 +108,8 @@ typedef struct {
 #define ACTOR_FLAG_6 (1 << 6)
 #define ACTOR_FLAG_7 (1 << 7)
 #define ACTOR_FLAG_8 (1 << 8)
-#define ACTOR_FLAG_9 (1 << 9)
-#define ACTOR_FLAG_10 (1 << 10)
+#define ACTOR_FLAG_9 (1 << 9) // hookshot: actor to player
+#define ACTOR_FLAG_10 (1 << 10) // hookshot: player to actor
 #define ACTOR_FLAG_ENKUSA_CUT (1 << 11)
 #define ACTOR_FLAG_12 (1 << 12)
 #define ACTOR_FLAG_13 (1 << 13)

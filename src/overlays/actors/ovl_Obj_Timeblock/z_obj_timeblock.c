@@ -8,6 +8,7 @@
 #include "objects/object_timeblock/object_timeblock.h"
 
 #define FLAGS (ACTOR_FLAG_0 | ACTOR_FLAG_4 | ACTOR_FLAG_25 | ACTOR_FLAG_27)
+#define SWITCH(params)(params & 0x3F)
 
 void ObjTimeblock_Init(Actor* thisx, GlobalContext* globalCtx);
 void ObjTimeblock_Destroy(Actor* thisx, GlobalContext* globalCtx);
@@ -270,14 +271,16 @@ void ObjTimeblock_SetupAltBehaviorVisible(ObjTimeblock* this) {
 }
 
 void ObjTimeblock_AltBehaviorVisible(ObjTimeblock* this, GlobalContext* globalCtx) {
-    if (this->songObserverFunc(this, globalCtx) && this->demoEffectTimer <= 0) {
+    u8 songMode = this->songObserverFunc(this, globalCtx);
+    u8 flagMode = !this->unk_176 && this->isVisible ? true : false;
+    if ((songMode || flagMode) && this->demoEffectTimer <= 0) {
         this->demoEffectFirstPartTimer = 12;
         ObjTimeblock_SpawnDemoEffect(this, globalCtx);
         this->demoEffectTimer = 160;
         OnePointCutscene_Attention(globalCtx, &this->dyna.actor);
         // "Time Block Attention Camera (frame counter)"
         osSyncPrintf("◯◯◯◯ Time Block 注目カメラ (frame counter  %d)\n", globalCtx->state.frames);
-        ObjTimeblock_ToggleSwitchFlag(globalCtx, this->dyna.actor.params & 0x3F);
+        Flags_UnsetSwitch(globalCtx, SWITCH(this->dyna.actor.params));
     }
 
     func_80BA06AC(this, globalCtx);
