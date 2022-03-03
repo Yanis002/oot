@@ -12,7 +12,7 @@ void Opening_SetupTitleScreen(OpeningContext* this) {
     gSaveContext.linkAge = LINK_AGE_CHILD;
     Sram_InitDebugSave();
     gSaveContext.dayTime = 0x8000;
-    gSaveContext.entranceIndex = 0x276; // 0x33 spawn 1, 0x279 spawn 2, 0x26E spawn 3
+    gSaveContext.entranceIndex = 0x276; // 0x33 spawn 1, 0x276 spawn 2, 0x26E spawn 3
     // gSaveContext.cutsceneIndex = 0xFFF3;
     // gSaveContext.sceneSetupIndex = 7;
     SET_NEXT_GAMESTATE(&this->state, Gameplay_Init, GlobalContext);

@@ -61,6 +61,10 @@ void DoorWarp1_Init(Actor* thisx, GlobalContext* globalCtx) {
     DoorWarp1* this = (DoorWarp1*)thisx;
     GlobalContext* globalCtx2 = globalCtx;
 
+    if ((globalCtx->sceneNum == SCENE_ENTRA) && !Flags_GetTreasure(globalCtx, 0x1)){
+        Actor_Kill(&this->actor);
+    }
+
     this->unk_1B8 = 0;
     this->unk_1B4 = 0.0f;
     Actor_ProcessInitChain(&this->actor, sInitChain);
@@ -494,6 +498,7 @@ void DoorWarp1_ChildWarpOut(DoorWarp1* this, GlobalContext* globalCtx) {
     this->warpTimer++;
 
     if (sWarpTimerTarget < this->warpTimer && gSaveContext.nextCutsceneIndex == 0xFFEF) {
+        // It ’s time to come, so it ’s over.
         osSyncPrintf("\n\n\nじかんがきたからおーしまい fade_direction=[%d]", globalCtx->sceneLoadFlag, 0x14);
 
         if (globalCtx->sceneNum == SCENE_DDAN_BOSS) {
@@ -519,6 +524,9 @@ void DoorWarp1_ChildWarpOut(DoorWarp1* this, GlobalContext* globalCtx) {
             }
         } else if (globalCtx->sceneNum == SCENE_BDAN_BOSS) {
             globalCtx->nextEntranceIndex = 0x10E;
+            gSaveContext.nextCutsceneIndex = 0;
+        } else if (globalCtx->sceneNum == SCENE_ENTRA) {
+            globalCtx->nextEntranceIndex = 0x276;
             gSaveContext.nextCutsceneIndex = 0;
         }
         osSyncPrintf("\n\n\nおわりおわり");

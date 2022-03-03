@@ -126,9 +126,12 @@ void ObjTimeblock_Init(Actor* thisx, GlobalContext* globalCtx) {
     this->unk_175 = ((this->dyna.actor.params >> 15) & 1) ? true : false;
     this->isVisible = ObjTimeblock_CalculateIsVisible(this);
 
+    osSyncPrintf("isVisible: %d\n", this->isVisible);
+
     if (!((this->dyna.actor.params >> 10) & 1)) {
         ObjTimeblock_SetupNormal(this);
     } else if (this->isVisible) {
+        this->unk_176 = this->unk_174;
         ObjTimeblock_SetupAltBehaviorVisible(this);
     } else {
         ObjTimeblock_SetupAltBehaviourNotVisible(this);

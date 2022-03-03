@@ -8,7 +8,7 @@
 #include "objects/object_rr/object_rr.h"
 #include "vt.h"
 
-#define FLAGS (ACTOR_FLAG_0 | ACTOR_FLAG_2 | ACTOR_FLAG_4 | ACTOR_FLAG_5 | ACTOR_FLAG_10)
+#define FLAGS (ACTOR_FLAG_0 | ACTOR_FLAG_2 | ACTOR_FLAG_4 | ACTOR_FLAG_5 | ACTOR_FLAG_10 | ACTOR_FLAG_7)
 
 #define RR_MESSAGE_SHIELD (1 << 0)
 #define RR_MESSAGE_TUNIC (1 << 1)
@@ -295,32 +295,32 @@ void EnRr_SetupReleasePlayer(EnRr* this, GlobalContext* globalCtx) {
     this->wobbleSizeTarget = 2048.0f;
     tunic = 0;
     shield = 0;
-    if (CUR_EQUIP_VALUE(EQUIP_SHIELD) != 3 /* Mirror shield */) {
-        shield = Inventory_DeleteEquipment(globalCtx, EQUIP_SHIELD);
-        if (shield != 0) {
-            this->eatenShield = shield;
-            this->retreat = true;
-        }
-    }
-    if (CUR_EQUIP_VALUE(EQUIP_TUNIC) != 1 /* Kokiri tunic */) {
-        tunic = Inventory_DeleteEquipment(globalCtx, EQUIP_TUNIC);
-        if (tunic != 0) {
-            this->eatenTunic = tunic;
-            this->retreat = true;
-        }
-    }
+    // if (CUR_EQUIP_VALUE(EQUIP_SHIELD) != 3 /* Mirror shield */) {
+    //     shield = Inventory_DeleteEquipment(globalCtx, EQUIP_SHIELD);
+    //     if (shield != 0) {
+    //         this->eatenShield = shield;
+    //         this->retreat = true;
+    //     }
+    // }
+    // if (CUR_EQUIP_VALUE(EQUIP_TUNIC) != 1 /* Kokiri tunic */) {
+    //     tunic = Inventory_DeleteEquipment(globalCtx, EQUIP_TUNIC);
+    //     if (tunic != 0) {
+    //         this->eatenTunic = tunic;
+    //         this->retreat = true;
+    //     }
+    // }
     player->actor.parent = NULL;
-    switch (EnRr_GetMessage(shield, tunic)) {
-        case RR_MESSAGE_SHIELD:
-            Message_StartTextbox(globalCtx, 0x305F, NULL);
-            break;
-        case RR_MESSAGE_TUNIC:
-            Message_StartTextbox(globalCtx, 0x3060, NULL);
-            break;
-        case RR_MESSAGE_TUNIC | RR_MESSAGE_SHIELD:
-            Message_StartTextbox(globalCtx, 0x3061, NULL);
-            break;
-    }
+    // switch (EnRr_GetMessage(shield, tunic)) {
+    //     case RR_MESSAGE_SHIELD:
+    //         Message_StartTextbox(globalCtx, 0x305F, NULL);
+    //         break;
+    //     case RR_MESSAGE_TUNIC:
+    //         Message_StartTextbox(globalCtx, 0x3060, NULL);
+    //         break;
+    //     case RR_MESSAGE_TUNIC | RR_MESSAGE_SHIELD:
+    //         Message_StartTextbox(globalCtx, 0x3061, NULL);
+    //         break;
+    // }
     osSyncPrintf(VT_FGCOL(YELLOW) "%s[%d] : Rr_Catch_Cancel" VT_RST "\n", "../z_en_rr.c", 650);
     func_8002F6D4(globalCtx, &this->actor, 4.0f, this->actor.shape.rot.y, 12.0f, 8);
     if (this->actor.colorFilterTimer == 0) {

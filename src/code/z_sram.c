@@ -184,11 +184,11 @@ static SavePlayerData sDebugSavePlayerData = {
     0,                                                  // deaths
     { 0x15, 0x12, 0x17, 0x14, 0x3E, 0x3E, 0x3E, 0x3E }, // playerName ( "LINK" )
     0,                                                  // n64ddFlag
-    0xE0,                                               // healthCapacity
-    0xE0,                                               // health
-    0,                                                  // magicLevel
+    0xA0,                                               // healthCapacity
+    0xA0,                                               // health
+    0x30,                                               // magicLevel
     0x30,                                               // magic
-    150,                                                // rupees
+    420,                                                // rupees
     8,                                                  // swordHealth
     0,                                                  // naviTimer
     1,                                                  // magicAcquired
@@ -213,24 +213,24 @@ static SavePlayerData sDebugSavePlayerData = {
 };
 
 static ItemEquips sDebugSaveEquips = {
-    { ITEM_SWORD_MASTER, ITEM_HAMMER, ITEM_HOOKSHOT, ITEM_OCARINA_FAIRY }, // buttonItems
-    { SLOT_BOW, SLOT_BOMB, SLOT_OCARINA },                          // cButtonSlots
-    0x1232,                                                         // equipment
+    { ITEM_SWORD_KOKIRI, ITEM_NONE, ITEM_NONE, ITEM_NONE }, // buttonItems
+    { SLOT_NONE, SLOT_NONE, SLOT_NONE },                          // cButtonSlots
+    0x1111,                                                         // equipment
 };
 
 static Inventory sDebugSaveInventory = {
     {
-        ITEM_STICK,     ITEM_NUT,           ITEM_BOMB,         ITEM_BOW,         ITEM_ARROW_FIRE,  ITEM_DINS_FIRE,
-        ITEM_SLINGSHOT, ITEM_OCARINA_FAIRY, ITEM_BOMBCHU,      ITEM_HOOKSHOT,    ITEM_ARROW_ICE,   ITEM_FARORES_WIND,
-        ITEM_BOOMERANG, ITEM_LENS,          ITEM_BEAN,         ITEM_NONE,      ITEM_ARROW_LIGHT, ITEM_NAYRUS_LOVE,
-        ITEM_BOTTLE,    ITEM_POTION_RED,    ITEM_POTION_GREEN, ITEM_POTION_BLUE, ITEM_POCKET_EGG,  ITEM_WEIRD_EGG,
+        ITEM_STICK,     ITEM_NUT,    ITEM_BOMB,   ITEM_NONE,     ITEM_NONE, ITEM_NONE,
+        ITEM_SLINGSHOT, ITEM_NONE,   ITEM_NONE,   ITEM_HOOKSHOT, ITEM_NONE, ITEM_FARORES_WIND,
+        ITEM_NONE,      ITEM_LENS,   ITEM_NONE,   ITEM_NONE,     ITEM_NONE, ITEM_NONE,
+        ITEM_BOTTLE,    ITEM_BOTTLE, ITEM_BOTTLE, ITEM_BOTTLE,   ITEM_NONE, ITEM_NONE,
     },                                                              // items
-    { 50, 50, 10, 30, 1, 1, 30, 1, 50, 1, 1, 1, 1, 1, 1, 1 },       // ammo
-    0x7777,                                                         // equipment
+    { 10, 20, 20, 30, 1, 1, 30, 1, 50, 1, 1, 1, 1, 1, 1, 1 },       // ammo
+    0x1111,                                                         // equipment
     0x125249,                                                       // upgrades
     0x0,                                                            // questItems
-    { 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 }, // dungeonItems
-    { 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8 },    // dungeonKeys
+    { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 }, // dungeonItems
+    { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },    // dungeonKeys
     0,                                                              // defenseHearts
     0,                                                              // gsTokens
 };
@@ -268,15 +268,15 @@ void Sram_InitDebugSave(void) {
     gSaveContext.eventChkInf[8] |= 1;
     gSaveContext.eventChkInf[12] |= 0x10;
 
-    if (LINK_AGE_IN_YEARS == YEARS_CHILD) {
-        gSaveContext.equips.buttonItems[0] = ITEM_SWORD_KOKIRI;
-        Inventory_ChangeEquipment(EQUIP_SWORD, 1);
-        if (gSaveContext.fileNum == 0xFF) {
-            gSaveContext.equips.buttonItems[1] = ITEM_SLINGSHOT;
-            gSaveContext.equips.cButtonSlots[0] = SLOT_SLINGSHOT;
-            Inventory_ChangeEquipment(EQUIP_SHIELD, 1);
-        }
-    }
+    // if (LINK_AGE_IN_YEARS == YEARS_CHILD) {
+    //     gSaveContext.equips.buttonItems[0] = ITEM_SWORD_KOKIRI;
+    //     Inventory_ChangeEquipment(EQUIP_SWORD, 1);
+    //     if (gSaveContext.fileNum == 0xFF) {
+    //         gSaveContext.equips.buttonItems[1] = ITEM_SLINGSHOT;
+    //         gSaveContext.equips.cButtonSlots[0] = SLOT_SLINGSHOT;
+    //         Inventory_ChangeEquipment(EQUIP_SHIELD, 1);
+    //     }
+    // }
 
     gSaveContext.entranceIndex = 0xCD;
     gSaveContext.magicLevel = 0;
