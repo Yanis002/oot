@@ -272,6 +272,11 @@ void func_80AFC544(EnSiofuki* this, GlobalContext* globalCtx) {
 void EnSiofuki_Update(Actor* thisx, GlobalContext* globalCtx) {
     EnSiofuki* this = (EnSiofuki*)thisx;
 
+    if(Flags_GetTreasure(globalCtx, this->dyna.actor.params & 0x3F) &&
+        (this->dyna.actor.home.rot.y == 0xA) && (((thisx->params >> 0xC) & 0xF) == EN_SIOFUKI_LOWERING)){
+        Actor_Kill(&this->dyna.actor);
+    }
+
     this->actionFunc(this, globalCtx);
 }
 

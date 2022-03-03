@@ -9,7 +9,7 @@
 #include "overlays/actors/ovl_En_Bom/z_en_bom.h"
 #include "objects/gameplay_keep/gameplay_keep.h"
 
-#define FLAGS (ACTOR_FLAG_0 | ACTOR_FLAG_4 | ACTOR_FLAG_9)
+#define FLAGS (ACTOR_FLAG_0 | ACTOR_FLAG_4 | ACTOR_FLAG_10)
 
 void EnVm_Init(Actor* thisx, GlobalContext* globalCtx);
 void EnVm_Destroy(Actor* thisx, GlobalContext* globalCtx);
@@ -49,7 +49,7 @@ static ColliderCylinderInit sCylinderInit = {
         { 0x00000000, 0x00, 0x00 },
         { 0xFFCFFFFF, 0x00, 0x00 },
         TOUCH_NONE,
-        BUMP_ON,
+        BUMP_ON | BUMP_HOOKABLE,
         OCELEM_ON,
     },
     { 25, 70, 0, { 0, 0, 0 } },
@@ -89,7 +89,7 @@ static ColliderQuadInit sQuadInit2 = {
         { 0x00000000, 0x00, 0x00 },
         { 0xFFCFFFFF, 0x00, 0x00 },
         TOUCH_NONE,
-        BUMP_ON,
+        BUMP_ON | BUMP_HOOKABLE,
         OCELEM_NONE,
     },
     { { { 0.0f, 0.0f, 0.0f }, { 0.0f, 0.0f, 0.0f }, { 0.0f, 0.0f, 0.0f }, { 0.0f, 0.0f, 0.0f } } },

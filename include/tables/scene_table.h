@@ -36,7 +36,7 @@
 /* 0x18 */ DEFINE_SCENE(HAKAdan_bs_scene, none, SCENE_HAKADAN_BS, 24, 0, 0)
 /* 0x19 */ DEFINE_SCENE(ganon_boss_scene, none, SCENE_GANON_BOSS, 0, 0, 0)
 /* 0x1A */ DEFINE_SCENE(ganon_final_scene, none, SCENE_GANON_FINAL, 38, 0, 0)
-/* 0x1B */ DEFINE_SCENE(entra_scene, none, SCENE_ENTRA, 0, 0, 0)
+/* 0x1B */ DEFINE_SCENE(entra_scene, none, SCENE_ENTRA, 19, 0, 0)
 /* 0x1C */ DEFINE_SCENE(entra_n_scene, none, SCENE_ENTRA_N, 0, 0, 0)
 /* 0x1D */ DEFINE_SCENE(enrui_scene, none, SCENE_ENRUI, 0, 0, 0)
 /* 0x1E */ DEFINE_SCENE(market_alley_scene, g_pn_18, SCENE_MARKET_ALLEY, 0, 0, 0)
