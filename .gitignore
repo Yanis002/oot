@@ -56,7 +56,7 @@ assets_custom/
 # Per-user configuration
 .python-version
 assets_custom.py
+assets_custom/
 cache/
 *.wad
-z64compress/
 common-key.bin

@@ -140,6 +140,10 @@ endif
 
 # ROM image
 ROM := zelda_ocarina_mq_dbg.z64
+ROMC := zelda_ocarina_mq_dbg_compressed.z64
+BASE_WAD := zelda_ocarina_base.wad
+PATCHED_WAD := zelda_ocarina_mq_dbg.wad
+GZI_PATCH := tools/gzinject/patches/memory_dpad.gzi
 ELF := $(ROM:.z64=.elf)
 # description of ROM segments
 SPEC := spec
@@ -188,7 +192,7 @@ build/src/code/fault_drawer.o: OPTFLAGS := -O2 -g3
 build/src/code/ucode_disas.o: OPTFLAGS := -O2 -g3
 build/src/code/code_801068B0.o: OPTFLAGS := -g
 build/src/code/code_80106860.o: OPTFLAGS := -g
-build/src/code/code_801067F0.o: OPTFLAGS := -g
+build/src/code/fmodf.o: OPTFLAGS := -g
 
 build/src/libultra/libc/absf.o: OPTFLAGS := -O2 -g3
 build/src/libultra/libc/sqrt.o: OPTFLAGS := -O2 -g3
@@ -232,6 +236,13 @@ ifeq ($(COMPARE),1)
 	@md5sum -c checksum.md5
 endif
 
+compress: $(ROMC)
+
+wad:
+	$(MAKE) compress
+	gzinject -a inject -w $(BASE_WAD) -m $(ROMC) -o $(PATCHED_WAD) -p $(GZI_PATCH)
+	$(RM) -r wadextract
+
 clean:
 	$(RM) -r $(ROM) $(ELF) build
 
@@ -254,8 +265,7 @@ setup:
 test: $(ROM)
 	$(EMULATOR) $(EMU_FLAGS) $<
 
-
-.PHONY: all clean setup test distclean assetclean
+.PHONY: all clean setup test distclean assetclean compress
 
 #### Various Recipes ####
 
@@ -264,6 +274,9 @@ $(ROM): $(ELF)
 
 $(ELF): $(TEXTURE_FILES_OUT) $(ASSET_FILES_OUT) $(O_FILES) $(OVL_RELOC_FILES) build/ldscript.txt build/undefined_syms.txt
 	$(LD) -T build/undefined_syms.txt -T build/ldscript.txt --no-check-sections --accept-unknown-input-arch --emit-relocs -Map build/z64.map -o $@
+
+$(ROMC): $(ROM)
+	python3 tools/z64compress_wrapper.py --cache cache --threads $(shell nproc) $< $@ $(ELF) build/$(SPEC)
 
 ## Order-only prerequisites 
 # These ensure e.g. the O_FILES are built before the OVL_RELOC_FILES.
@@ -276,7 +289,6 @@ asset_files: $(TEXTURE_FILES_OUT) $(ASSET_FILES_OUT)
 $(O_FILES): | asset_files
 
 .PHONY: o_files asset_files
-
 
 build/$(SPEC): $(SPEC)
 	$(CPP) $(CPPFLAGS) $< > $@
