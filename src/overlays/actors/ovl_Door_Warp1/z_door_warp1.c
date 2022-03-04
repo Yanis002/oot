@@ -61,7 +61,9 @@ void DoorWarp1_Init(Actor* thisx, GlobalContext* globalCtx) {
     DoorWarp1* this = (DoorWarp1*)thisx;
     GlobalContext* globalCtx2 = globalCtx;
 
-    if ((globalCtx->sceneNum == SCENE_ENTRA) && !Flags_GetTreasure(globalCtx, 0x1)){
+    osSyncPrintf("prev room: %d\n", globalCtx->roomCtx.prevRoom.num);
+    if (((globalCtx->sceneNum == SCENE_ENTRA) && !Flags_GetTreasure(globalCtx, 0x1) && !(gSaveContext.entranceIndex == 0x276)) ||
+        (globalCtx->roomCtx.prevRoom.num == 1)) {
         Actor_Kill(&this->actor);
     }
 
@@ -166,13 +168,15 @@ void DoorWarp1_SetupWarp(DoorWarp1* this, GlobalContext* globalCtx) {
             DoorWarp1_SetupAction(this, DoorWarp1_AwaitClearFlag);
             break;
         case WARP_DESTINATION:
-            if ((!(gSaveContext.entranceIndex == 0x608 ||  // sacred forest meadow
-                   gSaveContext.entranceIndex == 0x564 ||  // death mountain crater
-                   gSaveContext.entranceIndex == 0x60C ||  // lake hylia
-                   gSaveContext.entranceIndex == 0x610 ||  // desert colossus
-                   gSaveContext.entranceIndex == 0x580) && // graveyard
-                 gSaveContext.sceneSetupIndex < 4) ||
-                (GET_PLAYER(globalCtx)->actor.params & 0xF00) != 0x200) {
+            if (
+            // if ((!(gSaveContext.entranceIndex == 0x608 ||  // sacred forest meadow
+            //        gSaveContext.entranceIndex == 0x564 ||  // death mountain crater
+            //        gSaveContext.entranceIndex == 0x60C ||  // lake hylia
+            //        gSaveContext.entranceIndex == 0x610 ||  // desert colossus
+            //        gSaveContext.entranceIndex == 0x580) && // graveyard
+            //      gSaveContext.sceneSetupIndex < 4) ||
+                (GET_PLAYER(globalCtx)->actor.params & 0xF00) != 0x200 ||
+                !(gSaveContext.entranceIndex == 0x276)) {
                 Actor_Kill(&this->actor);
             }
             if (Actor_WorldDistXZToActor(&player->actor, &this->actor) > 100.0f) {

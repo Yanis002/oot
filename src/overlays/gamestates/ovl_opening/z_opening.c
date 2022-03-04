@@ -13,6 +13,7 @@ void Opening_SetupTitleScreen(OpeningContext* this) {
     Sram_InitDebugSave();
     gSaveContext.dayTime = 0x8000;
     gSaveContext.entranceIndex = 0x276; // 0x33 spawn 1, 0x276 spawn 2, 0x26E spawn 3
+    gSaveContext.unk_13F6 = 0x30;
     // gSaveContext.cutsceneIndex = 0xFFF3;
     // gSaveContext.sceneSetupIndex = 7;
     SET_NEXT_GAMESTATE(&this->state, Gameplay_Init, GlobalContext);
