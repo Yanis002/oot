@@ -215,7 +215,7 @@ void EnBomChu_WaitForRelease(EnBomChu* this, GlobalContext* globalCtx) {
         //Project-A 
         this->actor.world.pos.y = player->actor.world.pos.y;
         //prevent updating X and Z coord
-        Actor_UpdateBgCheckInfo(globalCtx, &this->actor, 0.0f, 0.0f, 0.0f, 4);
+        Actor_UpdateBgCheckInfo(globalCtx, &this->actor, 0.0f, 0.0f, 0.0f, UPDBGCHECKINFO_FLAG_2);
         this->actor.shape.rot.y = player->actor.shape.rot.y;
 
         // rot.y = 0 -> +z (forwards in model space)
@@ -458,22 +458,22 @@ void EnBomChu_Update(Actor* thisx, GlobalContext* globalCtx2) {
             this->actor.yDistToWater = waterY - this->actor.world.pos.y;
 
             if (this->actor.yDistToWater < 0.0f) {
-                if (this->actor.bgCheckFlags & 0x20) {
+                if (this->actor.bgCheckFlags & BGCHECKFLAG_WATER) {
                     EnBomChu_SpawnRipples(this, globalCtx, waterY);
                 }
 
-                this->actor.bgCheckFlags &= ~0x20;
+                this->actor.bgCheckFlags &= ~BGCHECKFLAG_WATER;
             } else {
-                if (!(this->actor.bgCheckFlags & 0x20) && (this->timer != 120)) {
+                if (!(this->actor.bgCheckFlags & BGCHECKFLAG_WATER) && (this->timer != 120)) {
                     EnBomChu_SpawnRipples(this, globalCtx, waterY);
                 } else {
                     EffectSsBubble_Spawn(globalCtx, &this->actor.world.pos, 0.0f, 3.0f, 15.0f, 0.25f);
                 }
 
-                this->actor.bgCheckFlags |= 0x20;
+                this->actor.bgCheckFlags |= BGCHECKFLAG_WATER;
             }
         } else {
-            this->actor.bgCheckFlags &= ~0x20;
+            this->actor.bgCheckFlags &= ~BGCHECKFLAG_WATER;
             this->actor.yDistToWater = BGCHECK_Y_MIN;
         }
     }

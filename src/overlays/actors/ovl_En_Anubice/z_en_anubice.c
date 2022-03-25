@@ -221,7 +221,7 @@ void EnAnubice_Idle(EnAnubice* this, GlobalContext* globalCtx) {
     if (this->actor.shape.yOffset > -2.0f) {
         this->actor.shape.yOffset = 0.0f;
 
-        if (player->swordState != 0) {
+        if (player->meleeWeaponState != 0) {
             this->actionFunc = EnAnubice_SetupShootFireball;
         } else if (this->isPlayerOutOfRange) {
             this->actor.velocity.y = 0.0f;
@@ -337,8 +337,8 @@ void EnAnubice_Die(EnAnubice* this, GlobalContext* globalCtx) {
     rotX = curFrame * -3000.0f;
     rotX = CLAMP_MIN(rotX, -11000.0f);
 
-    Matrix_RotateY(BINANG_TO_RAD(this->actor.shape.rot.y), MTXMODE_NEW);
-    Matrix_RotateX(BINANG_TO_RAD(rotX), MTXMODE_APPLY);
+    Matrix_RotateY(BINANG_TO_RAD_ALT(this->actor.shape.rot.y), MTXMODE_NEW);
+    Matrix_RotateX(BINANG_TO_RAD_ALT(rotX), MTXMODE_APPLY);
     baseFireEffectPos.y = Rand_CenteredFloat(10.0f) + 30.0f;
     Matrix_MultVec3f(&baseFireEffectPos, &rotatedFireEffectPos);
     rotatedFireEffectPos.x += this->actor.world.pos.x + Rand_CenteredFloat(40.0f);
@@ -347,7 +347,7 @@ void EnAnubice_Die(EnAnubice* this, GlobalContext* globalCtx) {
     Actor_SetColorFilter(&this->actor, 0x4000, 128, 0, 8);
     EffectSsEnFire_SpawnVec3f(globalCtx, &this->actor, &rotatedFireEffectPos, 100, 0, 0, -1);
 
-    if ((this->animLastFrame <= curFrame) && (this->actor.bgCheckFlags & 1)) {
+    if ((this->animLastFrame <= curFrame) && (this->actor.bgCheckFlags & BGCHECKFLAG_GROUND)) {
         Math_ApproachF(&this->actor.shape.yOffset, -4230.0f, 0.5f, 300.0f);
         if (this->actor.shape.yOffset < -2000.0f) {
             Item_DropCollectibleRandom(globalCtx, &this->actor, &this->actor.world.pos, 0xC0);
@@ -404,7 +404,7 @@ void EnAnubice_Update(Actor* thisx, GlobalContext* globalCtx) {
                 rotatedKnockbackVelocity.y = 0.0f;
                 rotatedKnockbackVelocity.z = 0.0f;
 
-                Matrix_RotateY(BINANG_TO_RAD(this->actor.shape.rot.y), MTXMODE_NEW);
+                Matrix_RotateY(BINANG_TO_RAD_ALT(this->actor.shape.rot.y), MTXMODE_NEW);
                 Matrix_MultVec3f(&baseKnockbackVelocity, &rotatedKnockbackVelocity);
 
                 this->actor.velocity.x = rotatedKnockbackVelocity.x;
@@ -448,9 +448,12 @@ void EnAnubice_Update(Actor* thisx, GlobalContext* globalCtx) {
     func_8002D7EC(&this->actor);
 
     if (!this->isPlayerOutOfRange) {
-        Actor_UpdateBgCheckInfo(globalCtx, &this->actor, 5.0f, 5.0f, 10.0f, 0x1D);
+        Actor_UpdateBgCheckInfo(globalCtx, &this->actor, 5.0f, 5.0f, 10.0f,
+                                UPDBGCHECKINFO_FLAG_0 | UPDBGCHECKINFO_FLAG_2 | UPDBGCHECKINFO_FLAG_3 |
+                                    UPDBGCHECKINFO_FLAG_4);
     } else {
-        Actor_UpdateBgCheckInfo(globalCtx, &this->actor, 5.0f, 5.0f, 10.0f, 0x1C);
+        Actor_UpdateBgCheckInfo(globalCtx, &this->actor, 5.0f, 5.0f, 10.0f,
+                                UPDBGCHECKINFO_FLAG_2 | UPDBGCHECKINFO_FLAG_3 | UPDBGCHECKINFO_FLAG_4);
     }
 
     if ((this->actionFunc != EnAnubice_SetupDie) && (this->actionFunc != EnAnubice_Die)) {
