@@ -10264,17 +10264,17 @@ void Player_UpdateCommon(Player* this, GlobalContext* globalCtx, Input* input) {
     //file select
     if(CHECK_BTN_ALL(sControlInput->cur.button, BTN_L + BTN_B + BTN_A)){
         Audio_SetCutsceneFlag(0);
-        Audio_PlaySoundGeneral(NA_SE_SY_PIECE_OF_HEART, &D_801333D4, 4, &D_801333E0, &D_801333E0, &D_801333E8);
+        Audio_PlaySoundGeneral(NA_SE_SY_PIECE_OF_HEART, &gSfxDefaultPos, 4, &gSfxDefaultFreqAndVolScale, &gSfxDefaultFreqAndVolScale, &gSfxDefaultReverb);
         gSaveContext.gameMode = 2;
-        globalCtx->sceneLoadFlag = 20;
-        globalCtx->fadeTransition = 2;
+        globalCtx->transitionTrigger = TRANS_TRIGGER_START;
+        globalCtx->transitionType = TRANS_TYPE_FADE_BLACK;
     }
 
     //paella
     if(CHECK_BTN_ALL(sControlInput->cur.button, BTN_L + BTN_R + BTN_CUP))
     {
         Audio_QueueSeqCmd(0x61);
-        Audio_PlaySoundGeneral(NA_SE_EN_TWINROBA_FIGHT, &D_801333D4, 4, &D_801333E0, &D_801333E0, &D_801333E8);
+        Audio_PlaySoundGeneral(NA_SE_EN_TWINROBA_FIGHT, &gSfxDefaultPos, 4, &gSfxDefaultFreqAndVolScale, &gSfxDefaultFreqAndVolScale, &gSfxDefaultReverb);
     }
 
     //StalZone
@@ -10286,7 +10286,7 @@ void Player_UpdateCommon(Player* this, GlobalContext* globalCtx, Input* input) {
 
     //Adult/Child switch
     if((CHECK_BTN_ALL(sControlInput->cur.button, BTN_Z + BTN_R + BTN_DRIGHT))){
-        if(!timeSwitch){
+        if(!timeSwitch) {
             Actor_Spawn(&globalCtx->actorCtx, globalCtx, ACTOR_OCEFF_SPOT,
                     this->actor.world.pos.x,
                     this->actor.world.pos.y,
@@ -10298,17 +10298,17 @@ void Player_UpdateCommon(Player* this, GlobalContext* globalCtx, Input* input) {
 
     if(timeSwitch){
         if(counter < 90) counter++;
-        else{
+        else {
             globalCtx->nextEntranceIndex = gSaveContext.entranceIndex;
             globalCtx->linkAgeOnLoad = !gSaveContext.linkAge;
-            globalCtx->sceneLoadFlag = 0x14;
+            globalCtx->transitionTrigger = TRANS_TRIGGER_START;
         }
     }
 
     //reload area
     if((CHECK_BTN_ALL(sControlInput->cur.button, BTN_A + BTN_L))){
         globalCtx->nextEntranceIndex = gSaveContext.entranceIndex;
-        globalCtx->sceneLoadFlag = 0x14;
+        globalCtx->transitionTrigger = TRANS_TRIGGER_START;
     }
 
     if (this->unk_A86 < 0) {
