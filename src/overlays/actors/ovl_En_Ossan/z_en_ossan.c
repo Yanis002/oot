@@ -548,7 +548,7 @@ void EnOssan_UpdateCameraDirection(EnOssan* this, GlobalContext* globalCtx, f32 
     Camera_SetCameraData(GET_ACTIVE_CAM(globalCtx), 0xC, NULL, NULL, cameraFaceAngle, 0, 0);
 }
 
-s32 EnOssan_TryGetObjBankIndexes(EnOssan* this, GlobalContext* globalCtx, s16* objectIds) {
+s32 EnOssan_TryGetObjBankIndices(EnOssan* this, GlobalContext* globalCtx, s16* objectIds) {
     if (objectIds[1] != OBJECT_ID_MAX) {
         this->objBankIndex2 = Object_GetIndex(&globalCtx->objectCtx, objectIds[1]);
         if (this->objBankIndex2 < 0) {
@@ -616,7 +616,7 @@ void EnOssan_Init(Actor* thisx, GlobalContext* globalCtx) {
         return;
     }
 
-    if (EnOssan_TryGetObjBankIndexes(this, globalCtx, objectIds) == 0) {
+    if (EnOssan_TryGetObjBankIndices(this, globalCtx, objectIds) == 0) {
         Actor_Kill(&this->actor);
         osSyncPrintf(VT_COL(RED, WHITE));
         osSyncPrintf("予備バンクが無いよ！！(%s)\n", sShopkeeperPrintName[this->actor.params]);
@@ -918,8 +918,8 @@ void EnOssan_State_StartConversation(EnOssan* this, GlobalContext* globalCtx, Pl
                 return;
             case OSSAN_HAPPY_STATE_ANGRY:
                 globalCtx->nextEntranceIndex = 0x1D1;
-                globalCtx->sceneLoadFlag = 0x14;
-                globalCtx->fadeTransition = 0x2E;
+                globalCtx->transitionTrigger = TRANS_TRIGGER_START;
+                globalCtx->transitionType = TRANS_TYPE_CIRCLE(TCA_STARBURST, TCC_WHITE, TCS_FAST);
                 return;
         }
 
