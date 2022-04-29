@@ -538,8 +538,8 @@ s16 func_80A97738(GlobalContext* globalCtx, Actor* thisx) {
                 case 0x10B7:
                 case 0x10B8:
                     if (this->unk_210 == 0) {
-                        Audio_PlaySoundGeneral(NA_SE_SY_TRE_BOX_APPEAR, &D_801333D4, 4, &D_801333E0, &D_801333E0,
-                                               &D_801333E8);
+                        Audio_PlaySoundGeneral(NA_SE_SY_TRE_BOX_APPEAR, &gSfxDefaultPos, 4, &gSfxDefaultFreqAndVolScale,
+                                               &gSfxDefaultFreqAndVolScale, &gSfxDefaultReverb);
                         this->unk_210 = 1;
                     }
             }
@@ -1290,14 +1290,14 @@ s32 EnKo_OverrideLimbDraw(GlobalContext* globalCtx, s32 limbIndex, Gfx** dList, 
     }
     if (limbIndex == 8) {
         sp40 = this->unk_1E8.unk_0E;
-        Matrix_RotateX(BINANG_TO_RAD(-sp40.y), MTXMODE_APPLY);
-        Matrix_RotateZ(BINANG_TO_RAD(sp40.x), MTXMODE_APPLY);
+        Matrix_RotateX(BINANG_TO_RAD_ALT(-sp40.y), MTXMODE_APPLY);
+        Matrix_RotateZ(BINANG_TO_RAD_ALT(sp40.x), MTXMODE_APPLY);
     }
     if (limbIndex == 15) {
         Matrix_Translate(1200.0f, 0.0f, 0.0f, MTXMODE_APPLY);
         sp40 = this->unk_1E8.unk_08;
-        Matrix_RotateX(BINANG_TO_RAD(sp40.y), MTXMODE_APPLY);
-        Matrix_RotateZ(BINANG_TO_RAD(sp40.x), MTXMODE_APPLY);
+        Matrix_RotateX(BINANG_TO_RAD_ALT(sp40.y), MTXMODE_APPLY);
+        Matrix_RotateZ(BINANG_TO_RAD_ALT(sp40.x), MTXMODE_APPLY);
         Matrix_Translate(-1200.0f, 0.0f, 0.0f, MTXMODE_APPLY);
     }
     if (limbIndex == 8 || limbIndex == 9 || limbIndex == 12) {

@@ -668,8 +668,8 @@ void func_80AF68E4(EnSa* this, GlobalContext* globalCtx) {
                 phi_v0 = this->unk_20C;
             }
             if (phi_v0 == 0) {
-                Audio_PlaySoundGeneral(NA_SE_PL_WALK_GROUND, &this->actor.projectedPos, 4, &D_801333E0, &D_801333E0,
-                                       &D_801333E8);
+                Audio_PlaySoundGeneral(NA_SE_PL_WALK_GROUND, &this->actor.projectedPos, 4, &gSfxDefaultFreqAndVolScale,
+                                       &gSfxDefaultFreqAndVolScale, &gSfxDefaultReverb);
                 this->unk_20C = 8;
             }
         }
@@ -760,15 +760,15 @@ s32 EnSa_OverrideLimbDraw(GlobalContext* globalCtx, s32 limbIndex, Gfx** dList, 
     if (limbIndex == 16) {
         Matrix_Translate(900.0f, 0.0f, 0.0f, MTXMODE_APPLY);
         sp18 = this->unk_1E0.unk_08;
-        Matrix_RotateX(BINANG_TO_RAD(sp18.y), MTXMODE_APPLY);
-        Matrix_RotateZ(BINANG_TO_RAD(sp18.x), MTXMODE_APPLY);
+        Matrix_RotateX(BINANG_TO_RAD_ALT(sp18.y), MTXMODE_APPLY);
+        Matrix_RotateZ(BINANG_TO_RAD_ALT(sp18.x), MTXMODE_APPLY);
         Matrix_Translate(-900.0f, 0.0f, 0.0f, MTXMODE_APPLY);
     }
 
     if (limbIndex == 9) {
         sp18 = this->unk_1E0.unk_0E;
-        Matrix_RotateY(BINANG_TO_RAD(sp18.y), MTXMODE_APPLY);
-        Matrix_RotateX(BINANG_TO_RAD(sp18.x), MTXMODE_APPLY);
+        Matrix_RotateY(BINANG_TO_RAD_ALT(sp18.y), MTXMODE_APPLY);
+        Matrix_RotateX(BINANG_TO_RAD_ALT(sp18.x), MTXMODE_APPLY);
     }
 
     if (globalCtx->sceneNum == SCENE_SPOT05 && limbIndex == 15) {

@@ -223,8 +223,8 @@ void BgSpot00Hanebasi_Update(Actor* thisx, GlobalContext* globalCtx) {
                     func_8002DF54(globalCtx, &player->actor, 8);
                     globalCtx->nextEntranceIndex = 0x00CD;
                     gSaveContext.nextCutsceneIndex = 0xFFF1;
-                    globalCtx->sceneLoadFlag = 0x14;
-                    globalCtx->fadeTransition = 4;
+                    globalCtx->transitionTrigger = TRANS_TRIGGER_START;
+                    globalCtx->transitionType = TRANS_TYPE_FADE_BLACK_FAST;
                 } else if (Actor_IsFacingAndNearPlayer(&this->dyna.actor, 3000.0f, 0x7530)) {
                     globalCtx->envCtx.gloomySkyMode = 1;
                 }
@@ -269,7 +269,7 @@ void BgSpot00Hanebasi_DrawTorches(Actor* thisx, GlobalContext* globalCtx2) {
         sTorchFlameScale = ((thisx->shape.rot.x * -1) - 0x2000) * (1.0f / 1024000.0f);
     }
 
-    angle = (s16)(Camera_GetCamDirYaw(GET_ACTIVE_CAM(globalCtx)) + 0x8000) * (M_PI / 32768.0f);
+    angle = BINANG_TO_RAD((s16)(Camera_GetCamDirYaw(GET_ACTIVE_CAM(globalCtx)) + 0x8000));
     gDPSetPrimColor(POLY_XLU_DISP++, 128, 128, 255, 255, 0, 255);
     gDPSetEnvColor(POLY_XLU_DISP++, 255, 0, 0, 0);
 
