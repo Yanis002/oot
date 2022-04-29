@@ -481,7 +481,7 @@ void Player_SetBootData(GlobalContext* globalCtx, Player* this) {
 
 s32 Player_InBlockingCsMode(GlobalContext* globalCtx, Player* this) {
     return (this->stateFlags1 & (PLAYER_STATE1_7 | PLAYER_STATE1_29)) || (this->csMode != 0) ||
-           (globalCtx->sceneLoadFlag == 0x14) || (this->stateFlags1 & PLAYER_STATE1_0) ||
+           (globalCtx->transitionTrigger == TRANS_TRIGGER_START) || (this->stateFlags1 & PLAYER_STATE1_0) ||
            (this->stateFlags3 & PLAYER_STATE3_7) ||
            ((gSaveContext.unk_13F0 != 0) && (Player_ActionToMagicSpell(this, this->itemActionParam) >= 0));
 }
@@ -804,7 +804,7 @@ s32 func_8008F2F8(GlobalContext* globalCtx) {
     return var + 1;
 }
 
-u8 sEyeMouthIndexes[][2] = {
+u8 sEyeMouthIndices[][2] = {
     { 0, 0 }, { 1, 0 }, { 2, 0 }, { 0, 0 }, { 1, 0 }, { 2, 0 }, { 4, 0 }, { 5, 1 },
     { 7, 2 }, { 0, 2 }, { 3, 0 }, { 4, 0 }, { 2, 2 }, { 1, 1 }, { 0, 2 }, { 0, 0 },
 };
@@ -868,7 +868,7 @@ void Player_DrawImpl(GlobalContext* globalCtx, void** skeleton, Vec3s* jointTabl
     OPEN_DISPS(globalCtx->state.gfxCtx, "../z_player_lib.c", 1721);
 
     if (eyeIndex < 0) {
-        eyeIndex = sEyeMouthIndexes[face][0];
+        eyeIndex = sEyeMouthIndices[face][0];
     }
 
 #ifndef AVOID_UB
@@ -878,7 +878,7 @@ void Player_DrawImpl(GlobalContext* globalCtx, void** skeleton, Vec3s* jointTabl
 #endif
 
     if (mouthIndex < 0) {
-        mouthIndex = sEyeMouthIndexes[face][1];
+        mouthIndex = sEyeMouthIndices[face][1];
     }
 
 #ifndef AVOID_UB
@@ -1014,14 +1014,14 @@ void func_8008F87C(GlobalContext* globalCtx, Player* this, SkelAnime* skelAnime,
 
             sp50 = Math_FAtan2F(sp58, sp60);
 
-            temp1 = RADF_TO_BINANG(M_PI - (Math_FAtan2F(sp5C, sp58) + ((M_PI / 2) - sp50)));
+            temp1 = RAD_TO_BINANG(M_PI - (Math_FAtan2F(sp5C, sp58) + ((M_PI / 2) - sp50)));
             temp1 = temp1 - skelAnime->jointTable[shinLimbIndex].z;
 
             if ((s16)(ABS(skelAnime->jointTable[shinLimbIndex].x) + ABS(skelAnime->jointTable[shinLimbIndex].y)) < 0) {
                 temp1 += 0x8000;
             }
 
-            temp2 = RADF_TO_BINANG(sp50 - sp54);
+            temp2 = RAD_TO_BINANG(sp50 - sp54);
             rot->z -= temp2;
 
             skelAnime->jointTable[thighLimbIndex].z = skelAnime->jointTable[thighLimbIndex].z - temp2;
@@ -1307,7 +1307,7 @@ void Player_DrawGetItemImpl(GlobalContext* globalCtx, Player* this, Vec3f* refPo
 }
 
 void Player_DrawGetItem(GlobalContext* globalCtx, Player* this) {
-    if (!this->giObjectLoading || !osRecvMesg(&this->giObjectLoadQueue, NULL, OS_MESG_NOBLOCK)) {
+    if (!this->giObjectLoading || osRecvMesg(&this->giObjectLoadQueue, NULL, OS_MESG_NOBLOCK) == 0) {
         this->giObjectLoading = false;
         Player_DrawGetItemImpl(globalCtx, this, &sGetItemRefPos, ABS(this->unk_862));
     }
