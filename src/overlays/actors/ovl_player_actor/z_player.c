@@ -3790,7 +3790,7 @@ void func_8083819C(Player* this, GlobalContext* globalCtx) {
     if (this->currentShield == PLAYER_SHIELD_HYLIAN) {//PLAYER_SHIELD_DEKU
         /*Actor_Spawn(&globalCtx->actorCtx, globalCtx, ACTOR_ITEM_SHIELD, this->actor.world.pos.x,
                     this->actor.world.pos.y, this->actor.world.pos.z, 0, 0, 0, 1);*/       
-        Inventory_DeleteEquipment(globalCtx, EQUIP_SHIELD);
+        Inventory_DeleteEquipment(globalCtx, EQUIP_TYPE_SHIELD);
         Message_StartTextbox(globalCtx, 0x305F, NULL); // "Your shield is gone!"
         Player_InflictDamage(globalCtx, -(gSaveContext.healthCapacity * 0.99));
         this->shockTimer = 80;
