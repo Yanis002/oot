@@ -5553,7 +5553,8 @@ s32 func_80038154(GlobalContext* globalCtx, Actor* actor, Vec3s* arg2, Vec3s* ar
     actor->focus.pos = actor->world.pos;
     actor->focus.pos.y += arg4;
 
-    if (!(((globalCtx->csCtx.state != CS_STATE_IDLE) || (gDbgCamEnabled)) && (gSaveContext.entranceIndex == 0x00EE))) {
+    if (!(((globalCtx->csCtx.state != CS_STATE_IDLE) || (gDbgCamEnabled)) &&
+          (gSaveContext.entranceIndex == ENTR_SPOT04_0))) {
         var = actor->yawTowardsPlayer - actor->shape.rot.y;
         abs_var = ABS(var);
         if (abs_var >= 0x4300) {
@@ -5562,7 +5563,8 @@ s32 func_80038154(GlobalContext* globalCtx, Actor* actor, Vec3s* arg2, Vec3s* ar
         }
     }
 
-    if (((globalCtx->csCtx.state != CS_STATE_IDLE) || (gDbgCamEnabled)) && (gSaveContext.entranceIndex == 0x00EE)) {
+    if (((globalCtx->csCtx.state != CS_STATE_IDLE) || (gDbgCamEnabled)) &&
+        (gSaveContext.entranceIndex == ENTR_SPOT04_0)) {
         sp2C = globalCtx->view.eye;
     } else {
         sp2C = player->actor.focus.pos;
@@ -5582,7 +5584,8 @@ s32 func_80038290(GlobalContext* globalCtx, Actor* actor, Vec3s* arg2, Vec3s* ar
 
     actor->focus.pos = arg4;
 
-    if (!(((globalCtx->csCtx.state != CS_STATE_IDLE) || (gDbgCamEnabled)) && (gSaveContext.entranceIndex == 0x00EE))) {
+    if (!(((globalCtx->csCtx.state != CS_STATE_IDLE) || (gDbgCamEnabled)) &&
+          (gSaveContext.entranceIndex == ENTR_SPOT04_0))) {
         var = actor->yawTowardsPlayer - actor->shape.rot.y;
         abs_var = ABS(var);
         if (abs_var >= 0x4300) {
@@ -5591,7 +5594,8 @@ s32 func_80038290(GlobalContext* globalCtx, Actor* actor, Vec3s* arg2, Vec3s* ar
         }
     }
 
-    if (((globalCtx->csCtx.state != CS_STATE_IDLE) || (gDbgCamEnabled)) && (gSaveContext.entranceIndex == 0x00EE)) {
+    if (((globalCtx->csCtx.state != CS_STATE_IDLE) || (gDbgCamEnabled)) &&
+        (gSaveContext.entranceIndex == ENTR_SPOT04_0)) {
         sp24 = globalCtx->view.eye;
     } else {
         sp24 = player->actor.focus.pos;
