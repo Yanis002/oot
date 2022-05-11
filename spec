@@ -11993,3 +11993,22 @@ beginseg
     romalign 0x1000
     include "build/baserom/softsprite_matrix_static.o"
 endseg
+
+beginseg
+    name "test_detailed_panel_scene"
+    compress
+    romalign 0x1000
+    include "build/assets/scenes/wip/test_detailed_panel/test_detailed_panel_scene_main.o"
+    include "build/assets/scenes/wip/test_detailed_panel/test_detailed_panel_scene_col.o"
+    number 2
+endseg
+
+beginseg
+    name "test_detailed_panel_room_0"
+    compress
+    romalign 0x1000
+    include "build/assets/scenes/wip/test_detailed_panel/test_detailed_panel_room_0_main.o"
+    include "build/assets/scenes/wip/test_detailed_panel/test_detailed_panel_room_0_model_info.o"
+    include "build/assets/scenes/wip/test_detailed_panel/test_detailed_panel_room_0_model.o"
+    number 3
+endseg
