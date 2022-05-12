@@ -120,3 +120,5 @@
 /* 0x6B */ DEFINE_SCENE(hairal_niwa2_scene, g_pn_12, SCENE_HAIRAL_NIWA2, 35, 0, 0)
 /* 0x6C */ DEFINE_SCENE(sasatest_scene, none, SCENE_SASATEST, 0, 0, 0)
 /* 0x6D */ DEFINE_SCENE(testroom_scene, none, SCENE_TESTROOM, 0, 0, 0)
+// Added scenes
+/* 0x6E */ DEFINE_SCENE(test_detailed_panel_scene, none, SCENE_TEST_DETAILED_PANEL, 0, 0, 0)

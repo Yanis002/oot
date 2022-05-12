@@ -3370,6 +3370,12 @@ beginseg
 endseg
 
 beginseg
+    name "ovl_En_Trap_Item"
+    include "build/src/overlays/actors/ovl_En_Trap_Item/z_en_trap_item.o"
+    include "build/src/overlays/actors/ovl_En_Trap_Item/ovl_En_Trap_Item_reloc.o"
+endseg
+
+beginseg
     name "gameplay_keep"
     romalign 0x1000
     include "build/assets/objects/gameplay_keep/gameplay_keep.o"
@@ -10469,4 +10475,21 @@ beginseg
     name "softsprite_matrix_static"
     romalign 0x1000
     include "build/baserom/softsprite_matrix_static.o"
+endseg
+
+beginseg
+    name "test_detailed_panel_scene"
+    romalign 0x1000
+    include "build/assets/scenes/wip/test_detailed_panel/test_detailed_panel_scene_main.o"
+    include "build/assets/scenes/wip/test_detailed_panel/test_detailed_panel_scene_col.o"
+    number 2
+endseg
+
+beginseg
+    name "test_detailed_panel_room_0"
+    romalign 0x1000
+    include "build/assets/scenes/wip/test_detailed_panel/test_detailed_panel_room_0_main.o"
+    include "build/assets/scenes/wip/test_detailed_panel/test_detailed_panel_room_0_model_info.o"
+    include "build/assets/scenes/wip/test_detailed_panel/test_detailed_panel_room_0_model.o"
+    number 3
 endseg
