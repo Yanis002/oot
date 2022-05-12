@@ -156,7 +156,9 @@ void EnBoom_Fly(EnBoom* this, GlobalContext* globalCtx) {
     collided = this->collider.base.atFlags & AT_HIT;
     collided = !!(collided);
     if (collided) {
-        if (((this->collider.base.at->id == ACTOR_EN_ITEM00) || (this->collider.base.at->id == ACTOR_EN_SI))) {
+        if (((this->collider.base.at->id == ACTOR_EN_ITEM00) ||
+                (this->collider.base.at->id == ACTOR_EN_TRAP_ITEM) ||
+                (this->collider.base.at->id == ACTOR_EN_SI))) {
             this->grabbed = this->collider.base.at;
             if (this->collider.base.at->id == ACTOR_EN_SI) {
                 this->collider.base.at->flags |= ACTOR_FLAG_13;
@@ -178,7 +180,7 @@ void EnBoom_Fly(EnBoom* this, GlobalContext* globalCtx) {
 
                 // If the grabbed actor is EnItem00 (HP/Key etc) set gravity and flags so it falls in front of Link.
                 // Otherwise if it's a Skulltula Token, just set flags so he collides with it to collect it.
-                if (target->id == ACTOR_EN_ITEM00) {
+                if ((target->id == ACTOR_EN_ITEM00) || (target->id == ACTOR_EN_TRAP_ITEM)) {
                     target->gravity = -0.9f;
                     target->bgCheckFlags &= ~(BGCHECKFLAG_GROUND | BGCHECKFLAG_GROUND_TOUCH);
                 } else {
