@@ -352,14 +352,14 @@ void ObjSwitch_Init(Actor* thisx, GlobalContext* globalCtx) {
 void ObjSwitch_Destroy(Actor* thisx, GlobalContext* globalCtx) {
     ObjSwitch* this = (ObjSwitch*)thisx;
 
-    switch ((this->dyna.actor.params & 7)) {
+    switch (this->dyna.actor.params & 7) {
         case OBJSWITCH_TYPE_FLOOR:
         case OBJSWITCH_TYPE_FLOOR_RUSTY:
             DynaPoly_DeleteBgActor(globalCtx, &globalCtx->colCtx.dyna, this->dyna.bgId);
             break;
     }
 
-    switch ((this->dyna.actor.params & 7)) {
+    switch (this->dyna.actor.params & 7) {
         case OBJSWITCH_TYPE_FLOOR_RUSTY:
         case OBJSWITCH_TYPE_EYE:
             Collider_DestroyTris(globalCtx, &this->tris.col);
@@ -386,7 +386,7 @@ void ObjSwitch_FloorUp(ObjSwitch* this, GlobalContext* globalCtx) {
             CollisionCheck_SetAC(globalCtx, &globalCtx->colChkCtx, &this->tris.col.base);
         }
     } else {
-        switch ((this->dyna.actor.params >> 4 & 7)) {
+        switch (this->dyna.actor.params >> 4 & 7) {
             case OBJSWITCH_SUBTYPE_ONCE:
                 if (func_8004356C(&this->dyna)) {
                     ObjSwitch_FloorPressInit(this);
@@ -439,7 +439,7 @@ void ObjSwitch_FloorDownInit(ObjSwitch* this) {
 }
 
 void ObjSwitch_FloorDown(ObjSwitch* this, GlobalContext* globalCtx) {
-    switch ((this->dyna.actor.params >> 4 & 7)) {
+    switch (this->dyna.actor.params >> 4 & 7) {
         case OBJSWITCH_SUBTYPE_ONCE:
             if (!Flags_GetSwitch(globalCtx, (this->dyna.actor.params >> 8 & 0x3F))) {
                 ObjSwitch_FloorReleaseInit(this);
@@ -552,7 +552,7 @@ void ObjSwitch_EyeClosedInit(ObjSwitch* this) {
 }
 
 void ObjSwitch_EyeClosed(ObjSwitch* this, GlobalContext* globalCtx) {
-    switch ((this->dyna.actor.params >> 4 & 7)) {
+    switch (this->dyna.actor.params >> 4 & 7) {
         case OBJSWITCH_SUBTYPE_ONCE:
             if (!Flags_GetSwitch(globalCtx, (this->dyna.actor.params >> 8 & 0x3F))) {
                 ObjSwitch_EyeOpeningInit(this);
@@ -594,7 +594,7 @@ void ObjSwitch_CrystalOffInit(ObjSwitch* this) {
 }
 
 void ObjSwitch_CrystalOff(ObjSwitch* this, GlobalContext* globalCtx) {
-    switch ((this->dyna.actor.params >> 4 & 7)) {
+    switch (this->dyna.actor.params >> 4 & 7) {
         case OBJSWITCH_SUBTYPE_ONCE:
             if ((this->jntSph.col.base.acFlags & AC_HIT) && this->disableAcTimer <= 0) {
                 this->disableAcTimer = 10;
@@ -645,7 +645,7 @@ void ObjSwitch_CrystalOnInit(ObjSwitch* this) {
 }
 
 void ObjSwitch_CrystalOn(ObjSwitch* this, GlobalContext* globalCtx) {
-    switch ((this->dyna.actor.params >> 4 & 7)) {
+    switch (this->dyna.actor.params >> 4 & 7) {
         case OBJSWITCH_SUBTYPE_ONCE:
         case OBJSWITCH_SUBTYPE_SYNC:
             if (!Flags_GetSwitch(globalCtx, (this->dyna.actor.params >> 8 & 0x3F))) {
@@ -690,7 +690,7 @@ void ObjSwitch_Update(Actor* thisx, GlobalContext* globalCtx) {
 
     this->actionFunc(this, globalCtx);
 
-    switch ((this->dyna.actor.params & 7)) {
+    switch (this->dyna.actor.params & 7) {
         case OBJSWITCH_TYPE_FLOOR:
         case OBJSWITCH_TYPE_FLOOR_RUSTY:
             this->unk_17F = this->dyna.unk_160;
