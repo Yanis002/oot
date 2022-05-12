@@ -117,7 +117,7 @@ u16 EnGo_GetTextID(GlobalContext* globalCtx, Actor* thisx) {
                 } else {
                     return 0x3041;
                 }
-            } else if (CHECK_OWNED_EQUIP(EQUIP_TUNIC, 1) || GET_INFTABLE(INFTABLE_10D)) {
+            } else if (CHECK_OWNED_EQUIP(EQUIP_TYPE_TUNIC, EQUIP_INV_TUNIC_GORON) || GET_INFTABLE(INFTABLE_10D)) {
                 if (GET_INFTABLE(INFTABLE_10E)) {
                     return 0x3038;
                 } else {
@@ -546,7 +546,7 @@ s32 EnGo_IsRollingOnGround(EnGo* this, s16 unkArg1, f32 unkArg2) {
     } else if (this->unk_1E0.unk_00 != 0) {
         return true;
     } else if (DECR(this->unk_21C)) {
-        if ((this->unk_21C & 1)) {
+        if (this->unk_21C & 1) {
             this->actor.world.pos.y += 1.5f;
         } else {
             this->actor.world.pos.y -= 1.5f;
@@ -648,7 +648,7 @@ void EnGo_Init(Actor* thisx, GlobalContext* globalCtx) {
     switch (this->actor.params & 0xF0) {
         case 0x00:
             Actor_SetScale(&this->actor, 0.008f);
-            if (CHECK_OWNED_EQUIP(EQUIP_TUNIC, 1)) {
+            if (CHECK_OWNED_EQUIP(EQUIP_TYPE_TUNIC, EQUIP_INV_TUNIC_GORON)) {
                 EnGo_SetMovedPos(this, globalCtx);
                 EnGo_SetupAction(this, EnGo_CurledUp);
             } else {

@@ -371,13 +371,13 @@ s32 EnSb_UpdateDamage(EnSb* this, GlobalContext* globalCtx) {
     u8 hitByWindArrow;
 
     // hit box collided, switch to cool down
-    if ((this->collider.base.atFlags & AT_HIT)) {
+    if (this->collider.base.atFlags & AT_HIT) {
         EnSb_SetupCooldown(this, 1);
         return 1;
     }
 
     // hurt box collided, take damage if appropriate
-    if ((this->collider.base.acFlags & AC_HIT)) {
+    if (this->collider.base.acFlags & AC_HIT) {
         hitByWindArrow = false;
         tookDamage = false;
         this->collider.base.acFlags &= ~AC_HIT;
@@ -453,7 +453,7 @@ void EnSb_Update(Actor* thisx, GlobalContext* globalCtx) {
             if (!this->hitByWindArrow) {
                 Item_DropCollectibleRandom(globalCtx, &this->actor, &this->actor.world.pos, 0x80);
             } else {
-                Item_DropCollectible(globalCtx, &this->actor.world.pos, 8);
+                Item_DropCollectible(globalCtx, &this->actor.world.pos, ITEM00_ARROWS_SMALL);
             }
             Actor_Kill(&this->actor);
         }

@@ -1791,7 +1791,7 @@ void func_8090120C(BossGanon2* this, GlobalContext* globalCtx) {
                 break;
             }
         case 20:
-            globalCtx->nextEntranceIndex = 0x6B;
+            globalCtx->nextEntranceIndex = ENTR_KENJYANOMA_0;
             gSaveContext.nextCutsceneIndex = 0xFFF2;
             globalCtx->transitionTrigger = TRANS_TRIGGER_START;
             globalCtx->transitionType = TRANS_TYPE_FADE_WHITE;
@@ -2869,7 +2869,7 @@ void BossGanon2_UpdateEffects(BossGanon2* this, GlobalContext* globalCtx) {
                             effect->type = 0;
                         }
                     }
-                } else if ((effect->position.y < 0.0f)) {
+                } else if (effect->position.y < 0.0f) {
                     effect->type = 0;
                 }
             }
