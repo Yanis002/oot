@@ -13,8 +13,7 @@ extern const ActorInit En_Trap_Item_InitVars;
 typedef enum {
     /* 0x00 */ ITEM_TYPE_HEART_PIECE,
     /* 0x01 */ ITEM_TYPE_RUPEE,
-    /* 0x02 */ 
-    /* 0x02 */ ITEM_TYPE_MAX
+    /* 0x03 */ ITEM_TYPE_MAX
 } EnTrapItemItemType;
 
 typedef enum {

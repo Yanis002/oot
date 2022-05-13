@@ -9271,6 +9271,7 @@ void Player_Init(Actor* thisx, GlobalContext* globalCtx2) {
     globalCtx->func_11D54 = func_80853080;
     globalCtx->damagePlayer = Player_InflictDamage;
     globalCtx->talkWithPlayer = func_80853148;
+    globalCtx->playerTakeDamage = func_80837C0C;
 
     thisx->room = -1;
     this->ageProperties = &sAgeProperties[gSaveContext.linkAge];

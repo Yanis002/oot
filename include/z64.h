@@ -1235,6 +1235,8 @@ typedef struct GlobalContext {
     /* 0x1242B */ u8 unk_1242B;
     /* 0x1242C */ SceneTableEntry* loadedScene;
     /* 0x12430 */ char unk_12430[0xE8];
+    // playerTakeDamage dmgType values: 0: normal hit, 1: thrown on the floor, 2: shaboms-like, 3: freeze, 4: electricity
+    /* 0x1251C */ void (*playerTakeDamage)(struct GlobalContext* globalCtx, Player* player, s32 dmgType, f32 arg3, f32 arg4, s16 arg5, s32 timer);
 } GlobalContext; // size = 0x12518
 
 typedef struct {

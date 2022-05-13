@@ -8,11 +8,12 @@
     - Item Type:     0000 0000 0000 0111 - 0x003
     - Trap Type:     0000 0000 0011 1000 - 0x038
     - Rupee Subtype: 0000 0001 1100 0000 - 0x1C0
+    - Example:       0000 0000 1001 0001 - 0x091
 */
 
 #include "z_en_trap_item.h"
 #include "objects/gameplay_keep/gameplay_keep.h"
-#include "overlays/actors/ovl_En_Boom/z_en_boom.h"
+#include "overlays/actors/ovl_En_Bom/z_en_bom.h"
 
 void EnTrapItem_Init(Actor* thisx, GlobalContext* globalCtx);
 void EnTrapItem_Destroy(Actor* thisx, GlobalContext* globalCtx);
@@ -38,7 +39,7 @@ static ColliderCylinderInit sCylinderInit = {
     {
         COLTYPE_NONE,
         AT_NONE,
-        AC_ON | AT_TYPE_PLAYER,
+        AC_ON | AC_TYPE_PLAYER,
         OC1_NONE,
         OC2_NONE,
         COLSHAPE_CYLINDER,
@@ -105,10 +106,9 @@ void EnTrapItem_Destroy(Actor* thisx, GlobalContext* globalCtx) {
 
 void EnTrapItem_Update(Actor* thisx, GlobalContext* globalCtx) {
     EnTrapItem* this = (EnTrapItem*)thisx;
-    u8 updateBgBool = false;
-
-    Collider_UpdateCylinder(&this->actor, &this->collider);
-    CollisionCheck_SetAC(globalCtx, &globalCtx->colChkCtx, &this->collider.base);
+    Player* player = GET_PLAYER(globalCtx);
+    EnBom* bomb = NULL;
+    u8 updateBgBool = false, i;
 
     // handles the gravity update
     if (!(this->actor.bgCheckFlags & (BGCHECKFLAG_GROUND | BGCHECKFLAG_GROUND_TOUCH))) {
@@ -122,11 +122,48 @@ void EnTrapItem_Update(Actor* thisx, GlobalContext* globalCtx) {
                                         UPDBGCHECKINFO_FLAG_4);
     }
 
-    // collider check
-    if (this->collider.base.acFlags & AC_HIT) {
-        this->collider.base.acFlags &= ~AC_HIT;
+    if (((this->actor.xzDistToPlayer <= 25.0f) &&
+        (this->actor.yDistToPlayer >= -50.0f) && (this->actor.yDistToPlayer <= 50.0f))) {
+        switch(GET_TRAP_TYPE(this->actor.params)) {
+            case TRAP_TYPE_ICE:
+                globalCtx->playerTakeDamage(globalCtx, player, 3, 0.0f, 0.0f, 0, 20);
+                break;
+            case TRAP_TYPE_EXPLOSION:
+                bomb = (EnBom*)Actor_Spawn(&globalCtx->actorCtx, globalCtx, ACTOR_EN_BOM, this->actor.world.pos.x,
+                               this->actor.world.pos.y, this->actor.world.pos.z, 0, 0, 0, BOMB_BODY);
+                if (bomb != NULL) {
+                    bomb->timer = 0;
+                }
+                globalCtx->damagePlayer(globalCtx, -0x8);
+                func_8002F71C(globalCtx, &this->actor, 2.0f, this->actor.yawTowardsPlayer, 0.0f);
+                break;
+            case TRAP_TYPE_CRUSH:
+                Gameplay_TriggerRespawn(globalCtx);
+                gSaveContext.respawnFlag = -2;
+                Audio_QueueSeqCmd(SEQ_PLAYER_BGM_MAIN << 24 | NA_BGM_STOP);
+                globalCtx->transitionType = TRANS_TYPE_FADE_BLACK;
+                func_800788CC(NA_SE_OC_ABYSS);
+                break;
+            case TRAP_TYPE_FIRE:
+                for (i = 0; i < PLAYER_BODYPART_MAX; i++) {
+                    player->flameTimers[i] = Rand_S16Offset(0, 200);
+                }
+                if (!player->isBurning) {
+                    player->isBurning = true;
+                }
+                globalCtx->playerTakeDamage(globalCtx, player, 1, 0.0f, 0.0f, 0, 0);
+                break;
+            case TRAP_TYPE_ELECTRICITY:
+                globalCtx->playerTakeDamage(globalCtx, player, 4, 0.0f, 0.0f, 0, 20);
+                break;
+            default:
+                break;
+        }
         Actor_Kill(&this->actor);
     }
+
+    Collider_UpdateCylinder(&this->actor, &this->collider);
+    CollisionCheck_SetAC(globalCtx, &globalCtx->colChkCtx, &this->collider.base);
 }
 
 void EnTrapItem_Draw(Actor* thisx, GlobalContext* globalCtx) {
