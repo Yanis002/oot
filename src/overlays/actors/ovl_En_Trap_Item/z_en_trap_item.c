@@ -21,6 +21,9 @@ void EnTrapItem_Destroy(Actor* thisx, GlobalContext* globalCtx);
 void EnTrapItem_Update(Actor* thisx, GlobalContext* globalCtx);
 void EnTrapItem_Draw(Actor* thisx, GlobalContext* globalCtx);
 
+void EnTrapItem_SetupAction(EnTrapItem* this, EnTrapItemActionFunc actionFunc);
+void EnTrapItem_WaitForNewObject(EnTrapItem* this, GlobalContext* globalCtx);
+void EnTrapItem_Main(EnTrapItem* this, GlobalContext* globalCtx);
 u8 EnTrapItem_InitItemType(EnTrapItem* this, GlobalContext* globalCtx);
 void EnTrapItem_InitItemSubType(EnTrapItem* this, GlobalContext* globalCtx);
 void EnTrapItem_Trap(EnTrapItem* this, GlobalContext* globalCtx);
@@ -38,7 +41,7 @@ const ActorInit En_Trap_Item_InitVars = {
     (ActorFunc)EnTrapItem_Init,
     (ActorFunc)EnTrapItem_Destroy,
     (ActorFunc)EnTrapItem_Update,
-    (ActorFunc)EnTrapItem_Draw,
+    NULL,
 };
 
 static ColliderCylinderInit sCylinderInit = {
@@ -62,7 +65,7 @@ static ColliderCylinderInit sCylinderInit = {
 };
 
 static void* sRupeeTex[] = {
-    gRupeeGreenTex, gRupeeBlueTex, gRupeeRedTex, gRupeePinkTex, gRupeeOrangeTex,
+    gRupeeGreenTex, gRupeeBlueTex, gRupeeRedTex, gRupeeOrangeTex, gRupeePinkTex,
 };
 
 static void* sItemDropTex[] = {
@@ -101,8 +104,15 @@ void EnTrapItem_Init(Actor* thisx, GlobalContext* globalCtx) {
     this->actor.shape.shadowAlpha = 180;
     this->actor.focus.pos = this->actor.world.pos;
 
-    osSyncPrintf("bank index: %X\n", this->bankIndex);
-    osSyncPrintf("En_Trap_Item: Init completed!\nExecuting update routine...\n");
+    // if ``bankIndex`` is 0 at this point it means the user doesn't want to use specific object
+    if (this->bankIndex) {
+        EnTrapItem_SetupAction(this, EnTrapItem_WaitForNewObject);
+    } else {
+        EnTrapItem_SetupAction(this, EnTrapItem_Main);
+        this->actor.draw = EnTrapItem_Draw;
+    }
+
+    osSyncPrintf("En_Trap_Item: Init completed!\n");
 }
 
 void EnTrapItem_Destroy(Actor* thisx, GlobalContext* globalCtx) {
@@ -113,7 +123,60 @@ void EnTrapItem_Destroy(Actor* thisx, GlobalContext* globalCtx) {
 
 void EnTrapItem_Update(Actor* thisx, GlobalContext* globalCtx) {
     EnTrapItem* this = (EnTrapItem*)thisx;
+    
+    if (this->actionFunc != NULL) {
+        this->actionFunc(this, globalCtx);
+    }
+}
+
+void EnTrapItem_Draw(Actor* thisx, GlobalContext* globalCtx) {
+    EnTrapItem* this = (EnTrapItem*)thisx;
+
+    switch (GET_ITEM_TYPE(this->actor.params)) {
+        case ITEM_TYPE_HEART:
+            EnTrapItem_DrawHeart(this, globalCtx);
+            break;
+        case ITEM_TYPE_RUPEE:
+            EnTrapItem_DrawRupee(this, globalCtx);
+            break;
+        case ITEM_TYPE_SHIELD:
+        case ITEM_TYPE_TUNIC:
+            EnTrapItem_DrawEquipment(this, globalCtx);
+            break;
+        case ITEM_TYPE_MAGIC:
+        case ITEM_TYPE_ARROW:
+        case ITEM_TYPE_SMALL_KEY:
+        case ITEM_TYPE_BOMBS:
+        case ITEM_TYPE_NUTS:
+        case ITEM_TYPE_STICK:
+        case ITEM_TYPE_SEEDS:
+            EnTrapItem_DrawCollectible(this, globalCtx);
+            break;
+        default:
+            break;
+    }
+}
+
+void EnTrapItem_SetupAction(EnTrapItem* this, EnTrapItemActionFunc actionFunc) {
+    this->actionFunc = actionFunc;
+}
+
+void EnTrapItem_WaitForNewObject(EnTrapItem* this, GlobalContext* globalCtx) {
+    if (Object_IsLoaded(&globalCtx->objectCtx, this->bankIndex)) {
+        this->actor.objBankIndex = this->bankIndex;
+        Actor_SetObjectDependency(globalCtx, &this->actor);
+        EnTrapItem_SetupAction(this, EnTrapItem_Main);
+        this->actor.draw = EnTrapItem_Draw;
+    }
+}
+
+void EnTrapItem_Main(EnTrapItem* this, GlobalContext* globalCtx) {
     u8 updateBgBool = false;
+
+    if (GET_ITEM_SUBTYPE(this->actor.params) == SUBTYPE_HEART_CONTAINER) {
+        Math_ApproachF(&this->actor.scale.x, 0.4f, 0.1f, 0.01f);
+        this->actor.scale.y = this->actor.scale.z = this->actor.scale.x;
+    }
 
     // handles the gravity update
     if (!(this->actor.bgCheckFlags & (BGCHECKFLAG_GROUND | BGCHECKFLAG_GROUND_TOUCH))) {
@@ -130,32 +193,6 @@ void EnTrapItem_Update(Actor* thisx, GlobalContext* globalCtx) {
     EnTrapItem_Trap(this, globalCtx);
     Collider_UpdateCylinder(&this->actor, &this->collider);
     CollisionCheck_SetAC(globalCtx, &globalCtx->colChkCtx, &this->collider.base);
-}
-
-void EnTrapItem_Draw(Actor* thisx, GlobalContext* globalCtx) {
-    EnTrapItem* this = (EnTrapItem*)thisx;
-
-    switch (GET_ITEM_TYPE(this->actor.params)) {
-        case ITEM_TYPE_HEART:
-            EnTrapItem_DrawHeart(this, globalCtx);
-            break;
-        case ITEM_TYPE_RUPEE:
-            EnTrapItem_DrawRupee(this, globalCtx);
-            break;
-        case ITEM_TYPE_SHIELD:
-        case ITEM_TYPE_TUNIC:
-            EnTrapItem_DrawEquipment(this, globalCtx);
-        case ITEM_TYPE_MAGIC:
-        case ITEM_TYPE_ARROW:
-        case ITEM_TYPE_SMALL_KEY:
-        case ITEM_TYPE_BOMBS:
-        case ITEM_TYPE_NUTS:
-        case ITEM_TYPE_STICK:
-        case ITEM_TYPE_SEEDS:
-            EnTrapItem_DrawCollectible(this, globalCtx);
-        default:
-            break;
-    }
 }
 
 u8 EnTrapItem_InitItemType(EnTrapItem* this, GlobalContext* globalCtx){
@@ -193,16 +230,14 @@ void EnTrapItem_InitItemSubType(EnTrapItem* this, GlobalContext* globalCtx){
             Actor_SetScale(&this->actor, 0.03f);
             break;
         case SUBTYPE_SHIELD_DEKU:
-            this->actor.objBankIndex = Object_GetIndex(&globalCtx->objectCtx, OBJECT_GI_SHIELD_1);
-            Actor_SetObjectDependency(globalCtx, &this->actor);
+            this->bankIndex = Object_GetIndex(&globalCtx->objectCtx, OBJECT_GI_SHIELD_1);
             this->yOffset = 0.0f;
             Actor_SetScale(&this->actor, 0.5f);
             this->shadowScale = 0.6f;
             this->actor.world.rot.x = 0x4000;
             break;
         case SUBTYPE_SHIELD_HYLIAN:
-            this->actor.objBankIndex = Object_GetIndex(&globalCtx->objectCtx, OBJECT_GI_SHIELD_2);
-            Actor_SetObjectDependency(globalCtx, &this->actor);
+            this->bankIndex = Object_GetIndex(&globalCtx->objectCtx, OBJECT_GI_SHIELD_2);
             this->yOffset = 0.0f;
             Actor_SetScale(&this->actor, 0.5f);
             this->shadowScale = 0.6f;
@@ -211,24 +246,25 @@ void EnTrapItem_InitItemSubType(EnTrapItem* this, GlobalContext* globalCtx){
         case SUBTYPE_TUNIC_ZORA:
         case SUBTYPE_TUNIC_GORON:
             this->bankIndex = Object_GetIndex(&globalCtx->objectCtx, OBJECT_GI_CLOTHES);
-            this->actor.objBankIndex = this->bankIndex;
-            Actor_SetObjectDependency(globalCtx, &this->actor);
             this->yOffset = 0.0f;
             Actor_SetScale(&this->actor, 0.5f);
             this->shadowScale = 0.6f;
             this->actor.world.rot.x = 0x4000;
             break;
         case SUBTYPE_HEART_RECOVERY:
+            this->bankIndex = Object_GetIndex(&globalCtx->objectCtx, OBJECT_GI_HEART);
+            this->shadowScale = 0.0f;
             this->yOffset = 430.0f;
             Actor_SetScale(&this->actor, 0.02f);
             break;
         case SUBTYPE_HEART_PIECE:
+            this->shadowScale = 0.0f;
             this->yOffset = 650.0f;
             Actor_SetScale(&this->actor, 0.02f);
             break;
         case SUBTYPE_HEART_CONTAINER:
-            this->yOffset = 430.0f;
-            Actor_SetScale(&this->actor, 0.02f);
+            this->bankIndex = Object_GetIndex(&globalCtx->objectCtx, OBJECT_GI_HEARTS);
+            this->shadowScale = 0.0f;
             break;
         case SUBTYPE_ARROW_SINGLE:
             this->yOffset = 400.0f;
@@ -295,9 +331,14 @@ void EnTrapItem_Trap(EnTrapItem* this, GlobalContext* globalCtx){
 }
 
 void EnTrapItem_DrawHeart(EnTrapItem* this, GlobalContext* globalCtx) {
+    // spin
+    this->actor.shape.rot.y += 960;
+
     // displays the heart
     switch (GET_ITEM_SUBTYPE(this->actor.params)) {
         case SUBTYPE_HEART_PIECE:
+            this->actor.shape.yOffset = Math_SinS(this->actor.shape.rot.y) * 150.0f + 850.0f;
+
             OPEN_DISPS(globalCtx->state.gfxCtx, __FILE__, __LINE__);
 
             func_80093D84(globalCtx->state.gfxCtx);
@@ -309,21 +350,8 @@ void EnTrapItem_DrawHeart(EnTrapItem* this, GlobalContext* globalCtx) {
             CLOSE_DISPS(globalCtx->state.gfxCtx, __FILE__, __LINE__);
             break;
         case SUBTYPE_HEART_CONTAINER:
-            OPEN_DISPS(globalCtx->state.gfxCtx, __FILE__, __LINE__);
-
-            func_80093D18(globalCtx->state.gfxCtx);
-            func_8002EBCC(&this->actor, globalCtx, 0);
-            gSPMatrix(POLY_OPA_DISP++, Matrix_NewMtx(globalCtx->state.gfxCtx, __FILE__, __LINE__),
-                    G_MTX_MODELVIEW | G_MTX_LOAD);
-            gSPDisplayList(POLY_OPA_DISP++, gHeartPieceExteriorDL);
-
-            func_80093D84(globalCtx->state.gfxCtx);
-            func_8002ED80(&this->actor, globalCtx, 0);
-            gSPMatrix(POLY_XLU_DISP++, Matrix_NewMtx(globalCtx->state.gfxCtx, __FILE__, __LINE__),
-                    G_MTX_MODELVIEW | G_MTX_LOAD);
-            gSPDisplayList(POLY_XLU_DISP++, gHeartContainerInteriorDL);
-
-            CLOSE_DISPS(globalCtx->state.gfxCtx, __FILE__, __LINE__);
+            this->actor.shape.yOffset = Math_SinS(this->actor.shape.rot.y) * 12.0f + 44.0f;
+            GetItem_Draw(globalCtx, GID_HEART_CONTAINER);
             break;
         case SUBTYPE_HEART_RECOVERY:
             Matrix_Scale(16.0f, 16.0f, 16.0f, MTXMODE_APPLY);
@@ -331,10 +359,6 @@ void EnTrapItem_DrawHeart(EnTrapItem* this, GlobalContext* globalCtx) {
         default:
             break;
     }
-
-    // spin
-    this->actor.shape.rot.y += 960;
-    this->actor.shape.yOffset = Math_SinS(this->actor.shape.rot.y) * 150.0f + 850.0f;
 }
 
 void EnTrapItem_DrawRupee(EnTrapItem* this, GlobalContext* globalCtx) {
@@ -358,6 +382,8 @@ void EnTrapItem_DrawRupee(EnTrapItem* this, GlobalContext* globalCtx) {
 }
 
 void EnTrapItem_DrawCollectible(EnTrapItem* this, GlobalContext* globalCtx) {
+    // both magic displays corrupted texture
+
     if (GET_ITEM_TYPE(this->actor.params) >= ITEM_TYPE_SMALL_KEY) {
         this->texIndex = GET_ITEM_TYPE(this->actor.params) - ITEM_TYPE_SMALL_KEY;
     } else {
@@ -390,6 +416,12 @@ void EnTrapItem_DrawCollectible(EnTrapItem* this, GlobalContext* globalCtx) {
 }
 
 void EnTrapItem_DrawEquipment(EnTrapItem* this, GlobalContext* globalCtx) {
+    this->actor.shape.yOffset = Math_CosS(this->actor.shape.rot.x) * 37.0f;
+    this->actor.shape.yOffset = ABS(this->actor.shape.yOffset);
+    this->actor.world.rot.x -= 700;
+    this->actor.shape.rot.y += 400;
+    this->actor.shape.rot.x = this->actor.world.rot.x - 0x4000;
+
     switch(GET_ITEM_SUBTYPE(this->actor.params)) {
         case SUBTYPE_SHIELD_DEKU:
             GetItem_Draw(globalCtx, GID_SHIELD_DEKU);

@@ -10,6 +10,9 @@ extern const ActorInit En_Trap_Item_InitVars;
 #define GET_TRAP_TYPE(params) ((((params) >> 0x4) & 0x7) < TRAP_TYPE_MAX ? (((params) >> 0x4) & 0x7) : TRAP_TYPE_ICE)
 #define GET_ITEM_SUBTYPE(params) ((((params) >> 0x7) & 0x1F) < SUBTYPE_MAX ? (((params) >> 0x7) & 0x1F) : SUBTYPE_NONE)
 
+struct EnTrapItem;
+typedef void (*EnTrapItemActionFunc)(struct EnTrapItem*, GlobalContext*);
+
 typedef enum {
     /* 0x00 */ ITEM_TYPE_HEART,
     /* 0x01 */ ITEM_TYPE_RUPEE,
@@ -59,6 +62,7 @@ typedef enum {
 
 typedef struct EnTrapItem {
     Actor actor;
+    EnTrapItemActionFunc actionFunc;
     ColliderCylinder collider;
     f32 yOffset;
     f32 shadowScale;
