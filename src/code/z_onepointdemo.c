@@ -1313,6 +1313,11 @@ s32 OnePointCutscene_Attention(GlobalContext* globalCtx, Actor* actor) {
             timer = 30;
             break;
     }
+
+    if (actor->id == ACTOR_OBJ_TIMEBLOCK) {
+        timer = 125;
+    }
+
     osSyncPrintf(VT_FGCOL(CYAN) "%06u:" VT_RST " actor attention demo camera: request %d ", globalCtx->state.frames,
                  actor->category);
 
