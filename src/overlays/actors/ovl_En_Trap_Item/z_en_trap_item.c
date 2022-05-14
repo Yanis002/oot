@@ -6,10 +6,21 @@
 
 /* 
     PARAMETERS:
-    - Item Type:      0000 0000 0000 1111 - 0x00F
-    - Trap Type:      0000 0000 0111 0000 - 0x070
-    - Item Subtype:   0000 1111 1000 0000 - 0xF80
-    - Example:        0000 0000 1001 0001 - 0x091
+    - Item Type:    0000 0000 0000 1111 - 0x000F
+    - Trap Type:    0000 0000 0111 0000 - 0x0070
+    - Item Subtype: 0000 1111 1000 0000 - 0x0F80
+    - Enemy Type:   1111 0000 0000 0000 - 0xF000
+
+    Z-ROT PARAMETERS:
+    - Switch Flag:  0000 0000 0011 1111 - 0x003F
+    - Mode:         0000 0000 0100 0000 - 0x0040
+    - Enemy Flag:   0001 1111 1000 0000 - 0x1F80
+
+    EXAMPLE:
+    - Parameters:   0000 0010 0010 0101 - 0x0225
+        ((SUBTYPE_TUNIC_ZORA << 0x7) | (TRAP_TYPE_CRUSH << 0x4) | ITEM_TYPE_TUNIC)
+    - Z-Rot Params: 0000 0000 0100 0001 - 0x0041
+        ((MODE_SWITCH << 6) | 0x1)
 */
 
 #include "z_en_trap_item.h"
@@ -27,6 +38,8 @@ void EnTrapItem_Main(EnTrapItem* this, GlobalContext* globalCtx);
 u8 EnTrapItem_InitItemType(EnTrapItem* this, GlobalContext* globalCtx);
 void EnTrapItem_InitItemSubType(EnTrapItem* this, GlobalContext* globalCtx);
 void EnTrapItem_Trap(EnTrapItem* this, GlobalContext* globalCtx);
+void EnTrapItem_SpawnBomb(EnTrapItem* this, GlobalContext* globalCtx);
+void EnTrapItem_SpawnEnemy(EnTrapItem* this, GlobalContext* globalCtx);
 void EnTrapItem_DrawHeart(EnTrapItem* this, GlobalContext* globalCtx);
 void EnTrapItem_DrawRupee(EnTrapItem* this, GlobalContext* globalCtx);
 void EnTrapItem_DrawCollectible(EnTrapItem* this, GlobalContext* globalCtx);
@@ -78,20 +91,34 @@ void EnTrapItem_Init(Actor* thisx, GlobalContext* globalCtx) {
     EnTrapItem* this = (EnTrapItem*)thisx;
 
     osSyncPrintf("En_Trap_Item: Init started!\n");
-    osSyncPrintf("Raw Parameters: %X\nItem Type: %X\nTrap Type: %X\nItem Subtype: %X\n",
-                    this->actor.params,
-                    GET_ITEM_TYPE(this->actor.params),
-                    GET_TRAP_TYPE(this->actor.params),
-                    GET_ITEM_SUBTYPE(this->actor.params));
 
-    this->yOffset = 0.0f;
-    this->texIndex = 0;
+    this->itemType = this->actor.params & 0xF;
+    this->trapType = (this->actor.params >> 0x4) & 0x7;
+    this->itemSubType = (this->actor.params >> 0x7) & 0x1F;
+    this->enemyType = (this->actor.params >> 0xC) & 0xF;
+    this->switchFlag = this->actor.home.rot.z & 0x3F;
+    this->mode = (this->actor.home.rot.z >> 6) & 0x1;
+    this->enemySwitchFlag = (this->actor.home.rot.z >> 0x7) & 0x3F;
+    this->actor.home.rot.z = this->actor.world.rot.z = 0;
+
+    osSyncPrintf("Checking parameters...\n");
+
+    if ((this->itemType >= ITEM_TYPE_MAX) || (this->trapType >= TRAP_TYPE_MAX) || (this->itemSubType >= SUBTYPE_MAX) ||
+        ((this->enemyType >= ENEMY_TYPE_MAX) && (this->enemyType >= ENEMY_TYPE_MAX)) ||
+        (this->switchFlag > 0x3F) || (this->mode >= MODE_MAX) || (this->enemySwitchFlag > 0x3F)) {
+            osSyncPrintf("ERROR: Something's wrong with the parameters. Goodbye.\n");
+            Actor_Kill(&this->actor);
+    } else {
+        osSyncPrintf("Parameters OK!\nRaw Parameters: %X\nItem Type: %X\nTrap Type: %X\nItem Subtype: %X\nEnemy Type: %X\n",
+                    this->actor.params, this->itemType, this->trapType, this->itemSubType, this->enemyType);
+        osSyncPrintf("Switch Flag: %X\nMode: %X\nEnemy Flag: %X\n",
+                    this->switchFlag, this->mode, this->enemySwitchFlag);
+    }
+
     this->shadowScale = 6.0f;
-    this->bankIndex = 0;
-    this->actor.speedXZ = 0.0f;
-    this->actor.velocity.y = 0.0f;
-    this->actor.gravity = 0.0f;
     this->actor.minVelocityY = -12.0f;
+    this->texIndex = this->bankIndex = 0;
+    this->yOffset = this->actor.speedXZ = this->actor.velocity.y = this->actor.gravity = 0.0f;
 
     Collider_InitCylinder(globalCtx, &this->collider);
     Collider_SetCylinder(globalCtx, &this->collider, &this->actor, &sCylinderInit);
@@ -132,7 +159,7 @@ void EnTrapItem_Update(Actor* thisx, GlobalContext* globalCtx) {
 void EnTrapItem_Draw(Actor* thisx, GlobalContext* globalCtx) {
     EnTrapItem* this = (EnTrapItem*)thisx;
 
-    switch (GET_ITEM_TYPE(this->actor.params)) {
+    switch (this->itemType) {
         case ITEM_TYPE_HEART:
             EnTrapItem_DrawHeart(this, globalCtx);
             break;
@@ -173,7 +200,7 @@ void EnTrapItem_WaitForNewObject(EnTrapItem* this, GlobalContext* globalCtx) {
 void EnTrapItem_Main(EnTrapItem* this, GlobalContext* globalCtx) {
     u8 updateBgBool = false;
 
-    if (GET_ITEM_SUBTYPE(this->actor.params) == SUBTYPE_HEART_CONTAINER) {
+    if (this->itemSubType == SUBTYPE_HEART_CONTAINER) {
         Math_ApproachF(&this->actor.scale.x, 0.4f, 0.1f, 0.01f);
         this->actor.scale.y = this->actor.scale.z = this->actor.scale.x;
     }
@@ -196,7 +223,7 @@ void EnTrapItem_Main(EnTrapItem* this, GlobalContext* globalCtx) {
 }
 
 u8 EnTrapItem_InitItemType(EnTrapItem* this, GlobalContext* globalCtx){
-    switch (GET_ITEM_TYPE(this->actor.params)) {
+    switch (this->itemType) {
         case ITEM_TYPE_RUPEE:
             this->yOffset = 750.0f;
             Actor_SetScale(&this->actor, 0.015f);
@@ -220,7 +247,7 @@ u8 EnTrapItem_InitItemType(EnTrapItem* this, GlobalContext* globalCtx){
 }
 
 void EnTrapItem_InitItemSubType(EnTrapItem* this, GlobalContext* globalCtx){
-    switch (GET_ITEM_SUBTYPE(this->actor.params)) {
+    switch (this->itemSubType) {
         case SUBTYPE_MAGIC_LARGE:
             this->yOffset = 320.0f;
             Actor_SetScale(&this->actor, 0.045 - 1e-10);
@@ -286,23 +313,16 @@ void EnTrapItem_InitItemSubType(EnTrapItem* this, GlobalContext* globalCtx){
 
 void EnTrapItem_Trap(EnTrapItem* this, GlobalContext* globalCtx){
     Player* player = GET_PLAYER(globalCtx);
-    EnBom* bomb = NULL;
     u8 i;
 
     if (((this->actor.xzDistToPlayer <= 25.0f) &&
         (this->actor.yDistToPlayer >= -50.0f) && (this->actor.yDistToPlayer <= 50.0f))) {
-        switch(GET_TRAP_TYPE(this->actor.params)) {
+        switch(this->trapType) {
             case TRAP_TYPE_ICE:
                 globalCtx->playerTakeDamage(globalCtx, player, 3, 0.0f, 0.0f, 0, 20);
                 break;
             case TRAP_TYPE_EXPLOSION:
-                bomb = (EnBom*)Actor_Spawn(&globalCtx->actorCtx, globalCtx, ACTOR_EN_BOM, this->actor.world.pos.x,
-                               this->actor.world.pos.y, this->actor.world.pos.z, 0, 0, 0, BOMB_BODY);
-                if (bomb != NULL) {
-                    bomb->timer = 0;
-                }
-                globalCtx->damagePlayer(globalCtx, -0x8);
-                func_8002F71C(globalCtx, &this->actor, 2.0f, this->actor.yawTowardsPlayer, 0.0f);
+                EnTrapItem_SpawnBomb(this, globalCtx);
                 break;
             case TRAP_TYPE_CRUSH:
                 Gameplay_TriggerRespawn(globalCtx);
@@ -323,11 +343,79 @@ void EnTrapItem_Trap(EnTrapItem* this, GlobalContext* globalCtx){
             case TRAP_TYPE_ELECTRICITY:
                 globalCtx->playerTakeDamage(globalCtx, player, 4, 0.0f, 0.0f, 0, 20);
                 break;
+            case TRAP_TYPE_CUCCO:
+                Actor_Spawn(&globalCtx->actorCtx, globalCtx, ACTOR_EN_NIW, this->actor.world.pos.x,
+                    this->actor.world.pos.y, this->actor.world.pos.z, 0, 0, 0, 0xFFFF);
+                EnTrapItem_SpawnBomb(this, globalCtx);
+                break;
+            case TRAP_TYPE_ENEMY:
+                EnTrapItem_SpawnEnemy(this, globalCtx);
+                break;
             default:
                 break;
         }
+        if (this->mode == MODE_SWITCH) {
+            Flags_SetSwitch(globalCtx, this->switchFlag);
+        }
         Actor_Kill(&this->actor);
     }
+}
+
+void EnTrapItem_SpawnBomb(EnTrapItem* this, GlobalContext* globalCtx) {
+    EnBom* bomb = NULL;
+
+    bomb = (EnBom*)Actor_Spawn(&globalCtx->actorCtx, globalCtx, ACTOR_EN_BOM, this->actor.world.pos.x,
+                    this->actor.world.pos.y, this->actor.world.pos.z, 0, 0, 0, BOMB_BODY);
+    if (bomb != NULL) {
+        bomb->timer = 0;
+    }
+    globalCtx->damagePlayer(globalCtx, -0x8);
+    func_8002F71C(globalCtx, &this->actor, 2.0f, this->actor.yawTowardsPlayer, 0.0f);
+}
+
+void EnTrapItem_SpawnEnemy(EnTrapItem* this, GlobalContext* globalCtx) {
+    s16 params = 0;
+    u8 randomBool = (Rand_ZeroOne() <= 0.5f);
+    s16 enemyActorIDs[] = {
+        ACTOR_EN_BROB, ACTOR_EN_DODONGO, ACTOR_EN_FZ, ACTOR_EN_IK,      ACTOR_EN_PEEHAT,  
+        ACTOR_EN_RD,   ACTOR_EN_TEST,    ACTOR_EN_ZF, ACTOR_EN_WALLMAS, ACTOR_EN_RR,
+    };
+
+    switch (this->enemyType) {
+        case ENEMY_TYPE_MUSCLE:
+            params = (((randomBool ? false : true) << 12) | ((randomBool ? 0x14 : 0xFF) & 0x00FF));
+            break;
+        case ENEMY_TYPE_DODONGO:
+        case ENEMY_TYPE_PEEHAT:
+        case ENEMY_TYPE_LIKELIKE:
+            params = 0xFFFF;
+            break;
+        case ENEMY_TYPE_FREEZARD:
+            params = randomBool ? 0x0 : 0xFFFF;
+            break;
+        case ENEMY_TYPE_KNUCKLE:
+            params = (randomBool ? 0x2 : 0x3) | ((this->enemySwitchFlag << 0x8) & 0xFF00);
+            EnTrapItem_SpawnBomb(this, globalCtx);
+            break;
+        case ENEMY_TYPE_REDEAD:
+            params = ((randomBool ? 0x00 : 0x80) | ((((this->enemySwitchFlag) << 8) & 0x7F00) |
+                        (((Rand_ZeroOne() <= 0.5f) ? false : true) << 15) | (0xFE & 0x00FF)));
+            break;
+        case ENEMY_TYPE_STALFOS:
+            params = randomBool ? 0x0 : 0x4;
+            break;
+        case ENEMY_TYPE_LIZALFOS:
+            params = ((randomBool ? 0x80 : 0xFE) | (((0x0 << 8) & 0xFF00)));
+            break;
+        case ENEMY_TYPE_WALLMASTER:
+            // params = 0 by default
+            break;
+        default:
+            break;
+    }
+
+    Actor_Spawn(&globalCtx->actorCtx, globalCtx, enemyActorIDs[this->enemyType], this->actor.world.pos.x,
+                this->actor.world.pos.y, this->actor.world.pos.z, 0, 0, 0, params);
 }
 
 void EnTrapItem_DrawHeart(EnTrapItem* this, GlobalContext* globalCtx) {
@@ -335,7 +423,7 @@ void EnTrapItem_DrawHeart(EnTrapItem* this, GlobalContext* globalCtx) {
     this->actor.shape.rot.y += 960;
 
     // displays the heart
-    switch (GET_ITEM_SUBTYPE(this->actor.params)) {
+    switch (this->itemSubType) {
         case SUBTYPE_HEART_PIECE:
             this->actor.shape.yOffset = Math_SinS(this->actor.shape.rot.y) * 150.0f + 850.0f;
 
@@ -374,7 +462,7 @@ void EnTrapItem_DrawRupee(EnTrapItem* this, GlobalContext* globalCtx) {
     gSPMatrix(POLY_OPA_DISP++, Matrix_NewMtx(globalCtx->state.gfxCtx, __FILE__, __LINE__),
               G_MTX_MODELVIEW | G_MTX_LOAD);
 
-    gSPSegment(POLY_OPA_DISP++, 0x08, SEGMENTED_TO_VIRTUAL(sRupeeTex[GET_ITEM_SUBTYPE(this->actor.params) - SUBTYPE_RUPEE_GREEN]));
+    gSPSegment(POLY_OPA_DISP++, 0x08, SEGMENTED_TO_VIRTUAL(sRupeeTex[this->itemSubType - SUBTYPE_RUPEE_GREEN]));
 
     gSPDisplayList(POLY_OPA_DISP++, gRupeeDL);
 
@@ -384,18 +472,19 @@ void EnTrapItem_DrawRupee(EnTrapItem* this, GlobalContext* globalCtx) {
 void EnTrapItem_DrawCollectible(EnTrapItem* this, GlobalContext* globalCtx) {
     // both magic displays corrupted texture
 
-    if (GET_ITEM_TYPE(this->actor.params) >= ITEM_TYPE_SMALL_KEY) {
-        this->texIndex = GET_ITEM_TYPE(this->actor.params) - ITEM_TYPE_SMALL_KEY;
+    if (this->itemType >= ITEM_TYPE_SMALL_KEY) {
+        this->texIndex = this->itemType - ITEM_TYPE_SMALL_KEY;
     } else {
-        this->texIndex = 5; 
-        switch(GET_ITEM_SUBTYPE(this->actor.params)) {
+        switch(this->itemSubType) {
             case SUBTYPE_MAGIC_LARGE:
             case SUBTYPE_MAGIC_SMALL:
-                this->texIndex += GET_ITEM_SUBTYPE(this->actor.params) + 1;
+                this->texIndex = this->itemSubType + 6;
+                break;
             case SUBTYPE_ARROW_SMALL:
             case SUBTYPE_ARROW_MEDIUM:
             case SUBTYPE_ARROW_LARGE:
-                this->texIndex = GET_ITEM_SUBTYPE(this->actor.params) - 2;
+                this->texIndex = this->itemSubType - 2;
+                break;
             default:
                 break;
         }
@@ -422,7 +511,7 @@ void EnTrapItem_DrawEquipment(EnTrapItem* this, GlobalContext* globalCtx) {
     this->actor.shape.rot.y += 400;
     this->actor.shape.rot.x = this->actor.world.rot.x - 0x4000;
 
-    switch(GET_ITEM_SUBTYPE(this->actor.params)) {
+    switch(this->itemSubType) {
         case SUBTYPE_SHIELD_DEKU:
             GetItem_Draw(globalCtx, GID_SHIELD_DEKU);
             break;

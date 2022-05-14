@@ -6,10 +6,6 @@
 
 extern const ActorInit En_Trap_Item_InitVars;
 
-#define GET_ITEM_TYPE(params) (((params) & 0xF) < ITEM_TYPE_MAX ? ((params) & 0xF) : ITEM_TYPE_HEART)
-#define GET_TRAP_TYPE(params) ((((params) >> 0x4) & 0x7) < TRAP_TYPE_MAX ? (((params) >> 0x4) & 0x7) : TRAP_TYPE_ICE)
-#define GET_ITEM_SUBTYPE(params) ((((params) >> 0x7) & 0x1F) < SUBTYPE_MAX ? (((params) >> 0x7) & 0x1F) : SUBTYPE_NONE)
-
 struct EnTrapItem;
 typedef void (*EnTrapItemActionFunc)(struct EnTrapItem*, GlobalContext*);
 
@@ -52,22 +48,52 @@ typedef enum {
 } EnTrapItemSubType;
 
 typedef enum {
+    /* 0x00 */ ENEMY_TYPE_MUSCLE,
+    /* 0x01 */ ENEMY_TYPE_DODONGO,
+    /* 0x02 */ ENEMY_TYPE_FREEZARD,
+    /* 0x03 */ ENEMY_TYPE_KNUCKLE,
+    /* 0x04 */ ENEMY_TYPE_PEEHAT,
+    /* 0x05 */ ENEMY_TYPE_REDEAD,
+    /* 0x06 */ ENEMY_TYPE_STALFOS,
+    /* 0x07 */ ENEMY_TYPE_LIZALFOS,
+    /* 0x08 */ ENEMY_TYPE_WALLMASTER,
+    /* 0x09 */ ENEMY_TYPE_LIKELIKE,
+    /* 0x0A */ ENEMY_TYPE_MAX
+} EnTrapItemEnemyType;
+
+typedef enum {
     /* 0x00 */ TRAP_TYPE_ICE,
     /* 0x01 */ TRAP_TYPE_EXPLOSION,
     /* 0x02 */ TRAP_TYPE_CRUSH,
     /* 0x03 */ TRAP_TYPE_FIRE,
     /* 0x04 */ TRAP_TYPE_ELECTRICITY,
-    /* 0x05 */ TRAP_TYPE_MAX
+    /* 0x05 */ TRAP_TYPE_CUCCO,
+    /* 0x06 */ TRAP_TYPE_ENEMY,
+    /* 0x07 */ TRAP_TYPE_MAX
 } EnTrapItemTrapType;
 
+typedef enum {
+    /* 0x00 */ MODE_DEFAULT,
+    /* 0x01 */ MODE_SWITCH,
+    /* 0x02 */ MODE_MAX
+} EnTrapItemMode;
+
+// actor: 14C, actionfunc: 4, collider: 4C, f32: 4, s16: 2, u8: 1, entrapitem: 1B0
 typedef struct EnTrapItem {
-    Actor actor;
-    EnTrapItemActionFunc actionFunc;
-    ColliderCylinder collider;
-    f32 yOffset;
-    f32 shadowScale;
-    u8 texIndex;
-    u8 bankIndex;
-} EnTrapItem;
+    /* 0x14C */ Actor actor;
+    /* 0x04C */ ColliderCylinder collider;
+    /* 0x004 */ EnTrapItemActionFunc actionFunc;
+    /* 0x004 */ f32 shadowScale;
+    /* 0x004 */ f32 yOffset;
+    /* 0x002 */ s16 enemySwitchFlag;
+    /* 0x002 */ s16 switchFlag;
+    /* 0x001 */ u8 bankIndex;
+    /* 0x001 */ u8 enemyType;
+    /* 0x001 */ u8 itemSubType;
+    /* 0x001 */ u8 itemType;
+    /* 0x001 */ u8 mode;
+    /* 0x001 */ u8 texIndex;
+    /* 0x001 */ u8 trapType;
+} EnTrapItem; // size = 0x1B0
 
 #endif
