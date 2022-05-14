@@ -115,6 +115,7 @@ void EnTrapItem_Init(Actor* thisx, GlobalContext* globalCtx) {
                     this->switchFlag, this->mode, this->enemySwitchFlag);
     }
 
+    this->killTimer = 41;
     this->shadowScale = 6.0f;
     this->actor.minVelocityY = -12.0f;
     this->texIndex = this->bankIndex = 0;
@@ -218,6 +219,16 @@ void EnTrapItem_Main(EnTrapItem* this, GlobalContext* globalCtx) {
     }
 
     EnTrapItem_Trap(this, globalCtx);
+
+    if ((this->actor.draw == NULL) && (this->killTimer < 41)) {
+        if (this->killTimer > 0) {
+            this->killTimer--;
+        } else {
+            osSyncPrintf("En_Trap_Item: My job here is done\n");
+            Actor_Kill(&this->actor);
+        }
+    }
+
     Collider_UpdateCylinder(&this->actor, &this->collider);
     CollisionCheck_SetAC(globalCtx, &globalCtx->colChkCtx, &this->collider.base);
 }
@@ -316,7 +327,7 @@ void EnTrapItem_Trap(EnTrapItem* this, GlobalContext* globalCtx){
     u8 i;
 
     if (((this->actor.xzDistToPlayer <= 25.0f) &&
-        (this->actor.yDistToPlayer >= -50.0f) && (this->actor.yDistToPlayer <= 50.0f))) {
+        (this->actor.yDistToPlayer >= -50.0f) && (this->actor.yDistToPlayer <= 50.0f)) && (this->killTimer == 41)) {
         switch(this->trapType) {
             case TRAP_TYPE_ICE:
                 globalCtx->playerTakeDamage(globalCtx, player, 3, 0.0f, 0.0f, 0, 20);
@@ -356,8 +367,10 @@ void EnTrapItem_Trap(EnTrapItem* this, GlobalContext* globalCtx){
         }
         if (this->mode == MODE_SWITCH) {
             Flags_SetSwitch(globalCtx, this->switchFlag);
+            this->mode = MODE_DEFAULT;
         }
-        Actor_Kill(&this->actor);
+        this->actor.draw = NULL;
+        this->killTimer = 40;
     }
 }
 

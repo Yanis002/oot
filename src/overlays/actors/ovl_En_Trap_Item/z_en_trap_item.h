@@ -93,7 +93,8 @@ typedef struct EnTrapItem {
     /* 0x001 */ u8 itemType;
     /* 0x001 */ u8 mode;
     /* 0x001 */ u8 texIndex;
+    /* 0x001 */ u8 killTimer;
     /* 0x001 */ u8 trapType;
-} EnTrapItem; // size = 0x1B0
+} EnTrapItem; // size = 0x1B1
 
 #endif
