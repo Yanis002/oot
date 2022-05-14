@@ -22,7 +22,7 @@ void KaleidoSetup_Update(GlobalContext* globalCtx) {
             if (BREG(0)) {
                 pauseCtx->debugState = 3;
             }
-        } else if (CHECK_BTN_ALL(input->press.button, BTN_START)) {
+        } else if (CHECK_BTN_ALL(input->press.button, BTN_START) && (D_801614B0.a == 0)) {
             gSaveContext.unk_13EE = gSaveContext.unk_13EA;
 
             WREG(16) = -175;

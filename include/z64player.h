@@ -637,6 +637,10 @@ typedef struct Player {
     /* 0x0A86 */ s8         unk_A86;
     /* 0x0A87 */ u8         unk_A87;
     /* 0x0A88 */ Vec3f      unk_A88; // previous body part 0 position
-} Player; // size = 0xA94
+    /* 0x0A89 */ u8         isFreezerSpawned;
+    /* 0x0A8A */ u8         nbEnArrow;
+    /* 0x0A8B */ u8         scrollChange;
+    /* 0x0A8C */ Actor*     freezerChild;
+} Player; // size = 0xBD8
 
 #endif

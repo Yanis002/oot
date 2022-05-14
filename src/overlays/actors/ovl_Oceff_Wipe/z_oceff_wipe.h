@@ -6,14 +6,17 @@
 
 typedef enum {
     /* 0x00 */ OCEFF_WIPE_ZL,
-    /* 0x01 */ OCEFF_WIPE_SOT
+    /* 0x01 */ OCEFF_WIPE_SOT,
+    /* 0x02 */ OCEFF_WIPE_SOT2
 } OceffWipeType;
 
 struct OceffWipe;
 
 typedef struct OceffWipe {
     /* 0x0000 */ Actor actor;
-    /* 0x014C */ s16 timer;
+    /* 0x014C */ s16 counter;
+    /* P-A    */ s16 counter2;
+                 u8 boolWipe2;
 } OceffWipe; // size = 0x0150
 
 #endif

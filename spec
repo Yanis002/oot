@@ -3370,6 +3370,12 @@ beginseg
 endseg
 
 beginseg
+    name "ovl_En_Freezer"
+    include "build/src/overlays/actors/ovl_En_Freezer/z_en_freezer.o"
+    include "build/src/overlays/actors/ovl_En_Freezer/ovl_En_Freezer_reloc.o"
+endseg
+
+beginseg
     name "gameplay_keep"
     romalign 0x1000
     include "build/assets/objects/gameplay_keep/gameplay_keep.o"

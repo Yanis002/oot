@@ -108,9 +108,23 @@ void* D_8012A2F8[] = {
     gYdanTex_00CA18,
 };
 
+bool freezeWater(GlobalContext* globalCtx){
+    Player* player = GET_PLAYER(globalCtx);
+    if(player->scrollChange){
+        func_80099550(globalCtx);
+        return true;
+    } else {
+        return false;
+    }
+}
+
 // Scene Draw Config 19
 void func_800995DC(GlobalContext* globalCtx) {
     u32 gameplayFrames = globalCtx->gameplayFrames;
+
+    if (freezeWater(globalCtx)) {
+        return;
+    }
 
     OPEN_DISPS(globalCtx->state.gfxCtx, "../z_scene_table.c", 4763);
 
@@ -129,6 +143,10 @@ void func_800995DC(GlobalContext* globalCtx) {
 // Scene Draw Config 28
 void func_80099760(GlobalContext* globalCtx) {
     u32 gameplayFrames;
+
+    if (freezeWater(globalCtx)) {
+        return;
+    }
 
     OPEN_DISPS(globalCtx->state.gfxCtx, "../z_scene_table.c", 4845);
 
@@ -157,6 +175,10 @@ void func_80099878(GlobalContext* globalCtx) {
     u32 gameplayFrames;
     s32 pad;
     Gfx* displayListHead = Graph_Alloc(globalCtx->state.gfxCtx, 2 * sizeof(Gfx[3]));
+
+    if (freezeWater(globalCtx)) {
+        return;
+    }
 
     OPEN_DISPS(globalCtx->state.gfxCtx, "../z_scene_table.c", 4905);
 
@@ -193,6 +215,10 @@ void func_80099878(GlobalContext* globalCtx) {
 void func_80099BD8(GlobalContext* globalCtx) {
     f32 temp;
     Gfx* displayListHead = Graph_Alloc(globalCtx->state.gfxCtx, 18 * sizeof(Gfx));
+
+    if (freezeWater(globalCtx)) {
+        return;
+    }
 
     OPEN_DISPS(globalCtx->state.gfxCtx, "../z_scene_table.c", 5069);
 
@@ -255,6 +281,10 @@ void func_80099BD8(GlobalContext* globalCtx) {
 void func_8009A45C(GlobalContext* globalCtx) {
     u32 gameplayFrames;
 
+    if (freezeWater(globalCtx)) {
+        return;
+    }
+
     OPEN_DISPS(globalCtx->state.gfxCtx, "../z_scene_table.c", 5171);
 
     gameplayFrames = globalCtx->gameplayFrames;
@@ -285,6 +315,10 @@ void func_8009A45C(GlobalContext* globalCtx) {
 void func_8009A798(GlobalContext* globalCtx) {
     u32 gameplayFrames;
 
+    if (freezeWater(globalCtx)) {
+        return;
+    }
+
     OPEN_DISPS(globalCtx->state.gfxCtx, "../z_scene_table.c", 5226);
 
     gameplayFrames = globalCtx->gameplayFrames;
@@ -313,6 +347,10 @@ void func_8009A798(GlobalContext* globalCtx) {
 void func_8009A9DC(GlobalContext* globalCtx) {
     u32 gameplayFrames;
 
+    if (freezeWater(globalCtx)) {
+        return;
+    }
+
     OPEN_DISPS(globalCtx->state.gfxCtx, "../z_scene_table.c", 5278);
 
     gameplayFrames = globalCtx->gameplayFrames;
@@ -336,6 +374,10 @@ void func_8009A9DC(GlobalContext* globalCtx) {
 void func_8009AB98(GlobalContext* globalCtx) {
     u32 gameplayFrames;
 
+    if (freezeWater(globalCtx)) {
+        return;
+    }
+
     OPEN_DISPS(globalCtx->state.gfxCtx, "../z_scene_table.c", 5317);
 
     gameplayFrames = globalCtx->gameplayFrames;
@@ -353,6 +395,10 @@ void func_8009AB98(GlobalContext* globalCtx) {
 // Scene Draw Config 39
 void func_8009ACA8(GlobalContext* globalCtx) {
     u32 gameplayFrames;
+
+    if (freezeWater(globalCtx)) {
+        return;
+    }
 
     OPEN_DISPS(globalCtx->state.gfxCtx, "../z_scene_table.c", 5346);
 
@@ -374,6 +420,10 @@ void func_8009ACA8(GlobalContext* globalCtx) {
 // Scene Draw Config 24
 void func_8009AE30(GlobalContext* globalCtx) {
     u32 gameplayFrames;
+
+    if (freezeWater(globalCtx)) {
+        return;
+    }
 
     OPEN_DISPS(globalCtx->state.gfxCtx, "../z_scene_table.c", 5384);
 
@@ -407,6 +457,10 @@ void* sThievesHideoutEntranceTextures[] = {
 void func_8009AFE0(GlobalContext* globalCtx) {
     u32 gameplayFrames;
 
+    if (freezeWater(globalCtx)) {
+        return;
+    }
+
     OPEN_DISPS(globalCtx->state.gfxCtx, "../z_scene_table.c", 5490);
 
     gameplayFrames = globalCtx->gameplayFrames;
@@ -428,6 +482,10 @@ void func_8009B0FC(GlobalContext* globalCtx) {
     u32 gameplayFrames;
     s32 spB0;
     s32 spAC;
+
+    if (freezeWater(globalCtx)) {
+        return;
+    }
 
     OPEN_DISPS(globalCtx->state.gfxCtx, "../z_scene_table.c", 5535);
 
@@ -497,6 +555,10 @@ void func_8009B0FC(GlobalContext* globalCtx) {
 void func_8009B86C(GlobalContext* globalCtx) {
     u32 gameplayFrames;
 
+    if (freezeWater(globalCtx)) {
+        return;
+    }
+
     OPEN_DISPS(globalCtx->state.gfxCtx, "../z_scene_table.c", 5791);
 
     gameplayFrames = globalCtx->gameplayFrames;
@@ -516,6 +578,10 @@ void func_8009B86C(GlobalContext* globalCtx) {
 void func_8009B9BC(GlobalContext* globalCtx) {
     u32 gameplayFrames;
 
+    if (freezeWater(globalCtx)) {
+        return;
+    }
+
     OPEN_DISPS(globalCtx->state.gfxCtx, "../z_scene_table.c", 5822);
 
     gameplayFrames = globalCtx->gameplayFrames;
@@ -530,6 +596,10 @@ void func_8009B9BC(GlobalContext* globalCtx) {
 // Scene Draw Config 35
 void func_8009BAA4(GlobalContext* globalCtx) {
     u32 gameplayFrames;
+
+    if (freezeWater(globalCtx)) {
+        return;
+    }
 
     OPEN_DISPS(globalCtx->state.gfxCtx, "../z_scene_table.c", 5850);
 
@@ -556,6 +626,10 @@ void func_8009BAA4(GlobalContext* globalCtx) {
 void func_8009BC44(GlobalContext* globalCtx) {
     u32 gameplayFrames;
     s8 sp83;
+
+    if (freezeWater(globalCtx)) {
+        return;
+    }
 
     if (1) {} // Necessary to match
 
@@ -615,6 +689,10 @@ void func_8009C0AC(GlobalContext* globalCtx) {
     u32 gameplayFrames;
     s8 sp7B;
 
+    if (freezeWater(globalCtx)) {
+        return;
+    }
+
     if (1) {} // Necessary to match
 
     sp7B = coss((globalCtx->gameplayFrames * 1500) & 0xFFFF) >> 8;
@@ -661,6 +739,10 @@ void* sIceCavernEntranceTextures[] = {
 void func_8009C3EC(GlobalContext* globalCtx) {
     u32 gameplayFrames;
 
+    if (freezeWater(globalCtx)) {
+        return;
+    }
+
     if (0) {} // Necessary to match
 
     OPEN_DISPS(globalCtx->state.gfxCtx, "../z_scene_table.c", 6042);
@@ -687,6 +769,10 @@ void func_8009C3EC(GlobalContext* globalCtx) {
 // Scene Draw Config 42
 void func_8009C608(GlobalContext* globalCtx) {
     u32 gameplayFrames;
+
+    if (freezeWater(globalCtx)) {
+        return;
+    }
 
     OPEN_DISPS(globalCtx->state.gfxCtx, "../z_scene_table.c", 6151);
 
@@ -715,6 +801,10 @@ void func_8009C608(GlobalContext* globalCtx) {
 void func_8009C8B8(GlobalContext* globalCtx) {
     u32 gameplayFrames;
 
+    if (freezeWater(globalCtx)) {
+        return;
+    }
+
     OPEN_DISPS(globalCtx->state.gfxCtx, "../z_scene_table.c", 6201);
 
     gameplayFrames = globalCtx->gameplayFrames;
@@ -738,6 +828,10 @@ void func_8009C8B8(GlobalContext* globalCtx) {
 // Scene Draw Config 47
 void func_8009CAC0(GlobalContext* globalCtx) {
     u32 gameplayFrames;
+
+    if (freezeWater(globalCtx)) {
+        return;
+    }
 
     OPEN_DISPS(globalCtx->state.gfxCtx, "../z_scene_table.c", 6249);
 
@@ -765,6 +859,10 @@ void func_8009CC00(GlobalContext* globalCtx) {
     u32 gameplayFrames;
 
     if (0) {} // Necessary to match
+
+    if (freezeWater(globalCtx)) {
+        return;
+    }
 
     OPEN_DISPS(globalCtx->state.gfxCtx, "../z_scene_table.c", 6290);
 
@@ -809,6 +907,10 @@ Gfx* Gfx_TwoTexScrollPrimColor(GraphicsContext* gfxCtx, s32 tile1, u32 x1, u32 y
 void func_8009CF84(GlobalContext* globalCtx) {
     u32 gameplayFrames;
 
+    if (freezeWater(globalCtx)) {
+        return;
+    }
+
     OPEN_DISPS(globalCtx->state.gfxCtx, "../z_scene_table.c", 6433);
 
     gameplayFrames = globalCtx->gameplayFrames;
@@ -830,6 +932,10 @@ void func_8009CF84(GlobalContext* globalCtx) {
 // Scene Draw Config 41
 void func_8009D0E8(GlobalContext* globalCtx) {
     u32 gameplayFrames;
+
+    if (freezeWater(globalCtx)) {
+        return;
+    }
 
     OPEN_DISPS(globalCtx->state.gfxCtx, "../z_scene_table.c", 6463);
 
@@ -859,6 +965,10 @@ void* sLonLonHouseEntranceTextures[] = {
 
 // Scene Draw Config 44
 void func_8009D31C(GlobalContext* globalCtx) {
+    if (freezeWater(globalCtx)) {
+        return;
+    }
+
     OPEN_DISPS(globalCtx->state.gfxCtx, "../z_scene_table.c", 6515);
 
     gSPSegment(POLY_XLU_DISP++, 0x08,
@@ -886,6 +996,10 @@ void* sGuardHouseView1Textures[] = {
 void func_8009D438(GlobalContext* globalCtx) {
     s32 var;
 
+    if (freezeWater(globalCtx)) {
+        return;
+    }
+
     OPEN_DISPS(globalCtx->state.gfxCtx, "../z_scene_table.c", 6560);
 
     if (LINK_IS_ADULT) {
@@ -909,6 +1023,10 @@ void func_8009D438(GlobalContext* globalCtx) {
 // Scene Draw Config 46
 void func_8009D5B4(GlobalContext* globalCtx) {
     u32 gameplayFrames;
+
+    if (freezeWater(globalCtx)) {
+        return;
+    }
 
     OPEN_DISPS(globalCtx->state.gfxCtx, "../z_scene_table.c", 6595);
 
@@ -938,6 +1056,10 @@ void func_8009D758(GlobalContext* globalCtx) {
 
     if (0) {} // Necessary to match
 
+    if (freezeWater(globalCtx)) {
+        return;
+    }
+
     OPEN_DISPS(globalCtx->state.gfxCtx, "../z_scene_table.c", 6640);
 
     gameplayFrames = globalCtx->gameplayFrames;
@@ -966,6 +1088,10 @@ void* sSpiritTempleEntranceTextures[] = {
 
 // Scene Draw Config 25
 void func_8009D974(GlobalContext* globalCtx) {
+    if (freezeWater(globalCtx)) {
+        return;
+    }
+
     OPEN_DISPS(globalCtx->state.gfxCtx, "../z_scene_table.c", 6752);
 
     gSPSegment(POLY_XLU_DISP++, 0x08,
@@ -978,6 +1104,10 @@ void func_8009D974(GlobalContext* globalCtx) {
 void func_8009DA30(GlobalContext* globalCtx) {
     u32 gameplayFrames;
     Gfx* displayListHead;
+
+    if (freezeWater(globalCtx)) {
+        return;
+    }
 
     displayListHead = Graph_Alloc(globalCtx->state.gfxCtx, 3 * sizeof(Gfx));
 
@@ -1027,6 +1157,10 @@ void* sKakarikoWindowTextures[] = {
 
 // Scene Draw Config 2
 void func_8009DD5C(GlobalContext* globalCtx) {
+    if (freezeWater(globalCtx)) {
+        return;
+    }
+
     OPEN_DISPS(globalCtx->state.gfxCtx, "../z_scene_table.c", 6890);
 
     gSPSegment(POLY_OPA_DISP++, 0x08, SEGMENTED_TO_VIRTUAL(sKakarikoWindowTextures[((void)0, gSaveContext.nightFlag)]));
@@ -1043,6 +1177,10 @@ void func_8009DD5C(GlobalContext* globalCtx) {
 // Scene Draw Config 3
 void func_8009DE78(GlobalContext* globalCtx) {
     u32 gameplayFrames;
+
+    if (freezeWater(globalCtx)) {
+        return;
+    }
 
     OPEN_DISPS(globalCtx->state.gfxCtx, "../z_scene_table.c", 6917);
 
@@ -1072,6 +1210,10 @@ void func_8009E0B8(GlobalContext* globalCtx) {
     u8 spA3;
     u16 spA0;
     Gfx* displayListHead;
+
+    if (freezeWater(globalCtx)) {
+        return;
+    }
 
     spA3 = 128;
     spA0 = 500;
@@ -1126,6 +1268,10 @@ void func_8009E0B8(GlobalContext* globalCtx) {
 void func_8009E54C(GlobalContext* globalCtx) {
     u32 gameplayFrames;
 
+    if (freezeWater(globalCtx)) {
+        return;
+    }
+
     OPEN_DISPS(globalCtx->state.gfxCtx, "../z_scene_table.c", 7058);
 
     if ((gSaveContext.sceneSetupIndex > 3) || (LINK_IS_ADULT && !GET_EVENTCHKINF(EVENTCHKINF_69))) {
@@ -1156,6 +1302,10 @@ void func_8009E730(GlobalContext* globalCtx) {
     u32 gameplayFrames;
     u32 var;
 
+    if (freezeWater(globalCtx)) {
+        return;
+    }
+
     OPEN_DISPS(globalCtx->state.gfxCtx, "../z_scene_table.c", 7123);
 
     gameplayFrames = globalCtx->gameplayFrames;
@@ -1177,6 +1327,10 @@ void func_8009E730(GlobalContext* globalCtx) {
 // Scene Draw Config 7
 void func_8009E8C0(GlobalContext* globalCtx) {
     u32 gameplayFrames;
+
+    if (freezeWater(globalCtx)) {
+        return;
+    }
 
     OPEN_DISPS(globalCtx->state.gfxCtx, "../z_scene_table.c", 7161);
 
@@ -1202,6 +1356,10 @@ void func_8009E8C0(GlobalContext* globalCtx) {
 // Scene Draw Config 8
 void func_8009EAD8(GlobalContext* globalCtx) {
     u32 gameplayFrames;
+
+    if (freezeWater(globalCtx)) {
+        return;
+    }
 
     OPEN_DISPS(globalCtx->state.gfxCtx, "../z_scene_table.c", 7206);
 
@@ -1240,6 +1398,10 @@ void func_8009EE44(GlobalContext* globalCtx) {
 
     if (0) {} // Necessary to match
 
+    if (freezeWater(globalCtx)) {
+        return;
+    }
+
     OPEN_DISPS(globalCtx->state.gfxCtx, "../z_scene_table.c", 7274);
 
     gameplayFrames = globalCtx->gameplayFrames;
@@ -1271,6 +1433,10 @@ void func_8009EE44(GlobalContext* globalCtx) {
 void func_8009F074(GlobalContext* globalCtx) {
     u32 gameplayFrames;
 
+    if (freezeWater(globalCtx)) {
+        return;
+    }
+
     OPEN_DISPS(globalCtx->state.gfxCtx, "../z_scene_table.c", 7323);
 
     gameplayFrames = globalCtx->gameplayFrames;
@@ -1293,6 +1459,10 @@ void* D_8012A380[] = {
 
 // Scene Draw Config 11
 void func_8009F1B4(GlobalContext* globalCtx) {
+    if (freezeWater(globalCtx)) {
+        return;
+    }
+
     OPEN_DISPS(globalCtx->state.gfxCtx, "../z_scene_table.c", 7363);
 
     gSPSegment(POLY_OPA_DISP++, 0x08, SEGMENTED_TO_VIRTUAL(D_8012A380[((void)0, gSaveContext.nightFlag)]));
@@ -1303,6 +1473,10 @@ void func_8009F1B4(GlobalContext* globalCtx) {
 // Scene Draw Config 12
 void func_8009F270(GlobalContext* globalCtx) {
     u32 gameplayFrames;
+
+    if (freezeWater(globalCtx)) {
+        return;
+    }
 
     OPEN_DISPS(globalCtx->state.gfxCtx, "../z_scene_table.c", 7385);
 
@@ -1327,6 +1501,10 @@ void func_8009F270(GlobalContext* globalCtx) {
 void func_8009F40C(GlobalContext* globalCtx) {
     u32 gameplayFrames;
 
+    if (freezeWater(globalCtx)) {
+        return;
+    }
+
     OPEN_DISPS(globalCtx->state.gfxCtx, "../z_scene_table.c", 7423);
 
     gameplayFrames = globalCtx->gameplayFrames;
@@ -1349,6 +1527,10 @@ void func_8009F40C(GlobalContext* globalCtx) {
 // Scene Draw Config 14
 void func_8009F5D4(GlobalContext* globalCtx) {
     Gfx* displayListHead = Graph_Alloc(globalCtx->state.gfxCtx, 3 * sizeof(Gfx));
+
+    if (freezeWater(globalCtx)) {
+        return;
+    }
 
     OPEN_DISPS(globalCtx->state.gfxCtx, "../z_scene_table.c", 7461);
 
@@ -1387,6 +1569,10 @@ void func_8009F7D4(GlobalContext* globalCtx) {
     s8 sp6E = coss((globalCtx->gameplayFrames * 1500) & 0xFFFF) >> 8;
     u32 gameplayFrames;
 
+    if (freezeWater(globalCtx)) {
+        return;
+    }
+
     OPEN_DISPS(globalCtx->state.gfxCtx, "../z_scene_table.c", 7512);
 
     gameplayFrames = globalCtx->gameplayFrames;
@@ -1415,6 +1601,10 @@ void* sGoronCityEntranceTextures[] = {
 void func_8009F9D0(GlobalContext* globalCtx) {
     u32 gameplayFrames;
 
+    if (freezeWater(globalCtx)) {
+        return;
+    }
+
     OPEN_DISPS(globalCtx->state.gfxCtx, "../z_scene_table.c", 7555);
 
     gameplayFrames = globalCtx->gameplayFrames;
@@ -1441,6 +1631,10 @@ void* sLonLonRanchWindowTextures[] = {
 
 // Scene Draw Config 17
 void func_8009FB74(GlobalContext* globalCtx) {
+    if (freezeWater(globalCtx)) {
+        return;
+    }
+
     OPEN_DISPS(globalCtx->state.gfxCtx, "../z_scene_table.c", 7602);
 
     gSPSegment(POLY_OPA_DISP++, 0x08,
@@ -1458,6 +1652,10 @@ void func_8009FB74(GlobalContext* globalCtx) {
 // Scene Draw Config 18
 void func_8009FC90(GlobalContext* globalCtx) {
     u32 gameplayFrames;
+
+    if (freezeWater(globalCtx)) {
+        return;
+    }
 
     OPEN_DISPS(globalCtx->state.gfxCtx, "../z_scene_table.c", 7630);
 
@@ -1486,6 +1684,10 @@ void func_8009FE58(GlobalContext* globalCtx) {
     static s16 D_8012A3A0 = 4272;
     u32 gameplayFrames;
     f32 temp;
+
+    if (freezeWater(globalCtx)) {
+        return;
+    }
 
     OPEN_DISPS(globalCtx->state.gfxCtx, "../z_scene_table.c", 7712);
 
@@ -1562,6 +1764,10 @@ void func_8009FE58(GlobalContext* globalCtx) {
 void func_800A0334(GlobalContext* globalCtx) {
     u32 gameplayFrames;
 
+    if (freezeWater(globalCtx)) {
+        return;
+    }
+
     OPEN_DISPS(globalCtx->state.gfxCtx, "../z_scene_table.c", 7825);
 
     gameplayFrames = globalCtx->gameplayFrames;
@@ -1597,6 +1803,10 @@ void func_800A057C(GlobalContext* globalCtx) {
 // Scene Draw Config 49
 void func_800A059C(GlobalContext* globalCtx) {
     u32 gameplayFrames;
+
+    if (freezeWater(globalCtx)) {
+        return;
+    }
 
     OPEN_DISPS(globalCtx->state.gfxCtx, "../z_scene_table.c", 7893);
 

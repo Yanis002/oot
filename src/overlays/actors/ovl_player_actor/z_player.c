@@ -2862,8 +2862,32 @@ void func_80835F44(GlobalContext* globalCtx, Player* this, s32 item) {
     s8 actionParam;
     s32 temp;
     s32 nextAnimType;
+    Actor* actor;
 
     actionParam = Player_ItemToActionParam(item);
+
+    if(this->isFreezerSpawned) {
+        actor = globalCtx->actorCtx.actorLists[ACTORCAT_ITEMACTION].head;
+        switch(actor->id){ 
+            case ACTOR_EN_ARROW:
+                if((this->nbEnArrow >= 10) && 
+                  ((actionParam == PLAYER_AP_NUT) || 
+                   (actionParam == PLAYER_AP_BOW) || 
+                   (actionParam == PLAYER_AP_SLINGSHOT))){
+                    this->itemActionParam = PLAYER_AP_NONE;
+                    func_80078884(NA_SE_SY_ERROR);
+                    return;
+                }
+                break;
+        }
+
+        switch(actionParam){
+            case PLAYER_AP_BOTTLE_BUG:
+            case PLAYER_AP_BOTTLE_FISH:
+                func_80078884(NA_SE_SY_ERROR);
+                return;
+        }
+    } else this->nbEnArrow = 0;
 
     if (((this->heldItemActionParam == this->itemActionParam) &&
          (!(this->stateFlags1 & PLAYER_STATE1_22) || (Player_ActionToMeleeWeapon(actionParam) != 0) ||
@@ -2900,7 +2924,12 @@ void func_80835F44(GlobalContext* globalCtx, Player* this, s32 item) {
                 } else {
                     func_80078884(NA_SE_SY_ERROR);
                 }
-            } else if ((temp = Player_ActionToMagicSpell(this, actionParam)) >= 0) {
+                return;
+            }
+
+            temp = Player_ActionToMagicSpell(this, actionParam);
+
+            if (temp >= 0) {
                 if (((actionParam == PLAYER_AP_FARORES_WIND) && (gSaveContext.respawn[RESPAWN_MODE_TOP].data > 0)) ||
                     ((gSaveContext.unk_13F4 != 0) && (gSaveContext.unk_13F0 == 0) &&
                      (gSaveContext.magic >= sMagicSpellCosts[temp]))) {
@@ -4878,7 +4907,16 @@ s32 func_8083B040(Player* this, GlobalContext* globalCtx) {
         if (!func_8083ADD4(globalCtx, this)) {
             if (this->unk_6AD == 4) {
                 sp2C = Player_ActionToMagicSpell(this, this->itemActionParam);
+
                 if (sp2C >= 0) {
+                    if((sp2C == 4)){
+                        this->freezerChild = 
+                        Actor_SpawnAsChild(&globalCtx->actorCtx, &this->actor, globalCtx, ACTOR_EN_FREEZER, this->actor.world.pos.x,
+                                           this->actor.world.pos.y, this->actor.world.pos.z, 0, 0, 0, 2);
+                        func_8008EC70(this);
+                        return 1;
+                    }
+
                     if ((sp2C != 3) || (gSaveContext.respawn[RESPAWN_MODE_TOP].data <= 0)) {
                         func_8083AF44(globalCtx, this, sp2C);
                     } else {
@@ -9271,6 +9309,9 @@ void Player_Init(Actor* thisx, GlobalContext* globalCtx2) {
     globalCtx->func_11D54 = func_80853080;
     globalCtx->damagePlayer = Player_InflictDamage;
     globalCtx->talkWithPlayer = func_80853148;
+
+    this->isFreezerSpawned = this->nbEnArrow = this->scrollChange = 0;
+    this->freezerChild = NULL;
 
     thisx->room = -1;
     this->ageProperties = &sAgeProperties[gSaveContext.linkAge];
