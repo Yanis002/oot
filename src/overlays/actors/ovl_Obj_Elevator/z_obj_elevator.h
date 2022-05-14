@@ -14,6 +14,8 @@ typedef struct ObjElevator {
     /* 0x0168 */ f32 unk_168;
     /* 0x016C */ f32 unk_16C;
     /* 0x0170 */ u8 unk_170;
+                 u8 timer;
+                 u8 mode;
 } ObjElevator; // size = 0x0174
 
 #endif
