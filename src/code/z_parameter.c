@@ -1776,9 +1776,11 @@ u8 Item_Give(GlobalContext* globalCtx, u8 item) {
             }
         }
     } else if ((item >= ITEM_WEIRD_EGG) && (item <= ITEM_CLAIM_CHECK)) {
-        if (item == ITEM_SAW) {
-            SET_ITEMGETINF(ITEMGETINF_1F);
-        }
+        /* Deku Nuts Upgrade softlock fix
+            if (item == ITEM_SAW) {
+                SET_ITEMGETINF(ITEMGETINF_1F);
+            }
+        */
 
         temp = INV_CONTENT(item);
         INV_CONTENT(item) = item;
