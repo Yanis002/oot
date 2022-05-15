@@ -351,6 +351,7 @@ void EnItem00_Init(Actor* thisx, GlobalContext* globalCtx) {
     }
 
     if ((getItemId != GI_NONE) && !Actor_HasParent(&this->actor, globalCtx)) {
+        // sets get item to player actor
         func_8002F554(&this->actor, globalCtx, getItemId);
     }
 
@@ -364,6 +365,7 @@ void EnItem00_Destroy(Actor* thisx, GlobalContext* globalCtx) {
     Collider_DestroyCylinder(globalCtx, &this->collider);
 }
 
+// EnItem00_ItemIdleAnimation
 void func_8001DFC8(EnItem00* this, GlobalContext* globalCtx) {
     if ((this->actor.params <= ITEM00_RUPEE_RED) || ((this->actor.params == ITEM00_HEART) && (this->unk_15A < 0)) ||
         (this->actor.params == ITEM00_HEART_PIECE)) {
@@ -410,6 +412,7 @@ void func_8001DFC8(EnItem00* this, GlobalContext* globalCtx) {
     }
 }
 
+// EnItem00_ItemIdleEffects
 void func_8001E1C8(EnItem00* this, GlobalContext* globalCtx) {
     f32 originalVelocity;
     Vec3f effectPos;
@@ -438,6 +441,7 @@ void func_8001E1C8(EnItem00* this, GlobalContext* globalCtx) {
     }
 }
 
+// EnItem00_CollectibleSpawnAnimation
 void func_8001E304(EnItem00* this, GlobalContext* globalCtx) {
     s32 pad;
     Vec3f pos;
@@ -469,9 +473,9 @@ void func_8001E304(EnItem00* this, GlobalContext* globalCtx) {
     }
 
     if (this->actor.velocity.y <= 2.0f) {
-        rotOffset = (u16)this->actor.shape.rot.z + 10000;
-        if (rotOffset < 65535) {
-            this->actor.shape.rot.z += 10000;
+        rotOffset = (u16)this->actor.shape.rot.z + 10000; // 0x2710
+        if (rotOffset < 65535) { // 0xFFFF
+            this->actor.shape.rot.z += 10000; // 0x2710
         } else {
             this->actor.shape.rot.z = -1;
         }
@@ -493,6 +497,7 @@ void func_8001E304(EnItem00* this, GlobalContext* globalCtx) {
     }
 }
 
+// EnItem00_MoveItemPosToPlayer
 void func_8001E5C8(EnItem00* this, GlobalContext* globalCtx) {
     Player* player = GET_PLAYER(globalCtx);
 
@@ -695,6 +700,7 @@ void EnItem00_Update(Actor* thisx, GlobalContext* globalCtx) {
     params = &this->actor.params;
 
     if ((getItemId != GI_NONE) && !Actor_HasParent(&this->actor, globalCtx)) {
+        // sets get item to player actor
         func_8002F554(&this->actor, globalCtx, getItemId);
     }
 

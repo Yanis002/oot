@@ -280,9 +280,9 @@ typedef struct EnItem00 {
     /* 0x150 */ s16 collectibleFlag;
     /* 0x152 */ s16 getItemId;
     /* 0x154 */ s16 unk_154;
-    /* 0x156 */ s16 unk_156;
-    /* 0x158 */ s16 unk_158;
-    /* 0x15A */ s16 unk_15A;
+    /* 0x156 */ s16 unk_156; // blinkTimer, used with blinkBool to make the item blink for 41 frames
+    /* 0x158 */ s16 unk_158; // blinkBool, used with blinkTimer, prevents important items from blinking
+    /* 0x15A */ s16 unk_15A; // timer, can be 220 (when spawned by actors), can be 15 (when over Link's head), < 0 to avoid disappearing
     /* 0x15C */ f32 scale;
     /* 0x160 */ ColliderCylinder collider;
 } EnItem00; // size = 0x1AC
