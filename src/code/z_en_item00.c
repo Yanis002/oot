@@ -972,7 +972,7 @@ EnItem00* Item_DropCollectible(GlobalContext* globalCtx, Vec3f* spawnPos, s16 pa
                 spawnedActor->actor.world.rot.y = Rand_CenteredFloat(65536.0f);
                 Actor_SetScale(&spawnedActor->actor, 0.0f);
                 EnItem00_SetupAction(spawnedActor, func_8001E304);
-                spawnedActor->unk_15A = 220;
+                spawnedActor->unk_15A = 600;
                 if ((spawnedActor->actor.params != ITEM00_SMALL_KEY) &&
                     (spawnedActor->actor.params != ITEM00_HEART_PIECE) &&
                     (spawnedActor->actor.params != ITEM00_HEART_CONTAINER)) {
@@ -1128,7 +1128,7 @@ void Item_DropCollectibleRandom(GlobalContext* globalCtx, Actor* fromActor, Vec3
                             (spawnedActor->actor.params != ITEM00_HEART_CONTAINER)) {
                             spawnedActor->actor.room = -1;
                         }
-                        spawnedActor->unk_15A = 220;
+                        spawnedActor->unk_15A = 600;
                     }
                 }
             } else {

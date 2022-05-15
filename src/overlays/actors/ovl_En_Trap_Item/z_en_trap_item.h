@@ -83,6 +83,7 @@ typedef struct EnTrapItem {
     /* 0x14C */ Actor actor;
     /* 0x04C */ ColliderCylinder collider;
     /* 0x004 */ EnTrapItemActionFunc actionFunc;
+    /* 0x004 */ f32 scale;
     /* 0x004 */ f32 shadowScale;
     /* 0x004 */ f32 yOffset;
     /* 0x002 */ s16 enemySwitchFlag;
