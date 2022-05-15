@@ -15,12 +15,16 @@
     - Switch Flag:  0000 0000 0011 1111 - 0x003F
     - Mode:         0000 0000 0100 0000 - 0x0040
     - Enemy Flag:   0001 1111 1000 0000 - 0x1F80
+    - Enemy Count:  0110 0000 0000 0000 - 0x6000
 
     EXAMPLE:
     - Parameters:   0000 0010 0010 0101 - 0x0225
-        ((SUBTYPE_TUNIC_ZORA << 0x7) | (TRAP_TYPE_CRUSH << 0x4) | ITEM_TYPE_TUNIC)
-    - Z-Rot Params: 0000 0000 0100 0001 - 0x0041
-        ((MODE_SWITCH << 6) | 0x1)
+        ((SUBTYPE_TUNIC_ZORA << 0x7) | (TRAP_TYPE_VOID << 0x4) | ITEM_TYPE_TUNIC)
+    - Z-Rot Params: 0100 0000 0100 0001 - 0x4041
+        ((4 << 0xD) | (MODE_SWITCH << 6) | 0x1)
+
+    TODO:
+    - spawn in pots/flying pots
 */
 
 #include "z_en_trap_item.h"
@@ -99,7 +103,8 @@ void EnTrapItem_Init(Actor* thisx, GlobalContext* globalCtx) {
     this->switchFlag = this->actor.home.rot.z & 0x3F;
     this->mode = (this->actor.home.rot.z >> 6) & 0x1;
     this->enemySwitchFlag = (this->actor.home.rot.z >> 0x7) & 0x3F;
-    this->actor.home.rot.z = this->actor.world.rot.z = 0;
+    this->enemyCount = (this->actor.home.rot.z >> 0xD) & 0x7;
+    this->actor.home.rot.z = this->actor.world.rot.z = this->actor.shape.rot.z = 0;
 
     osSyncPrintf("Checking parameters...\n");
 
@@ -111,8 +116,8 @@ void EnTrapItem_Init(Actor* thisx, GlobalContext* globalCtx) {
     } else {
         osSyncPrintf("Parameters OK!\nRaw Parameters: %X\nItem Type: %X\nTrap Type: %X\nItem Subtype: %X\nEnemy Type: %X\n",
                     this->actor.params, this->itemType, this->trapType, this->itemSubType, this->enemyType);
-        osSyncPrintf("Switch Flag: %X\nMode: %X\nEnemy Flag: %X\n",
-                    this->switchFlag, this->mode, this->enemySwitchFlag);
+        osSyncPrintf("Switch Flag: %X\nMode: %X\nEnemy Flag: %X\nEnemy Count: %X\n",
+                    this->switchFlag, this->mode, this->enemySwitchFlag, this->enemyCount);
     }
 
     this->killTimer = 41;
@@ -335,7 +340,7 @@ void EnTrapItem_Trap(EnTrapItem* this, GlobalContext* globalCtx){
             case TRAP_TYPE_EXPLOSION:
                 EnTrapItem_SpawnBomb(this, globalCtx);
                 break;
-            case TRAP_TYPE_CRUSH:
+            case TRAP_TYPE_VOID:
                 Gameplay_TriggerRespawn(globalCtx);
                 gSaveContext.respawnFlag = -2;
                 Audio_QueueSeqCmd(SEQ_PLAYER_BGM_MAIN << 24 | NA_BGM_STOP);
@@ -360,7 +365,13 @@ void EnTrapItem_Trap(EnTrapItem* this, GlobalContext* globalCtx){
                 EnTrapItem_SpawnBomb(this, globalCtx);
                 break;
             case TRAP_TYPE_ENEMY:
-                EnTrapItem_SpawnEnemy(this, globalCtx);
+                if ((this->enemyCount > 0) && (this->enemyCount <= 3)) {
+                    for (i = 1; i <= this->enemyCount; i++) {
+                        EnTrapItem_SpawnEnemy(this, globalCtx);
+                    }
+                } else {
+                    EnTrapItem_SpawnEnemy(this, globalCtx);
+                }
                 break;
             default:
                 break;
@@ -396,7 +407,7 @@ void EnTrapItem_SpawnEnemy(EnTrapItem* this, GlobalContext* globalCtx) {
 
     switch (this->enemyType) {
         case ENEMY_TYPE_MUSCLE:
-            params = (((randomBool ? false : true) << 12) | ((randomBool ? 0x14 : 0xFF) & 0x00FF));
+            params = ((!randomBool << 12) | (((Rand_ZeroOne() <= 0.5f) ? 0x14 : 0xFF) & 0x00FF));
             break;
         case ENEMY_TYPE_DODONGO:
         case ENEMY_TYPE_PEEHAT:
@@ -412,7 +423,7 @@ void EnTrapItem_SpawnEnemy(EnTrapItem* this, GlobalContext* globalCtx) {
             break;
         case ENEMY_TYPE_REDEAD:
             params = ((randomBool ? 0x00 : 0x80) | ((((this->enemySwitchFlag) << 8) & 0x7F00) |
-                        (((Rand_ZeroOne() <= 0.5f) ? false : true) << 15) | (0xFE & 0x00FF)));
+                        (!(Rand_ZeroOne() <= 0.5f) << 15) | (0xFE & 0x00FF)));
             break;
         case ENEMY_TYPE_STALFOS:
             params = randomBool ? 0x0 : 0x4;

@@ -64,7 +64,7 @@ typedef enum {
 typedef enum {
     /* 0x00 */ TRAP_TYPE_ICE,
     /* 0x01 */ TRAP_TYPE_EXPLOSION,
-    /* 0x02 */ TRAP_TYPE_CRUSH,
+    /* 0x02 */ TRAP_TYPE_VOID,
     /* 0x03 */ TRAP_TYPE_FIRE,
     /* 0x04 */ TRAP_TYPE_ELECTRICITY,
     /* 0x05 */ TRAP_TYPE_CUCCO,
@@ -88,6 +88,7 @@ typedef struct EnTrapItem {
     /* 0x002 */ s16 enemySwitchFlag;
     /* 0x002 */ s16 switchFlag;
     /* 0x001 */ u8 bankIndex;
+    /* 0x001 */ u8 enemyCount;
     /* 0x001 */ u8 enemyType;
     /* 0x001 */ u8 itemSubType;
     /* 0x001 */ u8 itemType;
