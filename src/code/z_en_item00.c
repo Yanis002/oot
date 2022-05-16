@@ -2,6 +2,7 @@
 #include "overlays/actors/ovl_En_Elf/z_en_elf.h"
 #include "objects/gameplay_keep/gameplay_keep.h"
 #include "overlays/effects/ovl_Effect_Ss_Dead_Sound/z_eff_ss_dead_sound.h"
+#include "overlays/actors/ovl_En_Trap_Item/z_en_trap_item.h"
 
 #define FLAGS 0
 
@@ -1137,4 +1138,136 @@ void Item_DropCollectibleRandom(GlobalContext* globalCtx, Actor* fromActor, Vec3
             dropQuantity--;
         }
     }
+}
+
+void Item_DropTrapCollectible(GlobalContext* globalCtx, Vec3f pos, s16 params, s16 zRot) {
+    EnTrapItem* spawnedActor = NULL;
+    
+    spawnedActor = (EnTrapItem*)Actor_Spawn(&globalCtx->actorCtx, globalCtx, ACTOR_EN_TRAP_ITEM, pos.x,
+                pos.y, pos.z, 0, 0, zRot, params);
+
+    if (spawnedActor != NULL) {
+        spawnedActor->actor.velocity.y = 8.0f;
+        spawnedActor->actor.speedXZ = 2.0f;
+        spawnedActor->actor.gravity = -0.9f;
+        spawnedActor->actor.world.rot.y = Rand_CenteredFloat(65536.0f);
+        Actor_SetScale(&spawnedActor->actor, 0.0f);
+    }
+}
+
+s16 Item_Item00ToTrapItem(u8 dropType) {
+    u8 itemType = 0, subType = 0;
+    
+    switch (dropType) {
+        case ITEM00_HEART:
+        case ITEM00_HEART_PIECE:
+        case ITEM00_HEART_CONTAINER:
+            itemType = ITEM_TYPE_HEART;
+            break;
+        case ITEM00_RUPEE_GREEN:
+        case ITEM00_RUPEE_BLUE:
+        case ITEM00_RUPEE_RED:
+        case ITEM00_RUPEE_ORANGE:
+        case ITEM00_RUPEE_PURPLE:
+            itemType = ITEM_TYPE_RUPEE;
+            break;
+        case ITEM00_MAGIC_LARGE:
+        case ITEM00_MAGIC_SMALL:
+            itemType = ITEM_TYPE_MAGIC;
+            break;
+        case ITEM00_SHIELD_DEKU:
+        case ITEM00_SHIELD_HYLIAN:
+            itemType = ITEM_TYPE_SHIELD;
+            break;
+        case ITEM00_ARROWS_SINGLE:
+        case ITEM00_ARROWS_SMALL:
+        case ITEM00_ARROWS_MEDIUM:
+        case ITEM00_ARROWS_LARGE:
+            itemType = ITEM_TYPE_ARROW;
+            break;
+        case ITEM00_TUNIC_ZORA:
+        case ITEM00_TUNIC_GORON:
+            itemType = ITEM_TYPE_TUNIC;
+            break;
+        case ITEM00_SMALL_KEY:
+            itemType = ITEM_TYPE_SMALL_KEY;
+            break;
+        case ITEM00_BOMBS_A:
+        case ITEM00_BOMBS_B:
+        case ITEM00_BOMBS_SPECIAL:
+            itemType = ITEM_TYPE_BOMBS;
+            break;
+        case ITEM00_NUTS:
+            itemType = ITEM_TYPE_NUTS;
+            break;
+        case ITEM00_STICK:
+            itemType = ITEM_TYPE_STICK;
+            break;
+        case ITEM00_SEEDS:
+            itemType = ITEM_TYPE_SEEDS;
+            break;
+        default:
+            break;
+    }
+
+    switch (itemType) {
+        case ITEM_TYPE_HEART:
+            if (dropType == ITEM00_HEART) {
+                subType = SUBTYPE_HEART_RECOVERY;
+            } else if (dropType == ITEM00_HEART_PIECE) {
+                subType = SUBTYPE_HEART_PIECE;
+            } else {
+                subType = SUBTYPE_HEART_CONTAINER;
+            }
+            break;
+        case ITEM_TYPE_RUPEE:
+            if (dropType == ITEM00_RUPEE_GREEN) {
+                subType = SUBTYPE_RUPEE_GREEN;
+            } else if (dropType == ITEM00_RUPEE_BLUE) {
+                subType = SUBTYPE_RUPEE_BLUE;
+            } else if (dropType == ITEM00_RUPEE_RED) {
+                subType = SUBTYPE_RUPEE_RED;
+            } else if (dropType == ITEM00_RUPEE_PURPLE) {
+                subType = SUBTYPE_RUPEE_PURPLE;
+            } else {
+                subType = SUBTYPE_RUPEE_ORANGE;
+            }
+            break;
+        case ITEM_TYPE_MAGIC:
+            if (dropType == ITEM00_MAGIC_LARGE) {
+                subType = SUBTYPE_MAGIC_LARGE;
+            } else {
+                subType = SUBTYPE_MAGIC_SMALL;
+            }
+            break;
+        case ITEM_TYPE_SHIELD:
+            if (dropType == ITEM00_SHIELD_DEKU) {
+                subType = SUBTYPE_SHIELD_DEKU;
+            } else {
+                subType = SUBTYPE_SHIELD_HYLIAN;
+            }
+            break;
+        case ITEM_TYPE_ARROW:
+            if (dropType == ITEM00_ARROWS_SINGLE) {
+                subType = SUBTYPE_ARROW_SINGLE;
+            } else if (dropType == ITEM00_ARROWS_SMALL) {
+                subType = SUBTYPE_ARROW_SMALL;
+            } else if (dropType == ITEM00_ARROWS_MEDIUM) {
+                subType = SUBTYPE_ARROW_MEDIUM;
+            } else {
+                subType = SUBTYPE_ARROW_LARGE;
+            }
+            break;
+        case ITEM_TYPE_TUNIC:
+            if (dropType == ITEM00_TUNIC_ZORA) {
+                subType = SUBTYPE_TUNIC_ZORA;
+            } else {
+                subType = SUBTYPE_TUNIC_GORON;
+            }
+            break;
+        default:
+            break;
+    }
+
+    return (itemType | ((subType & 0x1F) << 0x7));
 }

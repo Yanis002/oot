@@ -78,25 +78,24 @@ typedef enum {
     /* 0x02 */ MODE_MAX
 } EnTrapItemMode;
 
-// actor: 14C, actionfunc: 4, collider: 4C, f32: 4, s16: 2, u8: 1, entrapitem: 1B0
 typedef struct EnTrapItem {
-    /* 0x14C */ Actor actor;
-    /* 0x04C */ ColliderCylinder collider;
-    /* 0x004 */ EnTrapItemActionFunc actionFunc;
-    /* 0x004 */ f32 scale;
-    /* 0x004 */ f32 shadowScale;
-    /* 0x004 */ f32 yOffset;
-    /* 0x002 */ s16 enemySwitchFlag;
-    /* 0x002 */ s16 switchFlag;
-    /* 0x001 */ u8 bankIndex;
-    /* 0x001 */ u8 enemyCount;
-    /* 0x001 */ u8 enemyType;
-    /* 0x001 */ u8 itemSubType;
-    /* 0x001 */ u8 itemType;
-    /* 0x001 */ u8 mode;
-    /* 0x001 */ u8 texIndex;
-    /* 0x001 */ u8 killTimer;
-    /* 0x001 */ u8 trapType;
-} EnTrapItem; // size = 0x1B1
+    /* 0x0000 */ Actor actor;
+    /* 0x014C */ ColliderCylinder collider;
+    /* 0x0198 */ EnTrapItemActionFunc actionFunc;
+    /* 0x019C */ f32 scale;
+    /* 0x01A0 */ f32 shadowScale;
+    /* 0x01A4 */ f32 yOffset;
+    /* 0x01A6 */ s16 enemySwitchFlag;
+    /* 0x01A8 */ s16 switchFlag;
+    /* 0x01A9 */ u8 bankIndex;
+    /* 0x01AA */ u8 enemyCount;
+    /* 0x01AB */ u8 enemyType;
+    /* 0x01AC */ u8 itemSubType;
+    /* 0x01AD */ u8 itemType;
+    /* 0x01AE */ u8 mode;
+    /* 0x01AF */ u8 texIndex;
+    /* 0x01B0 */ u8 killTimer;
+    /* 0x01B1 */ u8 trapType;
+} EnTrapItem; // size = 0x01B2
 
 #endif

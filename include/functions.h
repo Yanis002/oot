@@ -161,6 +161,8 @@ void osViSetYScale(f32 scale);
 void osViSetXScale(f32 value);
 void __osSetWatchLo(u32);
 
+void Item_DropTrapCollectible(GlobalContext* globalCtx, Vec3f pos, s16 params, s16 zRot);
+s16 Item_Item00ToTrapItem(u8 dropType);
 EnItem00* Item_DropCollectible(GlobalContext* globalCtx, Vec3f* spawnPos, s16 params);
 EnItem00* Item_DropCollectible2(GlobalContext* globalCtx, Vec3f* spawnPos, s16 params);
 void Item_DropCollectibleRandom(GlobalContext* globalCtx, Actor* fromActor, Vec3f* spawnPos, s16 params);

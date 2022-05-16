@@ -165,6 +165,10 @@ void EnTrapItem_Init(Actor* thisx, GlobalContext* globalCtx) {
         this->actor.draw = EnTrapItem_Draw;
     }
 
+    if (this->trapType == TRAP_TYPE_ENEMY) {
+        Actor_ChangeCategory(globalCtx, &globalCtx->actorCtx, &this->actor, ACTORCAT_ENEMY);
+    }
+
     osSyncPrintf("En_Trap_Item: Init completed!\n");
 }
 

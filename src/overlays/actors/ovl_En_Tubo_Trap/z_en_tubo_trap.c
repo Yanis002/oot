@@ -4,6 +4,24 @@
  * Description: Flying pot enemy
  */
 
+/* 
+    PARAMETERS:
+    - Col/Sw Flag:  0000 0000 0011 1111 - 0x003F
+    - Collectible:  0000 0111 1100 0000 - 0x07C0
+    - Item Type:    0111 1000 0000 0000 - 0x7800
+    - Mode:         1000 0000 0000 0000 - 0x8000
+
+    X-ROT PARAMETERS:
+    - Enemy Flag:   0000 0000 0011 1111 - 0x003F
+
+    Z-ROT PARAMETERS:
+    - Trap Type:    0000 0000 0000 0111 - 0x0007
+    - Enemy Type:   0000 0000 0111 1000 - 0x0078
+    - Item Subtype: 0000 1111 1000 0000 - 0x0F80
+    - Tubo Mode:    0011 0000 0000 0000 - 0x3000
+    - Enemy Count:  1100 0000 0000 0000 - 0xC000
+*/
+
 #include "z_en_tubo_trap.h"
 #include "objects/gameplay_dangeon_keep/gameplay_dangeon_keep.h"
 #include "overlays/effects/ovl_Effect_Ss_Kakera/z_eff_ss_kakera.h"
@@ -55,6 +73,9 @@ const ActorInit En_Tubo_Trap_InitVars = {
 void EnTuboTrap_Init(Actor* thisx, GlobalContext* globalCtx) {
     EnTuboTrap* this = (EnTuboTrap*)thisx;
 
+    this->actor.world.rot.x = this->actor.shape.rot.x = 0.0f;
+    this->actor.world.rot.z = this->actor.shape.rot.z = 0.0f;
+
     ActorShape_Init(&this->actor.shape, 0.0f, ActorShadow_DrawCircle, 2.0f);
     osSyncPrintf("\n\n");
     osSyncPrintf(VT_FGCOL(GREEN) "☆☆☆☆☆ 壷トラップ ☆☆☆☆☆ %x\n" VT_RST, this->actor.params); // "Urn Trap"
@@ -72,10 +93,30 @@ void EnTuboTrap_Destroy(Actor* thisx, GlobalContext* globalCtx) {
 
 void EnTuboTrap_DropCollectible(EnTuboTrap* this, GlobalContext* globalCtx) {
     s16 params = this->actor.params;
-    s16 dropType = (params >> 6) & 0x3FF;
+    s16 dropType = (params >> 6) & 0x1F;
+    s16 zRot = this->actor.home.rot.z, xRot = this->actor.home.rot.x, trapParams = 0, trapRotZ = 0;
+    u8 randomBool = false, tuboMode = ((zRot >> 0xC) & 0x3); // mode: 0: normal, 1: random, 2: trap
+
+    if (tuboMode == 1) {
+        randomBool = (Rand_ZeroOne() <= 0.5f);
+    }
 
     if (dropType >= 0 && dropType < ITEM00_MAX) {
-        Item_DropCollectible(globalCtx, &this->actor.world.pos, dropType | ((params & 0x3F) << 8));
+        if (!tuboMode || (!randomBool && (tuboMode == 1))) {
+            Item_DropCollectible(globalCtx, &this->actor.world.pos, dropType | ((params & 0x3F) << 8));
+        } else if ((tuboMode > 0) || randomBool) {
+            if (tuboMode == 2) {
+                trapParams |= ((zRot & 0xF80) | ((params >> 0xB) & 0xF));
+            }
+            if (randomBool) {
+                trapParams |= Item_Item00ToTrapItem(dropType);
+            }
+            trapParams |= (((zRot & 0x7) << 4) | ((zRot & 0x78) << 9));
+            trapRotZ |= ((params & 0x3F) | ((params & 0x8000) >> 0x9) |
+                        ((xRot << 0x7) & 0x1F80) | ((zRot >> 0x1) & 0x6000));
+
+            Item_DropTrapCollectible(globalCtx, this->actor.world.pos, trapParams, trapRotZ);
+        }
     }
 }
 
