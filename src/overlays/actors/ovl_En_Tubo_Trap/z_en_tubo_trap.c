@@ -113,7 +113,7 @@ void EnTuboTrap_DropCollectible(EnTuboTrap* this, GlobalContext* globalCtx) {
             }
             trapParams |= (((zRot & 0x7) << 4) | ((zRot & 0x78) << 9));
             trapRotZ |= ((params & 0x3F) | ((params & 0x8000) >> 0x9) |
-                        ((xRot << 0x7) & 0x1F80) | ((zRot >> 0x1) & 0x6000));
+                        ((xRot << 0x7) & 0x1F80) | ((zRot >> 0x1) & 0x6000) | 0x8000);
 
             Item_DropTrapCollectible(globalCtx, this->actor.world.pos, trapParams, trapRotZ);
         }

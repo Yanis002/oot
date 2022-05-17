@@ -406,26 +406,26 @@ void func_8001DFC8(EnItem00* this, GlobalContext* globalCtx) {
         }
     }
 
-    if ((this->actor.gravity != 0.0f) && !(this->actor.bgCheckFlags & BGCHECKFLAG_GROUND)) {
-        EnItem00_SetupAction(this, func_8001E1C8);
-    }
+    // if ((this->actor.gravity != 0.0f) && !(this->actor.bgCheckFlags & BGCHECKFLAG_GROUND)) {
+    //     EnItem00_SetupAction(this, func_8001E1C8);
+    // }
 }
 
 void func_8001E1C8(EnItem00* this, GlobalContext* globalCtx) {
     f32 originalVelocity;
-    Vec3f effectPos;
+    // Vec3f effectPos;
 
     if (this->actor.params <= ITEM00_RUPEE_RED) {
         this->actor.shape.rot.y += 960;
     }
 
-    if (globalCtx->gameplayFrames & 1) {
-        effectPos.x = this->actor.world.pos.x + Rand_CenteredFloat(10.0f);
-        effectPos.y = this->actor.world.pos.y + Rand_CenteredFloat(10.0f);
-        effectPos.z = this->actor.world.pos.z + Rand_CenteredFloat(10.0f);
-        EffectSsKiraKira_SpawnSmall(globalCtx, &effectPos, &sEffectVelocity, &sEffectAccel, &sEffectPrimColor,
-                                    &sEffectEnvColor);
-    }
+    // if (globalCtx->gameplayFrames & 1) {
+    //     effectPos.x = this->actor.world.pos.x + Rand_CenteredFloat(10.0f);
+    //     effectPos.y = this->actor.world.pos.y + Rand_CenteredFloat(10.0f);
+    //     effectPos.z = this->actor.world.pos.z + Rand_CenteredFloat(10.0f);
+    //     EffectSsKiraKira_SpawnSmall(globalCtx, &effectPos, &sEffectVelocity, &sEffectAccel, &sEffectPrimColor,
+    //                                 &sEffectEnvColor);
+    // }
 
     if (this->actor.bgCheckFlags & (BGCHECKFLAG_GROUND | BGCHECKFLAG_GROUND_TOUCH)) {
         originalVelocity = this->actor.velocity.y;

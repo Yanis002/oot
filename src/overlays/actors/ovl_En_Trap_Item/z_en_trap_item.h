@@ -52,7 +52,7 @@ typedef enum {
     /* 0x01 */ ENEMY_TYPE_DODONGO,
     /* 0x02 */ ENEMY_TYPE_FREEZARD,
     /* 0x03 */ ENEMY_TYPE_KNUCKLE,
-    /* 0x04 */ ENEMY_TYPE_PEEHAT,
+    /* 0x04 */ ENEMY_TYPE_PEAHAT,
     /* 0x05 */ ENEMY_TYPE_REDEAD,
     /* 0x06 */ ENEMY_TYPE_STALFOS,
     /* 0x07 */ ENEMY_TYPE_LIZALFOS,
@@ -90,12 +90,13 @@ typedef struct EnTrapItem {
     /* 0x01A9 */ u8 bankIndex;
     /* 0x01AA */ u8 enemyCount;
     /* 0x01AB */ u8 enemyType;
-    /* 0x01AC */ u8 itemSubType;
-    /* 0x01AD */ u8 itemType;
-    /* 0x01AE */ u8 mode;
-    /* 0x01AF */ u8 texIndex;
-    /* 0x01B0 */ u8 killTimer;
-    /* 0x01B1 */ u8 trapType;
-} EnTrapItem; // size = 0x01B2
+    /* 0x01AC */ u8 isNotFreestanding;
+    /* 0x01AD */ u8 itemSubType;
+    /* 0x01AE */ u8 itemType;
+    /* 0x01AF */ u8 mode;
+    /* 0x01B0 */ u8 texIndex;
+    /* 0x01B1 */ u8 killTimer;
+    /* 0x01B2 */ u8 trapType;
+} EnTrapItem; // size = 0x01B3
 
 #endif

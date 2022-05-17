@@ -16,6 +16,7 @@
     - Mode:         0000 0000 0100 0000 - 0x0040
     - Enemy Flag:   0001 1111 1000 0000 - 0x1F80
     - Enemy Count:  0110 0000 0000 0000 - 0x6000
+    - Is Child:     1000 0000 0000 0000 - 0x8000
 
     EXAMPLE:
     - Parameters:   0000 0010 0010 0101 - 0x0225
@@ -47,6 +48,7 @@ void EnTrapItem_InitItemSubType(EnTrapItem* this, GlobalContext* globalCtx);
 void EnTrapItem_Trap(EnTrapItem* this, GlobalContext* globalCtx);
 void EnTrapItem_SpawnBomb(EnTrapItem* this, GlobalContext* globalCtx);
 void EnTrapItem_SpawnEnemy(EnTrapItem* this, GlobalContext* globalCtx);
+void EnTrapItem_SpawnAnimation(EnTrapItem* this, GlobalContext* globalCtx);
 void EnTrapItem_DrawHeart(EnTrapItem* this, GlobalContext* globalCtx);
 void EnTrapItem_DrawRupee(EnTrapItem* this, GlobalContext* globalCtx);
 void EnTrapItem_DrawCollectible(EnTrapItem* this, GlobalContext* globalCtx);
@@ -111,7 +113,8 @@ void EnTrapItem_Init(Actor* thisx, GlobalContext* globalCtx) {
     this->switchFlag = this->actor.home.rot.z & 0x3F;
     this->mode = (this->actor.home.rot.z >> 6) & 0x1;
     this->enemySwitchFlag = (this->actor.home.rot.z >> 0x7) & 0x3F;
-    this->enemyCount = (this->actor.home.rot.z >> 0xD) & 0x7;
+    this->enemyCount = (this->actor.home.rot.z >> 0xD) & 0x3;
+    this->isNotFreestanding = (this->actor.home.rot.z >> 0xF) & 0x1;
     this->actor.home.rot.z = this->actor.world.rot.z = this->actor.shape.rot.z = 0;
 
     osSyncPrintf("Checking parameters...\n");
@@ -124,11 +127,12 @@ void EnTrapItem_Init(Actor* thisx, GlobalContext* globalCtx) {
     EnTrapItem_ParamsCheck(this, (this->switchFlag > 0x3F), 5, this->switchFlag);
     EnTrapItem_ParamsCheck(this, (this->mode >= MODE_MAX), 6, this->mode);
     EnTrapItem_ParamsCheck(this, (this->enemySwitchFlag > 0x3F), 7, this->enemySwitchFlag);
+    EnTrapItem_ParamsCheck(this, (this->isNotFreestanding > 0x1), 8, this->isNotFreestanding);
 
     osSyncPrintf("Raw Parameters: %X\nItem Type: %X\nTrap Type: %X\nItem Subtype: %X\nEnemy Type: %X\n",
                 this->actor.params, this->itemType, this->trapType, this->itemSubType, this->enemyType);
-    osSyncPrintf("Switch Flag: %X\nMode: %X\nEnemy Flag: %X\nEnemy Count: %X\n",
-                this->switchFlag, this->mode, this->enemySwitchFlag, this->enemyCount);
+    osSyncPrintf("Switch Flag: %X\nMode: %X\nEnemy Flag: %X\nEnemy Count: %X\nIs Child: %X\n",
+                this->switchFlag, this->mode, this->enemySwitchFlag, this->enemyCount, this->isNotFreestanding);
 
     osSyncPrintf("Checking switch flag state...\n");
 
@@ -161,7 +165,7 @@ void EnTrapItem_Init(Actor* thisx, GlobalContext* globalCtx) {
     if (this->bankIndex) {
         EnTrapItem_SetupAction(this, EnTrapItem_WaitForNewObject);
     } else {
-        EnTrapItem_SetupAction(this, EnTrapItem_Main);
+        EnTrapItem_SetupAction(this, EnTrapItem_SpawnAnimation);
         this->actor.draw = EnTrapItem_Draw;
     }
 
@@ -180,10 +184,35 @@ void EnTrapItem_Destroy(Actor* thisx, GlobalContext* globalCtx) {
 
 void EnTrapItem_Update(Actor* thisx, GlobalContext* globalCtx) {
     EnTrapItem* this = (EnTrapItem*)thisx;
+
+    // handles scaling
+    if (this->actor.scale.x < this->scale) {
+        Math_SmoothStepToF(&this->actor.scale.x, this->scale, 0.1f, this->scale * 0.1f, 0.0f);
+        this->actor.scale.z = this->actor.scale.x;
+        this->actor.scale.y = this->actor.scale.x;
+    }
+    
+    if ((this->itemSubType == SUBTYPE_HEART_CONTAINER)) {
+        if (this->actor.scale.x < 0.4f) {
+            Math_ApproachF(&this->actor.scale.x, 0.4f, 0.1f, 0.01f);
+            this->actor.scale.y = this->actor.scale.z = this->actor.scale.x;
+        }
+    }
+
+    // handles the gravity update
+    if (!(this->actor.bgCheckFlags & (BGCHECKFLAG_GROUND | BGCHECKFLAG_GROUND_TOUCH))) {
+        Actor_MoveForward(&this->actor);
+        Actor_UpdateBgCheckInfo(globalCtx, &this->actor, 10.0f, 15.0f, 15.0f,
+                                    UPDBGCHECKINFO_FLAG_0 | UPDBGCHECKINFO_FLAG_2 | UPDBGCHECKINFO_FLAG_3 |
+                                        UPDBGCHECKINFO_FLAG_4);
+    }
     
     if (this->actionFunc != NULL) {
         this->actionFunc(this, globalCtx);
     }
+
+    Collider_UpdateCylinder(&this->actor, &this->collider);
+    CollisionCheck_SetAC(globalCtx, &globalCtx->colChkCtx, &this->collider.base);
 }
 
 void EnTrapItem_Draw(Actor* thisx, GlobalContext* globalCtx) {
@@ -229,46 +258,13 @@ void EnTrapItem_WaitForNewObject(EnTrapItem* this, GlobalContext* globalCtx) {
     if (Object_IsLoaded(&globalCtx->objectCtx, this->bankIndex)) {
         this->actor.objBankIndex = this->bankIndex;
         Actor_SetObjectDependency(globalCtx, &this->actor);
-        EnTrapItem_SetupAction(this, EnTrapItem_Main);
+        EnTrapItem_SetupAction(this, EnTrapItem_SpawnAnimation);
         this->actor.draw = EnTrapItem_Draw;
     }
 }
 
 void EnTrapItem_Main(EnTrapItem* this, GlobalContext* globalCtx) {
-    u8 updateBgBool = false;
-    Vec3f pos;
-
-    // handles scaling
-    if (this->actor.scale.x < this->scale) {
-        Math_SmoothStepToF(&this->actor.scale.x, this->scale, 0.1f, this->scale * 0.1f, 0.0f);
-        this->actor.scale.z = this->actor.scale.x;
-        this->actor.scale.y = this->actor.scale.x;
-    }
-
-    if ((this->itemSubType == SUBTYPE_HEART_CONTAINER) && (this->actor.scale.x < 0.4f)) {
-        Math_ApproachF(&this->actor.scale.x, 0.4f, 0.1f, 0.01f);
-        this->actor.scale.y = this->actor.scale.z = this->actor.scale.x;
-    }
-
-    // handles the gravity update
-    if (!(this->actor.bgCheckFlags & (BGCHECKFLAG_GROUND | BGCHECKFLAG_GROUND_TOUCH))) {
-        updateBgBool = true;
-        Actor_MoveForward(&this->actor);
-
-        if (!(globalCtx->gameplayFrames & 1)) {
-            pos.x = this->actor.world.pos.x + (Rand_ZeroOne() - 0.5f) * 10.0f;
-            pos.y = this->actor.world.pos.y + (Rand_ZeroOne() - 0.5f) * 10.0f;
-            pos.z = this->actor.world.pos.z + (Rand_ZeroOne() - 0.5f) * 10.0f;
-            EffectSsKiraKira_SpawnSmall(globalCtx, &pos, &sEffectVelocity, &sEffectAccel, &sEffectPrimColor,
-                                        &sEffectEnvColor);
-        }
-    }
-
-    if (updateBgBool) {
-        Actor_UpdateBgCheckInfo(globalCtx, &this->actor, 10.0f, 15.0f, 15.0f,
-                                    UPDBGCHECKINFO_FLAG_0 | UPDBGCHECKINFO_FLAG_2 | UPDBGCHECKINFO_FLAG_3 |
-                                        UPDBGCHECKINFO_FLAG_4);
-    }
+    Vec3f effectPos;
 
     EnTrapItem_Trap(this, globalCtx);
 
@@ -280,9 +276,6 @@ void EnTrapItem_Main(EnTrapItem* this, GlobalContext* globalCtx) {
             Actor_Kill(&this->actor);
         }
     }
-
-    Collider_UpdateCylinder(&this->actor, &this->collider);
-    CollisionCheck_SetAC(globalCtx, &globalCtx->colChkCtx, &this->collider.base);
 }
 
 u8 EnTrapItem_InitItemType(EnTrapItem* this, GlobalContext* globalCtx){
@@ -453,7 +446,7 @@ void EnTrapItem_SpawnBomb(EnTrapItem* this, GlobalContext* globalCtx) {
         bomb->timer = 0;
     }
     globalCtx->damagePlayer(globalCtx, -0x8);
-    func_8002F71C(globalCtx, &this->actor, 2.0f, this->actor.yawTowardsPlayer, 0.0f);
+    func_8002F71C(globalCtx, &this->actor, 2.0f, this->actor.yawTowardsPlayer, 10.0f);
 
     osSyncPrintf("En_Trap_Item: Le Bomb has arrived\n");
 }
@@ -471,7 +464,7 @@ void EnTrapItem_SpawnEnemy(EnTrapItem* this, GlobalContext* globalCtx) {
             params = ((!randomBool << 12) | (((Rand_ZeroOne() <= 0.5f) ? 0x14 : 0xFF) & 0x00FF));
             break;
         case ENEMY_TYPE_DODONGO:
-        case ENEMY_TYPE_PEEHAT:
+        case ENEMY_TYPE_PEAHAT:
         case ENEMY_TYPE_LIKELIKE:
             params = 0xFFFF;
             break;
@@ -499,10 +492,81 @@ void EnTrapItem_SpawnEnemy(EnTrapItem* this, GlobalContext* globalCtx) {
             break;
     }
 
-    Actor_Spawn(&globalCtx->actorCtx, globalCtx, enemyActorIDs[this->enemyType], this->actor.world.pos.x,
-                this->actor.world.pos.y, this->actor.world.pos.z, 0, 0, 0, params);
+    Actor_Spawn(&globalCtx->actorCtx, globalCtx, enemyActorIDs[this->enemyType],
+                this->actor.world.pos.x, this->actor.world.pos.y, this->actor.world.pos.z,
+                0, this->actor.yawTowardsPlayer, 0, params);
 
     osSyncPrintf("En_Trap_Item: Enemy is here! Watch out!\n");
+}
+
+void EnTrapItem_SpawnAnimation(EnTrapItem* this, GlobalContext* globalCtx) {
+    Vec3f effectPos;
+
+    if (!this->isNotFreestanding) {
+        EnTrapItem_SetupAction(this, EnTrapItem_Main);
+        return;
+    }
+
+    // doing the same rotation things item00 does
+    switch (this->itemSubType) {
+        case SUBTYPE_HEART_RECOVERY:
+            if (this->actor.velocity.y < 0.0f) {
+                this->actor.speedXZ = 0.0f;
+                this->actor.gravity = -0.4f;
+                if (this->actor.velocity.y < -1.5f) {
+                    this->actor.velocity.y = -1.5f;
+                }
+                this->actor.home.rot.z += (s16)((this->actor.velocity.y + 3.0f) * 1000.0f);
+                this->actor.world.pos.x +=
+                    Math_CosS(this->actor.yawTowardsPlayer) * (-3.0f * Math_CosS(this->actor.home.rot.z));
+                this->actor.world.pos.z +=
+                    Math_SinS(this->actor.yawTowardsPlayer) * (-3.0f * Math_CosS(this->actor.home.rot.z));
+            }
+            break;
+        case SUBTYPE_RUPEE_GREEN:
+        case SUBTYPE_RUPEE_BLUE:
+        case SUBTYPE_RUPEE_RED:
+        case SUBTYPE_RUPEE_PURPLE:
+        case SUBTYPE_RUPEE_ORANGE:
+            this->actor.shape.rot.y += 960;
+            break;
+        case SUBTYPE_SHIELD_DEKU:
+        case SUBTYPE_SHIELD_HYLIAN:
+        case SUBTYPE_TUNIC_ZORA:
+        case SUBTYPE_TUNIC_GORON:
+            this->actor.world.rot.x -= 700;
+            this->actor.shape.rot.y += 400;
+            this->actor.shape.rot.x = this->actor.world.rot.x - 0x4000;
+            break;
+        default:
+            break;
+    }
+
+    if (this->actor.velocity.y <= 2.0f) {
+        if ((this->actor.shape.rot.z + 0x2710) < 0xFFFF) {
+            this->actor.shape.rot.z += 0x2710;
+        } else {
+            this->actor.shape.rot.z = 0;
+        }
+    }
+
+    if (this->actor.velocity.y <= -2.5f) {
+        this->actor.shape.rot.z = 0;
+        this->isNotFreestanding = false;
+    }
+
+    if (!(globalCtx->gameplayFrames & 1)) {
+            effectPos.x = this->actor.world.pos.x + (Rand_ZeroOne() - 0.5f) * 10.0f;
+            effectPos.y = this->actor.world.pos.y + (Rand_ZeroOne() - 0.5f) * 10.0f;
+            effectPos.z = this->actor.world.pos.z + (Rand_ZeroOne() - 0.5f) * 10.0f;
+            EffectSsKiraKira_SpawnSmall(globalCtx, &effectPos, &sEffectVelocity, &sEffectAccel, &sEffectPrimColor,
+                                        &sEffectEnvColor);
+    }
+
+    if(this->actor.bgCheckFlags & (BGCHECKFLAG_GROUND | BGCHECKFLAG_GROUND_TOUCH)) {
+        this->actor.shape.rot.z = 0;
+        this->actor.velocity.y = this->actor.speedXZ = 0.0f;
+    }
 }
 
 void EnTrapItem_DrawHeart(EnTrapItem* this, GlobalContext* globalCtx) {

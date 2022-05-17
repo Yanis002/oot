@@ -123,7 +123,7 @@ void ObjTsubo_SpawnCollectible(ObjTsubo* this, GlobalContext* globalCtx) {
             }
             trapParams |= (((zRot & 0xF) << 0xC) | (((zRot >> 4) & 0x7) << 4));
             trapRotZ |= ((((zRot >> 7) & 0x3F) << 0x7) | (((zRot >> 0xD) & 0x3) << 0xD) |
-                            (((params >> 0xF) & 0x1) << 0x6) | ((params >> 0x9) & 0x3F));
+                            (((params >> 0xF) & 0x1) << 0x6) | ((params >> 0x9) & 0x3F) | 0x8000);
 
             Item_DropTrapCollectible(globalCtx, this->actor.world.pos, trapParams, trapRotZ);
         }
