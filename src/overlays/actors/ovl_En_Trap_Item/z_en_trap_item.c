@@ -403,7 +403,7 @@ void EnTrapItem_Trap(EnTrapItem* this, GlobalContext* globalCtx){
                 EnTrapItem_SpawnBomb(this, globalCtx, this->actor.world.pos);
                 break;
             case TRAP_TYPE_VOID:
-                Gameplay_TriggerRespawn(globalCtx);
+                Play_TriggerRespawn(globalCtx);
                 gSaveContext.respawnFlag = -2;
                 Audio_QueueSeqCmd(SEQ_PLAYER_BGM_MAIN << 24 | NA_BGM_STOP);
                 globalCtx->transitionType = TRANS_TYPE_FADE_BLACK;
@@ -660,7 +660,7 @@ void EnTrapItem_DrawCollectible(EnTrapItem* this, GlobalContext* globalCtx) {
 
     OPEN_DISPS(globalCtx->state.gfxCtx, __FILE__, __LINE__);
 
-    POLY_OPA_DISP = Gameplay_SetFog(globalCtx, POLY_OPA_DISP);
+    POLY_OPA_DISP = Play_SetFog(globalCtx, POLY_OPA_DISP);
     POLY_OPA_DISP = func_800946E4(POLY_OPA_DISP);
 
     gSPSegment(POLY_OPA_DISP++, 0x08, SEGMENTED_TO_VIRTUAL(sItemDropTex[this->texIndex]));
