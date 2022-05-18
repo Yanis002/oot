@@ -4,7 +4,7 @@
 #include "overlays/effects/ovl_Effect_Ss_Dead_Sound/z_eff_ss_dead_sound.h"
 #include "overlays/actors/ovl_En_Trap_Item/z_en_trap_item.h"
 
-#define FLAGS 0
+#define FLAGS ACTOR_FLAG_9
 
 void EnItem00_Init(Actor* thisx, GlobalContext* globalCtx);
 void EnItem00_Destroy(Actor* thisx, GlobalContext* globalCtx);
@@ -45,9 +45,9 @@ static ColliderCylinderInit sCylinderInit = {
     {
         ELEMTYPE_UNK0,
         { 0x00000000, 0x00, 0x00 },
-        { 0x00000010, 0x00, 0x00 },
-        TOUCH_NONE | TOUCH_SFX_NORMAL,
-        BUMP_ON,
+        { 0x00000090, 0x00, 0x00 },
+        TOUCH_NONE,
+        BUMP_ON | BUMP_HOOKABLE,
         OCELEM_NONE,
     },
     { 10, 30, 0, { 0, 0, 0 } },
@@ -57,6 +57,7 @@ static InitChainEntry sInitChain[] = {
     ICHAIN_F32(targetArrowOffset, 2000, ICHAIN_STOP),
 };
 
+static u8 isHooked = false;
 static Color_RGBA8 sEffectPrimColor = { 255, 255, 127, 0 };
 static Color_RGBA8 sEffectEnvColor = { 255, 255, 255, 0 };
 static Vec3f sEffectVelocity = { 0.0f, 0.1f, 0.0f };
@@ -545,6 +546,16 @@ void EnItem00_Update(Actor* thisx, GlobalContext* globalCtx) {
 
     if ((this->unk_15A > 0) && (this->unk_15A < 41) && (this->unk_154 <= 0)) {
         this->unk_156 = this->unk_15A;
+    }
+
+    // if hooked
+    if (CHECK_FLAG_ALL(this->actor.flags, ACTOR_FLAG_13)) {
+        isHooked = true;
+    }
+
+    if (isHooked) {
+        this->actor.gravity = -0.9f;
+        this->actor.bgCheckFlags &= ~(BGCHECKFLAG_GROUND | BGCHECKFLAG_GROUND_TOUCH);
     }
 
     this->actionFunc(this, globalCtx);

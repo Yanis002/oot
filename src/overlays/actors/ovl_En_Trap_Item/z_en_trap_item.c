@@ -23,16 +23,13 @@
         ((SUBTYPE_TUNIC_ZORA << 0x7) | (TRAP_TYPE_VOID << 0x4) | ITEM_TYPE_TUNIC)
     - Z-Rot Params: 0100 0000 0100 0001 - 0x4041
         ((4 << 0xD) | (MODE_SWITCH << 6) | 0x1)
-
-    TODO:
-    - spawn in flying pots
 */
 
 #include "z_en_trap_item.h"
 #include "objects/gameplay_keep/gameplay_keep.h"
 #include "overlays/actors/ovl_En_Bom/z_en_bom.h"
 
-#define FLAGS (ACTOR_FLAG_4 | ACTOR_FLAG_5) // always run update and draw
+#define FLAGS (ACTOR_FLAG_4 | ACTOR_FLAG_5 | ACTOR_FLAG_9) // always run update and draw, hookshotable (brings)
 
 void EnTrapItem_Init(Actor* thisx, GlobalContext* globalCtx);
 void EnTrapItem_Destroy(Actor* thisx, GlobalContext* globalCtx);
@@ -46,8 +43,8 @@ void EnTrapItem_Main(EnTrapItem* this, GlobalContext* globalCtx);
 u8 EnTrapItem_InitItemType(EnTrapItem* this, GlobalContext* globalCtx);
 void EnTrapItem_InitItemSubType(EnTrapItem* this, GlobalContext* globalCtx);
 void EnTrapItem_Trap(EnTrapItem* this, GlobalContext* globalCtx);
-void EnTrapItem_SpawnBomb(EnTrapItem* this, GlobalContext* globalCtx);
-void EnTrapItem_SpawnEnemy(EnTrapItem* this, GlobalContext* globalCtx);
+void EnTrapItem_SpawnBomb(EnTrapItem* this, GlobalContext* globalCtx, Vec3f pos);
+void EnTrapItem_SpawnEnemy(EnTrapItem* this, GlobalContext* globalCtx, Vec3f pos, s16 angle);
 void EnTrapItem_SpawnAnimation(EnTrapItem* this, GlobalContext* globalCtx);
 void EnTrapItem_DrawHeart(EnTrapItem* this, GlobalContext* globalCtx);
 void EnTrapItem_DrawRupee(EnTrapItem* this, GlobalContext* globalCtx);
@@ -78,9 +75,9 @@ static ColliderCylinderInit sCylinderInit = {
     {
         ELEMTYPE_UNK0,
         { 0x00000000, 0x00, 0x00 },
-        { 0x00000010, 0x00, 0x00 },
+        { 0x00000090, 0x00, 0x00 },
         TOUCH_NONE,
-        BUMP_ON,
+        BUMP_ON | BUMP_HOOKABLE,
         OCELEM_NONE,
     },
     { 10, 30, 0, { 0, 0, 0 } },
@@ -96,6 +93,7 @@ static void* sItemDropTex[] = {
     gDropArrows2Tex, gDropArrows3Tex,
 };
 
+static u8 isHooked = false;
 static Color_RGBA8 sEffectPrimColor = { 255, 255, 127, 0 };
 static Color_RGBA8 sEffectEnvColor = { 255, 255, 255, 0 };
 static Vec3f sEffectVelocity = { 0.0f, 0.1f, 0.0f };
@@ -268,6 +266,16 @@ void EnTrapItem_Main(EnTrapItem* this, GlobalContext* globalCtx) {
 
     EnTrapItem_Trap(this, globalCtx);
 
+    // if hooked
+    if (CHECK_FLAG_ALL(this->actor.flags, ACTOR_FLAG_13)) {
+        isHooked = true;
+    }
+
+    if (isHooked) {
+        this->actor.gravity = -0.9f;
+        this->actor.bgCheckFlags &= ~(BGCHECKFLAG_GROUND | BGCHECKFLAG_GROUND_TOUCH);
+    }
+
     if ((this->actor.draw == NULL) && (this->killTimer < 41)) {
         if (this->killTimer > 0) {
             this->killTimer--;
@@ -381,7 +389,9 @@ void EnTrapItem_InitItemSubType(EnTrapItem* this, GlobalContext* globalCtx){
 
 void EnTrapItem_Trap(EnTrapItem* this, GlobalContext* globalCtx){
     Player* player = GET_PLAYER(globalCtx);
-    u8 i;
+    Vec3f pos;
+    s16 angle;
+    s8 i;
 
     if (((this->actor.xzDistToPlayer <= 25.0f) &&
         (this->actor.yDistToPlayer >= -50.0f) && (this->actor.yDistToPlayer <= 50.0f)) && (this->killTimer == 41)) {
@@ -390,7 +400,7 @@ void EnTrapItem_Trap(EnTrapItem* this, GlobalContext* globalCtx){
                 globalCtx->playerTakeDamage(globalCtx, player, 3, 0.0f, 0.0f, 0, 20);
                 break;
             case TRAP_TYPE_EXPLOSION:
-                EnTrapItem_SpawnBomb(this, globalCtx);
+                EnTrapItem_SpawnBomb(this, globalCtx, this->actor.world.pos);
                 break;
             case TRAP_TYPE_VOID:
                 Gameplay_TriggerRespawn(globalCtx);
@@ -414,15 +424,23 @@ void EnTrapItem_Trap(EnTrapItem* this, GlobalContext* globalCtx){
             case TRAP_TYPE_CUCCO:
                 Actor_Spawn(&globalCtx->actorCtx, globalCtx, ACTOR_EN_NIW, this->actor.world.pos.x,
                     this->actor.world.pos.y, this->actor.world.pos.z, 0, 0, 0, 0xFFFF);
-                EnTrapItem_SpawnBomb(this, globalCtx);
+                EnTrapItem_SpawnBomb(this, globalCtx, this->actor.world.pos);
                 break;
             case TRAP_TYPE_ENEMY:
                 if ((this->enemyCount > 0) && (this->enemyCount <= 3)) {
+                    angle = (Rand_ZeroOne() - 0.5f) * 6.28f;
+                    pos.y = this->actor.floorHeight;
                     for (i = 1; i <= this->enemyCount; i++) {
-                        EnTrapItem_SpawnEnemy(this, globalCtx);
+                        pos.x = (Math_SinF(angle) * 110.0f) + this->actor.world.pos.x;
+                        pos.z = (Math_CosF(angle) * 110.0f) + this->actor.world.pos.z;
+
+                        EnTrapItem_SpawnEnemy(this, globalCtx, pos, this->actor.yawTowardsPlayer);
+                        EnTrapItem_SpawnBomb(this, globalCtx, player->actor.world.pos);
+
+                        angle += 6.28f / this->enemyCount;
                     }
                 } else {
-                    EnTrapItem_SpawnEnemy(this, globalCtx);
+                    EnTrapItem_SpawnEnemy(this, globalCtx, this->actor.world.pos, this->actor.yawTowardsPlayer);
                 }
                 break;
             default:
@@ -437,11 +455,11 @@ void EnTrapItem_Trap(EnTrapItem* this, GlobalContext* globalCtx){
     }
 }
 
-void EnTrapItem_SpawnBomb(EnTrapItem* this, GlobalContext* globalCtx) {
+void EnTrapItem_SpawnBomb(EnTrapItem* this, GlobalContext* globalCtx, Vec3f pos) {
     EnBom* bomb = NULL;
 
-    bomb = (EnBom*)Actor_Spawn(&globalCtx->actorCtx, globalCtx, ACTOR_EN_BOM, this->actor.world.pos.x,
-                    this->actor.world.pos.y, this->actor.world.pos.z, 0, 0, 0, BOMB_BODY);
+    bomb = (EnBom*)Actor_Spawn(&globalCtx->actorCtx, globalCtx, ACTOR_EN_BOM, pos.x,
+                    pos.y, pos.z, 0, 0, 0, BOMB_BODY);
     if (bomb != NULL) {
         bomb->timer = 0;
     }
@@ -451,7 +469,7 @@ void EnTrapItem_SpawnBomb(EnTrapItem* this, GlobalContext* globalCtx) {
     osSyncPrintf("En_Trap_Item: Le Bomb has arrived\n");
 }
 
-void EnTrapItem_SpawnEnemy(EnTrapItem* this, GlobalContext* globalCtx) {
+void EnTrapItem_SpawnEnemy(EnTrapItem* this, GlobalContext* globalCtx, Vec3f pos, s16 angle) {
     s16 params = 0;
     u8 randomBool = (Rand_ZeroOne() <= 0.5f);
     s16 enemyActorIDs[] = {
@@ -473,7 +491,7 @@ void EnTrapItem_SpawnEnemy(EnTrapItem* this, GlobalContext* globalCtx) {
             break;
         case ENEMY_TYPE_KNUCKLE:
             params = (randomBool ? 0x2 : 0x3) | ((this->enemySwitchFlag << 0x8) & 0xFF00);
-            EnTrapItem_SpawnBomb(this, globalCtx);
+            EnTrapItem_SpawnBomb(this, globalCtx, pos);
             break;
         case ENEMY_TYPE_REDEAD:
             params = ((randomBool ? 0x00 : 0x80) | ((((this->enemySwitchFlag) << 8) & 0x7F00) |
@@ -493,8 +511,7 @@ void EnTrapItem_SpawnEnemy(EnTrapItem* this, GlobalContext* globalCtx) {
     }
 
     Actor_Spawn(&globalCtx->actorCtx, globalCtx, enemyActorIDs[this->enemyType],
-                this->actor.world.pos.x, this->actor.world.pos.y, this->actor.world.pos.z,
-                0, this->actor.yawTowardsPlayer, 0, params);
+                pos.x, pos.y, pos.z, 0, angle, 0, params);
 
     osSyncPrintf("En_Trap_Item: Enemy is here! Watch out!\n");
 }

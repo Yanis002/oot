@@ -23,7 +23,7 @@ void Opening_SetupTitleScreen(OpeningContext* this) {
     gSaveContext.unk_13F4 = 0;
     gSaveContext.magicLevel = gSaveContext.magic;
 
-    gSaveContext.linkAge = LINK_AGE_CHILD;
+    gSaveContext.linkAge = LINK_AGE_ADULT;
     gSaveContext.dayTime = 0x8000;
     gSaveContext.buttonStatus[4] = BTN_ENABLED;
     gSaveContext.buttonStatus[3] = BTN_ENABLED;
