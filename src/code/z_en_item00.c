@@ -487,7 +487,8 @@ void func_8001E304(EnItem00* this, GlobalContext* globalCtx) {
                                     &sEffectEnvColor);
     }
 
-    if (this->actor.bgCheckFlags & (BGCHECKFLAG_GROUND | BGCHECKFLAG_GROUND_TOUCH)) {
+    if (this->actor.bgCheckFlags & (BGCHECKFLAG_GROUND | BGCHECKFLAG_GROUND_TOUCH) ||
+        ((this->actor.world.pos.y - this->actor.floorHeight) <= 6.0f)) {
         EnItem00_SetupAction(this, func_8001DFC8);
         this->actor.shape.rot.z = 0;
         this->actor.velocity.y = 0.0f;
