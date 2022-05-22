@@ -114,93 +114,93 @@ s32 func_80B0BE20(EnSw* this, CollisionPoly* poly) {
     //! @bug: Does not return.
 }
 
-CollisionPoly* func_80B0C020(PlayState* play, Vec3f* arg1, Vec3f* arg2, Vec3f* arg3, s32* arg4) {
-    CollisionPoly* sp3C;
+CollisionPoly* EnSw_GetGroundPoly(PlayState* play, Vec3f* posA, Vec3f* posB, Vec3f* posResult, s32* bgId) {
+    CollisionPoly* groundPoly;
     s32 pad;
 
-    if (!BgCheck_EntityLineTest1(&play->colCtx, arg1, arg2, arg3, &sp3C, true, true, true, false, arg4)) {
+    if (!BgCheck_EntityLineTest1(&play->colCtx, posA, posB, posResult, &groundPoly, true, true, true, false, bgId)) {
         return NULL;
     }
 
-    if (func_80041DB8(&play->colCtx, sp3C, *arg4) & 0x30) {
+    if (func_80041DB8(&play->colCtx, groundPoly, *bgId) & 0x30) {
         return NULL;
     }
 
-    if (SurfaceType_IsIgnoredByProjectiles(&play->colCtx, sp3C, *arg4)) {
+    if (SurfaceType_IsIgnoredByProjectiles(&play->colCtx, groundPoly, *bgId)) {
         return NULL;
     }
 
-    return sp3C;
+    return groundPoly;
 }
 
 s32 func_80B0C0CC(EnSw* this, PlayState* play, s32 arg2) {
-    CollisionPoly* temp_v0_2;
-    CollisionPoly* temp_s1;
-    Vec3f sp9C;
-    Vec3f sp90;
-    Vec3f sp84;
-    Vec3f sp78;
+    CollisionPoly* poly1;
+    CollisionPoly* poly2;
+    Vec3f posResult1;
+    Vec3f posResult2;
+    Vec3f posA;
+    Vec3f posB;
     s32 pad;
-    s32 sp70;
-    s32 sp6C;
-    s32 phi_s1;
-    s32 sp64;
+    s32 bgId1;
+    s32 bgId2;
+    s32 i;
+    s32 hasTouchedGround;
 
-    sp64 = 0;
-    this->unk_42C = 1;
-    sp84 = sp78 = this->actor.world.pos;
-    sp84.x += this->unk_364.x * 18.0f;
-    sp84.y += this->unk_364.y * 18.0f;
-    sp84.z += this->unk_364.z * 18.0f;
-    sp78.x -= this->unk_364.x * 18.0f;
-    sp78.y -= this->unk_364.y * 18.0f;
-    sp78.z -= this->unk_364.z * 18.0f;
-    temp_s1 = func_80B0C020(play, &sp84, &sp78, &sp90, &sp70);
+    hasTouchedGround = false;
+    this->unusedBool = true;
+    posA = posB = this->actor.world.pos;
+    posA.x += this->unk_364.x * 18.0f;
+    posA.y += this->unk_364.y * 18.0f;
+    posA.z += this->unk_364.z * 18.0f;
+    posB.x -= this->unk_364.x * 18.0f;
+    posB.y -= this->unk_364.y * 18.0f;
+    posB.z -= this->unk_364.z * 18.0f;
+    poly2 = EnSw_GetGroundPoly(play, &posA, &posB, &posResult2, &bgId1);
 
-    if ((temp_s1 != NULL) && (this->unk_360 == 0)) {
-        sp78.x = sp84.x + (this->unk_37C.x * 24);
-        sp78.y = sp84.y + (this->unk_37C.y * 24);
-        sp78.z = sp84.z + (this->unk_37C.z * 24);
-        temp_v0_2 = func_80B0C020(play, &sp84, &sp78, &sp9C, &sp6C);
-        if (temp_v0_2 != NULL) {
+    if ((poly2 != NULL) && (this->isFalling == false)) {
+        posB.x = posA.x + (this->unk_37C.x * 24);
+        posB.y = posA.y + (this->unk_37C.y * 24);
+        posB.z = posA.z + (this->unk_37C.z * 24);
+        poly1 = EnSw_GetGroundPoly(play, &posA, &posB, &posResult1, &bgId2);
+        if (poly1 != NULL) {
             if (arg2 == 1) {
-                func_80B0BE20(this, temp_v0_2);
-                this->actor.world.pos = sp9C;
-                this->actor.floorBgId = sp6C;
+                func_80B0BE20(this, poly1);
+                this->actor.world.pos = posResult1;
+                this->actor.floorBgId = bgId2;
             }
         } else {
-            if (this->actor.floorPoly != temp_s1) {
-                func_80B0BE20(this, temp_s1);
+            if (this->actor.floorPoly != poly2) {
+                func_80B0BE20(this, poly2);
             }
-            this->actor.world.pos = sp90;
-            this->actor.floorBgId = sp70;
+            this->actor.world.pos = posResult2;
+            this->actor.floorBgId = bgId1;
         }
-        sp64 = 1;
+        hasTouchedGround = true;
     } else {
-        sp84 = sp78;
-        for (phi_s1 = 0; phi_s1 < 3; phi_s1++) {
-            if (phi_s1 == 0) {
-                sp78.x = sp84.x - (this->unk_37C.x * 24.0f);
-                sp78.y = sp84.y - (this->unk_37C.y * 24.0f);
+        posA = posB;
+        for (i = 0; i < 3; i++) {
+            if (i == 0) {
+                posB.x = posA.x - (this->unk_37C.x * 24.0f);
+                posB.y = posA.y - (this->unk_37C.y * 24.0f);
                 if (0) {}
-                sp78.z = sp84.z - (this->unk_37C.z * 24.0f);
-            } else if (phi_s1 == 1) {
-                sp78.x = sp84.x + (this->unk_370.x * 24.0f);
-                sp78.y = sp84.y + (this->unk_370.y * 24.0f);
-                sp78.z = sp84.z + (this->unk_370.z * 24.0f);
+                posB.z = posA.z - (this->unk_37C.z * 24.0f);
+            } else if (i == 1) {
+                posB.x = posA.x + (this->unk_370.x * 24.0f);
+                posB.y = posA.y + (this->unk_370.y * 24.0f);
+                posB.z = posA.z + (this->unk_370.z * 24.0f);
             } else {
-                sp78.x = sp84.x - (this->unk_370.x * 24.0f);
-                sp78.y = sp84.y - (this->unk_370.y * 24.0f);
-                sp78.z = sp84.z - (this->unk_370.z * 24.0f);
+                posB.x = posA.x - (this->unk_370.x * 24.0f);
+                posB.y = posA.y - (this->unk_370.y * 24.0f);
+                posB.z = posA.z - (this->unk_370.z * 24.0f);
             }
-            temp_v0_2 = func_80B0C020(play, &sp84, &sp78, &sp9C, &sp6C);
-            if (temp_v0_2 != NULL) {
+            poly1 = EnSw_GetGroundPoly(play, &posA, &posB, &posResult1, &bgId2);
+            if (poly1 != NULL) {
                 if (arg2 == 1) {
-                    func_80B0BE20(this, temp_v0_2);
-                    this->actor.world.pos = sp9C;
-                    this->actor.floorBgId = sp6C;
+                    func_80B0BE20(this, poly1);
+                    this->actor.world.pos = posResult1;
+                    this->actor.floorBgId = bgId2;
                 }
-                sp64 = 1;
+                hasTouchedGround = true;
                 break;
             }
         }
@@ -210,23 +210,23 @@ s32 func_80B0C0CC(EnSw* this, PlayState* play, s32 arg2) {
     Math_SmoothStepToS(&this->actor.shape.rot.y, this->actor.world.rot.y, 8, 0xFA0, 1);
     Math_SmoothStepToS(&this->actor.shape.rot.z, this->actor.world.rot.z, 8, 0xFA0, 1);
 
-    return sp64;
+    return hasTouchedGround;
 }
 
 void EnSw_Init(Actor* thisx, PlayState* play) {
     EnSw* this = (EnSw*)thisx;
-    s32 phi_v0;
-    Vec3f sp4C = { 0.0f, 0.0f, 0.0f };
+    s32 paramAdjustment;
+    Vec3f unused = { 0.0f, 0.0f, 0.0f };
     s32 pad;
 
     if (thisx->params & 0x8000) {
-        phi_v0 = (((thisx->params - 0x8000) & 0xE000) >> 0xD) + 1;
-        thisx->params = (thisx->params & 0x1FFF) | (phi_v0 << 0xD);
+        paramAdjustment = (((thisx->params - 0x8000) & 0xE000) >> 0xD) + 1;
+        thisx->params = (thisx->params & 0x1FFF) | (paramAdjustment << 0xD);
     }
 
-    if (((thisx->params & 0xE000) >> 0xD) > 0) {
-        phi_v0 = ((thisx->params & 0x1F00) >> 8) - 1;
-        thisx->params = (thisx->params & 0xE0FF) | (phi_v0 << 8);
+    if (((thisx->params & 0xE000) >> 0xD) > TYPE_SKULLWALLTULA) {
+        paramAdjustment = ((thisx->params & 0x1F00) >> 8) - 1;
+        thisx->params = (thisx->params & 0xE0FF) | (paramAdjustment << 8);
     }
 
     // Check to see if this gold skull token has already been retrieved.
@@ -243,7 +243,7 @@ void EnSw_Init(Actor* thisx, PlayState* play) {
     CollisionCheck_SetInfo2(&this->actor.colChkInfo, DamageTable_Get(0xE), &D_80B0F074);
     this->actor.scale.x = 0.02f;
 
-    if (((thisx->params & 0xE000) >> 0xD) == 0) {
+    if (((thisx->params & 0xE000) >> 0xD) == TYPE_SKULLWALLTULA) {
         this->actor.world.rot.x = 0;
         this->actor.world.rot.z = 0;
         thisx->shape.rot = this->actor.world.rot;
@@ -265,21 +265,21 @@ void EnSw_Init(Actor* thisx, PlayState* play) {
         func_80B0C0CC(this, play, 1);
     }
 
-    if (((thisx->params & 0xE000) >> 0xD) >= 3) {
+    if (((thisx->params & 0xE000) >> 0xD) >= TYPE_GS_SPAWN_UP_SFX_DUST) {
         Audio_PlaySoundGeneral(NA_SE_SY_CORRECT_CHIME, &gSfxDefaultPos, 4, &gSfxDefaultFreqAndVolScale,
                                &gSfxDefaultFreqAndVolScale, &gSfxDefaultReverb);
     }
 
     switch ((thisx->params & 0xE000) >> 0xD) {
-        case 3:
-        case 4:
-            this->unk_360 = 1;
+        case TYPE_GS_SPAWN_UP_SFX_DUST: // c
+        case TYPE_GS_SPAWN_NO_UP_SFX_DUST: // e
+            this->isFalling = true;
             this->actor.velocity.y = 8.0f;
             this->actor.speedXZ = 4.0f;
             this->actor.gravity = -1.0f;
-        case 2:
+        case TYPE_GS_APPEARS: // b
             this->actor.scale.x = 0.0f;
-        case 1:
+        case TYPE_GS_FREESTANDING: // 9
             this->collider.elements[0].info.toucher.damage *= 2;
             this->actor.naviEnemyId = NAVI_ENEMY_GOLD_SKULLTULA;
             this->actor.colChkInfo.health *= 2;
@@ -296,11 +296,11 @@ void EnSw_Init(Actor* thisx, PlayState* play) {
     this->actor.home.pos = this->actor.world.pos;
     thisx->shape.rot = this->actor.world.rot;
 
-    if (((thisx->params & 0xE000) >> 0xD) >= 3) {
-        this->unk_38C = 0x28;
+    if (((thisx->params & 0xE000) >> 0xD) >= TYPE_GS_SPAWN_UP_SFX_DUST) {
+        this->unk_38C = 40;
         this->unk_394 = 1;
         this->actionFunc = func_80B0D364;
-    } else if (((thisx->params & 0xE000) >> 0xD) == 0) {
+    } else if (((thisx->params & 0xE000) >> 0xD) == TYPE_SKULLWALLTULA) {
         this->actionFunc = func_80B0E5E0;
     } else {
         this->actionFunc = func_80B0D590;
@@ -316,24 +316,24 @@ void EnSw_Destroy(Actor* thisx, PlayState* play) {
 s32 func_80B0C9F0(EnSw* this, PlayState* play) {
     s32 phi_v1 = false;
 
-    if (this->actor.xyzDistToPlayerSq < SQ(400.0f) && ((this->actor.params & 0xE000) >> 0xD) == 0 &&
+    if (this->actor.xyzDistToPlayerSq < SQ(400.0f) && ((this->actor.params & 0xE000) >> 0xD) == TYPE_SKULLWALLTULA &&
         play->actorCtx.unk_02 != 0) {
 
         this->actor.colChkInfo.damage = this->actor.colChkInfo.health;
         phi_v1 = true;
     }
 
-    if (this->unk_392 == 0) {
+    if (this->invisibilityTimer == 0) {
         if ((this->collider.base.acFlags & 2) || phi_v1) {
             this->collider.base.acFlags &= ~2;
-            this->unk_392 = 0x10;
-            Actor_SetColorFilter(&this->actor, 0x4000, 0xC8, 0, this->unk_392);
+            this->invisibilityTimer = 0x10;
+            Actor_SetColorFilter(&this->actor, 0x4000, 0xC8, 0, this->invisibilityTimer);
             if (Actor_ApplyDamage(&this->actor) != 0) {
                 Audio_PlayActorSound2(&this->actor, NA_SE_EN_STALTU_DAMAGE);
                 return true;
             }
             Enemy_StartFinishingBlow(play, &this->actor);
-            if (((this->actor.params & 0xE000) >> 0xD) != 0) {
+            if (((this->actor.params & 0xE000) >> 0xD) != TYPE_SKULLWALLTULA) {
                 this->skelAnime.playSpeed = 8.0f;
                 if ((play->state.frames & 1) == 0) {
                     this->unk_420 = 0.1f;
@@ -359,24 +359,24 @@ s32 func_80B0C9F0(EnSw* this, PlayState* play) {
         }
     }
 
-    if ((this->unk_390 == 0) && (this->collider.base.atFlags & 2)) {
-        this->unk_390 = 30;
+    if ((this->atOffTimer == 0) && (this->collider.base.atFlags & 2)) {
+        this->atOffTimer = 30;
     }
 
     return false;
 }
 
 void func_80B0CBE8(EnSw* this, PlayState* play) {
-    if ((((this->actor.params & 0xE000) >> 0xD) > 0) && (this->actionFunc != func_80B0D590)) {
-        if (this->unk_392 != 0) {
-            this->unk_392--;
+    if ((((this->actor.params & 0xE000) >> 0xD) > TYPE_SKULLWALLTULA) && (this->actionFunc != func_80B0D590)) {
+        if (this->invisibilityTimer != 0) {
+            this->invisibilityTimer--;
         }
     } else {
-        if ((DECR(this->unk_390) == 0) && (this->actor.colChkInfo.health != 0)) {
+        if ((DECR(this->atOffTimer) == 0) && (this->actor.colChkInfo.health != 0)) {
             CollisionCheck_SetAT(play, &play->colChkCtx, &this->collider.base);
         }
 
-        if ((DECR(this->unk_392) == 0) && (this->actor.colChkInfo.health != 0)) {
+        if ((DECR(this->invisibilityTimer) == 0) && (this->actor.colChkInfo.health != 0)) {
             CollisionCheck_SetAC(play, &play->colChkCtx, &this->collider.base);
         }
 
@@ -435,13 +435,13 @@ void func_80B0CEA8(EnSw* this, PlayState* play) {
         Camera* activeCam = GET_ACTIVE_CAM(play);
 
         if (!(Math_Vec3f_DistXYZ(&this->actor.world.pos, &activeCam->eye) >= 380.0f)) {
-            Audio_PlayActorSound2(&this->actor, ((this->actor.params & 0xE000) >> 0xD) > 0 ? NA_SE_EN_STALGOLD_ROLL
+            Audio_PlayActorSound2(&this->actor, ((this->actor.params & 0xE000) >> 0xD) > TYPE_SKULLWALLTULA ? NA_SE_EN_STALGOLD_ROLL
                                                                                            : NA_SE_EN_STALWALL_ROLL);
         }
     }
 }
 
-void func_80B0CF44(EnSw* this, PlayState* play, s32 cnt) {
+void EnSw_SpawnDust1(EnSw* this, PlayState* play, s32 cnt) {
     Color_RGBA8 primColor = { 80, 80, 50, 255 };
     Color_RGBA8 envColor = { 100, 100, 80, 0 };
     Vec3f velocity = { 0.0f, 0.0f, 0.0f };
@@ -480,7 +480,7 @@ void func_80B0D14C(EnSw* this, PlayState* play, s32 cnt) {
 }
 
 void func_80B0D364(EnSw* this, PlayState* play) {
-    if (((this->actor.params & 0xE000) >> 0xD) == 4) {
+    if (((this->actor.params & 0xE000) >> 0xD) == TYPE_GS_SPAWN_NO_UP_SFX_DUST) {
         this->unk_38C = 0;
         this->actionFunc = func_80B0D3AC;
     } else {
@@ -492,7 +492,7 @@ void func_80B0D364(EnSw* this, PlayState* play) {
 void func_80B0D3AC(EnSw* this, PlayState* play) {
     if (this->unk_38C != 0) {
         if ((this->unk_38C & 4) != 0) {
-            func_80B0CF44(this, play, 5);
+            EnSw_SpawnDust1(this, play, 5);
         }
         this->unk_38C--;
         if (this->unk_38C == 0) {
@@ -515,10 +515,10 @@ void func_80B0D3AC(EnSw* this, PlayState* play) {
     this->actor.velocity.y = CLAMP_MIN(this->actor.velocity.y, this->actor.minVelocityY);
 
     if (this->actor.velocity.y < 0.0f) {
-        this->unk_360 = 0;
+        this->isFalling = false;
     }
 
-    if (func_80B0C0CC(this, play, 1) == 1) {
+    if (func_80B0C0CC(this, play, 1) == true) {
         Audio_PlayActorSound2(&this->actor, NA_SE_EN_DODO_M_GND);
         func_80B0D14C(this, play, 8);
         this->actor.scale.x = 0.02f;
@@ -533,7 +533,7 @@ void func_80B0D3AC(EnSw* this, PlayState* play) {
 void func_80B0D590(EnSw* this, PlayState* play) {
     f32 sp2C;
 
-    if (((this->actor.params & 0xE000) >> 0xD) == 2) {
+    if (((this->actor.params & 0xE000) >> 0xD) == TYPE_GS_APPEARS) {
         if (this->actor.scale.x < 0.0139999995f) {
             this->collider.elements[0].info.toucherFlags = 0;
             this->collider.elements[0].info.bumperFlags = 0;
@@ -557,7 +557,7 @@ void func_80B0D590(EnSw* this, PlayState* play) {
             this->unk_420 = ((play->state.frames % 2) == 0) ? 0.1f : -0.1f;
             this->unk_38A = 1;
             this->unk_38C = Rand_S16Offset(30, 60);
-            if (((this->actor.params & 0xE000) >> 0xD) != 0) {
+            if (((this->actor.params & 0xE000) >> 0xD) != TYPE_SKULLWALLTULA) {
                 this->unk_38C *= 2;
                 this->unk_420 *= 2.0f;
             }
@@ -568,7 +568,7 @@ void func_80B0D590(EnSw* this, PlayState* play) {
             this->unk_38E = Rand_S16Offset(15, 30);
             this->unk_38A = 0;
             this->skelAnime.playSpeed = 0.0f;
-            if (((this->actor.params & 0xE000) >> 0xD) != 0) {
+            if (((this->actor.params & 0xE000) >> 0xD) != TYPE_SKULLWALLTULA) {
                 this->unk_38E /= 2;
             }
         } else if (this->unk_38A != 0) {
@@ -578,7 +578,7 @@ void func_80B0D590(EnSw* this, PlayState* play) {
             if (this->skelAnime.playSpeed > 0.0f) {
                 func_80B0CEA8(this, play);
             }
-            if (((this->actor.params & 0xE000) >> 0xD) != 0) {
+            if (((this->actor.params & 0xE000) >> 0xD) != TYPE_SKULLWALLTULA) {
                 this->skelAnime.playSpeed *= 2.0f;
             }
         } else {
@@ -609,7 +609,7 @@ void func_80B0D878(EnSw* this, PlayState* play) {
     func_80B0CCF4(this, &this->unk_420);
     this->actor.shape.rot = this->actor.world.rot;
 
-    if ((this->unk_394 == 0) && (this->unk_392 == 0)) {
+    if ((this->unk_394 == 0) && (this->invisibilityTimer == 0)) {
         Audio_PlaySoundGeneral(NA_SE_SY_KINSTA_MARK_APPEAR, &gSfxDefaultPos, 4, &gSfxDefaultFreqAndVolScale,
                                &gSfxDefaultFreqAndVolScale, &gSfxDefaultReverb);
         x = (this->unk_364.x * 10.0f);
@@ -625,7 +625,7 @@ void func_80B0D878(EnSw* this, PlayState* play) {
         return;
     }
 
-    if ((this->unk_392 == 0) && (DECR(this->unk_394) != 0)) {
+    if ((this->invisibilityTimer == 0) && (DECR(this->unk_394) != 0)) {
         pos = this->actor.world.pos;
         pos.y += 10.0f + ((Rand_ZeroOne() - 0.5f) * 6.0f);
         pos.x += (Rand_ZeroOne() - 0.5f) * 32.0f;
@@ -737,9 +737,9 @@ s32 func_80B0DFFC(EnSw* this, PlayState* play) {
         sp4C = false;
     }
 
-    if (BgCheck_EntityLineTest1(&play->colCtx, &this->actor.world.pos, &this->unk_484, &sp50, &this->unk_430, true,
+    if (BgCheck_EntityLineTest1(&play->colCtx, &this->actor.world.pos, &this->unk_484, &sp50, &this->skullwalltulaPoly, true,
                                 false, false, true, &sp5C)) {
-        this->actor.wallYaw = RAD_TO_BINANG(Math_FAtan2F(this->unk_430->normal.x, this->unk_430->normal.z));
+        this->actor.wallYaw = RAD_TO_BINANG(Math_FAtan2F(this->skullwalltulaPoly->normal.x, this->skullwalltulaPoly->normal.z));
         this->actor.world.pos = sp50;
         this->actor.world.pos.x += 6.0f * Math_SinS(this->actor.world.rot.y);
         this->actor.world.pos.z += 6.0f * Math_CosS(this->actor.world.rot.y);
@@ -824,9 +824,9 @@ void func_80B0E5E0(EnSw* this, PlayState* play) {
         this->unk_388 = Rand_S16Offset(10, 30);
     }
 
-    if ((DECR(this->unk_442) == 0) && (func_80B0DEA8(this, play, 1))) {
+    if ((DECR(this->seenTimer) == 0) && (func_80B0DEA8(this, play, 1))) {
         Audio_PlayActorSound2(&this->actor, NA_SE_EN_STALWALL_LAUGH);
-        this->unk_442 = 20;
+        this->seenTimer = 20;
         this->actionFunc = func_80B0E728;
     }
 }
@@ -835,30 +835,30 @@ void func_80B0E728(EnSw* this, PlayState* play) {
     Player* player = GET_PLAYER(play);
     s32 pad;
 
-    if (DECR(this->unk_442) != 0) {
+    if (DECR(this->seenTimer) != 0) {
         if (func_80B0DEA8(this, play, 1)) {
-            this->unk_448 = player->actor.world.pos;
-            this->unk_448.y += 30.0f;
-            this->unk_444 = func_80B0DE34(this, &this->unk_448);
+            this->skullwalltulaDest = player->actor.world.pos;
+            this->skullwalltulaDest.y += 30.0f;
+            this->unk_444 = func_80B0DE34(this, &this->skullwalltulaDest);
             func_80B0E430(this, 6.0f, (u16)0xFA0, 0, play);
         } else {
             this->actionFunc = func_80B0E5E0;
         }
     } else {
         if (!func_80B0DFFC(this, play)) {
-            this->unk_442 = Rand_S16Offset(20, 10);
+            this->seenTimer = Rand_S16Offset(20, 10);
             this->unk_444 = func_80B0DE34(this, &this->actor.home.pos);
-            this->unk_448 = this->actor.home.pos;
+            this->skullwalltulaDest = this->actor.home.pos;
             this->actionFunc = func_80B0E9BC;
         } else {
-            func_80B0E314(this, this->unk_448, 8.0f);
+            func_80B0E314(this, this->skullwalltulaDest, 8.0f);
 
             if (DECR(this->unk_440) == 0) {
                 Audio_PlayActorSound2(&this->actor, NA_SE_EN_STALWALL_DASH);
                 this->unk_440 = 4;
             }
 
-            if (!(Math_Vec3f_DistXYZ(&this->actor.world.pos, &this->unk_448) > 13.0f) || func_8002DDF4(play)) {
+            if (!(Math_Vec3f_DistXYZ(&this->actor.world.pos, &this->skullwalltulaDest) > 13.0f) || func_8002DDF4(play)) {
                 this->actionFunc = func_80B0E90C;
             }
         }
@@ -868,10 +868,10 @@ void func_80B0E728(EnSw* this, PlayState* play) {
 void func_80B0E90C(EnSw* this, PlayState* play) {
     s32 pad;
 
-    func_80B0E314(this, this->unk_448, 0.0f);
+    func_80B0E314(this, this->skullwalltulaDest, 0.0f);
     if (this->actor.speedXZ == 0.0f) {
         this->unk_444 = func_80B0DE34(this, &this->actor.home.pos);
-        this->unk_448 = this->actor.home.pos;
+        this->skullwalltulaDest = this->actor.home.pos;
         this->actionFunc = func_80B0E9BC;
     }
 }
@@ -880,8 +880,8 @@ void func_80B0E9BC(EnSw* this, PlayState* play) {
     s32 pad;
 
     if (func_80B0E430(this, 6.0f, 0x3E8, 0, play)) {
-        func_80B0E314(this, this->unk_448, 2.0f);
-        if (!(Math_Vec3f_DistXYZ(&this->actor.world.pos, &this->unk_448) > 4.0f)) {
+        func_80B0E314(this, this->skullwalltulaDest, 2.0f);
+        if (!(Math_Vec3f_DistXYZ(&this->actor.world.pos, &this->skullwalltulaDest) > 4.0f)) {
             this->actionFunc = func_80B0E5E0;
         }
     }
@@ -907,7 +907,7 @@ s32 EnSw_OverrideLimbDraw(PlayState* play, s32 limbIndex, Gfx** dList, Vec3f* po
 
     OPEN_DISPS(play->state.gfxCtx, "../z_en_sw.c", 2084);
 
-    if (((this->actor.params & 0xE000) >> 0xD) != 0) {
+    if (((this->actor.params & 0xE000) >> 0xD) != TYPE_SKULLWALLTULA) {
         switch (limbIndex) {
             case 23:
                 *dList = object_st_DL_004788;
@@ -998,7 +998,7 @@ void EnSw_Draw(Actor* thisx, PlayState* play) {
     EnSw* this = (EnSw*)thisx;
     Color_RGBA8 sp30 = { 184, 0, 228, 255 };
 
-    if (((this->actor.params & 0xE000) >> 0xD) != 0) {
+    if (((this->actor.params & 0xE000) >> 0xD) != TYPE_SKULLWALLTULA) {
         Matrix_RotateX(DEG_TO_RAD(-80), MTXMODE_APPLY);
         if (this->actor.colChkInfo.health != 0) {
             Matrix_Translate(0.0f, 0.0f, 200.0f, MTXMODE_APPLY);
