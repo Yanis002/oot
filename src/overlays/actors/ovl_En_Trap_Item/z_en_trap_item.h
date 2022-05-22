@@ -7,7 +7,7 @@
 extern const ActorInit En_Trap_Item_InitVars;
 
 struct EnTrapItem;
-typedef void (*EnTrapItemActionFunc)(struct EnTrapItem*, GlobalContext*);
+typedef void (*EnTrapItemActionFunc)(struct EnTrapItem*, PlayState*);
 
 typedef enum {
     /* 0x00 */ ITEM_TYPE_HEART,

@@ -37,7 +37,7 @@ void Opening_SetupTitleScreen(OpeningContext* this) {
     gSaveContext.showTitleCard = false;
     gWeatherMode = 0;
     this->state.running = false;
-    SET_NEXT_GAMESTATE(&this->state, Play_Init, GlobalContext);
+    SET_NEXT_GAMESTATE(&this->state, Play_Init, PlayState);
 }
 
 void func_80803C5C(OpeningContext* this) {
