@@ -9290,16 +9290,16 @@ void Player_Init(Actor* thisx, PlayState* play2) {
 
     play->shootingGalleryStatus = play->bombchuBowlingStatus = 0;
 
-    globalCtx->playerInit = Player_InitCommon;
-    globalCtx->playerUpdate = Player_UpdateCommon;
-    globalCtx->isPlayerDroppingFish = Player_IsDroppingFish;
-    globalCtx->startPlayerFishing = Player_StartFishing;
-    globalCtx->grabPlayer = func_80852F38;
-    globalCtx->startPlayerCutscene = func_80852FFC;
-    globalCtx->func_11D54 = func_80853080;
-    globalCtx->damagePlayer = Player_InflictDamage;
-    globalCtx->talkWithPlayer = func_80853148;
-    globalCtx->playerTakeDamage = func_80837C0C;
+    play->playerInit = Player_InitCommon;
+    play->playerUpdate = Player_UpdateCommon;
+    play->isPlayerDroppingFish = Player_IsDroppingFish;
+    play->startPlayerFishing = Player_StartFishing;
+    play->grabPlayer = func_80852F38;
+    play->startPlayerCutscene = func_80852FFC;
+    play->func_11D54 = func_80853080;
+    play->damagePlayer = Player_InflictDamage;
+    play->talkWithPlayer = func_80853148;
+    play->playerTakeDamage = func_80837C0C;
 
     thisx->room = -1;
     this->ageProperties = &sAgeProperties[gSaveContext.linkAge];
