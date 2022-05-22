@@ -329,7 +329,7 @@ beginseg
     include "build/src/code/z_elf_message.o"
     include "build/src/code/z_face_reaction.o"
     include "build/src/code/code_8006C3A0.o"
-    include "build/src/code/code_8006C510.o"
+    include "build/src/code/z_fcurve_data.o"
     include "build/src/code/z_fcurve_data_skelanime.o"
     include "build/src/code/z_game_dlftbls.o"
     include "build/src/code/z_horse.o"
@@ -416,7 +416,7 @@ beginseg
     include "build/src/code/fault.o"
     include "build/data/fault.bss.o"
     include "build/src/code/fault_drawer.o"
-    include "build/asm/code_800D71F0.o"
+    include "build/asm/kanread.o"
     include "build/src/code/ucode_disas.o"
     pad_text // audio library aligned to 32 bytes?
     include "build/src/code/audio_data.o"
