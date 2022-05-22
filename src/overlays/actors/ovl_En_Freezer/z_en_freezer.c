@@ -15,12 +15,12 @@
 #include "z_en_freezer.h"
 #include "../ovl_En_Arrow/z_en_arrow.h"
 
-void EnFreezer_Init(Actor* thisx, GlobalContext* globalCtx);
-void EnFreezer_Destroy(Actor* thisx, GlobalContext* globalCtx);
-void EnFreezer_Update(Actor* thisx, GlobalContext* globalCtx);
+void EnFreezer_Init(Actor* thisx, PlayState* play);
+void EnFreezer_Destroy(Actor* thisx, PlayState* play);
+void EnFreezer_Update(Actor* thisx, PlayState* play);
 
-void EnFreezer_SetupFreeze(GlobalContext* globalCtx, En_Freezer* this);
-void EnFreezer_Freeze(GlobalContext* globalCtx, En_Freezer* this, u16 duration);
+void EnFreezer_SetupFreeze(PlayState* play, En_Freezer* this);
+void EnFreezer_Freeze(PlayState* play, En_Freezer* this, u16 duration);
 void EnFreezer_FadeIn(En_Freezer* this);
 void EnFreezer_FadeOut(En_Freezer* this);
 
@@ -55,9 +55,9 @@ static u8 actorCatBlacklist[] =
 
 static u16 duration = 0;
 
-void EnFreezer_Init(Actor* thisx, GlobalContext* globalCtx) {
+void EnFreezer_Init(Actor* thisx, PlayState* play) {
     En_Freezer* this = (En_Freezer*)thisx;
-    Player* player = GET_PLAYER(globalCtx);
+    Player* player = GET_PLAYER(play);
 
     player->isFreezerSpawned = !player->isFreezerSpawned;
     this->counter = this->isEffectSpawned = this->dayTime = 
@@ -71,18 +71,18 @@ void EnFreezer_Init(Actor* thisx, GlobalContext* globalCtx) {
     else duration = 300;
 }
 
-void EnFreezer_Destroy(Actor* thisx, GlobalContext* globalCtx) {
+void EnFreezer_Destroy(Actor* thisx, PlayState* play) {
 }
 
-void EnFreezer_Update(Actor* thisx, GlobalContext* globalCtx) {
+void EnFreezer_Update(Actor* thisx, PlayState* play) {
     En_Freezer* this = (En_Freezer*)thisx;
-    Player* player = GET_PLAYER(globalCtx);
+    Player* player = GET_PLAYER(play);
     GraphicsContext* gfx;
     u8 i;
 
     if(!this->isEffectSpawned){
         this->isEffectSpawned = 1;
-        Actor_Spawn(&globalCtx->actorCtx, globalCtx,
+        Actor_Spawn(&play->actorCtx, play,
                     ACTOR_OCEFF_WIPE, player->actor.world.pos.x,
                     player->actor.world.pos.y,
                     player->actor.world.pos.z, 0, 0, 0, 2);
@@ -92,7 +92,7 @@ void EnFreezer_Update(Actor* thisx, GlobalContext* globalCtx) {
     else if(this->fadeIn && !this->fadeOut) EnFreezer_FadeOut(this);
 
     if(this->counter < 35) this->counter++;
-    else if(player->isFreezerSpawned && !this->isDurationReached) EnFreezer_SetupFreeze(globalCtx, this);
+    else if(player->isFreezerSpawned && !this->isDurationReached) EnFreezer_SetupFreeze(play, this);
     else if(!player->isFreezerSpawned && this->fadeOut){
         player->freezerChild = NULL;
         Actor_Kill(&this->actor);
@@ -103,26 +103,26 @@ void EnFreezer_Update(Actor* thisx, GlobalContext* globalCtx) {
         else if(!this->isDurationReached){
             this->isDurationReached = 1;
             player->isFreezerSpawned = this->isEffectSpawned = this->counter = this->fadeIn = this->fadeOut = 0;
-            EnFreezer_SetupFreeze(globalCtx, this);
+            EnFreezer_SetupFreeze(play, this);
         } 
     }
     
-    Environment_FillScreen(globalCtx->state.gfxCtx, this->rgb.r, this->rgb.g, this->rgb.b, this->alpha, 3);
+    Environment_FillScreen(play->state.gfxCtx, this->rgb.r, this->rgb.g, this->rgb.b, this->alpha, 3);
 }
 
-void EnFreezer_SetupFreeze(GlobalContext* globalCtx, En_Freezer* this){
-    if(!this->isDurationReached) EnFreezer_Freeze(globalCtx, this, 36);
-    else EnFreezer_Freeze(globalCtx, this, 35);    
+void EnFreezer_SetupFreeze(PlayState* play, En_Freezer* this){
+    if(!this->isDurationReached) EnFreezer_Freeze(play, this, 36);
+    else EnFreezer_Freeze(play, this, 35);    
 }
 
-void EnFreezer_Freeze(GlobalContext* globalCtx, En_Freezer* this, u16 duration){
+void EnFreezer_Freeze(PlayState* play, En_Freezer* this, u16 duration){
     Actor *wlActor, *blActor;
-    Player* player = GET_PLAYER(globalCtx);
+    Player* player = GET_PLAYER(play);
     u8 i;
 
     //process actors
     for (i = 0; i < ARRAY_COUNT(actorCatWhitelist); i++) {
-        wlActor = globalCtx->actorCtx.actorLists[actorCatWhitelist[i]].head;
+        wlActor = play->actorCtx.actorLists[actorCatWhitelist[i]].head;
 
         while (wlActor != NULL) {
             switch(wlActor->id){
@@ -143,7 +143,7 @@ void EnFreezer_Freeze(GlobalContext* globalCtx, En_Freezer* this, u16 duration){
 
                 //add a case to run the update function until the actor is drawn
                 case ACTOR_EN_BOM:
-                    if(wlActor->isDrawn == 0) wlActor->update(wlActor, globalCtx);
+                    if(wlActor->isDrawn == 0) wlActor->update(wlActor, play);
                     else wlActor->freezeTimer = duration;    
                     break;
 
@@ -155,7 +155,7 @@ void EnFreezer_Freeze(GlobalContext* globalCtx, En_Freezer* this, u16 duration){
     }
 
     for (i = 0; i < ARRAY_COUNT(actorCatBlacklist); i++){
-        blActor = globalCtx->actorCtx.actorLists[actorCatBlacklist[i]].head;
+        blActor = play->actorCtx.actorLists[actorCatBlacklist[i]].head;
 
         while (blActor != NULL) {
             switch(blActor->id){
@@ -190,12 +190,12 @@ void EnFreezer_Freeze(GlobalContext* globalCtx, En_Freezer* this, u16 duration){
     //process time of day and skybox rotation
     if(this->boolTimeSky == 0){
         this->dayTime = gSaveContext.dayTime;
-        this->skyRot = globalCtx->skyboxCtx.rot;
+        this->skyRot = play->skyboxCtx.rot;
         this->boolTimeSky = 1;
     }
 
     gSaveContext.dayTime = this->dayTime;
-    globalCtx->skyboxCtx.rot = this->skyRot;
+    play->skyboxCtx.rot = this->skyRot;
 }
 
 void EnFreezer_FadeIn(En_Freezer* this){
