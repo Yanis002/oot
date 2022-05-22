@@ -222,6 +222,9 @@ void EnSw_Init(Actor* thisx, PlayState* play) {
     if (thisx->params & 0x8000) {
         phi_v0 = (((thisx->params - 0x8000) & 0xE000) >> 0xD) + 1;
         thisx->params = (thisx->params & 0x1FFF) | (phi_v0 << 0xD);
+        if (this->actor.home.rot.z & 0x1) {
+            this->actor.flags |= ACTOR_FLAG_7;
+        }
     }
 
     if (((thisx->params & 0xE000) >> 0xD) > 0) {
@@ -435,6 +438,9 @@ void func_80B0CEA8(EnSw* this, PlayState* play) {
         Camera* activeCam = GET_ACTIVE_CAM(play);
 
         if (!(Math_Vec3f_DistXYZ(&this->actor.world.pos, &activeCam->eye) >= 380.0f)) {
+            if ((this->actor.home.rot.z & 0x1) && !(play->actorCtx.lensActive)) {
+                return;
+            }
             Audio_PlayActorSound2(&this->actor, ((this->actor.params & 0xE000) >> 0xD) > 0 ? NA_SE_EN_STALGOLD_ROLL
                                                                                            : NA_SE_EN_STALWALL_ROLL);
         }
