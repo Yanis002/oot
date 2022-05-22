@@ -9,10 +9,10 @@
 
 #define FLAGS (ACTOR_FLAG_4 | ACTOR_FLAG_25)
 
-void OceffWipe_Init(Actor* thisx, GlobalContext* globalCtx);
-void OceffWipe_Destroy(Actor* thisx, GlobalContext* globalCtx);
-void OceffWipe_Update(Actor* thisx, GlobalContext* globalCtx);
-void OceffWipe_Draw(Actor* thisx, GlobalContext* globalCtx);
+void OceffWipe_Init(Actor* thisx, PlayState* play);
+void OceffWipe_Destroy(Actor* thisx, PlayState* play);
+void OceffWipe_Update(Actor* thisx, PlayState* play);
+void OceffWipe_Draw(Actor* thisx, PlayState* play);
 
 const ActorInit Oceff_Wipe_InitVars = {
     ACTOR_OCEFF_WIPE,
@@ -26,12 +26,12 @@ const ActorInit Oceff_Wipe_InitVars = {
     (ActorFunc)OceffWipe_Draw,
 };
 
-void OceffWipe_Init(Actor* thisx, GlobalContext* globalCtx) {
+void OceffWipe_Init(Actor* thisx, PlayState* play) {
     OceffWipe* this = (OceffWipe*)thisx;
 
     Actor_SetScale(&this->actor, 0.1f);
     // this->timer = 0;
-    this->actor.world.pos = GET_ACTIVE_CAM(globalCtx)->eye;
+    this->actor.world.pos = GET_ACTIVE_CAM(play)->eye;
     osSyncPrintf(VT_FGCOL(CYAN) " WIPE arg_data = %d\n" VT_RST, this->actor.params);
 
     //Project-A
@@ -39,19 +39,19 @@ void OceffWipe_Init(Actor* thisx, GlobalContext* globalCtx) {
     this->boolWipe2 = 0;
 }
 
-void OceffWipe_Destroy(Actor* thisx, GlobalContext* globalCtx) {
+void OceffWipe_Destroy(Actor* thisx, PlayState* play) {
     OceffWipe* this = (OceffWipe*)thisx;
-    Player* player = GET_PLAYER(globalCtx);
+    Player* player = GET_PLAYER(play);
 
-    func_800876C8(globalCtx);
+    func_800876C8(play);
     if (gSaveContext.nayrusLoveTimer != 0) {
         player->stateFlags3 |= PLAYER_STATE3_6;
     }
 }
 
-void OceffWipe_Update(Actor* thisx, GlobalContext* globalCtx) {
+void OceffWipe_Update(Actor* thisx, PlayState* play) {
     OceffWipe* this = (OceffWipe*)thisx;
-    Player* player = GET_PLAYER(globalCtx);
+    Player* player = GET_PLAYER(play);
 
     //Project-A
     u8 changedValue;
@@ -59,7 +59,7 @@ void OceffWipe_Update(Actor* thisx, GlobalContext* globalCtx) {
     if(this->actor.params == OCEFF_WIPE_SOT2) changedValue = 40;
     else changedValue = 100;
 
-    this->actor.world.pos = GET_ACTIVE_CAM(globalCtx)->eye;
+    this->actor.world.pos = GET_ACTIVE_CAM(play)->eye;
 
     if(this->actor.params == OCEFF_WIPE_SOT2){
         if(this->counter2 < 35) this->counter2++;
@@ -83,8 +83,8 @@ static u8 sAlphaIndices[] = {
     0x10, 0x22, 0x01, 0x20, 0x12, 0x01, 0x12, 0x21, 0x01, 0x02,
 };
 
-void OceffWipe_Draw(Actor* thisx, GlobalContext* globalCtx) {
-    u32 scroll = globalCtx->state.frames & 0xFF;
+void OceffWipe_Draw(Actor* thisx, PlayState* play) {
+    u32 scroll = play->state.frames & 0xFF;
     OceffWipe* this = (OceffWipe*)thisx;
     f32 z;
     s32 pad;
@@ -115,10 +115,10 @@ void OceffWipe_Draw(Actor* thisx, GlobalContext* globalCtx) {
     /*-----------*/
     
     //position
-    eye = GET_ACTIVE_CAM(globalCtx)->eye;
-    Camera_GetSkyboxOffset(&vec, GET_ACTIVE_CAM(globalCtx));
+    eye = GET_ACTIVE_CAM(play)->eye;
+    Camera_GetSkyboxOffset(&vec, GET_ACTIVE_CAM(play));
 
-    OPEN_DISPS(globalCtx->state.gfxCtx, "../z_oceff_wipe.c", 346);
+    OPEN_DISPS(play->state.gfxCtx, "../z_oceff_wipe.c", 346);
 
     //wormhole interior circle size (sort of)
     if (this->counter < 32) {
@@ -146,15 +146,15 @@ void OceffWipe_Draw(Actor* thisx, GlobalContext* globalCtx) {
     }
 
     //???
-    func_80093D84(globalCtx->state.gfxCtx);
+    func_80093D84(play->state.gfxCtx);
 
     //position
     Matrix_Translate(eye.x + vec.x, eye.y + vec.y, eye.z + vec.z, MTXMODE_NEW);
     Matrix_Scale(0.1f, 0.1f, 0.1f, MTXMODE_APPLY);
-    Matrix_ReplaceRotation(&globalCtx->billboardMtxF);
+    Matrix_ReplaceRotation(&play->billboardMtxF);
     Matrix_Translate(0.0f, 0.0f, -z, MTXMODE_APPLY);
 
-    gSPMatrix(POLY_XLU_DISP++, Matrix_NewMtx(globalCtx->state.gfxCtx, "../z_oceff_wipe.c", 375),
+    gSPMatrix(POLY_XLU_DISP++, Matrix_NewMtx(play->state.gfxCtx, "../z_oceff_wipe.c", 375),
               G_MTX_NOPUSH | G_MTX_LOAD | G_MTX_MODELVIEW);
 
     //set proper color
@@ -167,9 +167,9 @@ void OceffWipe_Draw(Actor* thisx, GlobalContext* globalCtx) {
     }
 
     gSPDisplayList(POLY_XLU_DISP++, sMaterialDL);
-    gSPDisplayList(POLY_XLU_DISP++, Gfx_TwoTexScroll(globalCtx->state.gfxCtx, 0, 0 - scroll, scroll * (-2), 32, 32, 1,
+    gSPDisplayList(POLY_XLU_DISP++, Gfx_TwoTexScroll(play->state.gfxCtx, 0, 0 - scroll, scroll * (-2), 32, 32, 1,
                                                      0 - scroll, scroll * (-2), 32, 32));
     gSPDisplayList(POLY_XLU_DISP++, sFrustumDL);
 
-    CLOSE_DISPS(globalCtx->state.gfxCtx, "../z_oceff_wipe.c", 398);
+    CLOSE_DISPS(play->state.gfxCtx, "../z_oceff_wipe.c", 398);
 }
