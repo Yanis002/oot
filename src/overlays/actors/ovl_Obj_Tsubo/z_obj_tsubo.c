@@ -8,6 +8,7 @@
 #include "overlays/effects/ovl_Effect_Ss_Kakera/z_eff_ss_kakera.h"
 #include "objects/gameplay_dangeon_keep/gameplay_dangeon_keep.h"
 #include "objects/object_tsubo/object_tsubo.h"
+#include "overlays/actors/ovl_En_Sw/z_en_sw.h"
 
 #define FLAGS (ACTOR_FLAG_4 | ACTOR_FLAG_23)
 
@@ -84,9 +85,19 @@ static InitChainEntry sInitChain[] = {
 
 void ObjTsubo_SpawnCollectible(ObjTsubo* this, PlayState* play) {
     s16 dropParams = this->actor.params & 0x1F;
+    u8 isGoldSkull = this->actor.home.rot.x & 0x0020;
+    s16 params = 0;
+    EnSw* goldSkull = NULL;
 
-    if ((dropParams >= 0) && (dropParams < ITEM00_MAX)) {
+    if (!isGoldSkull && (dropParams >= 0) && (dropParams < ITEM00_MAX)) {
         Item_DropCollectible(play, &this->actor.world.pos, (dropParams | (((this->actor.params >> 9) & 0x3F) << 8)));
+    } else if (isGoldSkull) {
+        params = (0xC000 | ((this->actor.params >> 9) & 0x3F) | ((this->actor.home.rot.x & 0x07C0) << 2));
+        goldSkull = (EnSw*)Actor_Spawn(&play->actorCtx, play, ACTOR_EN_SW,
+                    this->actor.world.pos.x, this->actor.world.pos.y, this->actor.world.pos.z, 0, 0, 0, params);
+        if (goldSkull != NULL) {
+            goldSkull->unk_38C = 3;
+        }
     }
 }
 
@@ -143,6 +154,8 @@ void ObjTsubo_Init(Actor* thisx, PlayState* play) {
         ObjTsubo_SetupWaitForObject(this);
         osSyncPrintf("(dungeon keep 壷)(arg_data 0x%04x)\n", this->actor.params);
     }
+
+    this->actor.shape.rot.x = this->actor.world.rot.x = 0;
 }
 
 void ObjTsubo_Destroy(Actor* thisx, PlayState* play2) {

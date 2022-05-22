@@ -300,7 +300,9 @@ void EnSw_Init(Actor* thisx, PlayState* play) {
     thisx->shape.rot = this->actor.world.rot;
 
     if (((thisx->params & 0xE000) >> 0xD) >= 3) {
-        this->unk_38C = 0x28;
+        if (!(this->unk_38C == 3)) {
+            this->unk_38C = 0x28;
+        }
         this->unk_394 = 1;
         this->actionFunc = func_80B0D364;
     } else if (((thisx->params & 0xE000) >> 0xD) == 0) {
@@ -486,11 +488,15 @@ void func_80B0D14C(EnSw* this, PlayState* play, s32 cnt) {
 }
 
 void func_80B0D364(EnSw* this, PlayState* play) {
-    if (((this->actor.params & 0xE000) >> 0xD) == 4) {
-        this->unk_38C = 0;
-        this->actionFunc = func_80B0D3AC;
+    if (!(this->unk_38C == 3)) {
+        if (((this->actor.params & 0xE000) >> 0xD) == 4) {
+            this->unk_38C = 0;
+            this->actionFunc = func_80B0D3AC;
+        } else {
+            this->unk_38C = 10;
+            this->actionFunc = func_80B0D3AC;
+        }
     } else {
-        this->unk_38C = 10;
         this->actionFunc = func_80B0D3AC;
     }
 }
