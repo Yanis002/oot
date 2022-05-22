@@ -37,9 +37,9 @@ u16 ObjMure4_GetWood02Vars(Vec3s rot);
 u16 ObjMure4_GetVariantVars(ObjMure4* this, Vec3s rot);
 void ObjMure4_SetVariantParams(ObjMure4* this, Vec3s rot);
 
-void ObjMure4_SpawnTree(ObjMure4* this, GlobalContext *play, Vec3f pos, Vec3s rot, u16 i);
-void ObjMure4_SpawnVariant(ObjMure4* this, GlobalContext *play, Vec3f pos, u16 i);
-void ObjMure4_SpawnBothVariants(ObjMure4* this, GlobalContext *play, Vec3f pos, Vec3s rot, u16 i);
+void ObjMure4_SpawnTree(ObjMure4* this, PlayState *play, Vec3f pos, Vec3s rot, u16 i);
+void ObjMure4_SpawnVariant(ObjMure4* this, PlayState *play, Vec3f pos, u16 i);
+void ObjMure4_SpawnBothVariants(ObjMure4* this, PlayState *play, Vec3f pos, Vec3s rot, u16 i);
 
 void ObjMure4_ActorSpawn(ObjMure4* this, PlayState* play, Vec3f pos, Vec3f pos2, Vec3s rot);
 void ObjMure4_Kill(ObjMure4* this, PlayState* play);
@@ -117,17 +117,17 @@ void ObjMure4_SetVariantParams(ObjMure4* this, Vec3s rot){
 }
 
 //spawn a single tree and store the returned value of Actor_Spawn() in the pointer list
-void ObjMure4_SpawnTree(ObjMure4* this, GlobalContext *play, Vec3f pos, Vec3s rot, u16 i){
+void ObjMure4_SpawnTree(ObjMure4* this, PlayState *play, Vec3f pos, Vec3s rot, u16 i){
     this->actorPtrList[i] = Actor_Spawn(&play->actorCtx, play, sActorSpawnIDs[0], pos.x, pos.y, pos.z, 0, 0, 0, ObjMure4_GetWood02Vars(rot));
 }
 
 //spawn a single variant and store the returned value of Actor_Spawn() in the pointer list
-void ObjMure4_SpawnVariant(ObjMure4* this, GlobalContext *play, Vec3f pos, u16 i){
+void ObjMure4_SpawnVariant(ObjMure4* this, PlayState *play, Vec3f pos, u16 i){
     this->actorPtrList[i] = Actor_Spawn(&play->actorCtx, play, sActorSpawnIDs[type], pos.x, pos.y, pos.z, 0, 0, 0, spawnParams);
 }
 
 //used to spawn both variants, alternating
-void ObjMure4_SpawnBothVariants(ObjMure4* this, GlobalContext *play, Vec3f pos, Vec3s rot, u16 i){
+void ObjMure4_SpawnBothVariants(ObjMure4* this, PlayState *play, Vec3f pos, Vec3s rot, u16 i){
     ObjMure4_SetVariantParams(this, rot);
     ObjMure4_SpawnVariant(this, play, pos, i);
     
