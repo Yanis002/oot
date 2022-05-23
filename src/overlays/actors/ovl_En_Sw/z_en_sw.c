@@ -990,8 +990,11 @@ void func_80B0EDB8(PlayState* play, Color_RGBA8* arg1, s16 arg2, s16 arg3) {
     if (0.0f == temp_f2) {
         temp_f2 = 11500;
     }
-
-    POLY_OPA_DISP = Gfx_SetFog2(POLY_OPA_DISP, arg1->r, arg1->g, arg1->b, arg1->a, 0, (s16)temp_f2);
+    if (play->actorCtx.lensActive) {
+        POLY_XLU_DISP = Gfx_SetFog2(POLY_XLU_DISP, arg1->r, arg1->g, arg1->b, arg1->a, 0, (s16)temp_f2);
+    } else {
+        POLY_OPA_DISP = Gfx_SetFog2(POLY_OPA_DISP, arg1->r, arg1->g, arg1->b, arg1->a, 0, (s16)temp_f2);
+    }
 
     CLOSE_DISPS(play->state.gfxCtx, "../z_en_sw.c", 2197);
 }
@@ -1000,8 +1003,11 @@ void func_80B0EEA4(PlayState* play) {
     s32 pad;
 
     OPEN_DISPS(play->state.gfxCtx, "../z_en_sw.c", 2205);
-
-    POLY_OPA_DISP = Play_SetFog(play, POLY_OPA_DISP);
+    if (play->actorCtx.lensActive) {
+        POLY_XLU_DISP = Play_SetFog(play, POLY_XLU_DISP);
+    } else {
+        POLY_OPA_DISP = Play_SetFog(play, POLY_OPA_DISP);
+    }
 
     CLOSE_DISPS(play->state.gfxCtx, "../z_en_sw.c", 2207);
 }
@@ -1020,7 +1026,12 @@ void EnSw_Draw(Actor* thisx, PlayState* play) {
         func_80B0EDB8(play, &sp30, 0x14, 0x1E);
     }
 
-    func_80093D18(play->state.gfxCtx);
+    if (play->actorCtx.lensActive) {
+        func_80093D84(play->state.gfxCtx);
+    } else {
+        func_80093D18(play->state.gfxCtx);
+    }
+    
     SkelAnime_DrawOpa(play, this->skelAnime.skeleton, this->skelAnime.jointTable, EnSw_OverrideLimbDraw,
                       EnSw_PostLimbDraw, this);
     if (this->actionFunc == func_80B0E728) {

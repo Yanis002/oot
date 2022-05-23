@@ -1379,7 +1379,11 @@ void func_8002EBCC(Actor* actor, PlayState* play, s32 flag) {
 
         gDPSetHilite1Tile(displayListHead++, 1, hilite, 0x10, 0x10);
         gSPEndDisplayList(displayListHead);
-        gSPSegment(POLY_OPA_DISP++, 0x07, displayList);
+        if (play->actorCtx.lensActive) {
+            gSPSegment(POLY_XLU_DISP++, 0x07, displayList);
+        } else {
+            gSPSegment(POLY_OPA_DISP++, 0x07, displayList);
+        }
 
         CLOSE_DISPS(play->state.gfxCtx, "../z_actor.c", 4394);
     }

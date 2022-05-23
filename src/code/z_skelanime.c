@@ -260,8 +260,13 @@ void SkelAnime_DrawLimbOpa(PlayState* play, s32 limbIndex, void** skeleton, Vec3
     if ((overrideLimbDraw == NULL) || !overrideLimbDraw(play, limbIndex, &dList, &pos, &rot, arg)) {
         Matrix_TranslateRotateZYX(&pos, &rot);
         if (dList != NULL) {
-            gSPMatrix(POLY_OPA_DISP++, Matrix_NewMtx(play->state.gfxCtx, "../z_skelanime.c", 1103), G_MTX_LOAD);
-            gSPDisplayList(POLY_OPA_DISP++, dList);
+            if (play->actorCtx.lensActive) {
+                gSPMatrix(POLY_XLU_DISP++, Matrix_NewMtx(play->state.gfxCtx, "../z_skelanime.c", 1103), G_MTX_LOAD);
+                gSPDisplayList(POLY_XLU_DISP++, dList);
+            } else {
+                gSPMatrix(POLY_OPA_DISP++, Matrix_NewMtx(play->state.gfxCtx, "../z_skelanime.c", 1103), G_MTX_LOAD);
+                gSPDisplayList(POLY_OPA_DISP++, dList);
+            }
         }
     }
 
@@ -316,8 +321,13 @@ void SkelAnime_DrawOpa(PlayState* play, void** skeleton, Vec3s* jointTable, Over
     if ((overrideLimbDraw == NULL) || !overrideLimbDraw(play, 1, &dList, &pos, &rot, arg)) {
         Matrix_TranslateRotateZYX(&pos, &rot);
         if (dList != NULL) {
-            gSPMatrix(POLY_OPA_DISP++, Matrix_NewMtx(play->state.gfxCtx, "../z_skelanime.c", 1176), G_MTX_LOAD);
-            gSPDisplayList(POLY_OPA_DISP++, dList);
+            if (play->actorCtx.lensActive) {
+                gSPMatrix(POLY_XLU_DISP++, Matrix_NewMtx(play->state.gfxCtx, "../z_skelanime.c", 1176), G_MTX_LOAD);
+                gSPDisplayList(POLY_XLU_DISP++, dList);
+            } else {
+                gSPMatrix(POLY_OPA_DISP++, Matrix_NewMtx(play->state.gfxCtx, "../z_skelanime.c", 1176), G_MTX_LOAD);
+                gSPDisplayList(POLY_OPA_DISP++, dList);
+            }
         }
     }
 
