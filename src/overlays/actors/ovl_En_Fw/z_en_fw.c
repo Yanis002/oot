@@ -11,18 +11,18 @@
 
 #define FLAGS (ACTOR_FLAG_0 | ACTOR_FLAG_2 | ACTOR_FLAG_4 | ACTOR_FLAG_9)
 
-void EnFw_Init(Actor* thisx, GlobalContext* globalCtx);
-void EnFw_Destroy(Actor* thisx, GlobalContext* globalCtx);
-void EnFw_Update(Actor* thisx, GlobalContext* globalCtx);
-void EnFw_Draw(Actor* thisx, GlobalContext* globalCtx);
-void EnFw_UpdateDust(EnFw* this);
-void EnFw_DrawDust(EnFw* this, GlobalContext* globalCtx);
-void EnFw_AddDust(EnFw* this, Vec3f* initialPos, Vec3f* initialSpeed, Vec3f* accel, u8 initialTimer, f32 scale,
-                  f32 scaleStep);
-void EnFw_Bounce(EnFw* this, GlobalContext* globalCtx);
-void EnFw_Run(EnFw* this, GlobalContext* globalCtx);
-void EnFw_JumpToParentInitPos(EnFw* this, GlobalContext* globalCtx);
-void EnFw_TurnToParentInitPos(EnFw* this, GlobalContext* globalCtx);
+void EnFw_Init(Actor* thisx, PlayState* play);
+void EnFw_Destroy(Actor* thisx, PlayState* play);
+void EnFw_Update(Actor* thisx, PlayState* play);
+void EnFw_Draw(Actor* thisx, PlayState* play);
+void EnFw_UpdateEffects(EnFw* this);
+void EnFw_DrawEffects(EnFw* this, PlayState* play);
+void EnFw_SpawnEffectDust(EnFw* this, Vec3f* initialPos, Vec3f* initialSpeed, Vec3f* accel, u8 initialTimer, f32 scale,
+                          f32 scaleStep);
+void EnFw_Bounce(EnFw* this, PlayState* play);
+void EnFw_Run(EnFw* this, PlayState* play);
+void EnFw_JumpToParentInitPos(EnFw* this, PlayState* play);
+void EnFw_TurnToParentInitPos(EnFw* this, PlayState* play);
 
 const ActorInit En_Fw_InitVars = {
     ACTOR_EN_FW,
@@ -65,16 +65,20 @@ static ColliderJntSphInit sJntSphInit = {
 
 static CollisionCheckInfoInit2 D_80A1FB94 = { 8, 2, 25, 25, MASS_IMMOVABLE };
 
-static struct_80034EC0_Entry D_80A1FBA0[] = {
+typedef enum {
+    /* 0 */ ENFW_ANIM_0,
+    /* 1 */ ENFW_ANIM_1,
+    /* 2 */ ENFW_ANIM_2
+} EnFwAnimation;
+
+static AnimationInfo sAnimationInfo[] = {
     { &gFlareDancerCoreInitRunCycleAnim, 0.0f, 0.0f, -1.0f, ANIMMODE_ONCE_INTERP, 0.0f },
     { &gFlareDancerCoreRunCycleAnim, 1.0f, 0.0f, -1.0f, ANIMMODE_ONCE_INTERP, -8.0f },
     { &gFlareDancerCoreEndRunCycleAnim, 1.0f, 0.0f, -1.0f, ANIMMODE_LOOP_INTERP, -8.0f },
 };
 
 s32 EnFw_DoBounce(EnFw* this, s32 totalBounces, f32 yVelocity) {
-    s16 temp_v1;
-
-    if (!(this->actor.bgCheckFlags & 1) || (this->actor.velocity.y > 0.0f)) {
+    if (!(this->actor.bgCheckFlags & BGCHECKFLAG_GROUND) || (this->actor.velocity.y > 0.0f)) {
         // not on the ground or moving upwards.
         return false;
     }
@@ -90,12 +94,12 @@ s32 EnFw_DoBounce(EnFw* this, s32 totalBounces, f32 yVelocity) {
         this->bounceCnt = totalBounces;
     }
     this->actor.velocity.y = yVelocity;
-    this->actor.velocity.y *= ((f32)this->bounceCnt / totalBounces);
-    return 1;
+    this->actor.velocity.y *= (f32)this->bounceCnt / totalBounces;
+    return true;
 }
 
-s32 EnFw_PlayerInRange(EnFw* this, GlobalContext* globalCtx) {
-    Player* player = GET_PLAYER(globalCtx);
+s32 EnFw_PlayerInRange(EnFw* this, PlayState* play) {
+    Player* player = GET_PLAYER(play);
     CollisionPoly* poly;
     s32 bgId;
     Vec3f collisionPos;
@@ -108,8 +112,8 @@ s32 EnFw_PlayerInRange(EnFw* this, GlobalContext* globalCtx) {
         return false;
     }
 
-    if (BgCheck_EntityLineTest1(&globalCtx->colCtx, &this->actor.world.pos, &player->actor.world.pos, &collisionPos,
-                                &poly, true, false, false, true, &bgId)) {
+    if (BgCheck_EntityLineTest1(&play->colCtx, &this->actor.world.pos, &player->actor.world.pos, &collisionPos, &poly,
+                                true, false, false, true, &bgId)) {
         return false;
     }
 
@@ -130,9 +134,8 @@ Vec3f* EnFw_GetPosAdjAroundCircle(Vec3f* dst, EnFw* this, f32 radius, s16 dir) {
     return dst;
 }
 
-s32 EnFw_CheckCollider(EnFw* this, GlobalContext* globalCtx) {
+s32 EnFw_CheckCollider(EnFw* this, PlayState* play) {
     ColliderInfo* info;
-    s32 phi_return;
 
     if (this->collider.base.acFlags & AC_HIT) {
         info = &this->collider.elements[0].info;
@@ -144,7 +147,7 @@ s32 EnFw_CheckCollider(EnFw* this, GlobalContext* globalCtx) {
         this->collider.base.acFlags &= ~AC_HIT;
         if (Actor_ApplyDamage(&this->actor) <= 0) {
             if (this->actor.parent->colChkInfo.health <= 8) {
-                Enemy_StartFinishingBlow(globalCtx, &this->actor);
+                Enemy_StartFinishingBlow(play, &this->actor);
                 this->actor.parent->colChkInfo.health = 0;
             } else {
                 this->actor.parent->colChkInfo.health -= 8;
@@ -174,22 +177,21 @@ s32 EnFw_SpawnDust(EnFw* this, u8 timer, f32 scale, f32 scaleStep, s32 dustCnt, 
         accel.z = (Rand_ZeroOne() - 0.5f) * xzAccel;
         pos.x = (Math_SinS(angle) * radius) + this->actor.world.pos.x;
         pos.z = (Math_CosS(angle) * radius) + this->actor.world.pos.z;
-        EnFw_AddDust(this, &pos, &velocity, &accel, timer, scale, scaleStep);
+        EnFw_SpawnEffectDust(this, &pos, &velocity, &accel, timer, scale, scaleStep);
         angle += (s16)(0x10000 / dustCnt);
         i--;
     }
     return 0;
 }
 
-void EnFw_Init(Actor* thisx, GlobalContext* globalCtx) {
+void EnFw_Init(Actor* thisx, PlayState* play) {
     EnFw* this = (EnFw*)thisx;
 
-    SkelAnime_InitFlex(globalCtx, &this->skelAnime, &gFlareDancerCoreSkel, NULL, this->jointTable, this->morphTable,
-                       11);
-    func_80034EC0(&this->skelAnime, D_80A1FBA0, 0);
+    SkelAnime_InitFlex(play, &this->skelAnime, &gFlareDancerCoreSkel, NULL, this->jointTable, this->morphTable, 11);
+    Animation_ChangeByInfo(&this->skelAnime, sAnimationInfo, ENFW_ANIM_0);
     ActorShape_Init(&this->actor.shape, 0.0f, ActorShadow_DrawCircle, 20.0f);
-    Collider_InitJntSph(globalCtx, &this->collider);
-    Collider_SetJntSph(globalCtx, &this->collider, &this->actor, &sJntSphInit, this->sphs);
+    Collider_InitJntSph(play, &this->collider);
+    Collider_SetJntSph(play, &this->collider, &this->actor, &sJntSphInit, this->sphs);
     CollisionCheck_SetInfo2(&this->actor.colChkInfo, DamageTable_Get(0x10), &D_80A1FB94);
     Actor_SetScale(&this->actor, 0.01f);
     this->runDirection = -this->actor.params;
@@ -197,21 +199,22 @@ void EnFw_Init(Actor* thisx, GlobalContext* globalCtx) {
     this->actor.gravity = -1.0f;
 }
 
-void EnFw_Destroy(Actor* thisx, GlobalContext* globalCtx) {
+void EnFw_Destroy(Actor* thisx, PlayState* play) {
     EnFw* this = (EnFw*)thisx;
-    Collider_DestroyJntSph(globalCtx, &this->collider);
+
+    Collider_DestroyJntSph(play, &this->collider);
 }
 
-void EnFw_Bounce(EnFw* this, GlobalContext* globalCtx) {
+void EnFw_Bounce(EnFw* this, PlayState* play) {
     if (EnFw_DoBounce(this, 3, 8.0f) && this->bounceCnt == 0) {
         this->returnToParentTimer = Rand_S16Offset(300, 150);
         this->actionFunc = EnFw_Run;
     }
 }
 
-void EnFw_Run(EnFw* this, GlobalContext* globalCtx) {
+void EnFw_Run(EnFw* this, PlayState* play) {
     f32 tmpAngle;
-    s16 phi_v0;
+    s16 curFrame;
     f32 facingDir;
     EnBom* bomb;
     Actor* flareDancer;
@@ -220,12 +223,12 @@ void EnFw_Run(EnFw* this, GlobalContext* globalCtx) {
     if (this->skelAnime.animation == &gFlareDancerCoreInitRunCycleAnim) {
         if (Animation_OnFrame(&this->skelAnime, this->skelAnime.endFrame) == 0) {
             this->runRadius = Math_Vec3f_DistXYZ(&this->actor.world.pos, &this->actor.parent->world.pos);
-            func_80034EC0(&this->skelAnime, D_80A1FBA0, 2);
+            Animation_ChangeByInfo(&this->skelAnime, sAnimationInfo, ENFW_ANIM_2);
         }
         return;
     }
 
-    if (this->damageTimer == 0 && this->explosionTimer == 0 && EnFw_CheckCollider(this, globalCtx)) {
+    if (this->damageTimer == 0 && this->explosionTimer == 0 && EnFw_CheckCollider(this, play)) {
         if (this->actor.parent->colChkInfo.health > 0) {
             if (!this->lastDmgHook) {
                 this->actor.velocity.y = 6.0f;
@@ -249,19 +252,19 @@ void EnFw_Run(EnFw* this, GlobalContext* globalCtx) {
         }
 
         if (this->explosionTimer == 0) {
-            bomb = (EnBom*)Actor_Spawn(&globalCtx->actorCtx, globalCtx, ACTOR_EN_BOM, this->bompPos.x, this->bompPos.y,
+            bomb = (EnBom*)Actor_Spawn(&play->actorCtx, play, ACTOR_EN_BOM, this->bompPos.x, this->bompPos.y,
                                        this->bompPos.z, 0, 0, 0x600, 0);
             if (bomb != NULL) {
                 bomb->timer = 0;
             }
             flareDancer = this->actor.parent;
             flareDancer->params |= 0x4000;
-            Item_DropCollectibleRandom(globalCtx, NULL, &this->actor.world.pos, 0xA0);
+            Item_DropCollectibleRandom(play, NULL, &this->actor.world.pos, 0xA0);
             Actor_Kill(&this->actor);
             return;
         }
     } else {
-        if (!(this->actor.bgCheckFlags & 1) || this->actor.velocity.y > 0.0f) {
+        if (!(this->actor.bgCheckFlags & BGCHECKFLAG_GROUND) || this->actor.velocity.y > 0.0f) {
             Actor_SetColorFilter(&this->actor, 0x4000, 0xC8, 0, this->damageTimer);
             return;
         }
@@ -289,13 +292,14 @@ void EnFw_Run(EnFw* this, GlobalContext* globalCtx) {
             this->turnAround = false;
         } else {
             Vec3f sp48;
+
             EnFw_GetPosAdjAroundCircle(&sp48, this, this->runRadius, this->runDirection);
-            Math_SmoothStepToS(&this->actor.shape.rot.y, (Math_FAtan2F(sp48.x, sp48.z) * (0x8000 / M_PI)), 4, 0xFA0, 1);
+            Math_SmoothStepToS(&this->actor.shape.rot.y, RAD_TO_BINANG(Math_FAtan2F(sp48.x, sp48.z)), 4, 0xFA0, 1);
         }
 
         this->actor.world.rot = this->actor.shape.rot;
 
-        if (this->slideTimer == 0 && EnFw_PlayerInRange(this, globalCtx)) {
+        if (this->slideTimer == 0 && EnFw_PlayerInRange(this, play)) {
             Audio_PlayActorSound2(&this->actor, NA_SE_EN_FLAME_MAN_SURP);
             this->slideSfxTimer = 8;
             this->slideTimer = 8;
@@ -316,8 +320,8 @@ void EnFw_Run(EnFw* this, GlobalContext* globalCtx) {
             }
         } else {
             Math_SmoothStepToF(&this->actor.speedXZ, 6.0f, 0.1f, 1.0f, 0.0f);
-            phi_v0 = this->skelAnime.curFrame;
-            if (phi_v0 == 1 || phi_v0 == 4) {
+            curFrame = this->skelAnime.curFrame;
+            if (curFrame == 1 || curFrame == 4) {
                 Audio_PlayActorSound2(&this->actor, NA_SE_EN_FLAME_MAN_RUN);
                 EnFw_SpawnDust(this, 8, 0.16f, 0.1f, 1, 0.0f, 20.0f, 0.0f);
             }
@@ -325,7 +329,7 @@ void EnFw_Run(EnFw* this, GlobalContext* globalCtx) {
     }
 }
 
-void EnFw_TurnToParentInitPos(EnFw* this, GlobalContext* globalCtx) {
+void EnFw_TurnToParentInitPos(EnFw* this, PlayState* play) {
     s16 angleToParentInit;
 
     angleToParentInit = Math_Vec3f_Yaw(&this->actor.world.pos, &this->actor.parent->home.pos);
@@ -336,13 +340,13 @@ void EnFw_TurnToParentInitPos(EnFw* this, GlobalContext* globalCtx) {
         this->actor.velocity.y = 14.0f;
         this->actor.home.pos = this->actor.world.pos;
         Audio_PlayActorSound2(&this->actor, NA_SE_EN_STAL_JUMP);
-        func_80034EC0(&this->skelAnime, D_80A1FBA0, 1);
+        Animation_ChangeByInfo(&this->skelAnime, sAnimationInfo, ENFW_ANIM_1);
         this->actionFunc = EnFw_JumpToParentInitPos;
     }
 }
 
-void EnFw_JumpToParentInitPos(EnFw* this, GlobalContext* globalCtx) {
-    if (this->actor.bgCheckFlags & 1 && this->actor.velocity.y <= 0.0f) {
+void EnFw_JumpToParentInitPos(EnFw* this, PlayState* play) {
+    if ((this->actor.bgCheckFlags & BGCHECKFLAG_GROUND) && this->actor.velocity.y <= 0.0f) {
         this->actor.parent->params |= 0x8000;
         Actor_Kill(&this->actor);
     } else {
@@ -351,27 +355,27 @@ void EnFw_JumpToParentInitPos(EnFw* this, GlobalContext* globalCtx) {
     }
 }
 
-void EnFw_Update(Actor* thisx, GlobalContext* globalCtx) {
+void EnFw_Update(Actor* thisx, PlayState* play) {
     EnFw* this = (EnFw*)thisx;
+
     SkelAnime_Update(&this->skelAnime);
     if (!CHECK_FLAG_ALL(this->actor.flags, ACTOR_FLAG_13)) {
         // not attached to hookshot.
         Actor_MoveForward(&this->actor);
-        Actor_UpdateBgCheckInfo(globalCtx, &this->actor, 10.0f, 20.0f, 0.0f, 5);
-        this->actionFunc(this, globalCtx);
+        Actor_UpdateBgCheckInfo(play, &this->actor, 10.0f, 20.0f, 0.0f, UPDBGCHECKINFO_FLAG_0 | UPDBGCHECKINFO_FLAG_2);
+        this->actionFunc(this, play);
         if (this->damageTimer == 0 && this->explosionTimer == 0 && this->actionFunc == EnFw_Run) {
-            CollisionCheck_SetAC(globalCtx, &globalCtx->colChkCtx, &this->collider.base);
+            CollisionCheck_SetAC(play, &play->colChkCtx, &this->collider.base);
         }
-        CollisionCheck_SetOC(globalCtx, &globalCtx->colChkCtx, &this->collider.base);
+        CollisionCheck_SetOC(play, &play->colChkCtx, &this->collider.base);
     }
 }
 
-s32 EnFw_OverrideLimbDraw(GlobalContext* globalContext, s32 limbIndex, Gfx** dList, Vec3f* pos, Vec3s* rot,
-                          void* thisx) {
+s32 EnFw_OverrideLimbDraw(PlayState* play, s32 limbIndex, Gfx** dList, Vec3f* pos, Vec3s* rot, void* thisx) {
     return false;
 }
 
-void EnFw_PostLimbDraw(GlobalContext* globalCtx, s32 limbIndex, Gfx** dList, Vec3s* rot, void* thisx) {
+void EnFw_PostLimbDraw(PlayState* play, s32 limbIndex, Gfx** dList, Vec3s* rot, void* thisx) {
     EnFw* this = (EnFw*)thisx;
     Vec3f zeroVec = { 0.0f, 0.0f, 0.0f };
 
@@ -388,24 +392,24 @@ void EnFw_PostLimbDraw(GlobalContext* globalCtx, s32 limbIndex, Gfx** dList, Vec
     Collider_UpdateSpheres(limbIndex, &this->collider);
 }
 
-void EnFw_Draw(Actor* thisx, GlobalContext* globalCtx) {
+void EnFw_Draw(Actor* thisx, PlayState* play) {
     EnFw* this = (EnFw*)thisx;
 
-    EnFw_UpdateDust(this);
+    EnFw_UpdateEffects(this);
     Matrix_Push();
-    EnFw_DrawDust(this, globalCtx);
+    EnFw_DrawEffects(this, play);
     Matrix_Pop();
-    func_80093D18(globalCtx->state.gfxCtx);
-    SkelAnime_DrawFlexOpa(globalCtx, this->skelAnime.skeleton, this->skelAnime.jointTable, this->skelAnime.dListCount,
+    func_80093D18(play->state.gfxCtx);
+    SkelAnime_DrawFlexOpa(play, this->skelAnime.skeleton, this->skelAnime.jointTable, this->skelAnime.dListCount,
                           EnFw_OverrideLimbDraw, EnFw_PostLimbDraw, this);
 }
 
-void EnFw_AddDust(EnFw* this, Vec3f* initialPos, Vec3f* initialSpeed, Vec3f* accel, u8 initialTimer, f32 scale,
-                  f32 scaleStep) {
+void EnFw_SpawnEffectDust(EnFw* this, Vec3f* initialPos, Vec3f* initialSpeed, Vec3f* accel, u8 initialTimer, f32 scale,
+                          f32 scaleStep) {
     EnFwEffect* eff = this->effects;
     s16 i;
 
-    for (i = 0; i < ARRAY_COUNT(this->effects); i++, eff++) {
+    for (i = 0; i < EN_FW_EFFECT_COUNT; i++, eff++) {
         if (eff->type != 1) {
             eff->scale = scale;
             eff->scaleStep = scaleStep;
@@ -419,11 +423,11 @@ void EnFw_AddDust(EnFw* this, Vec3f* initialPos, Vec3f* initialSpeed, Vec3f* acc
     }
 }
 
-void EnFw_UpdateDust(EnFw* this) {
+void EnFw_UpdateEffects(EnFw* this) {
     EnFwEffect* eff = this->effects;
     s16 i;
 
-    for (i = 0; i < ARRAY_COUNT(this->effects); i++, eff++) {
+    for (i = 0; i < EN_FW_EFFECT_COUNT; i++, eff++) {
         if (eff->type != 0) {
             if ((--eff->timer) == 0) {
                 eff->type = 0;
@@ -441,38 +445,38 @@ void EnFw_UpdateDust(EnFw* this) {
     }
 }
 
-void EnFw_DrawDust(EnFw* this, GlobalContext* globalCtx) {
+void EnFw_DrawEffects(EnFw* this, PlayState* play) {
     static void* dustTextures[] = {
         gDust8Tex, gDust7Tex, gDust6Tex, gDust5Tex, gDust4Tex, gDust3Tex, gDust2Tex, gDust1Tex,
     };
     EnFwEffect* eff = this->effects;
-    s16 firstDone;
+    s16 materialFlag;
     s16 alpha;
     s16 i;
     s16 idx;
 
-    OPEN_DISPS(globalCtx->state.gfxCtx, "../z_en_fw.c", 1191);
+    OPEN_DISPS(play->state.gfxCtx, "../z_en_fw.c", 1191);
 
-    firstDone = false;
-    func_80093D84(globalCtx->state.gfxCtx);
+    materialFlag = false;
+    func_80093D84(play->state.gfxCtx);
     if (1) {}
 
-    for (i = 0; i < ARRAY_COUNT(this->effects); i++, eff++) {
+    for (i = 0; i < EN_FW_EFFECT_COUNT; i++, eff++) {
         if (eff->type != 0) {
-            if (!firstDone) {
+            if (!materialFlag) {
                 POLY_XLU_DISP = Gfx_CallSetupDL(POLY_XLU_DISP, 0U);
                 gSPDisplayList(POLY_XLU_DISP++, gFlareDancerDL_7928);
                 gDPSetEnvColor(POLY_XLU_DISP++, 100, 60, 20, 0);
-                firstDone = true;
+                materialFlag = true;
             }
 
             alpha = eff->timer * (255.0f / eff->initialTimer);
             gDPSetPrimColor(POLY_XLU_DISP++, 0, 0, 170, 130, 90, alpha);
             gDPPipeSync(POLY_XLU_DISP++);
             Matrix_Translate(eff->pos.x, eff->pos.y, eff->pos.z, MTXMODE_NEW);
-            func_800D1FD4(&globalCtx->billboardMtxF);
+            Matrix_ReplaceRotation(&play->billboardMtxF);
             Matrix_Scale(eff->scale, eff->scale, 1.0f, MTXMODE_APPLY);
-            gSPMatrix(POLY_XLU_DISP++, Matrix_NewMtx(globalCtx->state.gfxCtx, "../z_en_fw.c", 1229),
+            gSPMatrix(POLY_XLU_DISP++, Matrix_NewMtx(play->state.gfxCtx, "../z_en_fw.c", 1229),
                       G_MTX_NOPUSH | G_MTX_LOAD | G_MTX_MODELVIEW);
             idx = eff->timer * (8.0f / eff->initialTimer);
             gSPSegment(POLY_XLU_DISP++, 0x8, SEGMENTED_TO_VIRTUAL(dustTextures[idx]));
@@ -480,5 +484,5 @@ void EnFw_DrawDust(EnFw* this, GlobalContext* globalCtx) {
         }
     }
 
-    CLOSE_DISPS(globalCtx->state.gfxCtx, "../z_en_fw.c", 1243);
+    CLOSE_DISPS(play->state.gfxCtx, "../z_en_fw.c", 1243);
 }

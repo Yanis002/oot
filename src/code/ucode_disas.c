@@ -224,7 +224,8 @@ void UCodeDisas_ParseRenderMode(UCodeDisas* this, u32 mode) {
 
     // clang-format off
     if (this->enableLog == 0) {} else { osSyncPrintf("\nGBL_c1(%s, %s, %s, %s)|",
-        D_8012DDDC[0][a >> 12 & 3], D_8012DDDC[1][a >> 8 & 3], D_8012DDDC[2][a >> 4 & 3], D_8012DDDC[3][a >> 0 & 3]); }
+        D_8012DDDC[0][a >> 12 & 3], D_8012DDDC[1][a >> 8 & 3], D_8012DDDC[2][a >> 4 & 3], D_8012DDDC[3][a >> 0 & 3]);
+    }
     // clang-format on
 
     if (this->enableLog) {
@@ -715,7 +716,7 @@ void UCodeDisas_Disassemble(UCodeDisas* this, GfxMod* ptr) {
                           : (setscissor.pad == G_SC_EVEN_INTERLACE) ? "G_SC_EVEN_INTERLACE"
                                                                     : "???";
 
-                if ((setscissor.x0frac | setscissor.y0frac | setscissor.x1frac | setscissor.y1frac)) {
+                if (setscissor.x0frac | setscissor.y0frac | setscissor.x1frac | setscissor.y1frac) {
                     if (1) {}
                     DISAS_LOG("gsDPSetScissorFrac(%s, %d, %d, %d, %d),", modeStr,
                               (setscissor.x0 << 2) + setscissor.x0frac, (setscissor.y0 << 2) + setscissor.y0frac,
@@ -1188,7 +1189,7 @@ void UCodeDisas_Disassemble(UCodeDisas* this, GfxMod* ptr) {
                                     } break;
 
                                     case G_MV_LIGHT: {
-                                        switch ((movemem.offset * 8)) {
+                                        switch (movemem.offset * 8) {
                                             case G_MVO_LOOKATX: {
                                                 DISAS_LOG("gsSPLookAtX(0x%08x),", movemem.data);
                                             } break;

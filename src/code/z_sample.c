@@ -2,7 +2,7 @@
 
 void Sample_HandleStateChange(SampleContext* this) {
     if (CHECK_BTN_ALL(this->state.input[0].press.button, BTN_START)) {
-        SET_NEXT_GAMESTATE(&this->state, Gameplay_Init, GlobalContext);
+        SET_NEXT_GAMESTATE(&this->state, Play_Init, PlayState);
         this->state.running = false;
     }
 }
@@ -18,8 +18,8 @@ void Sample_Draw(SampleContext* this) {
 
     func_80095248(gfxCtx, 0, 0, 0);
 
-    view->flags = 1 | 2 | 4;
-    func_800AAA50(view, 15);
+    view->flags = VIEW_VIEWING | VIEW_VIEWPORT | VIEW_PROJECTION_PERSPECTIVE;
+    View_Apply(view, VIEW_ALL);
 
     {
         Mtx* mtx = Graph_Alloc(gfxCtx, sizeof(Mtx));
@@ -55,7 +55,7 @@ void Sample_SetupView(SampleContext* this) {
 
     View_Init(view, gfxCtx);
     SET_FULLSCREEN_VIEWPORT(view);
-    func_800AA460(view, 60.0f, 10.0f, 12800.0f);
+    View_SetPerspective(view, 60.0f, 10.0f, 12800.0f);
 
     {
         Vec3f eye;
@@ -72,7 +72,7 @@ void Sample_SetupView(SampleContext* this) {
         up.z = 0.0f;
         up.y = 1.0f;
 
-        func_800AA358(view, &eye, &lookAt, &up);
+        View_LookAt(view, &eye, &lookAt, &up);
     }
 }
 

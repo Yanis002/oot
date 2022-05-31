@@ -23,7 +23,7 @@ typedef struct {
     /* 0x0C */ Vec3f eye;
     /* 0x18 */ s16 roll;
     /* 0x1A */ s16 fov;
-} CutsceneCameraAngle; // size = 0x1C
+} CutsceneCameraDirection; // size = 0x1C
 
 typedef struct {
     /* 0x0 */ CutsceneCameraPoint* atPoints;
@@ -139,14 +139,14 @@ typedef enum {
 
 /**
  * Special type for blocks of cutscene data, asm-processor checks
- * arrays for CutsceneData type and converts floats within the array 
- * to their IEEE-754 representation. The array must close with }; 
+ * arrays for CutsceneData type and converts floats within the array
+ * to their IEEE-754 representation. The array must close with };
  * on its own line.
- * 
+ *
  * Files that contain this type that are included in other C files
  * must include an 'EARLY' qualifier to inform asm-processor that it
  * must recursively process that include.
- * 
+ *
  * Example: #include "file.c" EARLY
  */
 typedef union CutsceneData {

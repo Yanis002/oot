@@ -6,9 +6,9 @@
 
 struct EnViewer;
 
-typedef void (*EnViewerActionFunc)(struct EnViewer*, GlobalContext*);
-typedef void (*EnViewerDrawFunc)(struct EnViewer*, GlobalContext*);
-typedef void (*EnViewerInitAnimFunc)(struct EnViewer*, GlobalContext*, void*, AnimationHeader*);
+typedef void (*EnViewerActionFunc)(struct EnViewer*, PlayState*);
+typedef void (*EnViewerDrawFunc)(struct EnViewer*, PlayState*);
+typedef void (*EnViewerInitAnimFunc)(struct EnViewer*, PlayState*, void*, AnimationHeader*);
 
 typedef enum {
     /* 0 */ ENVIEWER_TYPE_0_HORSE_ZELDA,
@@ -60,7 +60,7 @@ typedef struct {
 
 typedef struct EnViewer {
     /* 0x0000 */ Actor actor;
-    /* 0x014C */ PSkinAwb skin;
+    /* 0x014C */ Skin skin;
     /* 0x01DC */ s8 animObjBankIndex;
     /* 0x01DD */ u8 drawFuncIndex;
     /* 0x01E0 */ EnViewerActionFunc actionFunc;

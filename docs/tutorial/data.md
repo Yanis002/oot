@@ -10,8 +10,8 @@
 
 Each actor's data is stored in a separate file. EnJj's data is in `data/overlays/actors/z_en_jj.data.s`, for example. At some point in the decompilation process we need to convert this raw data into recognisable information for the C to use.
 
-There are two main ways to do this: either 
-1. import the data first and type it later, or 
+There are two main ways to do this: either
+1. import the data first and type it later, or
 2. wait until the data appears in functions, extern it, then import it at the end
 
 Sometimes something between these two is appropriate: wait until the largest or strangest bits of data appear in functions, get some typing information out of that, and then import it, but for now, let's stick to both of these.
@@ -84,10 +84,10 @@ Large code block, click to show
 
 #define THIS ((EnTg*)thisx)
 
-void EnTg_Init(Actor* thisx, GlobalContext* globalCtx);
-void EnTg_Destroy(Actor* thisx, GlobalContext* globalCtx);
-void EnTg_Update(Actor* thisx, GlobalContext* globalCtx);
-void EnTg_Draw(Actor* thisx, GlobalContext* globalCtx);
+void EnTg_Init(Actor* thisx, PlayState* play);
+void EnTg_Destroy(Actor* thisx, PlayState* play);
+void EnTg_Update(Actor* thisx, PlayState* play);
+void EnTg_Draw(Actor* thisx, PlayState* play);
 
 s32 D_80B18910[] = { 0x0A000039, 0x20010000, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000100, 0x00140040, 0x00000000, 0x00000000 };
 
@@ -123,7 +123,7 @@ beginseg
     include "build/data/overlays/actors/z_en_tg.reloc.o"
 endseg
 ```
-and comment out the .data line, 
+and comment out the .data line,
 ```
 beginseg
     name "ovl_En_Tg"
@@ -136,18 +136,18 @@ to tell the compiler not to look for the data in that file any more. Now run `ma
 
 Now carry out the usual steps to decompile `Init`. The usual cleanup and struct population gets us to
 ```C
-void EnTg_Init(Actor *thisx, GlobalContext *globalCtx) {
+void EnTg_Init(Actor *thisx, PlayState *play) {
     EnTg *this = THIS;
 
     ActorShape_Init(&this->actor.shape, 0.0f, ActorShadow_DrawFunc_Circle, 28.0f);
-    SkelAnime_InitFlex(globalCtx, &this->skelAnime, &D_0600AE40, &D_06005040, 0, 0, 0);
-    Collider_InitCylinder(globalCtx, &this->collider);
-    Collider_SetCylinder(globalCtx, &this->collider, &this->actor, (ColliderCylinderInit *) D_80B18910);
+    SkelAnime_InitFlex(play, &this->skelAnime, &D_0600AE40, &D_06005040, 0, 0, 0);
+    Collider_InitCylinder(play, &this->collider);
+    Collider_SetCylinder(play, &this->collider, &this->actor, (ColliderCylinderInit *) D_80B18910);
     func_80061EFC(&this->actor.colChkInfo, NULL, (CollisionCheckInfoInit2 *) D_80B1893C);
     this->actor.unk_1F = 6;
     Actor_SetScale(&this->actor, 0.01f);
     this->actionFunc = func_80B185C0;
-    this->unk_208 = globalCtx->state.frames & 1;
+    this->unk_208 = play->state.frames & 1;
 }
 ```
 and it remains to deal with the data. mips2c has told us what the types should be. We run `colliderinit` on `D_80B18910` as usual, which gives
@@ -182,7 +182,7 @@ CollisionCheckInfoInit2 D_80B1893C = { 0, 0, 0, 0, 0xFF };
 
 One more thing needs to change: since both are no longer arrays, we need to make the uses in the functions pointers:
 ```C
-Collider_SetCylinder(globalCtx, &this->collider, &this->actor, &D_80B18910);
+Collider_SetCylinder(play, &this->collider, &this->actor, &D_80B18910);
 func_80061EFC(&this->actor.colChkInfo, NULL, &D_80B1893C);
 ```
 
@@ -190,7 +190,7 @@ A quick check of the diff shows that we just need to put the action function set
 
 Following the function tree as usual, we find the only other place any data is used is in `func_80B1871C`. From its use in `EnTg_Draw`, we realise that this is a `PostLimbDraw` function. Giving mips2c the correct prototype, it comes out as
 ```C
-void func_80B1871C(GlobalContext* globalCtx, s32 limbIndex, Gfx** dList, Vec3s* rot, void* thisx) {
+void func_80B1871C(PlayState* play, s32 limbIndex, Gfx** dList, Vec3s* rot, void* thisx) {
     ? sp18;
 
     sp18.unk0 = (s32) D_80B18968->unk0;
@@ -207,11 +207,11 @@ Vec3f D_80B18968 = { 0.0f, 800.0f, 0.0f };
 ```
 and the function matches as
 ```C
-void func_80B1871C(GlobalContext* globalCtx, s32 limbIndex, Gfx** dList, Vec3s* rot, void* thisx) {
+void func_80B1871C(PlayState* play, s32 limbIndex, Gfx** dList, Vec3s* rot, void* thisx) {
     EnTg* this = THIS;
 
     Vec3f sp18 = D_80B18968;
-    
+
     if (limbIndex == 9) {
         Matrix_MultVec3f(&sp18, &this->actor.world2.pos);
     }

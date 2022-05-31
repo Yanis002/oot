@@ -7,20 +7,10 @@
 #include "global.h"
 
 void Opening_SetupTitleScreen(OpeningContext* this) {
-    // gSaveContext.gameMode = 1;
-    // this->state.running = false;
-    // gSaveContext.linkAge = 0;
-    // Sram_InitDebugSave();
-    // gSaveContext.cutsceneIndex = 0xFFF3;
-    // gSaveContext.sceneSetupIndex = 7;
-    // SET_NEXT_GAMESTATE(&this->state, Gameplay_Init, GlobalContext);
-
     gSaveContext.gameMode = 0;
 
     Sram_InitDebugSave();
-    gSaveContext.unk_13F6 = gSaveContext.magic;
     gSaveContext.magic = 0;
-    gSaveContext.unk_13F4 = 0;
     gSaveContext.magicLevel = gSaveContext.magic;
 
     gSaveContext.linkAge = 1;
@@ -40,7 +30,15 @@ void Opening_SetupTitleScreen(OpeningContext* this) {
     gSaveContext.showTitleCard = true;
     gWeatherMode = 0;
     this->state.running = false;
-    SET_NEXT_GAMESTATE(&this->state, Gameplay_Init, GlobalContext);
+    SET_NEXT_GAMESTATE(&this->state, Play_Init, PlayState);
+
+    // gSaveContext.gameMode = 1;
+    // this->state.running = false;
+    // gSaveContext.linkAge = LINK_AGE_ADULT;
+    // Sram_InitDebugSave();
+    // gSaveContext.cutsceneIndex = 0xFFF3;
+    // gSaveContext.sceneSetupIndex = 7;
+    // SET_NEXT_GAMESTATE(&this->state, Play_Init, PlayState);
 }
 
 void func_80803C5C(OpeningContext* this) {
@@ -48,7 +46,6 @@ void func_80803C5C(OpeningContext* this) {
 
 void Opening_Main(GameState* thisx) {
     OpeningContext* this = (OpeningContext*)thisx;
-
     func_80095248(this->state.gfxCtx, 0, 0, 0);
     Opening_SetupTitleScreen(this);
     func_80803C5C(this);

@@ -9,12 +9,12 @@
 
 #define FLAGS (ACTOR_FLAG_4 | ACTOR_FLAG_5)
 
-void EnBoom_Init(Actor* thisx, GlobalContext* globalCtx);
-void EnBoom_Destroy(Actor* thisx, GlobalContext* globalCtx);
-void EnBoom_Update(Actor* thisx, GlobalContext* globalCtx);
-void EnBoom_Draw(Actor* thisx, GlobalContext* globalCtx);
+void EnBoom_Init(Actor* thisx, PlayState* play);
+void EnBoom_Destroy(Actor* thisx, PlayState* play);
+void EnBoom_Update(Actor* thisx, PlayState* play);
+void EnBoom_Draw(Actor* thisx, PlayState* play);
 
-void EnBoom_Fly(EnBoom* this, GlobalContext* globalCtx);
+void EnBoom_Fly(EnBoom* this, PlayState* play);
 
 const ActorInit En_Boom_InitVars = {
     ACTOR_EN_BOOM,
@@ -57,7 +57,7 @@ void EnBoom_SetupAction(EnBoom* this, EnBoomActionFunc actionFunc) {
     this->actionFunc = actionFunc;
 }
 
-void EnBoom_Init(Actor* thisx, GlobalContext* globalCtx) {
+void EnBoom_Init(Actor* thisx, PlayState* play) {
     EnBoom* this = (EnBoom*)thisx;
     EffectBlureInit1 blure;
 
@@ -89,22 +89,22 @@ void EnBoom_Init(Actor* thisx, GlobalContext* globalCtx) {
     blure.unkFlag = 0;
     blure.calcMode = 0;
 
-    Effect_Add(globalCtx, &this->effectIndex, EFFECT_BLURE1, 0, 0, &blure);
+    Effect_Add(play, &this->effectIndex, EFFECT_BLURE1, 0, 0, &blure);
 
-    Collider_InitQuad(globalCtx, &this->collider);
-    Collider_SetQuad(globalCtx, &this->collider, &this->actor, &sQuadInit);
+    Collider_InitQuad(play, &this->collider);
+    Collider_SetQuad(play, &this->collider, &this->actor, &sQuadInit);
 
     EnBoom_SetupAction(this, EnBoom_Fly);
 }
 
-void EnBoom_Destroy(Actor* thisx, GlobalContext* globalCtx) {
+void EnBoom_Destroy(Actor* thisx, PlayState* play) {
     EnBoom* this = (EnBoom*)thisx;
 
-    Effect_Delete(globalCtx, this->effectIndex);
-    Collider_DestroyQuad(globalCtx, &this->collider);
+    Effect_Delete(play, this->effectIndex);
+    Collider_DestroyQuad(play, &this->collider);
 }
 
-void EnBoom_Fly(EnBoom* this, GlobalContext* globalCtx) {
+void EnBoom_Fly(EnBoom* this, PlayState* play) {
     Actor* target;
     Player* player;
     s32 collided;
@@ -120,7 +120,7 @@ void EnBoom_Fly(EnBoom* this, GlobalContext* globalCtx) {
     Vec3f hitPoint;
     s32 pad2;
 
-    player = GET_PLAYER(globalCtx);
+    player = GET_PLAYER(play);
     target = this->moveTo;
 
     // If the boomerang is moving toward a targeted actor, handle setting the proper x and y angle to fly toward it.
@@ -180,13 +180,13 @@ void EnBoom_Fly(EnBoom* this, GlobalContext* globalCtx) {
                 // Otherwise if it's a Skulltula Token, just set flags so he collides with it to collect it.
                 if (target->id == ACTOR_EN_ITEM00) {
                     target->gravity = -0.9f;
-                    target->bgCheckFlags &= ~0x03;
+                    target->bgCheckFlags &= ~(BGCHECKFLAG_GROUND | BGCHECKFLAG_GROUND_TOUCH);
                 } else {
                     target->flags &= ~ACTOR_FLAG_13;
                 }
             }
             // Set player flags and kill the boomerang beacause Link caught it.
-            player->stateFlags1 &= ~0x02000000;
+            player->stateFlags1 &= ~PLAYER_STATE1_25;
             Actor_Kill(&this->actor);
         }
     } else {
@@ -196,20 +196,19 @@ void EnBoom_Fly(EnBoom* this, GlobalContext* globalCtx) {
             // Copy the position from the prevous frame to the boomerang to start the bounce back.
             Math_Vec3f_Copy(&this->actor.world.pos, &this->actor.prevPos);
         } else {
-            collided = BgCheck_EntityLineTest1(&globalCtx->colCtx, &this->actor.prevPos, &this->actor.world.pos,
-                                               &hitPoint, &this->actor.wallPoly, true, true, true, true, &hitDynaID);
+            collided = BgCheck_EntityLineTest1(&play->colCtx, &this->actor.prevPos, &this->actor.world.pos, &hitPoint,
+                                               &this->actor.wallPoly, true, true, true, true, &hitDynaID);
 
             if (collided) {
                 // If the boomerang collides with something and it's is a Jabu Object actor with params equal to 0, then
                 // set collided to 0 so that the boomerang will go through the wall.
                 // Otherwise play a clank sound and keep collided set to bounce back.
-                if (func_8002F9EC(globalCtx, &this->actor, this->actor.wallPoly, hitDynaID, &hitPoint) != 0 ||
-                    (hitDynaID != BGCHECK_SCENE &&
-                     ((hitActor = DynaPoly_GetActor(&globalCtx->colCtx, hitDynaID)) != NULL) &&
+                if (func_8002F9EC(play, &this->actor, this->actor.wallPoly, hitDynaID, &hitPoint) != 0 ||
+                    (hitDynaID != BGCHECK_SCENE && ((hitActor = DynaPoly_GetActor(&play->colCtx, hitDynaID)) != NULL) &&
                      hitActor->actor.id == ACTOR_BG_BDAN_OBJECTS && hitActor->actor.params == 0)) {
                     collided = false;
                 } else {
-                    CollisionCheck_SpawnShieldParticlesMetal(globalCtx, &hitPoint);
+                    CollisionCheck_SpawnShieldParticlesMetal(play, &hitPoint);
                 }
             }
         }
@@ -236,42 +235,42 @@ void EnBoom_Fly(EnBoom* this, GlobalContext* globalCtx) {
     }
 }
 
-void EnBoom_Update(Actor* thisx, GlobalContext* globalCtx) {
+void EnBoom_Update(Actor* thisx, PlayState* play) {
     EnBoom* this = (EnBoom*)thisx;
-    Player* player = GET_PLAYER(globalCtx);
+    Player* player = GET_PLAYER(play);
 
-    if (!(player->stateFlags1 & 0x20000000)) {
-        this->actionFunc(this, globalCtx);
+    if (!(player->stateFlags1 & PLAYER_STATE1_29)) {
+        this->actionFunc(this, play);
         Actor_SetFocus(&this->actor, 0.0f);
         this->activeTimer = this->activeTimer + 1;
     }
 }
 
-void EnBoom_Draw(Actor* thisx, GlobalContext* globalCtx) {
+void EnBoom_Draw(Actor* thisx, PlayState* play) {
     static Vec3f sMultVec1 = { -960.0f, 0.0f, 0.0f };
     static Vec3f sMultVec2 = { 960.0f, 0.0f, 0.0f };
     EnBoom* this = (EnBoom*)thisx;
     Vec3f vec1;
     Vec3f vec2;
 
-    OPEN_DISPS(globalCtx->state.gfxCtx, "../z_en_boom.c", 567);
+    OPEN_DISPS(play->state.gfxCtx, "../z_en_boom.c", 567);
 
-    Matrix_RotateY(this->actor.world.rot.y * (M_PI / 0x8000), MTXMODE_APPLY);
-    Matrix_RotateZ(0x1F40 * (M_PI / 0x8000), MTXMODE_APPLY);
-    Matrix_RotateX(this->actor.world.rot.x * (M_PI / 0x8000), MTXMODE_APPLY);
+    Matrix_RotateY(BINANG_TO_RAD(this->actor.world.rot.y), MTXMODE_APPLY);
+    Matrix_RotateZ(BINANG_TO_RAD(0x1F40), MTXMODE_APPLY);
+    Matrix_RotateX(BINANG_TO_RAD(this->actor.world.rot.x), MTXMODE_APPLY);
     Matrix_MultVec3f(&sMultVec1, &vec1);
     Matrix_MultVec3f(&sMultVec2, &vec2);
 
-    if (func_80090480(globalCtx, &this->collider, &this->boomerangInfo, &vec1, &vec2) != 0) {
+    if (func_80090480(play, &this->collider, &this->boomerangInfo, &vec1, &vec2)) {
         EffectBlure_AddVertex(Effect_GetByIndex(this->effectIndex), &vec1, &vec2);
     }
 
-    func_80093D18(globalCtx->state.gfxCtx);
-    Matrix_RotateY((this->activeTimer * 12000) * (M_PI / 0x8000), MTXMODE_APPLY);
+    func_80093D18(play->state.gfxCtx);
+    Matrix_RotateY(BINANG_TO_RAD(this->activeTimer * 12000), MTXMODE_APPLY);
 
-    gSPMatrix(POLY_OPA_DISP++, Matrix_NewMtx(globalCtx->state.gfxCtx, "../z_en_boom.c", 601),
+    gSPMatrix(POLY_OPA_DISP++, Matrix_NewMtx(play->state.gfxCtx, "../z_en_boom.c", 601),
               G_MTX_NOPUSH | G_MTX_LOAD | G_MTX_MODELVIEW);
     gSPDisplayList(POLY_OPA_DISP++, gBoomerangRefDL);
 
-    CLOSE_DISPS(globalCtx->state.gfxCtx, "../z_en_boom.c", 604);
+    CLOSE_DISPS(play->state.gfxCtx, "../z_en_boom.c", 604);
 }

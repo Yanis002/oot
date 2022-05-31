@@ -17,7 +17,7 @@ typedef enum {
 
 struct EnFireRock;
 
-typedef void (*EnFireRockActionFunc)(struct EnFireRock*, GlobalContext*);
+typedef void (*EnFireRockActionFunc)(struct EnFireRock*, PlayState*);
 
 typedef struct EnFireRock {
     /* 0x0000 */ Actor actor;
@@ -27,7 +27,7 @@ typedef struct EnFireRock {
     /* 0x0168 */ EnFireRockActionFunc actionFunc;
     /* 0x016C */ f32 scale;
     /* 0x0170 */ Vec3f relativePos;
-    /* 0x017C */ Vec3f unk17C; // set but unused?
+    /* 0x017C */ Vec3f unk_17C; // set but unused?
     /* 0x0188 */ s16 timer;
     /* 0x018A */ s16 timer2;
     /* 0x018C */ s16 type;

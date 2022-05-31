@@ -3,11 +3,11 @@
 
 ElfMessage sChildSariaMsgs[] = {
     ELF_MSG_STRENGTH_UPG(SKIP, 3, false, 0),
-    ELF_MSG_FLAG(CHECK, 0x61, false, 0x37), /* eventChkInf[3] & 0x80 */
+    ELF_MSG_FLAG(CHECK, 0x61, false, EVENTCHKINF_37),
     ELF_MSG_END(0x64),
-    ELF_MSG_FLAG(CHECK, 0x62, false, 0x25), /* eventChkInf[2] & 0x20 */
-    ELF_MSG_FLAG(CHECK, 0x63, false, 0x37), /* eventChkInf[3] & 0x80 */
-    ELF_MSG_FLAG(CHECK, 0x65, false, 0x43), /* eventChkInf[4] & 0x8 */
+    ELF_MSG_FLAG(CHECK, 0x62, false, EVENTCHKINF_25),
+    ELF_MSG_FLAG(CHECK, 0x63, false, EVENTCHKINF_37),
+    ELF_MSG_FLAG(CHECK, 0x65, false, EVENTCHKINF_43),
     ELF_MSG_MEDALLION(CHECK, 0x66, false, ITEM_MEDALLION_FOREST),
     ELF_MSG_MEDALLION(CHECK, 0x66, false, ITEM_MEDALLION_FIRE),
     ELF_MSG_MEDALLION(CHECK, 0x66, false, ITEM_MEDALLION_WATER),
@@ -45,8 +45,8 @@ u32 ElfMessage_CheckCondition(ElfMessage* msg) {
                     return ((msg->byte0 & 1) == 1) == ((msg->byte1 & 0x0F) == CUR_UPG_VALUE(UPG_STRENGTH));
                 case (ELF_MSG_CONDITION_BOOTS << 4):
                     return ((msg->byte0 & 1) == 1) ==
-                           (((gBitFlags[msg->byte3 - ITEM_BOOTS_KOKIRI] << gEquipShifts[EQUIP_BOOTS]) &
-                             gSaveContext.inventory.equipment) != 0);
+                           (CHECK_OWNED_EQUIP(EQUIP_TYPE_BOOTS,
+                                              msg->byte3 - ITEM_BOOTS_KOKIRI + EQUIP_INV_BOOTS_KOKIRI) != 0);
                 case (ELF_MSG_CONDITION_SONG << 4):
                     return ((msg->byte0 & 1) == 1) ==
                            (CHECK_QUEST_ITEM(msg->byte3 - ITEM_SONG_MINUET + QUEST_SONG_MINUET) != 0);
@@ -54,7 +54,7 @@ u32 ElfMessage_CheckCondition(ElfMessage* msg) {
                     return ((msg->byte0 & 1) == 1) ==
                            (CHECK_QUEST_ITEM(msg->byte3 - ITEM_MEDALLION_FOREST + QUEST_MEDALLION_FOREST) != 0);
                 case (ELF_MSG_CONDITION_MAGIC << 4):
-                    return ((msg->byte0 & 1) == 1) == (((void)0, gSaveContext.magicAcquired) != 0);
+                    return ((msg->byte0 & 1) == 1) == (((void)0, gSaveContext.isMagicAcquired) != 0);
             }
     }
 
@@ -148,12 +148,12 @@ u16 ElfMessage_GetTextFromMsgs(ElfMessage* msg) {
     }
 }
 
-u16 ElfMessage_GetSariaText(GlobalContext* globalCtx) {
-    Player* player = GET_PLAYER(globalCtx);
+u16 ElfMessage_GetSariaText(PlayState* play) {
+    Player* player = GET_PLAYER(play);
     ElfMessage* msgs;
 
     if (!LINK_IS_ADULT) {
-        if (Actor_FindNearby(globalCtx, &player->actor, ACTOR_EN_SA, 4, 800.0f) == NULL) {
+        if (Actor_FindNearby(play, &player->actor, ACTOR_EN_SA, 4, 800.0f) == NULL) {
             msgs = sChildSariaMsgs;
         } else {
             return 0x0160; // Special text about Saria preferring to talk to you face-to-face
@@ -165,10 +165,10 @@ u16 ElfMessage_GetSariaText(GlobalContext* globalCtx) {
     return ElfMessage_GetTextFromMsgs(msgs);
 }
 
-u16 ElfMessage_GetCUpText(GlobalContext* globalCtx) {
-    if (globalCtx->cUpElfMsgs == NULL) {
+u16 ElfMessage_GetCUpText(PlayState* play) {
+    if (play->cUpElfMsgs == NULL) {
         return 0;
     } else {
-        return ElfMessage_GetTextFromMsgs(globalCtx->cUpElfMsgs);
+        return ElfMessage_GetTextFromMsgs(play->cUpElfMsgs);
     }
 }
