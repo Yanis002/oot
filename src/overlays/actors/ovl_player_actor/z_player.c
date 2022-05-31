@@ -10123,9 +10123,9 @@ void Player_UpdateCommon(Player* this, PlayState* play, Input* input) {
 
     // Adult/Child switch
     if((CHECK_BTN_ALL(sControlInput->cur.button, BTN_L + BTN_DUP))){
-        globalCtx->nextEntranceIndex = gSaveContext.entranceIndex;
-        globalCtx->linkAgeOnLoad = !gSaveContext.linkAge;
-        globalCtx->sceneLoadFlag = 0x14; 
+        play->nextEntranceIndex = gSaveContext.entranceIndex;
+        play->linkAgeOnLoad = !gSaveContext.linkAge;
+        play->transitionTrigger = TRANS_TRIGGER_START;
     }
 
     if (this->unk_A86 < 0) {
