@@ -492,7 +492,11 @@ void MirRay_Draw(Actor* thisx, PlayState* play) {
             gSPMatrix(POLY_XLU_DISP++, Matrix_NewMtx(play->state.gfxCtx, "../z_mir_ray.c", 972),
                       G_MTX_NOPUSH | G_MTX_LOAD | G_MTX_MODELVIEW);
             gDPSetPrimColor(POLY_XLU_DISP++, 0, 0, 255, 255, 150, (s16)(temp = this->reflectIntensity * 100.0f));
-            gSPDisplayList(POLY_XLU_DISP++, gShieldBeamGlowDL);
+            if (LINK_IS_CHILD) {
+                gSPDisplayList(POLY_XLU_DISP++, gLinkChildShieldBeamGlowDL);
+            } else {
+                gSPDisplayList(POLY_XLU_DISP++, gShieldBeamGlowDL);
+            }
             MirRay_SetupReflectionPolys(this, play, reflection);
             MirRay_RemoveSimilarReflections(reflection);
             MirRay_ReflectedBeam(this, play, reflection);
