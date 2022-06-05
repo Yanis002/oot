@@ -934,7 +934,16 @@ void Player_DrawImpl(PlayState* play, void** skeleton, Vec3s* jointTable, s32 dL
             u8 bootIndex = LINK_IS_ADULT ? (boots - PLAYER_BOOTS_IRON) : (boots - PLAYER_BOOTS_IRON) + 2;
             Gfx** bootDLists = sBootDListGroups[bootIndex];
 
+            // draw left boot
+            if (LINK_IS_CHILD) {
+                gSPMatrix(POLY_OPA_DISP++, 0x0D000180, G_MTX_NOPUSH | G_MTX_LOAD | G_MTX_MODELVIEW);
+            }
             gSPDisplayList(POLY_OPA_DISP++, bootDLists[0]);
+
+            // draw right boot
+            if (LINK_IS_CHILD) {
+                gSPMatrix(POLY_OPA_DISP++, 0x0D0000C0, G_MTX_NOPUSH | G_MTX_LOAD | G_MTX_MODELVIEW);
+            }
             gSPDisplayList(POLY_OPA_DISP++, bootDLists[1]);
         }
     }
