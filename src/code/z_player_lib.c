@@ -172,9 +172,9 @@ Gfx* sPlayerRightHandShieldDLs[PLAYER_SHIELD_MAX * 4] = {
     gLinkChildRightHandClosedFarDL,
     // PLAYER_SHIELD_MIRROR
     gLinkAdultRightHandHoldingMirrorShieldNearDL,
-    gLinkChildRightHandClosedNearDL,
+    gLinkChildRightHandHoldingMirrorShieldNearDL,
     gLinkAdultRightHandHoldingMirrorShieldFarDL,
-    gLinkChildRightHandClosedFarDL,
+    gLinkChildRightHandHoldingMirrorShieldNearDL,
 };
 
 Gfx* D_80125D28[(PLAYER_SHIELD_MAX + 2) * 4] = {
@@ -195,9 +195,9 @@ Gfx* D_80125D28[(PLAYER_SHIELD_MAX + 2) * 4] = {
     gLinkChildHylianShieldSwordAndSheathFarDL,
     // PLAYER_SHIELD_MIRROR
     gLinkAdultMirrorShieldSwordAndSheathNearDL,
-    gLinkChildSwordAndSheathNearDL,
+    gLinkChildMirrorShieldSwordAndSheathNearDL,
     gLinkAdultMirrorShieldSwordAndSheathFarDL,
-    gLinkChildSwordAndSheathFarDL,
+    gLinkChildMirrorShieldSwordAndSheathNearDL,
     // PLAYER_SHIELD_NONE (child, no sword)
     NULL,
     NULL,
@@ -228,9 +228,9 @@ Gfx* D_80125D88[(PLAYER_SHIELD_MAX + 2) * 4] = {
     gLinkChildHylianShieldAndSheathFarDL,
     // PLAYER_SHIELD_MIRROR
     gLinkAdultMirrorShieldAndSheathNearDL,
-    gLinkChildSheathNearDL,
+    gLinkChildMirrorShieldAndSheathNearDL,
     gLinkAdultMirrorShieldAndSheathFarDL,
-    gLinkChildSheathFarDL,
+    gLinkChildMirrorShieldAndSheathNearDL,
     // PLAYER_SHIELD_NONE (child, no sword)
     NULL,
     NULL,
