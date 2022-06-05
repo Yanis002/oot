@@ -3723,20 +3723,36 @@ void BossTw_ShieldChargeDraw(BossTw* this, PlayState* play) {
             temp_a0 = (Math_SinS(this->work[CS_TIMER_1] * 2730 * temp_t0) * D_8094C854 * 0.5f) + (D_8094C854 * 0.5f);
             if (sShieldFireCharge != 0) {
                 gDPSetEnvColor(POLY_XLU_DISP++, 255, 245, 255, temp_a0);
-                gSPDisplayList(POLY_XLU_DISP++, SEGMENTED_TO_VIRTUAL(object_tw_DL_01E0E0));
+                if (LINK_IS_CHILD) {
+                    gSPDisplayList(POLY_XLU_DISP++, SEGMENTED_TO_VIRTUAL(gLinkChildTWFireMirrorShieldBase));
+                } else {
+                    gSPDisplayList(POLY_XLU_DISP++, SEGMENTED_TO_VIRTUAL(object_tw_DL_01E0E0));
+                }
                 gSPSegment(POLY_XLU_DISP++, 8,
                            Gfx_TwoTexScroll(play->state.gfxCtx, 0, (this->work[CS_TIMER_1] * 2) * temp_t0, 0, 0x20,
                                             0x20, 1, (-this->work[CS_TIMER_1] * 2) * temp_t0, 0, 0x20, 0x20));
                 gDPSetPrimColor(POLY_XLU_DISP++, 0, 0, 100, 20, 0, (s16)D_8094C854);
-                gSPDisplayList(POLY_XLU_DISP++, SEGMENTED_TO_VIRTUAL(object_tw_DL_01E020));
+                if (LINK_IS_CHILD) {
+                    gSPDisplayList(POLY_XLU_DISP++, SEGMENTED_TO_VIRTUAL(gLinkChildTWFireMirrorShieldEffect));
+                } else {
+                    gSPDisplayList(POLY_XLU_DISP++, SEGMENTED_TO_VIRTUAL(object_tw_DL_01E020));
+                }
             } else {
                 gDPSetEnvColor(POLY_XLU_DISP++, 225, 255, 255, temp_a0);
-                gSPDisplayList(POLY_XLU_DISP++, SEGMENTED_TO_VIRTUAL(object_tw_DL_01E3A0));
+                if (LINK_IS_CHILD) {
+                    gSPDisplayList(POLY_XLU_DISP++, SEGMENTED_TO_VIRTUAL(gLinkChildTWIceMirrorShieldBase));
+                } else {
+                    gSPDisplayList(POLY_XLU_DISP++, SEGMENTED_TO_VIRTUAL(object_tw_DL_01E3A0));
+                }
                 gSPSegment(POLY_XLU_DISP++, 8,
                            Gfx_TwoTexScroll(play->state.gfxCtx, 0, 0, (-this->work[CS_TIMER_1] * 5) * temp_t0, 0x20,
                                             0x40, 1, (this->work[CS_TIMER_1] * 4) * temp_t0, 0, 0x20, 0x20));
                 gDPSetPrimColor(POLY_XLU_DISP++, 0, 0, 175, 205, 195, (s16)D_8094C854);
-                gSPDisplayList(POLY_XLU_DISP++, SEGMENTED_TO_VIRTUAL(object_tw_DL_01E2C0));
+                if (LINK_IS_CHILD) {
+                    gSPDisplayList(POLY_XLU_DISP++, SEGMENTED_TO_VIRTUAL(gLinkChildTWIceMirrorShieldEffect));
+                } else {
+                    gSPDisplayList(POLY_XLU_DISP++, SEGMENTED_TO_VIRTUAL(object_tw_DL_01E2C0));
+                }
             }
         }
     }
