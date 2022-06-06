@@ -8,9 +8,7 @@
 #include "objects/gameplay_keep/gameplay_keep.h"
 #include "objects/object_Bb/object_Bb.h"
 
-#define FLAGS 0x01000015
-
-#define THIS ((EnBb*)thisx)
+#define FLAGS (ACTOR_FLAG_0 | ACTOR_FLAG_2 | ACTOR_FLAG_4 | ACTOR_FLAG_24)
 
 #define vBombHopPhase actionVar1
 #define vTrailIdx actionVar1
@@ -55,42 +53,42 @@ typedef enum {
 
 // Main functions
 
-void EnBb_Init(Actor* thisx, GlobalContext* globalCtx);
-void EnBb_Destroy(Actor* thisx, GlobalContext* globalCtx);
-void EnBb_Update(Actor* this, GlobalContext* globalCtx);
-void EnBb_Draw(Actor* this, GlobalContext* globalCtx);
+void EnBb_Init(Actor* thisx, PlayState* play);
+void EnBb_Destroy(Actor* thisx, PlayState* play);
+void EnBb_Update(Actor* this, PlayState* play);
+void EnBb_Draw(Actor* this, PlayState* play);
 
 // Helper functions
 
 void EnBb_FaceWaypoint(EnBb* this);
-void EnBb_SetWaypoint(EnBb* this, GlobalContext* globalCtx);
+void EnBb_SetWaypoint(EnBb* this, PlayState* play);
 
 // Action functions
 
 void EnBb_SetupFlameTrail(EnBb* this);
-void EnBb_FlameTrail(EnBb* this, GlobalContext* globalCtx);
+void EnBb_FlameTrail(EnBb* this, PlayState* play);
 
-void EnBb_SetupDeath(EnBb* this, GlobalContext* globalCtx);
-void EnBb_Death(EnBb* this, GlobalContext* globalCtx);
+void EnBb_SetupDeath(EnBb* this, PlayState* play);
+void EnBb_Death(EnBb* this, PlayState* play);
 
-void EnBb_Damage(EnBb* this, GlobalContext* globalCtx);
+void EnBb_Damage(EnBb* this, PlayState* play);
 
 void EnBb_SetupBlue(EnBb* this);
-void EnBb_Blue(EnBb* this, GlobalContext* globalCtx);
+void EnBb_Blue(EnBb* this, PlayState* play);
 
 void EnBb_SetupDown(EnBb* this);
-void EnBb_Down(EnBb* this, GlobalContext* globalCtx);
+void EnBb_Down(EnBb* this, PlayState* play);
 
-void EnBb_SetupRed(GlobalContext* globalCtx, EnBb* this);
-void EnBb_Red(EnBb* this, GlobalContext* globalCtx);
+void EnBb_SetupRed(PlayState* play, EnBb* this);
+void EnBb_Red(EnBb* this, PlayState* play);
 
-void EnBb_SetupWhite(GlobalContext* globalCtx, EnBb* this);
-void EnBb_White(EnBb* this, GlobalContext* globalCtx);
+void EnBb_SetupWhite(PlayState* play, EnBb* this);
+void EnBb_White(EnBb* this, PlayState* play);
 
-void EnBb_InitGreen(EnBb* this, GlobalContext* globalCtx);
-void EnBb_Green(EnBb* this, GlobalContext* globalCtx);
+void EnBb_InitGreen(EnBb* this, PlayState* play);
+void EnBb_Green(EnBb* this, PlayState* play);
 
-void EnBb_Stunned(EnBb* this, GlobalContext* globalCtx);
+void EnBb_Stunned(EnBb* this, PlayState* play);
 
 static DamageTable sDamageTableBlueGreen = {
     /* Deku nut      */ DMG_ENTRY(0, 0xF),
@@ -244,8 +242,8 @@ void EnBb_SetupAction(EnBb* this, EnBbActionFunc actionFunc) {
     this->actionFunc = actionFunc;
 }
 
-Actor* EnBb_FindExplosive(GlobalContext* globalCtx, EnBb* this, f32 range) {
-    Actor* explosive = globalCtx->actorCtx.actorLists[ACTORCAT_EXPLOSIVE].head;
+Actor* EnBb_FindExplosive(PlayState* play, EnBb* this, f32 range) {
+    Actor* explosive = play->actorCtx.actorLists[ACTORCAT_EXPLOSIVE].head;
     f32 dist;
 
     while (explosive != NULL) {
@@ -262,14 +260,14 @@ Actor* EnBb_FindExplosive(GlobalContext* globalCtx, EnBb* this, f32 range) {
     return NULL;
 }
 
-void EnBb_SpawnFlameTrail(GlobalContext* globalCtx, EnBb* this, s16 startAtZero) {
+void EnBb_SpawnFlameTrail(PlayState* play, EnBb* this, s16 startAtZero) {
     EnBb* now = this;
     EnBb* next;
     s32 i;
 
     for (i = 0; i < 5; i++) {
-        next = (EnBb*)Actor_Spawn(&globalCtx->actorCtx, globalCtx, ACTOR_EN_BB, this->actor.world.pos.x,
-                                  this->actor.world.pos.y, this->actor.world.pos.z, 0, 0, 0, 0);
+        next = (EnBb*)Actor_Spawn(&play->actorCtx, play, ACTOR_EN_BB, this->actor.world.pos.x, this->actor.world.pos.y,
+                                  this->actor.world.pos.z, 0, 0, 0, 0);
         if (next != NULL) {
             now->actor.child = &next->actor;
             next->actor.parent = &now->actor;
@@ -307,18 +305,18 @@ void EnBb_KillFlameTrail(EnBb* this) {
     this->actor.child = NULL;
 }
 
-void EnBb_Init(Actor* thisx, GlobalContext* globalCtx) {
+void EnBb_Init(Actor* thisx, PlayState* play) {
     EffectBlureInit1 blureInit;
     s32 pad;
-    EnBb* this = THIS;
+    EnBb* this = (EnBb*)thisx;
 
     Actor_ProcessInitChain(thisx, sInitChain);
-    SkelAnime_Init(globalCtx, &this->skelAnime, &object_Bb_Skel_001A30, &object_Bb_Anim_000444, this->jointTable,
+    SkelAnime_Init(play, &this->skelAnime, &object_Bb_Skel_001A30, &object_Bb_Anim_000444, this->jointTable,
                    this->morphTable, 16);
     this->unk_254 = 0;
     thisx->colChkInfo.health = 4;
-    Collider_InitJntSph(globalCtx, &this->collider);
-    Collider_SetJntSph(globalCtx, &this->collider, thisx, &sJntSphInit, this->elements);
+    Collider_InitJntSph(play, &this->collider);
+    Collider_SetJntSph(play, &this->collider, thisx, &sJntSphInit, this->elements);
 
     this->actionState = thisx->params >> 8;
 
@@ -333,7 +331,7 @@ void EnBb_Init(Actor* thisx, GlobalContext* globalCtx) {
         this->flameScaleY = 80.0f;
         this->flameScaleX = 100.0f;
         this->collider.elements[0].info.toucherFlags = TOUCH_ON | TOUCH_SFX_HARD;
-        this->collider.elements[0].info.toucher.dmgFlags = 0xFFCFFFFF;
+        this->collider.elements[0].info.toucher.dmgFlags = DMG_DEFAULT;
         this->collider.elements[0].info.toucher.damage = 8;
         this->bobSize = this->actionState * 20.0f;
         this->flamePrimAlpha = 255;
@@ -341,22 +339,22 @@ void EnBb_Init(Actor* thisx, GlobalContext* globalCtx) {
         Actor_SetScale(thisx, 0.01f);
         switch (thisx->params) {
             case ENBB_BLUE:
-                thisx->naviEnemyId = 0x1C;
+                thisx->naviEnemyId = NAVI_ENEMY_BLUE_BUBBLE;
                 thisx->colChkInfo.damageTable = &sDamageTableBlueGreen;
                 this->flamePrimBlue = this->flameEnvColor.b = 255;
                 thisx->world.pos.y += 50.0f;
                 EnBb_SetupBlue(this);
-                thisx->flags |= 0x4000;
+                thisx->flags |= ACTOR_FLAG_14;
                 break;
             case ENBB_RED:
-                thisx->naviEnemyId = 0x24;
+                thisx->naviEnemyId = NAVI_ENEMY_RED_BUBBLE;
                 thisx->colChkInfo.damageTable = &sDamageTableRed;
                 this->flameEnvColor.r = 255;
                 this->collider.elements[0].info.toucher.effect = 1;
-                EnBb_SetupRed(globalCtx, this);
+                EnBb_SetupRed(play, this);
                 break;
             case ENBB_WHITE:
-                thisx->naviEnemyId = 0x1D;
+                thisx->naviEnemyId = NAVI_ENEMY_WHITE_BUBBLE;
                 thisx->colChkInfo.damageTable = &sDamageTableWhite;
                 this->path = this->actionState;
                 blureInit.p1StartColor[0] = blureInit.p1StartColor[1] = blureInit.p1StartColor[2] =
@@ -371,24 +369,25 @@ void EnBb_Init(Actor* thisx, GlobalContext* globalCtx) {
                 blureInit.unkFlag = 0;
                 blureInit.calcMode = 2;
 
-                Effect_Add(globalCtx, &this->blureIdx, EFFECT_BLURE1, 0, 0, &blureInit);
-                EnBb_SetupWhite(globalCtx, this);
-                EnBb_SetWaypoint(this, globalCtx);
+                Effect_Add(play, &this->blureIdx, EFFECT_BLURE1, 0, 0, &blureInit);
+                EnBb_SetupWhite(play, this);
+                EnBb_SetWaypoint(this, play);
                 EnBb_FaceWaypoint(this);
-                thisx->flags |= 0x4000;
+                thisx->flags |= ACTOR_FLAG_14;
                 break;
             case ENBB_GREEN_BIG:
                 this->path = this->actionState >> 4;
                 this->collider.elements[0].dim.modelSphere.radius = 0x16;
                 Actor_SetScale(thisx, 0.03f);
+                FALLTHROUGH;
             case ENBB_GREEN:
-                thisx->naviEnemyId = 0x1E;
+                thisx->naviEnemyId = NAVI_ENEMY_GREEN_BUBBLE;
                 this->bobSize = (this->actionState & 0xF) * 20.0f;
                 thisx->colChkInfo.damageTable = &sDamageTableBlueGreen;
                 this->flameEnvColor.g = 255;
                 thisx->colChkInfo.health = 1;
 
-                EnBb_InitGreen(this, globalCtx);
+                EnBb_InitGreen(this, play);
                 break;
         }
         thisx->focus.pos = thisx->world.pos;
@@ -399,27 +398,27 @@ void EnBb_Init(Actor* thisx, GlobalContext* globalCtx) {
         this->collider.elements[0].dim.modelSphere.radius * this->collider.elements[0].dim.scale;
 }
 
-void EnBb_Destroy(Actor* thisx, GlobalContext* globalCtx) {
+void EnBb_Destroy(Actor* thisx, PlayState* play) {
     s32 pad;
-    EnBb* this = THIS;
+    EnBb* this = (EnBb*)thisx;
 
-    Collider_DestroyJntSph(globalCtx, &this->collider);
+    Collider_DestroyJntSph(play, &this->collider);
 }
 
 void EnBb_SetupFlameTrail(EnBb* this) {
     this->action = BB_FLAME_TRAIL;
     this->moveMode = BBMOVE_NOCLIP;
-    this->actor.flags &= ~1;
+    this->actor.flags &= ~ACTOR_FLAG_0;
     this->actor.velocity.y = 0.0f;
     this->actor.gravity = 0.0f;
     this->actor.speedXZ = 0.0f;
     EnBb_SetupAction(this, EnBb_FlameTrail);
 }
 
-void EnBb_FlameTrail(EnBb* this, GlobalContext* globalCtx) {
+void EnBb_FlameTrail(EnBb* this, PlayState* play) {
     if (this->actor.params == ENBB_KILL_TRAIL) {
         if (this->actor.parent == NULL) {
-            EnBb_SetupDeath(this, globalCtx);
+            EnBb_SetupDeath(this, play);
         }
     } else {
         if (this->timer == 0) {
@@ -453,19 +452,19 @@ void EnBb_FlameTrail(EnBb* this, GlobalContext* globalCtx) {
     }
 }
 
-void EnBb_SetupDeath(EnBb* this, GlobalContext* globalCtx) {
+void EnBb_SetupDeath(EnBb* this, PlayState* play) {
     if (this->actor.params <= ENBB_BLUE) {
         this->actor.world.rot.y = this->actor.yawTowardsPlayer;
         this->actor.speedXZ = -7.0f;
         this->timer = 5;
         this->actor.shape.rot.x += 0x4E20;
-        EffectSsDeadSound_SpawnStationary(globalCtx, &this->actor.projectedPos, NA_SE_EN_BUBLE_DEAD, 1, 1, 0x28);
+        EffectSsDeadSound_SpawnStationary(play, &this->actor.projectedPos, NA_SE_EN_BUBLE_DEAD, 1, 1, 0x28);
     }
     this->action = BB_KILL;
     EnBb_SetupAction(this, EnBb_Death);
 }
 
-void EnBb_Death(EnBb* this, GlobalContext* globalCtx) {
+void EnBb_Death(EnBb* this, PlayState* play) {
     s16 enpartType = 3;
     Vec3f sp40 = { 0.0f, 0.5f, 0.0f };
     Vec3f sp34 = { 0.0f, 0.0f, 0.0f };
@@ -480,17 +479,17 @@ void EnBb_Death(EnBb* this, GlobalContext* globalCtx) {
         }
 
         if (this->bodyBreak.val == BODYBREAK_STATUS_FINISHED) {
-            BodyBreak_Alloc(&this->bodyBreak, 12, globalCtx);
+            BodyBreak_Alloc(&this->bodyBreak, 12, play);
         }
 
         if ((this->dmgEffect == 7) || (this->dmgEffect == 5)) {
             enpartType = 11;
         }
 
-        if (!BodyBreak_SpawnParts(&this->actor, &this->bodyBreak, globalCtx, enpartType)) {
+        if (!BodyBreak_SpawnParts(&this->actor, &this->bodyBreak, play, enpartType)) {
             return;
         }
-        Item_DropCollectibleRandom(globalCtx, &this->actor, &this->actor.world.pos, 0xD0);
+        Item_DropCollectibleRandom(play, &this->actor, &this->actor.world.pos, 0xD0);
     } else {
         if (this->flamePrimAlpha) {
             if (this->flamePrimAlpha <= 20) {
@@ -509,7 +508,7 @@ void EnBb_SetupDamage(EnBb* this) {
     Audio_PlayActorSound2(&this->actor, NA_SE_EN_BUBLE_DAMAGE);
     if (this->actor.params > ENBB_GREEN) {
         this->actor.world.rot.y = this->actor.yawTowardsPlayer;
-        if ((this->actor.bgCheckFlags & 8) == 0) {
+        if (!(this->actor.bgCheckFlags & BGCHECKFLAG_WALL)) {
             this->actor.speedXZ = -7.0f;
         }
         this->actor.shape.yOffset = 1500.0f;
@@ -522,7 +521,7 @@ void EnBb_SetupDamage(EnBb* this) {
     EnBb_SetupAction(this, EnBb_Damage);
 }
 
-void EnBb_Damage(EnBb* this, GlobalContext* globalCtx) {
+void EnBb_Damage(EnBb* this, PlayState* play) {
     Math_SmoothStepToF(&this->actor.speedXZ, 0.0f, 1.0f, 0.5f, 0.0f);
     if (this->actor.speedXZ == 0.0f) {
         this->actor.shape.yOffset = 200.0f;
@@ -540,7 +539,7 @@ void EnBb_SetupBlue(EnBb* this) {
     EnBb_SetupAction(this, EnBb_Blue);
 }
 
-void EnBb_Blue(EnBb* this, GlobalContext* globalCtx) {
+void EnBb_Blue(EnBb* this, PlayState* play) {
     Actor* explosive;
     s16 moveYawToWall;
     s16 thisYawToWall;
@@ -601,7 +600,7 @@ void EnBb_Blue(EnBb* this, GlobalContext* globalCtx) {
             this->vMoveAngleY = this->actor.yawTowardsPlayer;
         }
         if (this->targetActor == NULL) {
-            explosive = EnBb_FindExplosive(globalCtx, this, 300.0f);
+            explosive = EnBb_FindExplosive(play, this, 300.0f);
         } else if (this->targetActor->params == 0) {
             explosive = this->targetActor;
         } else {
@@ -628,7 +627,7 @@ void EnBb_Blue(EnBb* this, GlobalContext* globalCtx) {
         }
         thisYawToWall = this->actor.wallYaw - this->actor.world.rot.y;
         moveYawToWall = this->actor.wallYaw - this->vMoveAngleY;
-        if ((this->targetActor == NULL) && (this->actor.bgCheckFlags & 8) &&
+        if ((this->targetActor == NULL) && (this->actor.bgCheckFlags & BGCHECKFLAG_WALL) &&
             (ABS(thisYawToWall) > 0x4000 || ABS(moveYawToWall) > 0x4000)) {
             this->vMoveAngleY = this->actor.wallYaw + this->actor.wallYaw - this->actor.world.rot.y - 0x8000;
             Math_SmoothStepToS(&this->actor.world.rot.y, this->vMoveAngleY, 1, 0xBB8, 0);
@@ -642,7 +641,7 @@ void EnBb_Blue(EnBb* this, GlobalContext* globalCtx) {
         } else {
             afterHitAngle = 0x4000;
             Audio_PlayActorSound2(&this->actor, NA_SE_EN_BUBLE_BITE);
-            if (globalCtx->gameplayFrames & 1) {
+            if (play->gameplayFrames & 1) {
                 afterHitAngle = -0x4000;
             }
         }
@@ -673,7 +672,7 @@ void EnBb_SetupDown(EnBb* this) {
     this->action = BB_DOWN;
     this->timer = 200;
     this->actor.colorFilterTimer = 0;
-    this->actor.bgCheckFlags &= ~1;
+    this->actor.bgCheckFlags &= ~BGCHECKFLAG_GROUND;
     this->actor.speedXZ = 3.0f;
     this->flameScaleX = 0.0f;
     this->flameScaleY = 0.0f;
@@ -682,25 +681,25 @@ void EnBb_SetupDown(EnBb* this) {
     EnBb_SetupAction(this, EnBb_Down);
 }
 
-void EnBb_Down(EnBb* this, GlobalContext* globalCtx) {
+void EnBb_Down(EnBb* this, PlayState* play) {
     s16 yawDiff = this->actor.world.rot.y - this->actor.wallYaw;
 
     SkelAnime_Update(&this->skelAnime);
-    if (this->actor.bgCheckFlags & 8) {
+    if (this->actor.bgCheckFlags & BGCHECKFLAG_WALL) {
         if (ABS(yawDiff) > 0x4000) {
             this->actor.world.rot.y = this->actor.wallYaw + this->actor.wallYaw - this->actor.world.rot.y - 0x8000;
         }
-        this->actor.bgCheckFlags &= ~8;
+        this->actor.bgCheckFlags &= ~BGCHECKFLAG_WALL;
     }
-    if (this->actor.bgCheckFlags & 3) {
+    if (this->actor.bgCheckFlags & (BGCHECKFLAG_GROUND | BGCHECKFLAG_GROUND_TOUCH)) {
         if (this->actor.params == ENBB_RED) {
-            s32 floorType = func_80041D4C(&globalCtx->colCtx, this->actor.floorPoly, this->actor.floorBgId);
+            s32 floorType = func_80041D4C(&play->colCtx, this->actor.floorPoly, this->actor.floorBgId);
 
             if ((floorType == 2) || (floorType == 3) || (floorType == 9)) {
                 this->moveMode = BBMOVE_HIDDEN;
                 this->timer = 10;
                 this->actionState++;
-                this->actor.flags &= ~1;
+                this->actor.flags &= ~ACTOR_FLAG_0;
                 this->action = BB_RED;
                 EnBb_SetupAction(this, EnBb_Red);
                 return;
@@ -712,8 +711,8 @@ void EnBb_Down(EnBb* this, GlobalContext* globalCtx) {
         } else {
             this->actor.velocity.y = 10.0f;
         }
-        this->actor.bgCheckFlags &= ~1;
-        Actor_SpawnFloorDustRing(globalCtx, &this->actor, &this->actor.world.pos, 7.0f, 2, 2.0f, 0, 0, 0);
+        this->actor.bgCheckFlags &= ~BGCHECKFLAG_GROUND;
+        Actor_SpawnFloorDustRing(play, &this->actor, &this->actor.world.pos, 7.0f, 2, 2.0f, 0, 0, false);
         Math_SmoothStepToS(&this->actor.world.rot.y, -this->actor.yawTowardsPlayer, 1, 0xBB8, 0);
     }
     this->actor.shape.rot.y = this->actor.world.rot.y;
@@ -730,14 +729,14 @@ void EnBb_Down(EnBb* this, GlobalContext* globalCtx) {
                 break;
             case ENBB_RED:
                 if (this->actor.velocity.y == 10.0f) {
-                    EnBb_SetupRed(globalCtx, this);
-                    EnBb_SpawnFlameTrail(globalCtx, this, true);
+                    EnBb_SetupRed(play, this);
+                    EnBb_SpawnFlameTrail(play, this, true);
                 }
                 break;
             case ENBB_WHITE:
                 this->actor.velocity.y = 0.0f;
                 this->actor.gravity = 0.0f;
-                EnBb_SetupWhite(globalCtx, this);
+                EnBb_SetupWhite(play, this);
                 this->actor.world.pos.y -= 60.0f;
                 break;
         }
@@ -746,7 +745,7 @@ void EnBb_Down(EnBb* this, GlobalContext* globalCtx) {
     }
 }
 
-void EnBb_SetupRed(GlobalContext* globalCtx, EnBb* this) {
+void EnBb_SetupRed(PlayState* play, EnBb* this) {
     Animation_PlayLoop(&this->skelAnime, &object_Bb_Anim_000184);
     if (this->action == BB_DOWN) {
         this->actor.speedXZ = 5.0f;
@@ -755,7 +754,7 @@ void EnBb_SetupRed(GlobalContext* globalCtx, EnBb* this) {
         this->actionState = BBRED_ATTACK;
         this->timer = 0;
         this->moveMode = BBMOVE_NORMAL;
-        this->actor.bgCheckFlags &= ~1;
+        this->actor.bgCheckFlags &= ~BGCHECKFLAG_GROUND;
     } else {
         this->actor.colChkInfo.health = 4;
         this->timer = 0;
@@ -764,15 +763,15 @@ void EnBb_SetupRed(GlobalContext* globalCtx, EnBb* this) {
         this->actor.world.pos.y -= 80.0f;
         this->actor.home.pos = this->actor.world.pos;
         this->actor.velocity.y = this->actor.gravity = this->actor.speedXZ = 0.0f;
-        this->actor.bgCheckFlags &= ~1;
-        this->actor.flags &= ~1;
+        this->actor.bgCheckFlags &= ~BGCHECKFLAG_GROUND;
+        this->actor.flags &= ~ACTOR_FLAG_0;
     }
     this->action = BB_RED;
     EnBb_SetupAction(this, EnBb_Red);
 }
 
-void EnBb_Red(EnBb* this, GlobalContext* globalCtx) {
-    Player* player = GET_PLAYER(globalCtx);
+void EnBb_Red(EnBb* this, PlayState* play) {
+    Player* player = GET_PLAYER(play);
     s32 floorType;
     s16 yawDiff;
 
@@ -791,34 +790,34 @@ void EnBb_Red(EnBb* this, GlobalContext* globalCtx) {
                 this->actor.velocity.y = 18.0f;
                 this->moveMode = BBMOVE_NOCLIP;
                 this->timer = 7;
-                this->actor.bgCheckFlags &= ~1;
+                this->actor.bgCheckFlags &= ~BGCHECKFLAG_GROUND;
                 this->actionState++;
-                EnBb_SpawnFlameTrail(globalCtx, this, false);
+                EnBb_SpawnFlameTrail(play, this, false);
             }
             break;
         case BBRED_ATTACK:
             if (this->timer == 0) {
                 this->moveMode = BBMOVE_NORMAL;
-                this->actor.flags |= 1;
+                this->actor.flags |= ACTOR_FLAG_0;
             }
             this->bobPhase += Rand_ZeroOne();
             Math_SmoothStepToF(&this->flameScaleY, 80.0f, 1.0f, 10.0f, 0.0f);
             Math_SmoothStepToF(&this->flameScaleX, 100.0f, 1.0f, 10.0f, 0.0f);
-            if (this->actor.bgCheckFlags & 8) {
+            if (this->actor.bgCheckFlags & BGCHECKFLAG_WALL) {
                 yawDiff = this->actor.world.rot.y - this->actor.wallYaw;
                 if (ABS(yawDiff) > 0x4000) {
                     this->actor.world.rot.y =
                         this->actor.wallYaw + this->actor.wallYaw - this->actor.world.rot.y - 0x8000;
                 }
-                this->actor.bgCheckFlags &= ~8;
+                this->actor.bgCheckFlags &= ~BGCHECKFLAG_WALL;
             }
-            if (this->actor.bgCheckFlags & 1) {
-                floorType = func_80041D4C(&globalCtx->colCtx, this->actor.floorPoly, this->actor.floorBgId);
+            if (this->actor.bgCheckFlags & BGCHECKFLAG_GROUND) {
+                floorType = func_80041D4C(&play->colCtx, this->actor.floorPoly, this->actor.floorBgId);
                 if ((floorType == 2) || (floorType == 3) || (floorType == 9)) {
                     this->moveMode = BBMOVE_HIDDEN;
                     this->timer = 10;
                     this->actionState++;
-                    this->actor.flags &= ~1;
+                    this->actor.flags &= ~ACTOR_FLAG_0;
                 } else {
                     this->actor.velocity.y *= -1.06f;
                     if (this->actor.velocity.y > 13.0f) {
@@ -826,10 +825,10 @@ void EnBb_Red(EnBb* this, GlobalContext* globalCtx) {
                     }
                     this->actor.world.rot.y = Math_SinF(this->bobPhase) * 65535.0f;
                 }
-                this->actor.bgCheckFlags &= ~1;
+                this->actor.bgCheckFlags &= ~BGCHECKFLAG_GROUND;
             }
             this->actor.shape.rot.y = this->actor.world.rot.y;
-            if (Actor_GetCollidedExplosive(globalCtx, &this->collider.base) != NULL) {
+            if (Actor_GetCollidedExplosive(play, &this->collider.base) != NULL) {
                 EnBb_SetupDown(this);
             }
             break;
@@ -858,8 +857,8 @@ void EnBb_FaceWaypoint(EnBb* this) {
     this->actor.world.rot.y = this->actor.shape.rot.y = Math_Vec3f_Yaw(&this->actor.world.pos, &this->waypointPos);
 }
 
-void EnBb_SetWaypoint(EnBb* this, GlobalContext* globalCtx) {
-    Path* path = &globalCtx->setupPathList[this->path];
+void EnBb_SetWaypoint(EnBb* this, PlayState* play) {
+    Path* path = &play->setupPathList[this->path];
     Vec3s* point;
 
     if (this->waypoint == (s16)(path->count - 1)) {
@@ -873,7 +872,7 @@ void EnBb_SetWaypoint(EnBb* this, GlobalContext* globalCtx) {
     this->waypointPos.z = point->z;
 }
 
-void EnBb_SetupWhite(GlobalContext* globalCtx, EnBb* this) {
+void EnBb_SetupWhite(PlayState* play, EnBb* this) {
     Animation_PlayLoop(&this->skelAnime, &object_Bb_Anim_000444);
     this->actor.speedXZ = 0.0f;
     this->actor.world.pos.y += 60.0f;
@@ -885,7 +884,7 @@ void EnBb_SetupWhite(GlobalContext* globalCtx, EnBb* this) {
     EnBb_SetupAction(this, EnBb_White);
 }
 
-void EnBb_White(EnBb* this, GlobalContext* globalCtx) {
+void EnBb_White(EnBb* this, PlayState* play) {
     if (this->actor.speedXZ == 0.0f) {
         f32 distL1;
         f32 vx;
@@ -903,7 +902,7 @@ void EnBb_White(EnBb* this, GlobalContext* globalCtx) {
         if (distL1 == 0.0f) {
             this->timer--;
             if (this->timer == 0) {
-                EnBb_SetWaypoint(this, globalCtx);
+                EnBb_SetWaypoint(this, play);
                 EnBb_FaceWaypoint(this);
                 Animation_PlayLoop(&this->skelAnime, &object_Bb_Anim_000184);
                 this->timer = Rand_ZeroOne() * 30.0f + 40.0f;
@@ -939,7 +938,7 @@ void EnBb_White(EnBb* this, GlobalContext* globalCtx) {
     }
 }
 
-void EnBb_InitGreen(EnBb* this, GlobalContext* globalCtx) {
+void EnBb_InitGreen(EnBb* this, PlayState* play) {
     Vec3f bobOffset = { 0.0f, 0.0f, 0.0f };
 
     Animation_PlayLoop(&this->skelAnime, &object_Bb_Anim_000444);
@@ -949,7 +948,7 @@ void EnBb_InitGreen(EnBb* this, GlobalContext* globalCtx) {
     this->actor.shape.rot.x = this->actor.shape.rot.z = 0;
     this->actor.shape.rot.y = this->actor.yawTowardsPlayer;
     if (this->actor.params == ENBB_GREEN_BIG) {
-        EnBb_SetWaypoint(this, globalCtx);
+        EnBb_SetWaypoint(this, play);
         EnBb_FaceWaypoint(this);
     }
     Matrix_Translate(this->actor.home.pos.x, this->actor.home.pos.y, this->actor.home.pos.z, MTXMODE_NEW);
@@ -977,8 +976,8 @@ void EnBb_SetupGreen(EnBb* this) {
     EnBb_SetupAction(this, EnBb_Green);
 }
 
-void EnBb_Green(EnBb* this, GlobalContext* globalCtx) {
-    Player* player = GET_PLAYER(globalCtx);
+void EnBb_Green(EnBb* this, PlayState* play) {
+    Player* player = GET_PLAYER(play);
     Vec3f bobOffset = { 0.0f, 0.0f, 0.0f };
     Vec3f nextPos = player->actor.world.pos;
 
@@ -1001,7 +1000,7 @@ void EnBb_Green(EnBb* this, GlobalContext* globalCtx) {
             vz += Math_SmoothStepToF(&this->actor.home.pos.z, this->waypointPos.z, 1.0f, ABS(distL1), 0.0f);
             this->bobPhase += (0.05f + (Rand_ZeroOne() * 0.01f));
             if (vz == 0.0f) {
-                EnBb_SetWaypoint(this, globalCtx);
+                EnBb_SetWaypoint(this, play);
             }
             this->moveMode = BBMOVE_NOCLIP;
             this->maxSpeed = 10.0f;
@@ -1038,7 +1037,7 @@ void EnBb_Green(EnBb* this, GlobalContext* globalCtx) {
     Math_SmoothStepToF(&this->actor.world.pos.y, nextPos.y, 1.0f, this->bobPhase * 0.75f, 0.0f);
     Math_SmoothStepToF(&this->actor.world.pos.z, nextPos.z, 1.0f, this->bobPhase * 0.75f, 0.0f);
     this->bobPhase += 0.1f + this->bobSpeedMod;
-    if (Actor_GetCollidedExplosive(globalCtx, &this->collider.base) || (--this->vFlameTimer == 0)) {
+    if (Actor_GetCollidedExplosive(play, &this->collider.base) || (--this->vFlameTimer == 0)) {
         this->actionState++;
         this->timer = (Rand_ZeroOne() * 30.0f) + 60.0f;
         if (this->vFlameTimer != 0) {
@@ -1088,32 +1087,33 @@ void EnBb_SetupStunned(EnBb* this) {
             break;
         case 9:
             this->fireIceTimer = 0x30;
+            FALLTHROUGH;
         case 15:
             Audio_PlayActorSound2(&this->actor, NA_SE_EN_GOMA_JR_FREEZE);
             Actor_SetColorFilter(&this->actor, 0, 0xB4, 0, 0x50);
             break;
     }
-    this->actor.bgCheckFlags &= ~1;
+    this->actor.bgCheckFlags &= ~BGCHECKFLAG_GROUND;
     EnBb_SetupAction(this, EnBb_Stunned);
 }
 
-void EnBb_Stunned(EnBb* this, GlobalContext* globalCtx) {
+void EnBb_Stunned(EnBb* this, PlayState* play) {
     s16 yawDiff = this->actor.world.rot.y - this->actor.wallYaw;
 
-    if (this->actor.bgCheckFlags & 8) {
+    if (this->actor.bgCheckFlags & BGCHECKFLAG_WALL) {
         if (ABS(yawDiff) > 0x4000) {
             this->actor.world.rot.y = this->actor.wallYaw + this->actor.wallYaw - this->actor.world.rot.y - 0x8000;
         }
-        this->actor.bgCheckFlags &= ~8;
+        this->actor.bgCheckFlags &= ~BGCHECKFLAG_WALL;
     }
-    if (this->actor.bgCheckFlags & 2) {
+    if (this->actor.bgCheckFlags & BGCHECKFLAG_GROUND_TOUCH) {
         Audio_PlayActorSound2(&this->actor, NA_SE_EN_DODO_M_GND);
         if (this->actor.velocity.y < -14.0f) {
             this->actor.velocity.y *= -0.4f;
         } else {
             this->actor.velocity.y = 0.0f;
         }
-        Actor_SpawnFloorDustRing(globalCtx, &this->actor, &this->actor.world.pos, 7.0f, 2, 2.0f, 0, 0, 0);
+        Actor_SpawnFloorDustRing(play, &this->actor, &this->actor.world.pos, 7.0f, 2, 2.0f, 0, 0, false);
     }
     if (this->actor.colorFilterTimer == 0) {
         this->actor.shape.yOffset = 200.0f;
@@ -1127,13 +1127,13 @@ void EnBb_Stunned(EnBb* this, GlobalContext* globalCtx) {
                 EnBb_SetupDown(this);
             }
         } else {
-            this->actor.flags &= ~1;
-            EnBb_SetupDeath(this, globalCtx);
+            this->actor.flags &= ~ACTOR_FLAG_0;
+            EnBb_SetupDeath(this, play);
         }
     }
 }
 
-void EnBb_CollisionCheck(EnBb* this, GlobalContext* globalCtx) {
+void EnBb_CollisionCheck(EnBb* this, PlayState* play) {
     if (this->collider.base.atFlags & AT_BOUNCED) {
         this->collider.base.atFlags &= ~AT_BOUNCED;
         if (this->action != BB_DOWN) {
@@ -1151,10 +1151,11 @@ void EnBb_CollisionCheck(EnBb* this, GlobalContext* globalCtx) {
     if (this->collider.base.acFlags & AC_HIT) {
         this->collider.base.acFlags &= ~AC_HIT;
         this->dmgEffect = this->actor.colChkInfo.damageEffect;
-        Actor_SetDropFlag(&this->actor, &this->collider.elements[0].info, 0);
+        Actor_SetDropFlag(&this->actor, &this->collider.elements[0].info, false);
         switch (this->dmgEffect) {
             case 7:
                 this->actor.freezeTimer = this->collider.elements[0].info.acHitInfo->toucher.damage;
+                FALLTHROUGH;
             case 5:
                 this->fireIceTimer = 0x30;
                 //! @bug
@@ -1192,11 +1193,11 @@ void EnBb_CollisionCheck(EnBb* this, GlobalContext* globalCtx) {
                     }
                 }
                 if (this->actor.colChkInfo.health == 0) {
-                    this->actor.flags &= ~1;
+                    this->actor.flags &= ~ACTOR_FLAG_0;
                     if (this->actor.params == ENBB_RED) {
                         EnBb_KillFlameTrail(this);
                     }
-                    EnBb_SetupDeath(this, globalCtx);
+                    EnBb_SetupDeath(this, play);
                     //! @bug
                     //! Because Din's Fire kills the bubble in a single hit, Actor_SetColorFilter is never called and
                     //! colorFilterParams is never set. And because Din's Fire halts updating during its cutscene,
@@ -1213,15 +1214,16 @@ void EnBb_CollisionCheck(EnBb* this, GlobalContext* globalCtx) {
                            ((this->actor.params != ENBB_WHITE) && (this->flameScaleX < 20.0f))) {
                     EnBb_SetupDamage(this);
                 }
+                FALLTHROUGH;
             case 13:
                 break;
         }
     }
 }
 
-void EnBb_Update(Actor* thisx, GlobalContext* globalCtx2) {
-    GlobalContext* globalCtx = globalCtx2;
-    EnBb* this = THIS;
+void EnBb_Update(Actor* thisx, PlayState* play2) {
+    PlayState* play = play2;
+    EnBb* this = (EnBb*)thisx;
     Vec3f sp4C = { 0.0f, 0.0f, 0.0f };
     Vec3f sp40 = { 0.0f, -0.6f, 0.0f };
     Color_RGBA8 sp3C = { 0, 0, 255, 255 };
@@ -1229,19 +1231,20 @@ void EnBb_Update(Actor* thisx, GlobalContext* globalCtx2) {
     f32 sp34 = -15.0f;
 
     if (this->actor.params <= ENBB_BLUE) {
-        EnBb_CollisionCheck(this, globalCtx);
+        EnBb_CollisionCheck(this, play);
     }
     if (this->actor.colChkInfo.damageEffect != 0xD) {
-        this->actionFunc(this, globalCtx);
+        this->actionFunc(this, play);
         if ((this->actor.params <= ENBB_BLUE) && (this->actor.speedXZ >= -6.0f) &&
-            ((this->actor.flags & 0x8000) == 0)) {
+            ((this->actor.flags & ACTOR_FLAG_15) == 0)) {
             Actor_MoveForward(&this->actor);
         }
         if (this->moveMode == BBMOVE_NORMAL) {
             if ((this->actor.world.pos.y - 20.0f) <= this->actor.floorHeight) {
                 sp34 = 20.0f;
             }
-            Actor_UpdateBgCheckInfo(globalCtx, &this->actor, sp34, 25.0f, 20.0f, 5);
+            Actor_UpdateBgCheckInfo(play, &this->actor, sp34, 25.0f, 20.0f,
+                                    UPDBGCHECKINFO_FLAG_0 | UPDBGCHECKINFO_FLAG_2);
         }
         this->actor.focus.pos = this->actor.world.pos;
         this->collider.elements->dim.worldSphere.center.x = this->actor.world.pos.x;
@@ -1250,19 +1253,19 @@ void EnBb_Update(Actor* thisx, GlobalContext* globalCtx2) {
         this->collider.elements->dim.worldSphere.center.z = this->actor.world.pos.z;
 
         if ((this->action > BB_KILL) && ((this->actor.speedXZ != 0.0f) || (this->action == BB_GREEN))) {
-            CollisionCheck_SetAT(globalCtx, &globalCtx->colChkCtx, &this->collider.base);
+            CollisionCheck_SetAT(play, &play->colChkCtx, &this->collider.base);
         }
         if ((this->action > BB_FLAME_TRAIL) &&
             ((this->actor.colorFilterTimer == 0) || !(this->actor.colorFilterParams & 0x4000)) &&
             (this->moveMode != BBMOVE_HIDDEN)) {
-            CollisionCheck_SetAC(globalCtx, &globalCtx->colChkCtx, &this->collider.base);
-            CollisionCheck_SetOC(globalCtx, &globalCtx->colChkCtx, &this->collider.base);
+            CollisionCheck_SetAC(play, &play->colChkCtx, &this->collider.base);
+            CollisionCheck_SetOC(play, &play->colChkCtx, &this->collider.base);
         }
     }
 }
 
-void EnBb_PostLimbDraw(GlobalContext* globalCtx, s32 limbIndex, Gfx** dList, Vec3s* rot, void* thisx) {
-    EnBb* this = THIS;
+void EnBb_PostLimbDraw(PlayState* play, s32 limbIndex, Gfx** dList, Vec3s* rot, void* thisx) {
+    EnBb* this = (EnBb*)thisx;
 
     BodyBreak_SetInfo(&this->bodyBreak, limbIndex, 4, 15, 15, dList, BODYBREAK_OBJECT_DEFAULT);
 }
@@ -1273,22 +1276,22 @@ static Vec3f sFireIceOffsets[] = {
     { 5.0f, 0.0f, -5.0f },  { 0.0f, 10.0f, 13.0f },  { -5.0f, 0.0f, 5.0f },   { -5.0f, 0.0f, -5.0f },
 };
 
-void EnBb_Draw(Actor* thisx, GlobalContext* globalCtx) {
+void EnBb_Draw(Actor* thisx, PlayState* play) {
     s32 pad;
-    EnBb* this = THIS;
+    EnBb* this = (EnBb*)thisx;
     Vec3f blureBase1 = { 0.0f, 5000.0f, 0.0f };
     Vec3f blureBase2 = { 0.0f, 2000.0f, 0.0f };
     Vec3f blureVtx1;
     Vec3f blureVtx2;
 
-    OPEN_DISPS(globalCtx->state.gfxCtx, "../z_en_bb.c", 2044);
+    OPEN_DISPS(play->state.gfxCtx, "../z_en_bb.c", 2044);
 
     blureBase1.z = this->maxSpeed * 80.0f;
     blureBase2.z = this->maxSpeed * 80.0f;
     if (this->moveMode != BBMOVE_HIDDEN) {
         if (this->actor.params <= ENBB_BLUE) {
-            func_80093D18(globalCtx->state.gfxCtx);
-            SkelAnime_DrawOpa(globalCtx, this->skelAnime.skeleton, this->skelAnime.jointTable, NULL, EnBb_PostLimbDraw,
+            Gfx_SetupDL_25Opa(play->state.gfxCtx);
+            SkelAnime_DrawOpa(play, this->skelAnime.skeleton, this->skelAnime.jointTable, NULL, EnBb_PostLimbDraw,
                               this);
 
             if (this->fireIceTimer != 0) {
@@ -1309,11 +1312,11 @@ void EnBb_Draw(Actor* thisx, GlobalContext* globalCtx) {
                     sp70.z = this->actor.world.pos.z + sFireIceOffsets[index].z;
 
                     if ((this->dmgEffect != 7) && (this->dmgEffect != 5)) {
-                        EffectSsEnIce_SpawnFlyingVec3f(globalCtx, &this->actor, &sp70, 0x96, 0x96, 0x96, 0xFA, 0xEB,
-                                                       0xF5, 0xFF, 0.8f);
+                        EffectSsEnIce_SpawnFlyingVec3f(play, &this->actor, &sp70, 0x96, 0x96, 0x96, 0xFA, 0xEB, 0xF5,
+                                                       0xFF, 0.8f);
                     } else {
                         sp70.y -= 17.0f;
-                        EffectSsEnFire_SpawnVec3f(globalCtx, &this->actor, &sp70, 0x28, 1, 0, -1);
+                        EffectSsEnFire_SpawnVec3f(play, &this->actor, &sp70, 0x28, 1, 0, -1);
                     }
                 }
             }
@@ -1322,26 +1325,26 @@ void EnBb_Draw(Actor* thisx, GlobalContext* globalCtx) {
             Matrix_Translate(0.0f, -40.0f, 0.0f, MTXMODE_APPLY);
         }
         if (this->actor.params != ENBB_WHITE) {
-            func_80093D84(globalCtx->state.gfxCtx);
+            Gfx_SetupDL_25Xlu(play->state.gfxCtx);
             gSPSegment(POLY_XLU_DISP++, 0x08,
-                       Gfx_TwoTexScroll(globalCtx->state.gfxCtx, 0, 0, 0, 0x20, 0x40, 1, 0,
-                                        ((globalCtx->gameplayFrames + (this->flameScrollMod * 10)) *
+                       Gfx_TwoTexScroll(play->state.gfxCtx, 0, 0, 0, 0x20, 0x40, 1, 0,
+                                        ((play->gameplayFrames + (this->flameScrollMod * 10)) *
                                          (-20 - (this->flameScrollMod * -2))) %
                                             0x200,
                                         0x20, 0x80));
             gDPSetPrimColor(POLY_XLU_DISP++, 0x80, 0x80, 255, 255, this->flamePrimBlue, this->flamePrimAlpha);
             gDPSetEnvColor(POLY_XLU_DISP++, this->flameEnvColor.r, this->flameEnvColor.g, this->flameEnvColor.b, 0);
-            Matrix_RotateY(((s16)(Camera_GetCamDirYaw(GET_ACTIVE_CAM(globalCtx)) - this->actor.shape.rot.y + 0x8000)) *
-                               (M_PI / 0x8000),
-                           MTXMODE_APPLY);
+            Matrix_RotateY(
+                BINANG_TO_RAD((s16)(Camera_GetCamDirYaw(GET_ACTIVE_CAM(play)) - this->actor.shape.rot.y + 0x8000)),
+                MTXMODE_APPLY);
             Matrix_Scale(this->flameScaleX * 0.01f, this->flameScaleY * 0.01f, 1.0f, MTXMODE_APPLY);
-            gSPMatrix(POLY_XLU_DISP++, Matrix_NewMtx(globalCtx->state.gfxCtx, "../z_en_bb.c", 2106),
+            gSPMatrix(POLY_XLU_DISP++, Matrix_NewMtx(play->state.gfxCtx, "../z_en_bb.c", 2106),
                       G_MTX_NOPUSH | G_MTX_LOAD | G_MTX_MODELVIEW);
             gSPDisplayList(POLY_XLU_DISP++, gEffFire1DL);
         } else {
             Matrix_MultVec3f(&blureBase1, &blureVtx1);
             Matrix_MultVec3f(&blureBase2, &blureVtx2);
-            if ((this->maxSpeed != 0.0f) && (this->action == BB_WHITE) && !(globalCtx->gameplayFrames & 1) &&
+            if ((this->maxSpeed != 0.0f) && (this->action == BB_WHITE) && !(play->gameplayFrames & 1) &&
                 (this->actor.colChkInfo.health != 0)) {
                 EffectBlure_AddVertex(Effect_GetByIndex(this->blureIdx), &blureVtx1, &blureVtx2);
             } else if (this->action != BB_WHITE) {
@@ -1349,5 +1352,5 @@ void EnBb_Draw(Actor* thisx, GlobalContext* globalCtx) {
             }
         }
     }
-    CLOSE_DISPS(globalCtx->state.gfxCtx, "../z_en_bb.c", 2127);
+    CLOSE_DISPS(play->state.gfxCtx, "../z_en_bb.c", 2127);
 }

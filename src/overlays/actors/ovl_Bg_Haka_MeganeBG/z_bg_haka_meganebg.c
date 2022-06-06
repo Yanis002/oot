@@ -7,23 +7,21 @@
 #include "z_bg_haka_meganebg.h"
 #include "objects/object_haka_objects/object_haka_objects.h"
 
-#define FLAGS 0x00000000
+#define FLAGS 0
 
-#define THIS ((BgHakaMeganeBG*)thisx)
+void BgHakaMeganeBG_Init(Actor* thisx, PlayState* play);
+void BgHakaMeganeBG_Destroy(Actor* thisx, PlayState* play);
+void BgHakaMeganeBG_Update(Actor* thisx, PlayState* play);
+void BgHakaMeganeBG_Draw(Actor* thisx, PlayState* play);
 
-void BgHakaMeganeBG_Init(Actor* thisx, GlobalContext* globalCtx);
-void BgHakaMeganeBG_Destroy(Actor* thisx, GlobalContext* globalCtx);
-void BgHakaMeganeBG_Update(Actor* thisx, GlobalContext* globalCtx);
-void BgHakaMeganeBG_Draw(Actor* thisx, GlobalContext* globalCtx);
-
-void func_8087DFF8(BgHakaMeganeBG* this, GlobalContext* globalCtx);
-void func_8087E040(BgHakaMeganeBG* this, GlobalContext* globalCtx);
-void func_8087E10C(BgHakaMeganeBG* this, GlobalContext* globalCtx);
-void func_8087E1E0(BgHakaMeganeBG* this, GlobalContext* globalCtx);
-void func_8087E258(BgHakaMeganeBG* this, GlobalContext* globalCtx);
-void func_8087E288(BgHakaMeganeBG* this, GlobalContext* globalCtx);
-void func_8087E2D8(BgHakaMeganeBG* this, GlobalContext* globalCtx);
-void func_8087E34C(BgHakaMeganeBG* this, GlobalContext* globalCtx);
+void func_8087DFF8(BgHakaMeganeBG* this, PlayState* play);
+void func_8087E040(BgHakaMeganeBG* this, PlayState* play);
+void func_8087E10C(BgHakaMeganeBG* this, PlayState* play);
+void func_8087E1E0(BgHakaMeganeBG* this, PlayState* play);
+void func_8087E258(BgHakaMeganeBG* this, PlayState* play);
+void func_8087E288(BgHakaMeganeBG* this, PlayState* play);
+void func_8087E2D8(BgHakaMeganeBG* this, PlayState* play);
+void func_8087E34C(BgHakaMeganeBG* this, PlayState* play);
 
 const ActorInit Bg_Haka_MeganeBG_InitVars = {
     ACTOR_BG_HAKA_MEGANEBG,
@@ -55,9 +53,9 @@ static Gfx* D_8087E410[] = {
     object_haka_objects_DL_000040,
 };
 
-void BgHakaMeganeBG_Init(Actor* thisx, GlobalContext* globalCtx) {
+void BgHakaMeganeBG_Init(Actor* thisx, PlayState* play) {
     s32 pad;
-    BgHakaMeganeBG* this = THIS;
+    BgHakaMeganeBG* this = (BgHakaMeganeBG*)thisx;
     CollisionHeader* colHeader = NULL;
 
     Actor_ProcessInitChain(&this->dyna.actor, sInitChain);
@@ -66,7 +64,7 @@ void BgHakaMeganeBG_Init(Actor* thisx, GlobalContext* globalCtx) {
 
     if (thisx->params == 2) {
         DynaPolyActor_Init(&this->dyna, DPM_UNK3);
-        thisx->flags |= 0x10;
+        thisx->flags |= ACTOR_FLAG_4;
         CollisionHeader_GetVirtual(&object_haka_objects_Col_005334, &colHeader);
         this->actionFunc = func_8087E258;
     } else {
@@ -74,18 +72,18 @@ void BgHakaMeganeBG_Init(Actor* thisx, GlobalContext* globalCtx) {
 
         if (thisx->params == 0) {
             CollisionHeader_GetVirtual(&object_haka_objects_Col_009168, &colHeader);
-            thisx->flags |= 0x80;
+            thisx->flags |= ACTOR_FLAG_7;
             this->unk_16A = 20;
             this->actionFunc = func_8087DFF8;
         } else if (thisx->params == 3) {
             CollisionHeader_GetVirtual(&object_haka_objects_Col_000118, &colHeader);
             thisx->home.pos.y += 100.0f;
 
-            if (Flags_GetSwitch(globalCtx, this->unk_168)) {
+            if (Flags_GetSwitch(play, this->unk_168)) {
                 this->actionFunc = func_8087E34C;
                 thisx->world.pos.y = thisx->home.pos.y;
             } else {
-                thisx->flags |= 0x10;
+                thisx->flags |= ACTOR_FLAG_4;
                 this->actionFunc = func_8087E288;
             }
         } else {
@@ -97,16 +95,16 @@ void BgHakaMeganeBG_Init(Actor* thisx, GlobalContext* globalCtx) {
         }
     }
 
-    this->dyna.bgId = DynaPoly_SetBgActor(globalCtx, &globalCtx->colCtx.dyna, &this->dyna.actor, colHeader);
+    this->dyna.bgId = DynaPoly_SetBgActor(play, &play->colCtx.dyna, &this->dyna.actor, colHeader);
 }
 
-void BgHakaMeganeBG_Destroy(Actor* thisx, GlobalContext* globalCtx) {
-    BgHakaMeganeBG* this = THIS;
+void BgHakaMeganeBG_Destroy(Actor* thisx, PlayState* play) {
+    BgHakaMeganeBG* this = (BgHakaMeganeBG*)thisx;
 
-    DynaPoly_DeleteBgActor(globalCtx, &globalCtx->colCtx.dyna, this->dyna.bgId);
+    DynaPoly_DeleteBgActor(play, &play->colCtx.dyna, this->dyna.bgId);
 }
 
-void func_8087DFF8(BgHakaMeganeBG* this, GlobalContext* globalCtx) {
+void func_8087DFF8(BgHakaMeganeBG* this, PlayState* play) {
     if (this->unk_16A != 0) {
         this->unk_16A--;
     }
@@ -118,7 +116,7 @@ void func_8087DFF8(BgHakaMeganeBG* this, GlobalContext* globalCtx) {
     }
 }
 
-void func_8087E040(BgHakaMeganeBG* this, GlobalContext* globalCtx) {
+void func_8087E040(BgHakaMeganeBG* this, PlayState* play) {
     f32 xSub;
 
     if (this->unk_16A != 0) {
@@ -139,7 +137,7 @@ void func_8087E040(BgHakaMeganeBG* this, GlobalContext* globalCtx) {
     }
 }
 
-void func_8087E10C(BgHakaMeganeBG* this, GlobalContext* globalCtx) {
+void func_8087E10C(BgHakaMeganeBG* this, PlayState* play) {
     this->dyna.actor.velocity.y += 1.0f;
 
     if (this->dyna.actor.velocity.y > 20.0f) {
@@ -164,7 +162,7 @@ void func_8087E10C(BgHakaMeganeBG* this, GlobalContext* globalCtx) {
     }
 }
 
-void func_8087E1E0(BgHakaMeganeBG* this, GlobalContext* globalCtx) {
+void func_8087E1E0(BgHakaMeganeBG* this, PlayState* play) {
     Math_StepToF(&this->dyna.actor.world.pos.y, this->dyna.actor.home.pos.y, 16.0f / 3.0f);
     func_8002F974(&this->dyna.actor, NA_SE_EV_BRIDGE_CLOSE - SFX_FLAG);
 
@@ -178,19 +176,19 @@ void func_8087E1E0(BgHakaMeganeBG* this, GlobalContext* globalCtx) {
     }
 }
 
-void func_8087E258(BgHakaMeganeBG* this, GlobalContext* globalCtx) {
+void func_8087E258(BgHakaMeganeBG* this, PlayState* play) {
     this->dyna.actor.shape.rot.y += 0x180;
     func_8002F974(&this->dyna.actor, NA_SE_EV_ELEVATOR_MOVE - SFX_FLAG);
 }
 
-void func_8087E288(BgHakaMeganeBG* this, GlobalContext* globalCtx) {
-    if (Flags_GetSwitch(globalCtx, this->unk_168)) {
-        OnePointCutscene_Attention(globalCtx, &this->dyna.actor);
+void func_8087E288(BgHakaMeganeBG* this, PlayState* play) {
+    if (Flags_GetSwitch(play, this->unk_168)) {
+        OnePointCutscene_Attention(play, &this->dyna.actor);
         this->actionFunc = func_8087E2D8;
     }
 }
 
-void func_8087E2D8(BgHakaMeganeBG* this, GlobalContext* globalCtx) {
+void func_8087E2D8(BgHakaMeganeBG* this, PlayState* play) {
     Math_StepToF(&this->dyna.actor.speedXZ, 30.0f, 2.0f);
 
     if (Math_StepToF(&this->dyna.actor.world.pos.y, this->dyna.actor.home.pos.y, this->dyna.actor.speedXZ)) {
@@ -201,22 +199,22 @@ void func_8087E2D8(BgHakaMeganeBG* this, GlobalContext* globalCtx) {
     }
 }
 
-void func_8087E34C(BgHakaMeganeBG* this, GlobalContext* globalCtx) {
+void func_8087E34C(BgHakaMeganeBG* this, PlayState* play) {
 }
 
-void BgHakaMeganeBG_Update(Actor* thisx, GlobalContext* globalCtx) {
-    BgHakaMeganeBG* this = THIS;
+void BgHakaMeganeBG_Update(Actor* thisx, PlayState* play) {
+    BgHakaMeganeBG* this = (BgHakaMeganeBG*)thisx;
 
-    this->actionFunc(this, globalCtx);
+    this->actionFunc(this, play);
 }
 
-void BgHakaMeganeBG_Draw(Actor* thisx, GlobalContext* globalCtx) {
-    BgHakaMeganeBG* this = THIS;
+void BgHakaMeganeBG_Draw(Actor* thisx, PlayState* play) {
+    BgHakaMeganeBG* this = (BgHakaMeganeBG*)thisx;
     s16 params = this->dyna.actor.params;
 
     if (params == 0) {
-        Gfx_DrawDListXlu(globalCtx, object_haka_objects_DL_008EB0);
+        Gfx_DrawDListXlu(play, object_haka_objects_DL_008EB0);
     } else {
-        Gfx_DrawDListOpa(globalCtx, D_8087E410[params]);
+        Gfx_DrawDListOpa(play, D_8087E410[params]);
     }
 }

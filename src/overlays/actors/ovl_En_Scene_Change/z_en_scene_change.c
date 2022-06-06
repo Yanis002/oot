@@ -6,16 +6,14 @@
 
 #include "z_en_scene_change.h"
 
-#define FLAGS 0x00000000
+#define FLAGS 0
 
-#define THIS ((EnSceneChange*)thisx)
+void EnSceneChange_Init(Actor* thisx, PlayState* play);
+void EnSceneChange_Destroy(Actor* thisx, PlayState* play);
+void EnSceneChange_Update(Actor* thisx, PlayState* play);
+void EnSceneChange_Draw(Actor* thisx, PlayState* play);
 
-void EnSceneChange_Init(Actor* thisx, GlobalContext* globalCtx);
-void EnSceneChange_Destroy(Actor* thisx, GlobalContext* globalCtx);
-void EnSceneChange_Update(Actor* thisx, GlobalContext* globalCtx);
-void EnSceneChange_Draw(Actor* thisx, GlobalContext* globalCtx);
-
-void EnSceneChange_DoNothing(EnSceneChange* this, GlobalContext* globalCtx);
+void EnSceneChange_DoNothing(EnSceneChange* this, PlayState* play);
 
 const ActorInit En_Scene_Change_InitVars = {
     ACTOR_EN_SCENE_CHANGE,
@@ -33,38 +31,38 @@ void EnSceneChange_SetupAction(EnSceneChange* this, EnSceneChangeActionFunc acti
     this->actionFunc = actionFunc;
 }
 
-void EnSceneChange_Init(Actor* thisx, GlobalContext* globalCtx) {
-    EnSceneChange* this = THIS;
+void EnSceneChange_Init(Actor* thisx, PlayState* play) {
+    EnSceneChange* this = (EnSceneChange*)thisx;
 
     EnSceneChange_SetupAction(this, EnSceneChange_DoNothing);
 }
 
-void EnSceneChange_Destroy(Actor* thisx, GlobalContext* globalCtx) {
+void EnSceneChange_Destroy(Actor* thisx, PlayState* play) {
 }
 
-void EnSceneChange_DoNothing(EnSceneChange* this, GlobalContext* globalCtx) {
+void EnSceneChange_DoNothing(EnSceneChange* this, PlayState* play) {
 }
 
-void EnSceneChange_Update(Actor* thisx, GlobalContext* globalCtx) {
-    EnSceneChange* this = THIS;
+void EnSceneChange_Update(Actor* thisx, PlayState* play) {
+    EnSceneChange* this = (EnSceneChange*)thisx;
 
-    this->actionFunc(this, globalCtx);
+    this->actionFunc(this, play);
 }
 
-void EnSceneChange_Draw(Actor* thisx, GlobalContext* globalCtx) {
+void EnSceneChange_Draw(Actor* thisx, PlayState* play) {
     s32 pad[2];
     Gfx* displayList;
     s32 pad2[2];
     Gfx* displayListHead;
 
-    displayList = Graph_Alloc(globalCtx->state.gfxCtx, 0x3C0);
+    displayList = Graph_Alloc(play->state.gfxCtx, 0x3C0);
 
-    OPEN_DISPS(globalCtx->state.gfxCtx, "../z_en_scene_change.c", 290);
+    OPEN_DISPS(play->state.gfxCtx, "../z_en_scene_change.c", 290);
 
     displayListHead = displayList;
     gSPSegment(POLY_OPA_DISP++, 0x0C, displayListHead);
 
-    func_80093D18(globalCtx->state.gfxCtx);
+    Gfx_SetupDL_25Opa(play->state.gfxCtx);
 
-    CLOSE_DISPS(globalCtx->state.gfxCtx, "../z_en_scene_change.c", 386);
+    CLOSE_DISPS(play->state.gfxCtx, "../z_en_scene_change.c", 386);
 }

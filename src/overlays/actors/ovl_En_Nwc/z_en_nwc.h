@@ -7,8 +7,8 @@
 struct EnNwc;
 struct EnNwcChick;
 
-typedef void (*EnNwcUpdateFunc)(struct EnNwc*, GlobalContext*);
-typedef void (*EnNwcChickFunc)(struct EnNwcChick*, struct EnNwc*, GlobalContext*);
+typedef void (*EnNwcUpdateFunc)(struct EnNwc*, PlayState*);
+typedef void (*EnNwcChickFunc)(struct EnNwcChick*, struct EnNwc*, PlayState*);
 
 typedef struct EnNwcChick {
     /* 0x00 */ s8 type;
@@ -22,7 +22,7 @@ typedef struct EnNwcChick {
     /* 0x30 */ Vec3s rot;
     /* 0x36 */ u16 height;
     /* 0x38 */ CollisionPoly* floorPoly;
-    /* 0x44 */ char unk_3C[0x20]; 
+    /* 0x44 */ char unk_3C[0x20];
 } EnNwcChick; // size = 0x5C
 
 typedef struct EnNwc {

@@ -33,7 +33,7 @@ def ReadAllLines(fileName):
 
 def GetFiles(path, ext):
     files = []
-    
+
     for r, d, f in os.walk(path):
         for file in f:
             if file.endswith(ext):
@@ -58,6 +58,9 @@ def GetNonMatchingSize(path):
 
     return size
 
+def IsCFile(objfile):
+    srcfile = objfile.strip().replace("build/", "").replace(".o", ".c")
+    return os.path.isfile(srcfile)
 
 mapFile = ReadAllLines("build/z64.map")
 curSegment = None
@@ -82,7 +85,7 @@ for line in mapFile:
         size = int(lineSplit[2], 16)
         objFile = lineSplit[3]
 
-        if (section == ".text"):
+        if (section == ".text" and IsCFile(objFile)):
             if (objFile.startswith("build/src")):
                 src += size
 
@@ -116,11 +119,11 @@ ovlPct = 100 * ovl / ovlSize
 bytesPerHeartPiece = total // 80
 
 if args.format == 'csv':
-    version = 1
+    csv_version = 2
     git_object = git.Repo().head.object
     timestamp = str(git_object.committed_date)
     git_hash = git_object.hexsha
-    csv_list = [str(version), timestamp, git_hash, str(code), str(codeSize), str(boot), str(bootSize), str(ovl), str(ovlSize), str(src), str(nonMatchingASM), str(len(nonMatchingFunctions))]
+    csv_list = [str(csv_version), timestamp, git_hash, str(src), str(total), str(code), str(codeSize), str(boot), str(bootSize), str(ovl), str(ovlSize), str(nonMatchingASM), str(len(nonMatchingFunctions))]
     print(",".join(csv_list))
 elif args.format == 'shield-json':
     # https://shields.io/endpoint

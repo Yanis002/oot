@@ -7,14 +7,12 @@
 #include "z_bg_gnd_nisekabe.h"
 #include "objects/object_demo_kekkai/object_demo_kekkai.h"
 
-#define FLAGS 0x00000010
+#define FLAGS ACTOR_FLAG_4
 
-#define THIS ((BgGndNisekabe*)thisx)
-
-void BgGndNisekabe_Init(Actor* thisx, GlobalContext* globalCtx);
-void BgGndNisekabe_Destroy(Actor* thisx, GlobalContext* globalCtx);
-void BgGndNisekabe_Update(Actor* thisx, GlobalContext* globalCtx);
-void BgGndNisekabe_Draw(Actor* thisx, GlobalContext* globalCtx);
+void BgGndNisekabe_Init(Actor* thisx, PlayState* play);
+void BgGndNisekabe_Destroy(Actor* thisx, PlayState* play);
+void BgGndNisekabe_Update(Actor* thisx, PlayState* play);
+void BgGndNisekabe_Draw(Actor* thisx, PlayState* play);
 
 const ActorInit Bg_Gnd_Nisekabe_InitVars = {
     ACTOR_BG_GND_NISEKABE,
@@ -28,38 +26,38 @@ const ActorInit Bg_Gnd_Nisekabe_InitVars = {
     (ActorFunc)BgGndNisekabe_Draw,
 };
 
-void BgGndNisekabe_Init(Actor* thisx, GlobalContext* globalCtx) {
-    BgGndNisekabe* this = THIS;
+void BgGndNisekabe_Init(Actor* thisx, PlayState* play) {
+    BgGndNisekabe* this = (BgGndNisekabe*)thisx;
 
     Actor_SetScale(&this->actor, 0.1);
     this->actor.uncullZoneForward = 3000.0;
 }
 
-void BgGndNisekabe_Destroy(Actor* thisx, GlobalContext* globalCtx) {
+void BgGndNisekabe_Destroy(Actor* thisx, PlayState* play) {
 }
 
-void BgGndNisekabe_Update(Actor* thisx, GlobalContext* globalCtx) {
-    BgGndNisekabe* this = THIS;
+void BgGndNisekabe_Update(Actor* thisx, PlayState* play) {
+    BgGndNisekabe* this = (BgGndNisekabe*)thisx;
 
-    if (globalCtx->actorCtx.unk_03 != 0) {
-        this->actor.flags |= 0x80;
+    if (play->actorCtx.lensActive) {
+        this->actor.flags |= ACTOR_FLAG_7;
     } else {
-        this->actor.flags &= ~0x80;
+        this->actor.flags &= ~ACTOR_FLAG_7;
     }
 }
 
-void BgGndNisekabe_Draw(Actor* thisx, GlobalContext* globalCtx) {
+void BgGndNisekabe_Draw(Actor* thisx, PlayState* play) {
     static Gfx* dLists[] = {
         gLightTrialFakeWallDL,
         gGanonsCastleUnusedFakeWallDL,
         gGanonsCastleScrubsFakeWallDL,
     };
-    BgGndNisekabe* this = THIS;
+    BgGndNisekabe* this = (BgGndNisekabe*)thisx;
     u32 index = this->actor.params & 0xFF;
 
-    if ((this->actor.flags & 0x80) == 0x80) {
-        Gfx_DrawDListXlu(globalCtx, dLists[index]);
+    if (CHECK_FLAG_ALL(this->actor.flags, ACTOR_FLAG_7)) {
+        Gfx_DrawDListXlu(play, dLists[index]);
     } else {
-        Gfx_DrawDListOpa(globalCtx, dLists[index]);
+        Gfx_DrawDListOpa(play, dLists[index]);
     }
 }

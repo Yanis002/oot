@@ -6,6 +6,7 @@
 #include <stdexcept>
 
 #include "Utils/StringHelper.h"
+#include "WarningHandler.h"
 
 /* ImageBackend */
 
@@ -20,19 +21,28 @@ void ImageBackend::ReadPng(const char* filename)
 
 	FILE* fp = fopen(filename, "rb");
 	if (fp == nullptr)
-		throw std::runtime_error(StringHelper::Sprintf(
-			"ImageBackend::ReadPng: Error.\n\t Couldn't open file '%s'.", filename));
+	{
+		std::string errorHeader = StringHelper::Sprintf("could not open file '%s'", filename);
+		HANDLE_ERROR(WarningType::InvalidPNG, errorHeader, "");
+	}
 
 	png_structp png = png_create_read_struct(PNG_LIBPNG_VER_STRING, nullptr, nullptr, nullptr);
-	if (!png)
-		throw std::runtime_error("ImageBackend::ReadPng: Error.\n\t Couldn't create png struct.");
+	if (png == nullptr)
+	{
+		HANDLE_ERROR(WarningType::InvalidPNG, "could not create png struct", "");
+	}
 
 	png_infop info = png_create_info_struct(png);
-	if (!info)
-		throw std::runtime_error("ImageBackend::ReadPng: Error.\n\t Couldn't create png info.");
+	if (info == nullptr)
+	{
+		HANDLE_ERROR(WarningType::InvalidPNG, "could not create png info", "");
+	}
 
 	if (setjmp(png_jmpbuf(png)))
-		throw std::runtime_error("ImageBackend::ReadPng: Error.\n\t setjmp(png_jmpbuf(png)).");
+	{
+		// TODO: better warning explanation
+		HANDLE_ERROR(WarningType::InvalidPNG, "setjmp(png_jmpbuf(png))", "");
+	}
 
 	png_init_io(png, fp);
 
@@ -145,20 +155,30 @@ void ImageBackend::WritePng(const char* filename)
 	assert(hasImageData);
 
 	FILE* fp = fopen(filename, "wb");
-	if (!fp)
-		throw std::runtime_error(StringHelper::Sprintf(
-			"ImageBackend::WritePng: Error.\n\t Couldn't open file '%s' in write mode.", filename));
+	if (fp == nullptr)
+	{
+		std::string errorHeader =
+			StringHelper::Sprintf("could not open file '%s' in write mode", filename);
+		HANDLE_ERROR(WarningType::InvalidPNG, errorHeader, "");
+	}
 
 	png_structp png = png_create_write_struct(PNG_LIBPNG_VER_STRING, nullptr, nullptr, nullptr);
-	if (!png)
-		throw std::runtime_error("ImageBackend::WritePng: Error.\n\t Couldn't create png struct.");
+	if (png == nullptr)
+	{
+		HANDLE_ERROR(WarningType::InvalidPNG, "could not create png struct", "");
+	}
 
 	png_infop info = png_create_info_struct(png);
-	if (!info)
-		throw std::runtime_error("ImageBackend::WritePng: Error.\n\t Couldn't create png info.");
+	if (info == nullptr)
+	{
+		HANDLE_ERROR(WarningType::InvalidPNG, "could not create png info", "");
+	}
 
 	if (setjmp(png_jmpbuf(png)))
-		throw std::runtime_error("ImageBackend::WritePng: Error.\n\t setjmp(png_jmpbuf(png)).");
+	{
+		// TODO: better warning description
+		HANDLE_ERROR(WarningType::InvalidPNG, "setjmp(png_jmpbuf(png))", "");
+	}
 
 	png_init_io(png, fp);
 
@@ -378,7 +398,7 @@ void ImageBackend::SetPaletteIndex(size_t index, uint8_t nR, uint8_t nG, uint8_t
 	alphaPalette[index] = nA;
 }
 
-void ImageBackend::SetPalette(const ImageBackend& pal)
+void ImageBackend::SetPalette(const ImageBackend& pal, uint32_t offset)
 {
 	assert(isColorIndexed);
 	size_t bytePerPixel = pal.GetBytesPerPixel();
@@ -402,7 +422,7 @@ void ImageBackend::SetPalette(const ImageBackend& pal)
 			uint8_t g = pal.pixelMatrix[y][x * bytePerPixel + 1];
 			uint8_t b = pal.pixelMatrix[y][x * bytePerPixel + 2];
 			uint8_t a = pal.pixelMatrix[y][x * bytePerPixel + 3];
-			SetPaletteIndex(index, r, g, b, a);
+			SetPaletteIndex(index + offset, r, g, b, a);
 		}
 	}
 }
@@ -441,7 +461,7 @@ double ImageBackend::GetBytesPerPixel() const
 		return 1 * bitDepth / 8;
 
 	default:
-		throw std::invalid_argument("ImageBackend::GetBytesPerPixel():\n\t Invalid color type.");
+		HANDLE_ERROR(WarningType::InvalidPNG, "invalid color type", "");
 	}
 }
 

@@ -114,13 +114,13 @@ def bootstrap(ovl_path, ovl_text):
         ",\n" + indent + init_func_name + ",\n};\n*/"
 
     decs = "u32 " + init_func_name + \
-        "(GlobalContext* globalCtx, u32 index, EffectSs* this, void* initParamsx);\n"
+        "(PlayState* play, u32 index, EffectSs* this, void* initParamsx);\n"
     decs += "void " + \
         init_func_name[:-4] + \
-            "Draw(GlobalContext* globalCtx, u32 index, EffectSs* this);\n"
+            "Draw(PlayState* play, u32 index, EffectSs* this);\n"
     decs += "void " + \
         init_func_name[:-4] + \
-            "Update(GlobalContext* globalCtx, u32 index, EffectSs* this);\n"
+            "Update(PlayState* play, u32 index, EffectSs* this);\n"
 
     insert_pos = ovl_text.find("global.h>\n")
 
@@ -132,10 +132,10 @@ def get_header(header_path):
     ovl_name = path_split[-2]
     short_name = ovl_name[14:]
     init_vars_name = "".join(ovl_name[4:].split("_")) + "InitParams"
-    
+
     ifndef = "#ifndef _Z_EFF_SS_" + short_name.upper() + "_H_\n" + \
              "#define _Z_EFF_SS_" + short_name.upper() + "_H_\n\n"
-    
+
     includes = "#include <ultra64.h>\n#include <global.h>\n\n"
 
     struct = "typedef struct {\n" + \

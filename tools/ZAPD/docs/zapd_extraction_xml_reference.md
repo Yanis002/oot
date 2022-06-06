@@ -9,6 +9,7 @@ This document aims to be a small reference of how to create a compatible xml fil
   - [Basic XML](#basic-xml)
   - [Resources types](#resources-types)
     - [File](#file)
+    - [ExternalFile](#externalfile)
     - [Texture](#texture)
     - [Background](#background)
     - [Blob](#blob)
@@ -33,6 +34,7 @@ This document aims to be a small reference of how to create a compatible xml fil
     - [Array](#array)
     - [Path](#path)
     - [PlayerAnimationData](#playeranimationdata)
+    - [Pointer](#pointer)
 
 ## Basic XML
 
@@ -153,6 +155,9 @@ u64 gCraterSmokeConeTex[] = {
   - `Width`: Required. Width in pixels of the image.
   - `Height`: Required. Height in pixels of the image.
   - `TlutOffset`: Optional. Specifies the tlut's offset used by this texture. This attribute is only valid if `Format` is either `ci4` or `ci8`, otherwise an exception would be thrown.
+  - `ExternalTlut`: Optional. Specifies that the texture's tlut is in a different file. Takes the filename of the file that contains the tlut.
+  - `ExternalTlutOffset`: Optional. Specifies the offset in the `ExternalTlut` of the tlut for the given texture.
+  - `SplitTlut`: Optional. Specifies that the given texture should take from the upper half of the tlut. Takes a bool, i.e. one of `true`, `false`, `1`, `0`.
 
 The following is a list of the texture formats the Nintendo 64 supports, with their gfxdis names and ZAPD format names.
 
@@ -380,6 +385,13 @@ Useful only for the unused `object_human`'s animation data.
   - `Name`: Required. Suxffixed by `Skel`.
   - `Type`: Required. Valid values: `Normal`, `Flex` and `Curve`.
   - `LimbType`: Required. Valid values: `Standard`, `LOD`, `Skin`, `Curve` and `Legacy`.
+  - `EnumName`: Optional. The name of `typedef`'d limb enum.
+  - `LimbNone`: Optional. The name of the limb with index zero in the limb enum.
+  - `LimbMax`: Optional. The name of the max limb index in the limb enum.
+
+ZAPD is able to generate a limb enum by itself only if all the required data is provided. Providing some but not all the required data would trigger an error and the execution will halt.
+
+The required data is providing the `EnumName`, `LimbNone` and `LimbMax` attributes in the `Skeleton` or `LimbTable` node and the `EnumName` attribute in every `Limb` of this skeleton.
 
 ※ There are no restrictions in the `Type` and `LimbType` attributes besides the valid values, so any skeleton type can be combined with any limb type.
 
@@ -398,6 +410,11 @@ Useful only for the unused `object_human`'s animation data.
   - `Name`: Required. Suxffixed by `Skel`.
   - `LimbType`: Required. Valid values: `Standard`, `LOD`, `Skin`, `Curve` and `Legacy`.
   - `Count`: Required. Amount of limbs. Integer.
+  - `EnumName`: Optional. The name of `typedef`'d limb enum.
+  - `LimbNone`: Optional. The name of the limb with index zero in the limb enum.
+  - `LimbMax`: Optional. The name of the max limb index in the limb enum.
+
+See [Skeleton](#skeleton) for info on the limb enum generation.
 
 -------------------------
 
@@ -413,6 +430,9 @@ Useful only for the unused `object_human`'s animation data.
 
   - `Name`: Required. Suxffixed by `Limb`.
   - `LimbType`: Required. Valid values: `Standard`, `LOD`, `Skin`, `Curve` and `Legacy`.
+  - `EnumName`: Optional. The name used for this limb in the limbs enum. It must be either present in every limb or in none.
+
+See [Skeleton](#skeleton) for info on the limb enum generation.
 
 -------------------------
 
@@ -589,7 +609,7 @@ Vec3s D_04002040[24] = {
 
 The `Array` element is special, because it needs an inner element to work. It will declare an array of its inner element.
 
-Currently, only [`Scalar`](#scalar), [`Vector`](#vector) and [`Vtx`](#vtx) support being wrapped in an array.
+Currently, only [`Pointer`](#pointer), [`Scalar`](#scalar), [`Vector`](#vector) and [`Vtx`](#vtx) support being wrapped in an array.
 
 - Example:
 
@@ -635,5 +655,26 @@ Allows the extraction of the specific data of the player animations which are fo
 
   - `Name`: Required. Suxffixed by `AnimData`.
   - `FrameCount`: Required. The length of the animation in frames. It must be a positive integer.
+
+-------------------------
+
+### Pointer
+
+Allows the extraction of a variable that contains a pointer
+
+- Example:
+
+```xml
+<Array Name="object_hanareyama_obj_DLArray_004638" Count="54" Offset="0x4638">
+    <Pointer Type="Gfx"/>
+</Array>
+```
+
+- Attributes:
+
+  - `Name`: Required.
+  - `Type`: Required. The type of the extracted pointer.
+
+※ Can be wrapped in an [`Array`](#array) tag.
 
 -------------------------

@@ -7,9 +7,7 @@
 #include "z_en_geldb.h"
 #include "objects/object_geldb/object_geldb.h"
 
-#define FLAGS 0x00000015
-
-#define THIS ((EnGeldB*)thisx)
+#define FLAGS (ACTOR_FLAG_0 | ACTOR_FLAG_2 | ACTOR_FLAG_4)
 
 typedef enum {
     /*  0 */ GELDB_WAIT,
@@ -31,45 +29,45 @@ typedef enum {
     /* 16 */ GELDB_SPIN_DODGE
 } EnGeldBAction;
 
-void EnGeldB_Init(Actor* thisx, GlobalContext* globalCtx);
-void EnGeldB_Destroy(Actor* thisx, GlobalContext* globalCtx);
-void EnGeldB_Update(Actor* thisx, GlobalContext* globalCtx);
-void EnGeldB_Draw(Actor* thisx, GlobalContext* globalCtx);
+void EnGeldB_Init(Actor* thisx, PlayState* play);
+void EnGeldB_Destroy(Actor* thisx, PlayState* play);
+void EnGeldB_Update(Actor* thisx, PlayState* play);
+void EnGeldB_Draw(Actor* thisx, PlayState* play);
 
-s32 EnGeldB_DodgeRanged(GlobalContext* globalCtx, EnGeldB* this);
+s32 EnGeldB_DodgeRanged(PlayState* play, EnGeldB* this);
 
 void EnGeldB_SetupWait(EnGeldB* this);
 void EnGeldB_SetupReady(EnGeldB* this);
-void EnGeldB_SetupAdvance(EnGeldB* this, GlobalContext* globalCtx);
+void EnGeldB_SetupAdvance(EnGeldB* this, PlayState* play);
 void EnGeldB_SetupPivot(EnGeldB* this);
 void EnGeldB_SetupRollForward(EnGeldB* this);
 void EnGeldB_SetupCircle(EnGeldB* this);
-void EnGeldB_SetupSpinDodge(EnGeldB* this, GlobalContext* globalCtx);
+void EnGeldB_SetupSpinDodge(EnGeldB* this, PlayState* play);
 void EnGeldB_SetupSlash(EnGeldB* this);
 void EnGeldB_SetupSpinAttack(EnGeldB* this);
 void EnGeldB_SetupRollBack(EnGeldB* this);
 void EnGeldB_SetupJump(EnGeldB* this);
 void EnGeldB_SetupBlock(EnGeldB* this);
-void EnGeldB_SetupSidestep(EnGeldB* this, GlobalContext* globalCtx);
+void EnGeldB_SetupSidestep(EnGeldB* this, PlayState* play);
 void EnGeldB_SetupDefeated(EnGeldB* this);
 
-void EnGeldB_Wait(EnGeldB* this, GlobalContext* globalCtx);
-void EnGeldB_Flee(EnGeldB* this, GlobalContext* globalCtx);
-void EnGeldB_Ready(EnGeldB* this, GlobalContext* globalCtx);
-void EnGeldB_Advance(EnGeldB* this, GlobalContext* globalCtx);
-void EnGeldB_RollForward(EnGeldB* this, GlobalContext* globalCtx);
-void EnGeldB_Pivot(EnGeldB* this, GlobalContext* globalCtx);
-void EnGeldB_Circle(EnGeldB* this, GlobalContext* globalCtx);
-void EnGeldB_SpinDodge(EnGeldB* this, GlobalContext* globalCtx);
-void EnGeldB_Slash(EnGeldB* this, GlobalContext* globalCtx);
-void EnGeldB_SpinAttack(EnGeldB* this, GlobalContext* globalCtx);
-void EnGeldB_RollBack(EnGeldB* this, GlobalContext* globalCtx);
-void EnGeldB_Stunned(EnGeldB* this, GlobalContext* globalCtx);
-void EnGeldB_Damaged(EnGeldB* this, GlobalContext* globalCtx);
-void EnGeldB_Jump(EnGeldB* this, GlobalContext* globalCtx);
-void EnGeldB_Block(EnGeldB* this, GlobalContext* globalCtx);
-void EnGeldB_Sidestep(EnGeldB* this, GlobalContext* globalCtx);
-void EnGeldB_Defeated(EnGeldB* this, GlobalContext* globalCtx);
+void EnGeldB_Wait(EnGeldB* this, PlayState* play);
+void EnGeldB_Flee(EnGeldB* this, PlayState* play);
+void EnGeldB_Ready(EnGeldB* this, PlayState* play);
+void EnGeldB_Advance(EnGeldB* this, PlayState* play);
+void EnGeldB_RollForward(EnGeldB* this, PlayState* play);
+void EnGeldB_Pivot(EnGeldB* this, PlayState* play);
+void EnGeldB_Circle(EnGeldB* this, PlayState* play);
+void EnGeldB_SpinDodge(EnGeldB* this, PlayState* play);
+void EnGeldB_Slash(EnGeldB* this, PlayState* play);
+void EnGeldB_SpinAttack(EnGeldB* this, PlayState* play);
+void EnGeldB_RollBack(EnGeldB* this, PlayState* play);
+void EnGeldB_Stunned(EnGeldB* this, PlayState* play);
+void EnGeldB_Damaged(EnGeldB* this, PlayState* play);
+void EnGeldB_Jump(EnGeldB* this, PlayState* play);
+void EnGeldB_Block(EnGeldB* this, PlayState* play);
+void EnGeldB_Sidestep(EnGeldB* this, PlayState* play);
+void EnGeldB_Defeated(EnGeldB* this, PlayState* play);
 
 const ActorInit En_GeldB_InitVars = {
     ACTOR_EN_GELDB,
@@ -217,10 +215,10 @@ void EnGeldB_SetupAction(EnGeldB* this, EnGeldBActionFunc actionFunc) {
     this->actionFunc = actionFunc;
 }
 
-void EnGeldB_Init(Actor* thisx, GlobalContext* globalCtx) {
+void EnGeldB_Init(Actor* thisx, PlayState* play) {
     s32 pad;
     EffectBlureInit1 blureInit;
-    EnGeldB* this = THIS;
+    EnGeldB* this = (EnGeldB*)thisx;
 
     Actor_ProcessInitChain(thisx, sInitChain);
     thisx->colChkInfo.damageTable = &sDamageTable;
@@ -229,19 +227,19 @@ void EnGeldB_Init(Actor* thisx, GlobalContext* globalCtx) {
     thisx->colChkInfo.health = 20;
     thisx->colChkInfo.cylRadius = 50;
     thisx->colChkInfo.cylHeight = 100;
-    thisx->naviEnemyId = 0x54;
+    thisx->naviEnemyId = NAVI_ENEMY_GERUDO_THIEF;
     this->keyFlag = thisx->params & 0xFF00;
     thisx->params &= 0xFF;
     this->blinkState = 0;
     this->unkFloat = 10.0f;
-    SkelAnime_InitFlex(globalCtx, &this->skelAnime, &gGerudoRedSkel, &gGerudoRedNeutralAnim, this->jointTable,
+    SkelAnime_InitFlex(play, &this->skelAnime, &gGerudoRedSkel, &gGerudoRedNeutralAnim, this->jointTable,
                        this->morphTable, GELDB_LIMB_MAX);
-    Collider_InitCylinder(globalCtx, &this->bodyCollider);
-    Collider_SetCylinder(globalCtx, &this->bodyCollider, thisx, &sBodyCylInit);
-    Collider_InitTris(globalCtx, &this->blockCollider);
-    Collider_SetTris(globalCtx, &this->blockCollider, thisx, &sBlockTrisInit, this->blockElements);
-    Collider_InitQuad(globalCtx, &this->swordCollider);
-    Collider_SetQuad(globalCtx, &this->swordCollider, thisx, &sSwordQuadInit);
+    Collider_InitCylinder(play, &this->bodyCollider);
+    Collider_SetCylinder(play, &this->bodyCollider, thisx, &sBodyCylInit);
+    Collider_InitTris(play, &this->blockCollider);
+    Collider_SetTris(play, &this->blockCollider, thisx, &sBlockTrisInit, this->blockElements);
+    Collider_InitQuad(play, &this->swordCollider);
+    Collider_SetQuad(play, &this->swordCollider, thisx, &sSwordQuadInit);
     blureInit.p1StartColor[0] = blureInit.p1StartColor[1] = blureInit.p1StartColor[2] = blureInit.p1StartColor[3] =
         blureInit.p2StartColor[0] = blureInit.p2StartColor[1] = blureInit.p2StartColor[2] = blureInit.p1EndColor[0] =
             blureInit.p1EndColor[1] = blureInit.p1EndColor[2] = blureInit.p2EndColor[0] = blureInit.p2EndColor[1] =
@@ -252,27 +250,27 @@ void EnGeldB_Init(Actor* thisx, GlobalContext* globalCtx) {
     blureInit.unkFlag = 0;
     blureInit.calcMode = 2;
 
-    Effect_Add(globalCtx, &this->blureIndex, EFFECT_BLURE1, 0, 0, &blureInit);
+    Effect_Add(play, &this->blureIndex, EFFECT_BLURE1, 0, 0, &blureInit);
     Actor_SetScale(thisx, 0.012499999f);
     EnGeldB_SetupWait(this);
-    if ((this->keyFlag != 0) && Flags_GetCollectible(globalCtx, this->keyFlag >> 8)) {
+    if ((this->keyFlag != 0) && Flags_GetCollectible(play, this->keyFlag >> 8)) {
         Actor_Kill(thisx);
     }
 }
 
-void EnGeldB_Destroy(Actor* thisx, GlobalContext* globalCtx) {
+void EnGeldB_Destroy(Actor* thisx, PlayState* play) {
     s32 pad;
-    EnGeldB* this = THIS;
+    EnGeldB* this = (EnGeldB*)thisx;
 
     func_800F5B58();
-    Effect_Delete(globalCtx, this->blureIndex);
-    Collider_DestroyTris(globalCtx, &this->blockCollider);
-    Collider_DestroyCylinder(globalCtx, &this->bodyCollider);
-    Collider_DestroyQuad(globalCtx, &this->swordCollider);
+    Effect_Delete(play, this->blureIndex);
+    Collider_DestroyTris(play, &this->blockCollider);
+    Collider_DestroyCylinder(play, &this->bodyCollider);
+    Collider_DestroyQuad(play, &this->swordCollider);
 }
 
-s32 EnGeldB_ReactToPlayer(GlobalContext* globalCtx, EnGeldB* this, s16 arg2) {
-    Player* player = GET_PLAYER(globalCtx);
+s32 EnGeldB_ReactToPlayer(PlayState* play, EnGeldB* this, s16 arg2) {
+    Player* player = GET_PLAYER(play);
     Actor* thisx = &this->actor;
     s16 angleToWall;
     s16 angleToLink;
@@ -283,39 +281,40 @@ s32 EnGeldB_ReactToPlayer(GlobalContext* globalCtx, EnGeldB* this, s16 arg2) {
     angleToLink = thisx->yawTowardsPlayer - thisx->shape.rot.y;
     angleToLink = ABS(angleToLink);
 
-    if (func_800354B4(globalCtx, thisx, 100.0f, 0x2710, 0x3E80, thisx->shape.rot.y)) {
-        if (player->swordAnimation == 0x11) {
-            EnGeldB_SetupSpinDodge(this, globalCtx);
+    if (func_800354B4(play, thisx, 100.0f, 0x2710, 0x3E80, thisx->shape.rot.y)) {
+        if (player->meleeWeaponAnimation == PLAYER_MWA_JUMPSLASH_START) {
+            EnGeldB_SetupSpinDodge(this, play);
             return true;
-        } else if (globalCtx->gameplayFrames & 1) {
+        } else if (play->gameplayFrames & 1) {
             EnGeldB_SetupBlock(this);
             return true;
         }
     }
-    if (func_800354B4(globalCtx, thisx, 100.0f, 0x5DC0, 0x2AA8, thisx->shape.rot.y)) {
+    if (func_800354B4(play, thisx, 100.0f, 0x5DC0, 0x2AA8, thisx->shape.rot.y)) {
         thisx->shape.rot.y = thisx->world.rot.y = thisx->yawTowardsPlayer;
-        if ((thisx->bgCheckFlags & 8) && (ABS(angleToWall) < 0x2EE0) && (thisx->xzDistToPlayer < 90.0f)) {
+        if ((thisx->bgCheckFlags & BGCHECKFLAG_WALL) && (ABS(angleToWall) < 0x2EE0) &&
+            (thisx->xzDistToPlayer < 90.0f)) {
             EnGeldB_SetupJump(this);
             return true;
-        } else if (player->swordAnimation == 0x11) {
-            EnGeldB_SetupSpinDodge(this, globalCtx);
+        } else if (player->meleeWeaponAnimation == PLAYER_MWA_JUMPSLASH_START) {
+            EnGeldB_SetupSpinDodge(this, play);
             return true;
-        } else if ((thisx->xzDistToPlayer < 90.0f) && (globalCtx->gameplayFrames & 1)) {
+        } else if ((thisx->xzDistToPlayer < 90.0f) && (play->gameplayFrames & 1)) {
             EnGeldB_SetupBlock(this);
             return true;
         } else {
             EnGeldB_SetupRollBack(this);
             return true;
         }
-    } else if ((bomb = Actor_FindNearby(globalCtx, thisx, -1, ACTORCAT_EXPLOSIVE, 80.0f)) != NULL) {
+    } else if ((bomb = Actor_FindNearby(play, thisx, -1, ACTORCAT_EXPLOSIVE, 80.0f)) != NULL) {
         thisx->shape.rot.y = thisx->world.rot.y = thisx->yawTowardsPlayer;
-        if (((thisx->bgCheckFlags & 8) && (angleToWall < 0x2EE0)) || (bomb->id == ACTOR_EN_BOM_CHU)) {
+        if (((thisx->bgCheckFlags & BGCHECKFLAG_WALL) && (angleToWall < 0x2EE0)) || (bomb->id == ACTOR_EN_BOM_CHU)) {
             if ((bomb->id == ACTOR_EN_BOM_CHU) && (Actor_WorldDistXYZToActor(thisx, bomb) < 80.0f) &&
                 ((s16)(thisx->shape.rot.y - (bomb->world.rot.y - 0x8000)) < 0x3E80)) {
                 EnGeldB_SetupJump(this);
                 return true;
             } else {
-                EnGeldB_SetupSidestep(this, globalCtx);
+                EnGeldB_SetupSidestep(this, play);
                 return true;
             }
         } else {
@@ -324,13 +323,13 @@ s32 EnGeldB_ReactToPlayer(GlobalContext* globalCtx, EnGeldB* this, s16 arg2) {
         }
     } else if (arg2) {
         if (angleToLink >= 0x1B58) {
-            EnGeldB_SetupSidestep(this, globalCtx);
+            EnGeldB_SetupSidestep(this, play);
             return true;
         } else {
             s16 angleToFacingLink = player->actor.shape.rot.y - thisx->shape.rot.y;
 
-            if ((thisx->xzDistToPlayer <= 45.0f) && !Actor_OtherIsTargeted(globalCtx, thisx) &&
-                ((globalCtx->gameplayFrames & 7) || (ABS(angleToFacingLink) < 0x38E0))) {
+            if ((thisx->xzDistToPlayer <= 45.0f) && !Actor_OtherIsTargeted(play, thisx) &&
+                ((play->gameplayFrames & 7) || (ABS(angleToFacingLink) < 0x38E0))) {
                 EnGeldB_SetupSlash(this);
                 return true;
             } else {
@@ -348,15 +347,14 @@ void EnGeldB_SetupWait(EnGeldB* this) {
     this->timer = 10;
     this->invisible = true;
     this->action = GELDB_WAIT;
-    this->actor.bgCheckFlags &= ~3;
+    this->actor.bgCheckFlags &= ~(BGCHECKFLAG_GROUND | BGCHECKFLAG_GROUND_TOUCH);
     this->actor.gravity = -2.0f;
-    this->actor.flags &= ~1;
+    this->actor.flags &= ~ACTOR_FLAG_0;
     EnGeldB_SetupAction(this, EnGeldB_Wait);
 }
 
-void EnGeldB_Wait(EnGeldB* this, GlobalContext* globalCtx) {
-    if ((this->invisible && !Flags_GetSwitch(globalCtx, this->actor.home.rot.z)) ||
-        this->actor.xzDistToPlayer > 300.0f) {
+void EnGeldB_Wait(EnGeldB* this, PlayState* play) {
+    if ((this->invisible && !Flags_GetSwitch(play, this->actor.home.rot.z)) || this->actor.xzDistToPlayer > 300.0f) {
         this->actor.shape.rot.y = this->actor.world.rot.y = this->actor.yawTowardsPlayer;
         this->actor.world.pos.y = this->actor.floorHeight + 120.0f;
     } else {
@@ -364,16 +362,16 @@ void EnGeldB_Wait(EnGeldB* this, GlobalContext* globalCtx) {
         this->actor.shape.shadowScale = 90.0f;
         func_800F5ACC(NA_BGM_MINI_BOSS);
     }
-    if (this->actor.bgCheckFlags & 2) {
+    if (this->actor.bgCheckFlags & BGCHECKFLAG_GROUND_TOUCH) {
         Audio_PlayActorSound2(&this->actor, NA_SE_EN_RIZA_DOWN);
         this->skelAnime.playSpeed = 1.0f;
         this->actor.world.pos.y = this->actor.floorHeight;
-        this->actor.flags |= 1;
+        this->actor.flags |= ACTOR_FLAG_0;
         this->actor.focus.pos = this->actor.world.pos;
-        this->actor.bgCheckFlags &= ~2;
+        this->actor.bgCheckFlags &= ~BGCHECKFLAG_GROUND_TOUCH;
         this->actor.velocity.y = 0.0f;
-        Actor_SpawnFloorDustRing(globalCtx, &this->actor, &this->leftFootPos, 3.0f, 2, 2.0f, 0, 0, 0);
-        Actor_SpawnFloorDustRing(globalCtx, &this->actor, &this->rightFootPos, 3.0f, 2, 2.0f, 0, 0, 0);
+        Actor_SpawnFloorDustRing(play, &this->actor, &this->leftFootPos, 3.0f, 2, 2.0f, 0, 0, false);
+        Actor_SpawnFloorDustRing(play, &this->actor, &this->rightFootPos, 3.0f, 2, 2.0f, 0, 0, false);
     }
     if (SkelAnime_Update(&this->skelAnime)) {
         EnGeldB_SetupReady(this);
@@ -391,14 +389,14 @@ void EnGeldB_SetupFlee(EnGeldB* this) {
     EnGeldB_SetupAction(this, EnGeldB_Flee);
 }
 
-void EnGeldB_Flee(EnGeldB* this, GlobalContext* globalCtx) {
+void EnGeldB_Flee(EnGeldB* this, PlayState* play) {
     if (this->skelAnime.curFrame == 10.0f) {
         Audio_PlayActorSound2(&this->actor, NA_SE_EN_STAL_JUMP);
     }
     if (this->skelAnime.curFrame == 2.0f) {
         this->actor.gravity = 0.0f;
-        Actor_SpawnFloorDustRing(globalCtx, &this->actor, &this->leftFootPos, 3.0f, 2, 2.0f, 0, 0, 0);
-        Actor_SpawnFloorDustRing(globalCtx, &this->actor, &this->rightFootPos, 3.0f, 2, 2.0f, 0, 0, 0);
+        Actor_SpawnFloorDustRing(play, &this->actor, &this->leftFootPos, 3.0f, 2, 2.0f, 0, 0, false);
+        Actor_SpawnFloorDustRing(play, &this->actor, &this->rightFootPos, 3.0f, 2, 2.0f, 0, 0, false);
     }
     if (SkelAnime_Update(&this->skelAnime)) {
         Math_SmoothStepToF(&this->actor.world.pos.y, this->actor.floorHeight + 300.0f, 1.0f, 20.5f, 0.0f);
@@ -418,8 +416,8 @@ void EnGeldB_SetupReady(EnGeldB* this) {
     EnGeldB_SetupAction(this, EnGeldB_Ready);
 }
 
-void EnGeldB_Ready(EnGeldB* this, GlobalContext* globalCtx) {
-    Player* player = GET_PLAYER(globalCtx);
+void EnGeldB_Ready(EnGeldB* this, PlayState* play) {
+    Player* player = GET_PLAYER(play);
     s32 pad;
     s16 angleToLink;
 
@@ -433,7 +431,7 @@ void EnGeldB_Ready(EnGeldB* this, GlobalContext* globalCtx) {
         this->lookTimer = 0;
     }
     angleToLink = this->actor.yawTowardsPlayer - this->actor.shape.rot.y;
-    if (!EnGeldB_DodgeRanged(globalCtx, this)) {
+    if (!EnGeldB_DodgeRanged(play, this)) {
         if (this->unkTimer != 0) {
             this->unkTimer--;
 
@@ -441,39 +439,39 @@ void EnGeldB_Ready(EnGeldB* this, GlobalContext* globalCtx) {
                 return;
             }
             this->unkTimer = 0;
-        } else if (EnGeldB_ReactToPlayer(globalCtx, this, 0)) {
+        } else if (EnGeldB_ReactToPlayer(play, this, 0)) {
             return;
         }
         angleToLink = player->actor.shape.rot.y - this->actor.shape.rot.y;
-        if ((this->actor.xzDistToPlayer < 100.0f) && (player->swordState != 0) && (ABS(angleToLink) >= 0x1F40)) {
+        if ((this->actor.xzDistToPlayer < 100.0f) && (player->meleeWeaponState != 0) && (ABS(angleToLink) >= 0x1F40)) {
             this->actor.shape.rot.y = this->actor.world.rot.y = this->actor.yawTowardsPlayer;
             EnGeldB_SetupCircle(this);
         } else if (--this->timer == 0) {
             if (Actor_IsFacingPlayer(&this->actor, 30 * 0x10000 / 360)) {
                 if ((210.0f > this->actor.xzDistToPlayer) && (this->actor.xzDistToPlayer > 150.0f) &&
                     (Rand_ZeroOne() < 0.3f)) {
-                    if (Actor_OtherIsTargeted(globalCtx, &this->actor) || (Rand_ZeroOne() > 0.5f) ||
+                    if (Actor_OtherIsTargeted(play, &this->actor) || (Rand_ZeroOne() > 0.5f) ||
                         (ABS(angleToLink) < 0x38E0)) {
                         EnGeldB_SetupRollForward(this);
                     } else {
                         EnGeldB_SetupSpinAttack(this);
                     }
                 } else if (Rand_ZeroOne() > 0.3f) {
-                    EnGeldB_SetupAdvance(this, globalCtx);
+                    EnGeldB_SetupAdvance(this, play);
                 } else {
                     EnGeldB_SetupCircle(this);
                 }
             } else {
                 EnGeldB_SetupPivot(this);
             }
-            if ((globalCtx->gameplayFrames & 0x5F) == 0) {
+            if ((play->gameplayFrames & 0x5F) == 0) {
                 Audio_PlayActorSound2(&this->actor, NA_SE_EN_GERUDOFT_BREATH);
             }
         }
     }
 }
 
-void EnGeldB_SetupAdvance(EnGeldB* this, GlobalContext* globalCtx) {
+void EnGeldB_SetupAdvance(EnGeldB* this, PlayState* play) {
     f32 lastFrame = Animation_GetLastFrame(&gGerudoRedWalkAnim);
 
     Animation_Change(&this->skelAnime, &gGerudoRedWalkAnim, 1.0f, 0.0f, lastFrame, ANIMMODE_LOOP_INTERP, -4.0f);
@@ -481,14 +479,14 @@ void EnGeldB_SetupAdvance(EnGeldB* this, GlobalContext* globalCtx) {
     EnGeldB_SetupAction(this, EnGeldB_Advance);
 }
 
-void EnGeldB_Advance(EnGeldB* this, GlobalContext* globalCtx) {
-    s32 thisKeyFrame;
-    s32 prevKeyFrame;
-    s32 playSpeed;
+void EnGeldB_Advance(EnGeldB* this, PlayState* play) {
+    s32 prevFrame;
+    s32 beforeCurFrame;
+    s32 absPlaySpeed;
     s16 facingAngletoLink;
-    Player* player = GET_PLAYER(globalCtx);
+    Player* player = GET_PLAYER(play);
 
-    if (!EnGeldB_DodgeRanged(globalCtx, this)) {
+    if (!EnGeldB_DodgeRanged(play, this)) {
         Math_SmoothStepToS(&this->actor.shape.rot.y, this->actor.yawTowardsPlayer, 1, 0x2EE, 0);
         this->actor.world.rot.y = this->actor.shape.rot.y;
         if (this->actor.xzDistToPlayer <= 40.0f) {
@@ -501,17 +499,19 @@ void EnGeldB_Advance(EnGeldB* this, GlobalContext* globalCtx) {
         this->skelAnime.playSpeed = this->actor.speedXZ / 8.0f;
         facingAngletoLink = player->actor.shape.rot.y - this->actor.shape.rot.y;
         facingAngletoLink = ABS(facingAngletoLink);
-        if ((this->actor.xzDistToPlayer < 150.0f) && (player->swordState != 0) && (facingAngletoLink >= 0x1F40)) {
+        if ((this->actor.xzDistToPlayer < 150.0f) && (player->meleeWeaponState != 0) && (facingAngletoLink >= 0x1F40)) {
             this->actor.shape.rot.y = this->actor.world.rot.y = this->actor.yawTowardsPlayer;
             if (Rand_ZeroOne() > 0.7f) {
                 EnGeldB_SetupCircle(this);
                 return;
             }
         }
-        thisKeyFrame = (s32)this->skelAnime.curFrame;
+
+        prevFrame = (s32)this->skelAnime.curFrame;
         SkelAnime_Update(&this->skelAnime);
-        prevKeyFrame = this->skelAnime.curFrame - ABS(this->skelAnime.playSpeed);
-        playSpeed = (f32)ABS(this->skelAnime.playSpeed);
+        beforeCurFrame = (s32)(this->skelAnime.curFrame - ABS(this->skelAnime.playSpeed));
+        absPlaySpeed = (s32)(f32)ABS(this->skelAnime.playSpeed);
+
         if (!Actor_IsFacingPlayer(&this->actor, 0x11C7)) {
             if (Rand_ZeroOne() > 0.5f) {
                 EnGeldB_SetupCircle(this);
@@ -519,19 +519,19 @@ void EnGeldB_Advance(EnGeldB* this, GlobalContext* globalCtx) {
                 EnGeldB_SetupReady(this);
             }
         } else if (this->actor.xzDistToPlayer < 90.0f) {
-            if (!Actor_OtherIsTargeted(globalCtx, &this->actor) &&
+            if (!Actor_OtherIsTargeted(play, &this->actor) &&
                 (Rand_ZeroOne() > 0.03f || (this->actor.xzDistToPlayer <= 45.0f && facingAngletoLink < 0x38E0))) {
                 EnGeldB_SetupSlash(this);
-            } else if (Actor_OtherIsTargeted(globalCtx, &this->actor) && (Rand_ZeroOne() > 0.5f)) {
+            } else if (Actor_OtherIsTargeted(play, &this->actor) && (Rand_ZeroOne() > 0.5f)) {
                 EnGeldB_SetupRollBack(this);
             } else {
                 EnGeldB_SetupCircle(this);
             }
         }
-        if (!EnGeldB_ReactToPlayer(globalCtx, this, 0)) {
-            if ((210.0f > this->actor.xzDistToPlayer) && (this->actor.xzDistToPlayer > 150.0f) &&
+        if (!EnGeldB_ReactToPlayer(play, this, 0)) {
+            if ((this->actor.xzDistToPlayer < 210.0f) && (this->actor.xzDistToPlayer > 150.0f) &&
                 Actor_IsFacingPlayer(&this->actor, 0x71C)) {
-                if (Actor_IsTargeted(globalCtx, &this->actor)) {
+                if (Actor_IsTargeted(play, &this->actor)) {
                     if (Rand_ZeroOne() > 0.5f) {
                         EnGeldB_SetupRollForward(this);
                     } else {
@@ -542,13 +542,13 @@ void EnGeldB_Advance(EnGeldB* this, GlobalContext* globalCtx) {
                     return;
                 }
             }
-            if ((globalCtx->gameplayFrames & 0x5F) == 0) {
+            if ((play->gameplayFrames & 0x5F) == 0) {
                 Audio_PlayActorSound2(&this->actor, NA_SE_EN_GERUDOFT_BREATH);
             }
-            if (thisKeyFrame != (s32)this->skelAnime.curFrame) {
-                s32 temp = playSpeed + thisKeyFrame;
+            if (prevFrame != (s32)this->skelAnime.curFrame) {
+                s32 afterPrevFrame = absPlaySpeed + prevFrame;
 
-                if (((prevKeyFrame < 0) && (temp > 0)) || ((prevKeyFrame < 4) && (temp > 4))) {
+                if (((beforeCurFrame < 0) && (afterPrevFrame > 0)) || ((beforeCurFrame < 4) && (afterPrevFrame > 4))) {
                     Audio_PlayActorSound2(&this->actor, NA_SE_EN_MUSI_LAND);
                 }
             }
@@ -569,8 +569,8 @@ void EnGeldB_SetupRollForward(EnGeldB* this) {
     EnGeldB_SetupAction(this, EnGeldB_RollForward);
 }
 
-void EnGeldB_RollForward(EnGeldB* this, GlobalContext* globalCtx) {
-    Player* player = GET_PLAYER(globalCtx);
+void EnGeldB_RollForward(EnGeldB* this, PlayState* play) {
+    Player* player = GET_PLAYER(play);
     s16 facingAngleToLink = player->actor.shape.rot.y - this->actor.shape.rot.y;
 
     if (SkelAnime_Update(&this->skelAnime)) {
@@ -582,14 +582,14 @@ void EnGeldB_RollForward(EnGeldB* this, GlobalContext* globalCtx) {
             if (ABS(facingAngleToLink) < 0x38E0) {
                 this->lookTimer = 20;
             }
-        } else if (!Actor_OtherIsTargeted(globalCtx, &this->actor) &&
+        } else if (!Actor_OtherIsTargeted(play, &this->actor) &&
                    (Rand_ZeroOne() > 0.5f || (ABS(facingAngleToLink) < 0x3FFC))) {
             EnGeldB_SetupSlash(this);
         } else {
-            EnGeldB_SetupAdvance(this, globalCtx);
+            EnGeldB_SetupAdvance(this, play);
         }
     }
-    if ((globalCtx->gameplayFrames & 0x5F) == 0) {
+    if ((play->gameplayFrames & 0x5F) == 0) {
         Audio_PlayActorSound2(&this->actor, NA_SE_EN_GERUDOFT_BREATH);
     }
 }
@@ -600,12 +600,12 @@ void EnGeldB_SetupPivot(EnGeldB* this) {
     EnGeldB_SetupAction(this, EnGeldB_Pivot);
 }
 
-void EnGeldB_Pivot(EnGeldB* this, GlobalContext* globalCtx) {
+void EnGeldB_Pivot(EnGeldB* this, PlayState* play) {
     s16 angleToLink;
     s16 turnRate;
     f32 playSpeed;
 
-    if (!EnGeldB_DodgeRanged(globalCtx, this) && !EnGeldB_ReactToPlayer(globalCtx, this, 0)) {
+    if (!EnGeldB_DodgeRanged(play, this) && !EnGeldB_ReactToPlayer(play, this, 0)) {
         angleToLink = this->actor.yawTowardsPlayer - this->actor.shape.rot.y;
         turnRate = (angleToLink > 0) ? ((angleToLink * 0.25f) + 2000.0f) : ((angleToLink * 0.25f) - 2000.0f);
         this->actor.world.rot.y = this->actor.shape.rot.y += turnRate;
@@ -622,10 +622,10 @@ void EnGeldB_Pivot(EnGeldB* this, GlobalContext* globalCtx) {
             if (Rand_ZeroOne() > 0.8f) {
                 EnGeldB_SetupCircle(this);
             } else {
-                EnGeldB_SetupAdvance(this, globalCtx);
+                EnGeldB_SetupAdvance(this, play);
             }
         }
-        if ((globalCtx->gameplayFrames & 0x5F) == 0) {
+        if ((play->gameplayFrames & 0x5F) == 0) {
             Audio_PlayActorSound2(&this->actor, NA_SE_EN_GERUDOFT_BREATH);
         }
     }
@@ -644,17 +644,17 @@ void EnGeldB_SetupCircle(EnGeldB* this) {
     EnGeldB_SetupAction(this, EnGeldB_Circle);
 }
 
-void EnGeldB_Circle(EnGeldB* this, GlobalContext* globalCtx) {
+void EnGeldB_Circle(EnGeldB* this, PlayState* play) {
     s16 angleBehindLink;
     s16 phi_v1;
-    s32 nextKeyFrame;
-    s32 thisKeyFrame;
+    s32 afterPrevFrame;
+    s32 prevFrame;
     s32 pad;
-    s32 prevKeyFrame;
-    Player* player = GET_PLAYER(globalCtx);
+    s32 beforeCurFrame;
+    Player* player = GET_PLAYER(play);
 
     Math_SmoothStepToS(&this->actor.shape.rot.y, this->actor.yawTowardsPlayer, 1, 0xFA0, 1);
-    if (!EnGeldB_DodgeRanged(globalCtx, this) && !EnGeldB_ReactToPlayer(globalCtx, this, 0)) {
+    if (!EnGeldB_DodgeRanged(play, this) && !EnGeldB_ReactToPlayer(play, this, 0)) {
         this->actor.world.rot.y = this->actor.shape.rot.y + 0x3A98;
         angleBehindLink = player->actor.shape.rot.y + 0x8000;
         if (Math_SinS(angleBehindLink - this->actor.shape.rot.y) >= 0.0f) {
@@ -668,9 +668,9 @@ void EnGeldB_Circle(EnGeldB* this, GlobalContext* globalCtx) {
                 this->actor.speedXZ = 8.0f;
             }
         }
-        if ((this->actor.bgCheckFlags & 8) || !Actor_TestFloorInDirection(&this->actor, globalCtx, this->actor.speedXZ,
-                                                                          this->actor.shape.rot.y + 0x3E80)) {
-            if (this->actor.bgCheckFlags & 8) {
+        if ((this->actor.bgCheckFlags & BGCHECKFLAG_WALL) ||
+            !Actor_TestFloorInDirection(&this->actor, play, this->actor.speedXZ, this->actor.shape.rot.y + 0x3E80)) {
+            if (this->actor.bgCheckFlags & BGCHECKFLAG_WALL) {
                 if (this->actor.speedXZ >= 0.0f) {
                     phi_v1 = this->actor.shape.rot.y + 0x3E80;
                 } else {
@@ -708,23 +708,24 @@ void EnGeldB_Circle(EnGeldB* this, GlobalContext* globalCtx) {
         }
         this->skelAnime.playSpeed = CLAMP(this->skelAnime.playSpeed, -3.0f, 3.0f);
 
-        thisKeyFrame = this->skelAnime.curFrame;
+        prevFrame = (s32)this->skelAnime.curFrame;
         SkelAnime_Update(&this->skelAnime);
+        beforeCurFrame = (s32)(this->skelAnime.curFrame - ABS(this->skelAnime.playSpeed));
+        afterPrevFrame = (s32)ABS(this->skelAnime.playSpeed) + prevFrame;
 
-        prevKeyFrame = this->skelAnime.curFrame - ABS(this->skelAnime.playSpeed);
-        nextKeyFrame = (s32)ABS(this->skelAnime.playSpeed) + thisKeyFrame;
-        if ((thisKeyFrame != (s32)this->skelAnime.curFrame) &&
-            ((prevKeyFrame < 0 && 0 < nextKeyFrame) || (prevKeyFrame < 5 && 5 < nextKeyFrame))) {
+        if ((prevFrame != (s32)this->skelAnime.curFrame) &&
+            (((beforeCurFrame < 0) && (afterPrevFrame > 0)) || ((beforeCurFrame < 5) && (afterPrevFrame > 5)))) {
             Audio_PlayActorSound2(&this->actor, NA_SE_EN_MUSI_LAND);
         }
-        if ((globalCtx->gameplayFrames & 0x5F) == 0) {
+
+        if ((play->gameplayFrames & 0x5F) == 0) {
             Audio_PlayActorSound2(&this->actor, NA_SE_EN_GERUDOFT_BREATH);
         }
         if ((Math_CosS(angleBehindLink - this->actor.shape.rot.y) < -0.85f) &&
-            !Actor_OtherIsTargeted(globalCtx, &this->actor) && (this->actor.xzDistToPlayer <= 45.0f)) {
+            !Actor_OtherIsTargeted(play, &this->actor) && (this->actor.xzDistToPlayer <= 45.0f)) {
             EnGeldB_SetupSlash(this);
         } else if (--this->timer == 0) {
-            if (Actor_OtherIsTargeted(globalCtx, &this->actor) && (Rand_ZeroOne() > 0.5f)) {
+            if (Actor_OtherIsTargeted(play, &this->actor) && (Rand_ZeroOne() > 0.5f)) {
                 EnGeldB_SetupRollBack(this);
             } else {
                 EnGeldB_SetupReady(this);
@@ -733,9 +734,9 @@ void EnGeldB_Circle(EnGeldB* this, GlobalContext* globalCtx) {
     }
 }
 
-void EnGeldB_SetupSpinDodge(EnGeldB* this, GlobalContext* globalCtx) {
+void EnGeldB_SetupSpinDodge(EnGeldB* this, PlayState* play) {
     s16 sp3E;
-    Player* player = GET_PLAYER(globalCtx);
+    Player* player = GET_PLAYER(play);
     f32 lastFrame = Animation_GetLastFrame(&gGerudoRedSidestepAnim);
 
     Animation_Change(&this->skelAnime, &gGerudoRedSidestepAnim, 1.0f, 0.0f, lastFrame, ANIMMODE_LOOP_INTERP, 0.0f);
@@ -759,17 +760,17 @@ void EnGeldB_SetupSpinDodge(EnGeldB* this, GlobalContext* globalCtx) {
     EnGeldB_SetupAction(this, EnGeldB_SpinDodge);
 }
 
-void EnGeldB_SpinDodge(EnGeldB* this, GlobalContext* globalCtx) {
+void EnGeldB_SpinDodge(EnGeldB* this, PlayState* play) {
     s16 phi_v1;
-    s32 thisKeyFrame;
+    s32 prevFrame;
     s32 pad;
-    s32 lastKeyFrame;
-    s32 nextKeyFrame;
+    s32 beforeCurFrame;
+    s32 afterPrevFrame;
 
     this->actor.world.rot.y = this->actor.yawTowardsPlayer + 0x3A98;
-    if ((this->actor.bgCheckFlags & 8) ||
-        !Actor_TestFloorInDirection(&this->actor, globalCtx, this->actor.speedXZ, this->actor.shape.rot.y + 0x3E80)) {
-        if (this->actor.bgCheckFlags & 8) {
+    if ((this->actor.bgCheckFlags & BGCHECKFLAG_WALL) ||
+        !Actor_TestFloorInDirection(&this->actor, play, this->actor.speedXZ, this->actor.shape.rot.y + 0x3E80)) {
+        if (this->actor.bgCheckFlags & BGCHECKFLAG_WALL) {
             if (this->actor.speedXZ >= 0.0f) {
                 phi_v1 = this->actor.shape.rot.y + 0x3E80;
             } else {
@@ -802,22 +803,25 @@ void EnGeldB_SpinDodge(EnGeldB* this, GlobalContext* globalCtx) {
         this->skelAnime.playSpeed = -this->approachRate * 0.5f;
     }
     this->skelAnime.playSpeed = CLAMP(this->skelAnime.playSpeed, -3.0f, 3.0f);
-    thisKeyFrame = this->skelAnime.curFrame;
+
+    prevFrame = (s32)this->skelAnime.curFrame;
     SkelAnime_Update(&this->skelAnime);
-    lastKeyFrame = this->skelAnime.curFrame - ABS(this->skelAnime.playSpeed);
-    nextKeyFrame = (s32)ABS(this->skelAnime.playSpeed) + thisKeyFrame;
-    if ((thisKeyFrame != (s32)this->skelAnime.curFrame) &&
-        ((lastKeyFrame < 0 && 0 < nextKeyFrame) || (lastKeyFrame < 5 && 5 < nextKeyFrame))) {
+    beforeCurFrame = (s32)(this->skelAnime.curFrame - ABS(this->skelAnime.playSpeed));
+    afterPrevFrame = (s32)ABS(this->skelAnime.playSpeed) + prevFrame;
+
+    if ((prevFrame != (s32)this->skelAnime.curFrame) &&
+        (((beforeCurFrame < 0) && (afterPrevFrame > 0)) || ((beforeCurFrame < 5) && (afterPrevFrame > 5)))) {
         Audio_PlayActorSound2(&this->actor, NA_SE_EN_MUSI_LAND);
     }
-    if ((globalCtx->gameplayFrames & 0x5F) == 0) {
+
+    if ((play->gameplayFrames & 0x5F) == 0) {
         Audio_PlayActorSound2(&this->actor, NA_SE_EN_GERUDOFT_BREATH);
     }
     this->timer--;
     if (this->timer == 0) {
         this->actor.shape.rot.y = this->actor.yawTowardsPlayer;
-        if (!EnGeldB_DodgeRanged(globalCtx, this)) {
-            if (!Actor_OtherIsTargeted(globalCtx, &this->actor) && (this->actor.xzDistToPlayer <= 70.0f)) {
+        if (!EnGeldB_DodgeRanged(play, this)) {
+            if (!Actor_OtherIsTargeted(play, &this->actor) && (this->actor.xzDistToPlayer <= 70.0f)) {
                 EnGeldB_SetupSlash(this);
             } else {
                 EnGeldB_SetupRollBack(this);
@@ -842,8 +846,8 @@ void EnGeldB_SetupSlash(EnGeldB* this) {
     EnGeldB_SetupAction(this, EnGeldB_Slash);
 }
 
-void EnGeldB_Slash(EnGeldB* this, GlobalContext* globalCtx) {
-    Player* player = GET_PLAYER(globalCtx);
+void EnGeldB_Slash(EnGeldB* this, PlayState* play) {
+    Player* player = GET_PLAYER(play);
     s16 angleFacingLink = player->actor.shape.rot.y - this->actor.shape.rot.y;
     s16 angleToLink = this->actor.yawTowardsPlayer - this->actor.shape.rot.y;
 
@@ -874,13 +878,13 @@ void EnGeldB_Slash(EnGeldB* this, GlobalContext* globalCtx) {
         } else {
             this->actor.world.rot.y = this->actor.yawTowardsPlayer;
             if (Rand_ZeroOne() > 0.7f) {
-                EnGeldB_SetupSidestep(this, globalCtx);
+                EnGeldB_SetupSidestep(this, play);
             } else if (angleFacingLink <= 0x2710) {
                 if (angleToLink > 0x3E80) {
                     this->actor.world.rot.y = this->actor.yawTowardsPlayer;
                     EnGeldB_SetupCircle(this);
                 } else {
-                    EnGeldB_ReactToPlayer(globalCtx, this, 1);
+                    EnGeldB_ReactToPlayer(play, this, 1);
                 }
             } else {
                 EnGeldB_SetupCircle(this);
@@ -900,8 +904,8 @@ void EnGeldB_SetupSpinAttack(EnGeldB* this) {
     EnGeldB_SetupAction(this, EnGeldB_SpinAttack);
 }
 
-void EnGeldB_SpinAttack(EnGeldB* this, GlobalContext* globalCtx) {
-    Player* player = GET_PLAYER(globalCtx);
+void EnGeldB_SpinAttack(EnGeldB* this, PlayState* play) {
+    Player* player = GET_PLAYER(play);
     s16 angleFacingLink;
     s16 angleToLink;
 
@@ -913,10 +917,10 @@ void EnGeldB_SpinAttack(EnGeldB* this, GlobalContext* globalCtx) {
         } else if (this->swordCollider.base.atFlags & AT_HIT) {
             this->swordCollider.base.atFlags &= ~AT_HIT;
             if (&player->actor == this->swordCollider.base.at) {
-                func_8002F71C(globalCtx, &this->actor, 6.0f, this->actor.yawTowardsPlayer, 6.0f);
+                func_8002F71C(play, &this->actor, 6.0f, this->actor.yawTowardsPlayer, 6.0f);
                 this->spinAttackState = 2;
-                func_8002DF54(globalCtx, &this->actor, 0x18);
-                Message_StartTextbox(globalCtx, 0x6003, &this->actor);
+                func_8002DF54(play, &this->actor, 0x18);
+                Message_StartTextbox(play, 0x6003, &this->actor);
                 this->timer = 30;
                 this->actor.speedXZ = 0.0f;
                 Audio_PlayActorSound2(&this->actor, NA_SE_EN_TWINROBA_YOUNG_LAUGH);
@@ -927,8 +931,8 @@ void EnGeldB_SpinAttack(EnGeldB* this, GlobalContext* globalCtx) {
     if ((s32)this->skelAnime.curFrame < 9) {
         this->actor.shape.rot.y = this->actor.world.rot.y = this->actor.yawTowardsPlayer;
     } else if ((s32)this->skelAnime.curFrame == 13) {
-        Actor_SpawnFloorDustRing(globalCtx, &this->actor, &this->leftFootPos, 3.0f, 2, 2.0f, 0, 0, 0);
-        Actor_SpawnFloorDustRing(globalCtx, &this->actor, &this->rightFootPos, 3.0f, 2, 2.0f, 0, 0, 0);
+        Actor_SpawnFloorDustRing(play, &this->actor, &this->leftFootPos, 3.0f, 2, 2.0f, 0, 0, false);
+        Actor_SpawnFloorDustRing(play, &this->actor, &this->rightFootPos, 3.0f, 2, 2.0f, 0, 0, false);
         this->swordState = 1;
         this->actor.speedXZ = 10.0f;
         Audio_PlayActorSound2(&this->actor, NA_SE_EN_GERUDOFT_ATTACK);
@@ -950,7 +954,7 @@ void EnGeldB_SpinAttack(EnGeldB* this, GlobalContext* globalCtx) {
         } else {
             this->actor.world.rot.y = this->actor.yawTowardsPlayer;
             if (Rand_ZeroOne() > 0.7f) {
-                EnGeldB_SetupSidestep(this, globalCtx);
+                EnGeldB_SetupSidestep(this, play);
             } else {
                 angleFacingLink = player->actor.shape.rot.y - this->actor.shape.rot.y;
                 angleFacingLink = ABS(angleFacingLink);
@@ -961,7 +965,7 @@ void EnGeldB_SpinAttack(EnGeldB* this, GlobalContext* globalCtx) {
                         this->actor.world.rot.y = this->actor.yawTowardsPlayer;
                         EnGeldB_SetupCircle(this);
                     } else {
-                        EnGeldB_ReactToPlayer(globalCtx, this, 1);
+                        EnGeldB_ReactToPlayer(play, this, 1);
                     }
                 } else {
                     EnGeldB_SetupCircle(this);
@@ -982,24 +986,24 @@ void EnGeldB_SetupRollBack(EnGeldB* this) {
     EnGeldB_SetupAction(this, EnGeldB_RollBack);
 }
 
-void EnGeldB_RollBack(EnGeldB* this, GlobalContext* globalCtx) {
+void EnGeldB_RollBack(EnGeldB* this, PlayState* play) {
     if (SkelAnime_Update(&this->skelAnime)) {
-        if (!Actor_OtherIsTargeted(globalCtx, &this->actor) && (this->actor.xzDistToPlayer < 170.0f) &&
+        if (!Actor_OtherIsTargeted(play, &this->actor) && (this->actor.xzDistToPlayer < 170.0f) &&
             (this->actor.xzDistToPlayer > 140.0f) && (Rand_ZeroOne() < 0.2f)) {
             EnGeldB_SetupSpinAttack(this);
-        } else if (globalCtx->gameplayFrames & 1) {
-            EnGeldB_SetupSidestep(this, globalCtx);
+        } else if (play->gameplayFrames & 1) {
+            EnGeldB_SetupSidestep(this, play);
         } else {
             EnGeldB_SetupReady(this);
         }
     }
-    if ((globalCtx->state.frames & 0x5F) == 0) {
+    if ((play->state.frames & 0x5F) == 0) {
         Audio_PlayActorSound2(&this->actor, NA_SE_EN_GERUDOFT_BREATH);
     }
 }
 
 void EnGeldB_SetupStunned(EnGeldB* this) {
-    if (this->actor.bgCheckFlags & 1) {
+    if (this->actor.bgCheckFlags & BGCHECKFLAG_GROUND) {
         this->actor.speedXZ = 0.0f;
     }
     if ((this->damageEffect != GELDB_DMG_FREEZE) || (this->action == GELDB_SPIN_ATTACK)) {
@@ -1013,28 +1017,28 @@ void EnGeldB_SetupStunned(EnGeldB* this) {
     EnGeldB_SetupAction(this, EnGeldB_Stunned);
 }
 
-void EnGeldB_Stunned(EnGeldB* this, GlobalContext* globalCtx) {
-    if (this->actor.bgCheckFlags & 2) {
+void EnGeldB_Stunned(EnGeldB* this, PlayState* play) {
+    if (this->actor.bgCheckFlags & BGCHECKFLAG_GROUND_TOUCH) {
         this->actor.speedXZ = 0.0f;
     }
-    if (this->actor.bgCheckFlags & 1) {
+    if (this->actor.bgCheckFlags & BGCHECKFLAG_GROUND) {
         if (this->actor.speedXZ < 0.0f) {
             this->actor.speedXZ += 0.05f;
         }
         this->invisible = false;
     }
-    if ((this->actor.colorFilterTimer == 0) && (this->actor.bgCheckFlags & 1)) {
+    if ((this->actor.colorFilterTimer == 0) && (this->actor.bgCheckFlags & BGCHECKFLAG_GROUND)) {
         if (this->actor.colChkInfo.health == 0) {
             EnGeldB_SetupDefeated(this);
         } else {
-            EnGeldB_ReactToPlayer(globalCtx, this, 1);
+            EnGeldB_ReactToPlayer(play, this, 1);
         }
     }
 }
 
 void EnGeldB_SetupDamaged(EnGeldB* this) {
     Animation_MorphToPlayOnce(&this->skelAnime, &gGerudoRedDamageAnim, -4.0f);
-    if (this->actor.bgCheckFlags & 1) {
+    if (this->actor.bgCheckFlags & BGCHECKFLAG_GROUND) {
         this->invisible = false;
         this->actor.speedXZ = -4.0f;
     } else {
@@ -1047,27 +1051,28 @@ void EnGeldB_SetupDamaged(EnGeldB* this) {
     EnGeldB_SetupAction(this, EnGeldB_Damaged);
 }
 
-void EnGeldB_Damaged(EnGeldB* this, GlobalContext* globalCtx) {
+void EnGeldB_Damaged(EnGeldB* this, PlayState* play) {
     s16 angleToWall;
 
-    if (this->actor.bgCheckFlags & 2) {
+    if (this->actor.bgCheckFlags & BGCHECKFLAG_GROUND_TOUCH) {
         this->actor.speedXZ = 0.0f;
     }
-    if (this->actor.bgCheckFlags & 1) {
+    if (this->actor.bgCheckFlags & BGCHECKFLAG_GROUND) {
         if (this->actor.speedXZ < 0.0f) {
             this->actor.speedXZ += 0.05f;
         }
         this->invisible = false;
     }
     Math_SmoothStepToS(&this->actor.shape.rot.y, this->actor.yawTowardsPlayer, 1, 0x1194, 0);
-    if (!EnGeldB_DodgeRanged(globalCtx, this) && !EnGeldB_ReactToPlayer(globalCtx, this, 0) &&
-        SkelAnime_Update(&this->skelAnime) && (this->actor.bgCheckFlags & 1)) {
+    if (!EnGeldB_DodgeRanged(play, this) && !EnGeldB_ReactToPlayer(play, this, 0) &&
+        SkelAnime_Update(&this->skelAnime) && (this->actor.bgCheckFlags & BGCHECKFLAG_GROUND)) {
         angleToWall = this->actor.wallYaw - this->actor.shape.rot.y;
-        if ((this->actor.bgCheckFlags & 8) && (ABS(angleToWall) < 0x2EE0) && (this->actor.xzDistToPlayer < 90.0f)) {
+        if ((this->actor.bgCheckFlags & BGCHECKFLAG_WALL) && (ABS(angleToWall) < 0x2EE0) &&
+            (this->actor.xzDistToPlayer < 90.0f)) {
             EnGeldB_SetupJump(this);
-        } else if (!EnGeldB_DodgeRanged(globalCtx, this)) {
-            if ((this->actor.xzDistToPlayer <= 45.0f) && !Actor_OtherIsTargeted(globalCtx, &this->actor) &&
-                (globalCtx->gameplayFrames & 7)) {
+        } else if (!EnGeldB_DodgeRanged(play, this)) {
+            if ((this->actor.xzDistToPlayer <= 45.0f) && !Actor_OtherIsTargeted(play, &this->actor) &&
+                (play->gameplayFrames & 7)) {
                 EnGeldB_SetupSlash(this);
             } else {
                 EnGeldB_SetupRollBack(this);
@@ -1090,19 +1095,20 @@ void EnGeldB_SetupJump(EnGeldB* this) {
     EnGeldB_SetupAction(this, EnGeldB_Jump);
 }
 
-void EnGeldB_Jump(EnGeldB* this, GlobalContext* globalCtx) {
+void EnGeldB_Jump(EnGeldB* this, PlayState* play) {
     Math_SmoothStepToS(&this->actor.shape.rot.y, this->actor.yawTowardsPlayer, 1, 0xFA0, 1);
     if (this->actor.velocity.y >= 5.0f) {
-        func_800355B8(globalCtx, &this->leftFootPos);
-        func_800355B8(globalCtx, &this->rightFootPos);
+        func_800355B8(play, &this->leftFootPos);
+        func_800355B8(play, &this->rightFootPos);
     }
-    if (SkelAnime_Update(&this->skelAnime) && (this->actor.bgCheckFlags & 3)) {
+    if (SkelAnime_Update(&this->skelAnime) &&
+        (this->actor.bgCheckFlags & (BGCHECKFLAG_GROUND | BGCHECKFLAG_GROUND_TOUCH))) {
         this->actor.world.rot.y = this->actor.shape.rot.y = this->actor.yawTowardsPlayer;
         this->actor.shape.rot.x = 0;
         this->actor.speedXZ = 0.0f;
         this->actor.velocity.y = 0.0f;
         this->actor.world.pos.y = this->actor.floorHeight;
-        if (!Actor_OtherIsTargeted(globalCtx, &this->actor)) {
+        if (!Actor_OtherIsTargeted(play, &this->actor)) {
             EnGeldB_SetupSlash(this);
         } else {
             EnGeldB_SetupReady(this);
@@ -1123,8 +1129,8 @@ void EnGeldB_SetupBlock(EnGeldB* this) {
     EnGeldB_SetupAction(this, EnGeldB_Block);
 }
 
-void EnGeldB_Block(EnGeldB* this, GlobalContext* globalCtx) {
-    Player* player = GET_PLAYER(globalCtx);
+void EnGeldB_Block(EnGeldB* this, PlayState* play) {
+    Player* player = GET_PLAYER(play);
     s32 pad;
     s16 angleToLink;
     s16 angleFacingLink;
@@ -1138,18 +1144,18 @@ void EnGeldB_Block(EnGeldB* this, GlobalContext* globalCtx) {
         angleToLink = this->actor.yawTowardsPlayer - this->actor.shape.rot.y;
         if ((ABS(angleToLink) <= 0x4000) && (this->actor.xzDistToPlayer < 40.0f) &&
             (ABS(this->actor.yDistToPlayer) < 50.0f)) {
-            if (func_800354B4(globalCtx, &this->actor, 100.0f, 0x2710, 0x4000, this->actor.shape.rot.y)) {
-                if (player->swordAnimation == 0x11) {
-                    EnGeldB_SetupSpinDodge(this, globalCtx);
-                } else if (globalCtx->gameplayFrames & 1) {
+            if (func_800354B4(play, &this->actor, 100.0f, 0x2710, 0x4000, this->actor.shape.rot.y)) {
+                if (player->meleeWeaponAnimation == PLAYER_MWA_JUMPSLASH_START) {
+                    EnGeldB_SetupSpinDodge(this, play);
+                } else if (play->gameplayFrames & 1) {
                     EnGeldB_SetupBlock(this);
                 } else {
                     EnGeldB_SetupRollBack(this);
                 }
             } else {
                 angleFacingLink = player->actor.shape.rot.y - this->actor.shape.rot.y;
-                if (!Actor_OtherIsTargeted(globalCtx, &this->actor) &&
-                    ((globalCtx->gameplayFrames & 1) || (ABS(angleFacingLink) < 0x38E0))) {
+                if (!Actor_OtherIsTargeted(play, &this->actor) &&
+                    ((play->gameplayFrames & 1) || (ABS(angleFacingLink) < 0x38E0))) {
                     EnGeldB_SetupSlash(this);
                 } else {
                     EnGeldB_SetupCircle(this);
@@ -1159,11 +1165,11 @@ void EnGeldB_Block(EnGeldB* this, GlobalContext* globalCtx) {
             EnGeldB_SetupCircle(this);
         }
     } else if ((this->timer == 0) &&
-               func_800354B4(globalCtx, &this->actor, 100.0f, 0x2710, 0x4000, this->actor.shape.rot.y)) {
-        if (player->swordAnimation == 0x11) {
-            EnGeldB_SetupSpinDodge(this, globalCtx);
-        } else if (!EnGeldB_DodgeRanged(globalCtx, this)) {
-            if ((globalCtx->gameplayFrames & 1)) {
+               func_800354B4(play, &this->actor, 100.0f, 0x2710, 0x4000, this->actor.shape.rot.y)) {
+        if (player->meleeWeaponAnimation == PLAYER_MWA_JUMPSLASH_START) {
+            EnGeldB_SetupSpinDodge(this, play);
+        } else if (!EnGeldB_DodgeRanged(play, this)) {
+            if (play->gameplayFrames & 1) {
                 if ((this->actor.xzDistToPlayer < 100.0f) && (Rand_ZeroOne() > 0.7f)) {
                     EnGeldB_SetupJump(this);
                 } else {
@@ -1176,13 +1182,13 @@ void EnGeldB_Block(EnGeldB* this, GlobalContext* globalCtx) {
     }
 }
 
-void EnGeldB_SetupSidestep(EnGeldB* this, GlobalContext* globalCtx) {
+void EnGeldB_SetupSidestep(EnGeldB* this, PlayState* play) {
     s16 linkAngle;
     Player* player;
     f32 lastFrame = Animation_GetLastFrame(&gGerudoRedSidestepAnim);
 
     Animation_Change(&this->skelAnime, &gGerudoRedSidestepAnim, 1.0f, 0.0f, lastFrame, ANIMMODE_LOOP_INTERP, 0.0f);
-    player = GET_PLAYER(globalCtx);
+    player = GET_PLAYER(play);
     Math_SmoothStepToS(&this->actor.shape.rot.y, this->actor.yawTowardsPlayer, 1, 0xFA0, 1);
     linkAngle = player->actor.shape.rot.y;
     if (Math_SinS(linkAngle - this->actor.shape.rot.y) > 0.0f) {
@@ -1200,13 +1206,13 @@ void EnGeldB_SetupSidestep(EnGeldB* this, GlobalContext* globalCtx) {
     EnGeldB_SetupAction(this, EnGeldB_Sidestep);
 }
 
-void EnGeldB_Sidestep(EnGeldB* this, GlobalContext* globalCtx) {
+void EnGeldB_Sidestep(EnGeldB* this, PlayState* play) {
     s16 behindLinkAngle;
     s16 phi_v1;
-    Player* player = GET_PLAYER(globalCtx);
-    s32 thisKeyFrame;
-    s32 prevKeyFrame;
-    f32 playSpeed;
+    Player* player = GET_PLAYER(play);
+    s32 prevFrame;
+    s32 beforeCurFrame;
+    f32 absPlaySpeed;
 
     Math_SmoothStepToS(&this->actor.shape.rot.y, this->actor.yawTowardsPlayer, 1, 0xBB8, 1);
     behindLinkAngle = player->actor.shape.rot.y + 0x8000;
@@ -1216,9 +1222,9 @@ void EnGeldB_Sidestep(EnGeldB* this, GlobalContext* globalCtx) {
         this->actor.speedXZ -= 0.125f;
     }
 
-    if ((this->actor.bgCheckFlags & 8) ||
-        !Actor_TestFloorInDirection(&this->actor, globalCtx, this->actor.speedXZ, this->actor.shape.rot.y + 0x3E80)) {
-        if (this->actor.bgCheckFlags & 8) {
+    if ((this->actor.bgCheckFlags & BGCHECKFLAG_WALL) ||
+        !Actor_TestFloorInDirection(&this->actor, play, this->actor.speedXZ, this->actor.shape.rot.y + 0x3E80)) {
+        if (this->actor.bgCheckFlags & BGCHECKFLAG_WALL) {
             if (this->actor.speedXZ >= 0.0f) {
                 phi_v1 = this->actor.shape.rot.y + 0x3E80;
             } else {
@@ -1260,13 +1266,13 @@ void EnGeldB_Sidestep(EnGeldB* this, GlobalContext* globalCtx) {
         this->skelAnime.playSpeed = -this->approachRate * 0.5f;
     }
     this->skelAnime.playSpeed = CLAMP(this->skelAnime.playSpeed, -3.0f, 3.0f);
-    thisKeyFrame = this->skelAnime.curFrame;
+
+    prevFrame = (s32)this->skelAnime.curFrame;
     SkelAnime_Update(&this->skelAnime);
-    prevKeyFrame = this->skelAnime.curFrame - ABS(this->skelAnime.playSpeed);
+    beforeCurFrame = (s32)(this->skelAnime.curFrame - ABS(this->skelAnime.playSpeed));
+    absPlaySpeed = ((void)0, ABS(this->skelAnime.playSpeed)); // Needed to match for some reason
 
-    playSpeed = ((void)0, ABS(this->skelAnime.playSpeed)); // Needed to match for some reason
-
-    if (!EnGeldB_DodgeRanged(globalCtx, this) && !EnGeldB_ReactToPlayer(globalCtx, this, 0)) {
+    if (!EnGeldB_DodgeRanged(play, this) && !EnGeldB_ReactToPlayer(play, this, 0)) {
         if (--this->timer == 0) {
             s16 angleFacingPlayer = player->actor.shape.rot.y - this->actor.shape.rot.y;
 
@@ -1275,32 +1281,32 @@ void EnGeldB_Sidestep(EnGeldB* this, GlobalContext* globalCtx) {
                 EnGeldB_SetupReady(this);
                 this->timer = (Rand_ZeroOne() * 5.0f) + 1.0f;
             } else {
-                Player* player2 = GET_PLAYER(globalCtx);
+                Player* player2 = GET_PLAYER(play);
                 s16 angleFacingPlayer2 = player2->actor.shape.rot.y - this->actor.shape.rot.y;
 
                 this->actor.world.rot.y = this->actor.shape.rot.y;
-                if ((this->actor.xzDistToPlayer <= 45.0f) && !Actor_OtherIsTargeted(globalCtx, &this->actor) &&
-                    (!(globalCtx->gameplayFrames & 3) || (ABS(angleFacingPlayer2) < 0x38E0))) {
+                if ((this->actor.xzDistToPlayer <= 45.0f) && !Actor_OtherIsTargeted(play, &this->actor) &&
+                    (!(play->gameplayFrames & 3) || (ABS(angleFacingPlayer2) < 0x38E0))) {
                     EnGeldB_SetupSlash(this);
                 } else if ((210.0f > this->actor.xzDistToPlayer) && (this->actor.xzDistToPlayer > 150.0f) &&
-                           !(globalCtx->gameplayFrames & 1)) {
-                    if (Actor_OtherIsTargeted(globalCtx, &this->actor) || (Rand_ZeroOne() > 0.5f) ||
+                           !(play->gameplayFrames & 1)) {
+                    if (Actor_OtherIsTargeted(play, &this->actor) || (Rand_ZeroOne() > 0.5f) ||
                         (ABS(angleFacingPlayer2) < 0x38E0)) {
                         EnGeldB_SetupRollForward(this);
                     } else {
                         EnGeldB_SetupSpinAttack(this);
                     }
                 } else {
-                    EnGeldB_SetupAdvance(this, globalCtx);
+                    EnGeldB_SetupAdvance(this, play);
                 }
             }
         }
-        if ((thisKeyFrame != (s32)this->skelAnime.curFrame) &&
-            (((prevKeyFrame < 0) && (((s32)playSpeed + thisKeyFrame) > 0)) ||
-             ((prevKeyFrame < 5) && (((s32)playSpeed + thisKeyFrame) > 5)))) {
+        if ((prevFrame != (s32)this->skelAnime.curFrame) &&
+            (((beforeCurFrame < 0) && (((s32)absPlaySpeed + prevFrame) > 0)) ||
+             ((beforeCurFrame < 5) && (((s32)absPlaySpeed + prevFrame) > 5)))) {
             Audio_PlayActorSound2(&this->actor, NA_SE_EN_MUSI_LAND);
         }
-        if ((globalCtx->gameplayFrames & 0x5F) == 0) {
+        if ((play->gameplayFrames & 0x5F) == 0) {
             Audio_PlayActorSound2(&this->actor, NA_SE_EN_GERUDOFT_BREATH);
         }
     }
@@ -1309,23 +1315,23 @@ void EnGeldB_Sidestep(EnGeldB* this, GlobalContext* globalCtx) {
 void EnGeldB_SetupDefeated(EnGeldB* this) {
     Animation_MorphToPlayOnce(&this->skelAnime, &gGerudoRedDefeatAnim, -4.0f);
     this->actor.world.rot.y = this->actor.shape.rot.y = this->actor.yawTowardsPlayer;
-    if (this->actor.bgCheckFlags & 1) {
+    if (this->actor.bgCheckFlags & BGCHECKFLAG_GROUND) {
         this->invisible = false;
         this->actor.speedXZ = -6.0f;
     } else {
         this->invisible = true;
     }
     this->action = GELDB_DEFEAT;
-    this->actor.flags &= ~1;
+    this->actor.flags &= ~ACTOR_FLAG_0;
     Audio_PlayActorSound2(&this->actor, NA_SE_EN_GERUDOFT_DEAD);
     EnGeldB_SetupAction(this, EnGeldB_Defeated);
 }
 
-void EnGeldB_Defeated(EnGeldB* this, GlobalContext* globalCtx) {
-    if (this->actor.bgCheckFlags & 2) {
+void EnGeldB_Defeated(EnGeldB* this, PlayState* play) {
+    if (this->actor.bgCheckFlags & BGCHECKFLAG_GROUND_TOUCH) {
         this->actor.speedXZ = 0.0f;
     }
-    if (this->actor.bgCheckFlags & 1) {
+    if (this->actor.bgCheckFlags & BGCHECKFLAG_GROUND) {
         Math_SmoothStepToF(&this->actor.speedXZ, 0.0f, 1.0f, 0.5f, 0.0f);
         this->invisible = false;
     }
@@ -1337,7 +1343,7 @@ void EnGeldB_Defeated(EnGeldB* this, GlobalContext* globalCtx) {
     }
 }
 
-void EnGeldB_TurnHead(EnGeldB* this, GlobalContext* globalCtx) {
+void EnGeldB_TurnHead(EnGeldB* this, PlayState* play) {
     if ((this->action == GELDB_READY) && (this->lookTimer != 0)) {
         this->headRot.y = Math_SinS(this->lookTimer * 0x1068) * 8920.0f;
     } else if (this->action != GELDB_STUNNED) {
@@ -1350,7 +1356,7 @@ void EnGeldB_TurnHead(EnGeldB* this, GlobalContext* globalCtx) {
     }
 }
 
-void EnGeldB_CollisionCheck(EnGeldB* this, GlobalContext* globalCtx) {
+void EnGeldB_CollisionCheck(EnGeldB* this, PlayState* play) {
     s32 pad;
     EnItem00* key;
 
@@ -1362,7 +1368,7 @@ void EnGeldB_CollisionCheck(EnGeldB* this, GlobalContext* globalCtx) {
         this->bodyCollider.base.acFlags &= ~AC_HIT;
         if (this->actor.colChkInfo.damageEffect != GELDB_DMG_UNK_6) {
             this->damageEffect = this->actor.colChkInfo.damageEffect;
-            Actor_SetDropFlag(&this->actor, &this->bodyCollider.info, 1);
+            Actor_SetDropFlag(&this->actor, &this->bodyCollider.info, true);
             Audio_StopSfxByPosAndId(&this->actor.projectedPos, NA_SE_EN_GERUDOFT_BREATH);
             if ((this->actor.colChkInfo.damageEffect == GELDB_DMG_STUN) ||
                 (this->actor.colChkInfo.damageEffect == GELDB_DMG_FREEZE)) {
@@ -1375,16 +1381,17 @@ void EnGeldB_CollisionCheck(EnGeldB* this, GlobalContext* globalCtx) {
                 Actor_SetColorFilter(&this->actor, 0x4000, 0xFF, 0, 8);
                 if (Actor_ApplyDamage(&this->actor) == 0) {
                     if (this->keyFlag != 0) {
-                        key = Item_DropCollectible(globalCtx, &this->actor.world.pos, this->keyFlag | ITEM00_SMALL_KEY);
+                        key = Item_DropCollectible(play, &this->actor.world.pos, this->keyFlag | ITEM00_SMALL_KEY);
                         if (key != NULL) {
                             key->actor.world.rot.y = Math_Vec3f_Yaw(&key->actor.world.pos, &this->actor.home.pos);
                             key->actor.speedXZ = 6.0f;
-                            Audio_PlaySoundGeneral(NA_SE_SY_TRE_BOX_APPEAR, &D_801333D4, 4, &D_801333E0, &D_801333E0,
-                                                   &D_801333E8);
+                            Audio_PlaySoundGeneral(NA_SE_SY_TRE_BOX_APPEAR, &gSfxDefaultPos, 4,
+                                                   &gSfxDefaultFreqAndVolScale, &gSfxDefaultFreqAndVolScale,
+                                                   &gSfxDefaultReverb);
                         }
                     }
                     EnGeldB_SetupDefeated(this);
-                    Enemy_StartFinishingBlow(globalCtx, &this->actor);
+                    Enemy_StartFinishingBlow(play, &this->actor);
                 } else {
                     EnGeldB_SetupDamaged(this);
                 }
@@ -1393,33 +1400,35 @@ void EnGeldB_CollisionCheck(EnGeldB* this, GlobalContext* globalCtx) {
     }
 }
 
-void EnGeldB_Update(Actor* thisx, GlobalContext* globalCtx) {
+void EnGeldB_Update(Actor* thisx, PlayState* play) {
     s32 pad;
-    EnGeldB* this = THIS;
+    EnGeldB* this = (EnGeldB*)thisx;
 
-    EnGeldB_CollisionCheck(this, globalCtx);
+    EnGeldB_CollisionCheck(this, play);
     if (this->actor.colChkInfo.damageEffect != GELDB_DMG_UNK_6) {
         Actor_MoveForward(&this->actor);
-        Actor_UpdateBgCheckInfo(globalCtx, &this->actor, 15.0f, 30.0f, 60.0f, 0x1D);
-        this->actionFunc(this, globalCtx);
+        Actor_UpdateBgCheckInfo(play, &this->actor, 15.0f, 30.0f, 60.0f,
+                                UPDBGCHECKINFO_FLAG_0 | UPDBGCHECKINFO_FLAG_2 | UPDBGCHECKINFO_FLAG_3 |
+                                    UPDBGCHECKINFO_FLAG_4);
+        this->actionFunc(this, play);
         this->actor.focus.pos = this->actor.world.pos;
         this->actor.focus.pos.y += 40.0f;
-        EnGeldB_TurnHead(this, globalCtx);
+        EnGeldB_TurnHead(this, play);
     }
     Collider_UpdateCylinder(&this->actor, &this->bodyCollider);
-    CollisionCheck_SetOC(globalCtx, &globalCtx->colChkCtx, &this->bodyCollider.base);
+    CollisionCheck_SetOC(play, &play->colChkCtx, &this->bodyCollider.base);
     if ((this->action >= GELDB_READY) && (this->spinAttackState < 2) &&
         ((this->actor.colorFilterTimer == 0) || !(this->actor.colorFilterParams & 0x4000))) {
-        CollisionCheck_SetAC(globalCtx, &globalCtx->colChkCtx, &this->bodyCollider.base);
+        CollisionCheck_SetAC(play, &play->colChkCtx, &this->bodyCollider.base);
     }
     if ((this->action == GELDB_BLOCK) && (this->skelAnime.curFrame == 0.0f)) {
-        CollisionCheck_SetAC(globalCtx, &globalCtx->colChkCtx, &this->blockCollider.base);
+        CollisionCheck_SetAC(play, &play->colChkCtx, &this->blockCollider.base);
     }
     if (this->swordState > 0) {
-        CollisionCheck_SetAT(globalCtx, &globalCtx->colChkCtx, &this->swordCollider.base);
+        CollisionCheck_SetAT(play, &play->colChkCtx, &this->swordCollider.base);
     }
     if (this->blinkState == 0) {
-        if ((Rand_ZeroOne() < 0.1f) && ((globalCtx->gameplayFrames % 4) == 0)) {
+        if ((Rand_ZeroOne() < 0.1f) && ((play->gameplayFrames % 4) == 0)) {
             this->blinkState++;
         }
     } else {
@@ -1427,11 +1436,10 @@ void EnGeldB_Update(Actor* thisx, GlobalContext* globalCtx) {
     }
 }
 
-s32 EnGeldB_OverrideLimbDraw(GlobalContext* globalCtx, s32 limbIndex, Gfx** dList, Vec3f* pos, Vec3s* rot,
-                             void* thisx) {
-    EnGeldB* this = THIS;
+s32 EnGeldB_OverrideLimbDraw(PlayState* play, s32 limbIndex, Gfx** dList, Vec3f* pos, Vec3s* rot, void* thisx) {
+    EnGeldB* this = (EnGeldB*)thisx;
 
-    OPEN_DISPS(globalCtx->state.gfxCtx, "../z_en_geldB.c", 2507);
+    OPEN_DISPS(play->state.gfxCtx, "../z_en_geldB.c", 2507);
     if (limbIndex == GELDB_LIMB_NECK) {
         rot->z += this->headRot.x;
         rot->x += this->headRot.y;
@@ -1447,11 +1455,11 @@ s32 EnGeldB_OverrideLimbDraw(GlobalContext* globalCtx, s32 limbIndex, Gfx** dLis
         gDPPipeSync(POLY_OPA_DISP++);
         gDPSetEnvColor(POLY_OPA_DISP++, 140, 0, 0, 255);
     }
-    CLOSE_DISPS(globalCtx->state.gfxCtx, "../z_en_geldB.c", 2529);
+    CLOSE_DISPS(play->state.gfxCtx, "../z_en_geldB.c", 2529);
     return false;
 }
 
-void EnGeldB_PostLimbDraw(GlobalContext* globalCtx, s32 limbIndex, Gfx** dList, Vec3s* rot, void* thisx) {
+void EnGeldB_PostLimbDraw(PlayState* play, s32 limbIndex, Gfx** dList, Vec3s* rot, void* thisx) {
     static Vec3f footOffset = { 300.0f, 0.0f, 0.0f };
     static Vec3f swordTipOffset = { 0.0f, -3000.0f, 0.0f };
     static Vec3f swordHiltOffset = { 400.0f, 0.0f, 0.0f };
@@ -1462,7 +1470,7 @@ void EnGeldB_PostLimbDraw(GlobalContext* globalCtx, s32 limbIndex, Gfx** dList, 
     static Vec3f zeroVec = { 0.0f, 0.0f, 0.0f };
     Vec3f swordTip;
     Vec3f swordHilt;
-    EnGeldB* this = THIS;
+    EnGeldB* this = (EnGeldB*)thisx;
     s32 bodyPart = -1;
 
     if (limbIndex == GELDB_LIMB_R_SWORD) {
@@ -1536,7 +1544,7 @@ void EnGeldB_PostLimbDraw(GlobalContext* globalCtx, s32 limbIndex, Gfx** dList, 
     }
 }
 
-void EnGeldB_Draw(Actor* thisx, GlobalContext* globalCtx) {
+void EnGeldB_Draw(Actor* thisx, PlayState* play) {
     static Vec3f blockTrisOffsets0[3] = {
         { -3000.0f, 6000.0f, 1600.0f },
         { -3000.0f, 0.0f, 1600.0f },
@@ -1550,9 +1558,9 @@ void EnGeldB_Draw(Actor* thisx, GlobalContext* globalCtx) {
     static void* eyeTextures[] = { gGerudoRedEyeOpenTex, gGerudoRedEyeHalfTex, gGerudoRedEyeShutTex,
                                    gGerudoRedEyeHalfTex };
     s32 pad;
-    EnGeldB* this = THIS;
+    EnGeldB* this = (EnGeldB*)thisx;
 
-    OPEN_DISPS(globalCtx->state.gfxCtx, "../z_en_geldB.c", 2672);
+    OPEN_DISPS(play->state.gfxCtx, "../z_en_geldB.c", 2672);
     if (1) {}
 
     if ((this->spinAttackState >= 2) && SkelAnime_Update(&this->skelAnime)) {
@@ -1565,23 +1573,23 @@ void EnGeldB_Draw(Actor* thisx, GlobalContext* globalCtx) {
             this->timer--;
             if (this->timer == 0) {
                 if ((INV_CONTENT(ITEM_HOOKSHOT) == ITEM_NONE) || (INV_CONTENT(ITEM_LONGSHOT) == ITEM_NONE)) {
-                    globalCtx->nextEntranceIndex = 0x1A5;
-                } else if (gSaveContext.eventChkInf[12] & 0x80) {
-                    globalCtx->nextEntranceIndex = 0x5F8;
+                    play->nextEntranceIndex = ENTR_SPOT09_1;
+                } else if (GET_EVENTCHKINF(EVENTCHKINF_C7)) {
+                    play->nextEntranceIndex = ENTR_SPOT12_18;
                 } else {
-                    globalCtx->nextEntranceIndex = 0x3B4;
+                    play->nextEntranceIndex = ENTR_SPOT12_17;
                 }
-                globalCtx->fadeTransition = 0x26;
-                globalCtx->sceneLoadFlag = 0x14;
+                play->transitionType = TRANS_TYPE_CIRCLE(TCA_STARBURST, TCC_BLACK, TCS_FAST);
+                play->transitionTrigger = TRANS_TRIGGER_START;
             }
         }
     }
 
     if ((this->action != GELDB_WAIT) || !this->invisible) {
-        func_80093D18(globalCtx->state.gfxCtx);
+        Gfx_SetupDL_25Opa(play->state.gfxCtx);
         gSPSegment(POLY_OPA_DISP++, 0x08, SEGMENTED_TO_VIRTUAL(eyeTextures[this->blinkState]));
-        SkelAnime_DrawFlexOpa(globalCtx, this->skelAnime.skeleton, this->skelAnime.jointTable,
-                              this->skelAnime.dListCount, EnGeldB_OverrideLimbDraw, EnGeldB_PostLimbDraw, this);
+        SkelAnime_DrawFlexOpa(play, this->skelAnime.skeleton, this->skelAnime.jointTable, this->skelAnime.dListCount,
+                              EnGeldB_OverrideLimbDraw, EnGeldB_PostLimbDraw, this);
         if (this->action == GELDB_BLOCK) {
             s32 i;
             Vec3f blockTrisVtx0[3];
@@ -1601,20 +1609,19 @@ void EnGeldB_Draw(Actor* thisx, GlobalContext* globalCtx) {
             if ((this->iceTimer % 4) == 0) {
                 s32 iceIndex = this->iceTimer >> 2;
 
-                EffectSsEnIce_SpawnFlyingVec3s(globalCtx, thisx, &this->bodyPartsPos[iceIndex], 150, 150, 150, 250, 235,
-                                               245, 255, 1.5f);
+                EffectSsEnIce_SpawnFlyingVec3s(play, thisx, &this->bodyPartsPos[iceIndex], 150, 150, 150, 250, 235, 245,
+                                               255, 1.5f);
             }
         }
     }
-    CLOSE_DISPS(globalCtx->state.gfxCtx, "../z_en_geldB.c", 2744);
+    CLOSE_DISPS(play->state.gfxCtx, "../z_en_geldB.c", 2744);
 }
 
-s32 EnGeldB_DodgeRanged(GlobalContext* globalCtx, EnGeldB* this) {
-    Actor* actor = Actor_GetProjectileActor(globalCtx, &this->actor, 800.0f);
+s32 EnGeldB_DodgeRanged(PlayState* play, EnGeldB* this) {
+    Actor* actor = Actor_GetProjectileActor(play, &this->actor, 800.0f);
 
     if (actor != NULL) {
         s16 angleToFacing;
-        s16 pad18;
         f32 dist;
 
         angleToFacing = Actor_WorldYawTowardActor(&this->actor, actor) - this->actor.shape.rot.y;
@@ -1632,7 +1639,7 @@ s32 EnGeldB_DodgeRanged(GlobalContext* globalCtx, EnGeldB* this) {
         } else {
             this->actor.world.rot.y = this->actor.shape.rot.y + 0x3FFF;
             if ((ABS(angleToFacing) < 0x2000) || (ABS(angleToFacing) > 0x5FFF)) {
-                EnGeldB_SetupSidestep(this, globalCtx);
+                EnGeldB_SetupSidestep(this, play);
                 this->actor.speedXZ *= 3.0f;
             } else if (ABS(angleToFacing) < 0x5FFF) {
                 EnGeldB_SetupRollBack(this);

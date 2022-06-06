@@ -7,14 +7,12 @@
 #include "z_en_pu_box.h"
 #include "objects/object_pu_box/object_pu_box.h"
 
-#define FLAGS 0x00000010
+#define FLAGS ACTOR_FLAG_4
 
-#define THIS ((EnPubox*)thisx)
-
-void EnPubox_Init(Actor* thisx, GlobalContext* globalCtx);
-void EnPubox_Destroy(Actor* thisx, GlobalContext* globalCtx);
-void EnPubox_Update(Actor* thisx, GlobalContext* globalCtx);
-void EnPubox_Draw(Actor* thisx, GlobalContext* globalCtx);
+void EnPubox_Init(Actor* thisx, PlayState* play);
+void EnPubox_Destroy(Actor* thisx, PlayState* play);
+void EnPubox_Update(Actor* thisx, PlayState* play);
+void EnPubox_Draw(Actor* thisx, PlayState* play);
 
 const ActorInit En_Pu_box_InitVars = {
     ACTOR_EN_PU_BOX,
@@ -28,9 +26,9 @@ const ActorInit En_Pu_box_InitVars = {
     (ActorFunc)EnPubox_Draw,
 };
 
-void EnPubox_Init(Actor* thisx, GlobalContext* globalCtx) {
+void EnPubox_Init(Actor* thisx, PlayState* play) {
     CollisionHeader* colHeader = NULL;
-    EnPubox* this = THIS;
+    EnPubox* this = (EnPubox*)thisx;
 
     switch (thisx->params) {
         case 0:
@@ -58,34 +56,35 @@ void EnPubox_Init(Actor* thisx, GlobalContext* globalCtx) {
     thisx->targetMode = 1;
     thisx->gravity = -2.0f;
     CollisionHeader_GetVirtual(&gBlockMediumCol, &colHeader);
-    this->dyna.bgId = DynaPoly_SetBgActor(globalCtx, &globalCtx->colCtx.dyna, thisx, colHeader);
+    this->dyna.bgId = DynaPoly_SetBgActor(play, &play->colCtx.dyna, thisx, colHeader);
 }
 
-void EnPubox_Destroy(Actor* thisx, GlobalContext* globalCtx) {
-    EnPubox* this = THIS;
+void EnPubox_Destroy(Actor* thisx, PlayState* play) {
+    EnPubox* this = (EnPubox*)thisx;
 
-    DynaPoly_DeleteBgActor(globalCtx, &globalCtx->colCtx.dyna, this->dyna.bgId);
+    DynaPoly_DeleteBgActor(play, &play->colCtx.dyna, this->dyna.bgId);
 }
 
-void EnPubox_Update(Actor* thisx, GlobalContext* globalCtx) {
-    EnPubox* this = THIS;
+void EnPubox_Update(Actor* thisx, PlayState* play) {
+    EnPubox* this = (EnPubox*)thisx;
 
     thisx->speedXZ += this->dyna.unk_150;
     thisx->world.rot.y = this->dyna.unk_158;
     thisx->speedXZ = (thisx->speedXZ < -2.5f) ? -2.5f : ((thisx->speedXZ > 2.5f) ? 2.5f : thisx->speedXZ);
     Math_SmoothStepToF(&thisx->speedXZ, 0.0f, 1.0f, 1.0f, 0.0f);
     if (thisx->speedXZ != 0.0f) {
-        Audio_PlaySoundGeneral(NA_SE_EV_ROCK_SLIDE - SFX_FLAG, &thisx->projectedPos, 4, &D_801333E0, &D_801333E0,
-                               &D_801333E8);
+        Audio_PlaySoundGeneral(NA_SE_EV_ROCK_SLIDE - SFX_FLAG, &thisx->projectedPos, 4, &gSfxDefaultFreqAndVolScale,
+                               &gSfxDefaultFreqAndVolScale, &gSfxDefaultReverb);
     }
     this->dyna.unk_154 = 0.0f;
     this->dyna.unk_150 = 0.0f;
     Actor_MoveForward(thisx);
-    Actor_UpdateBgCheckInfo(globalCtx, thisx, thisx->colChkInfo.cylHeight, thisx->colChkInfo.cylRadius,
-                            thisx->colChkInfo.cylRadius, 0x1D);
+    Actor_UpdateBgCheckInfo(
+        play, thisx, thisx->colChkInfo.cylHeight, thisx->colChkInfo.cylRadius, thisx->colChkInfo.cylRadius,
+        UPDBGCHECKINFO_FLAG_0 | UPDBGCHECKINFO_FLAG_2 | UPDBGCHECKINFO_FLAG_3 | UPDBGCHECKINFO_FLAG_4);
     thisx->focus.pos = thisx->world.pos;
 }
 
-void EnPubox_Draw(Actor* thisx, GlobalContext* globalCtx) {
-    Gfx_DrawDListOpa(globalCtx, gBlockMediumDL);
+void EnPubox_Draw(Actor* thisx, PlayState* play) {
+    Gfx_DrawDListOpa(play, gBlockMediumDL);
 }
