@@ -364,9 +364,9 @@ Gfx* sPlayerLeftHandHammerDLs[] = {
 };
 
 Gfx* gPlayerLeftHandBoomerangDLs[] = {
-    gLinkAdultLeftHandNearDL,
+    gLinkAdultLeftFistAndBoomerangNearDL,
     gLinkChildLeftFistAndBoomerangNearDL,
-    gLinkAdultLeftHandFarDL,
+    gLinkAdultLeftFistAndBoomerangNearDL,
     gLinkChildLeftFistAndBoomerangFarDL,
 };
 

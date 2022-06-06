@@ -4199,6 +4199,9 @@ s32 Camera_Subj3(Camera* camera) {
     CameraModeValue* values;
     Vec3f* pad2;
     f32 playerHeight;
+    CameraModeValue adultBoomerang[] = {
+        CAM_FUNCDATA_SUBJ3(5, 70, 50, 10, 0, 60, 0, 45, 0x2000),
+    };
 
     Actor_GetFocus(&sp60, &camera->player->actor);
     playerHeight = Player_GetHeight(camera->player);
@@ -4210,7 +4213,9 @@ s32 Camera_Subj3(Camera* camera) {
 
     func_80043ABC(camera);
     Camera_CopyPREGToModeValues(camera);
-    values = sCameraSettings[camera->setting].cameraModes[camera->mode].values;
+    values = ((LINK_IS_ADULT && (camera->player->heldItemActionParam == PLAYER_AP_BOOMERANG))
+        ? adultBoomerang
+        : sCameraSettings[camera->setting].cameraModes[camera->mode].values);
     roData->eyeNextYOffset = GET_NEXT_SCALED_RO_DATA(values) * playerHeight;
     roData->eyeDist = GET_NEXT_RO_DATA(values);
     roData->eyeNextDist = GET_NEXT_RO_DATA(values);
