@@ -17,7 +17,7 @@ static void write_dmadata_table(FILE *fout)
     int i;
 
     for (i = 0; i < g_segmentsCount; i++)
-        fprintf(fout, "DEFINE_DMA_ENTRY(%s)\n", g_segments[i].name);
+        if (!((g_segments[i].flags >> 3) & 1)) fprintf(fout, "DEFINE_DMA_ENTRY(%s)\n", g_segments[i].name);
 }
 
 static void usage(const char *execname)

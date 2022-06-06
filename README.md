@@ -1,5 +1,36 @@
 # The Legend of Zelda: Ocarina of Time
 
+## Compression Guide
+Run ``make compress`` to compress a rom, it should build a decompressed rom if it's missing.
+This should output a file called ``zelda_ocarina_mq_dbg_compressed.z64`` with a size of 32MB.
+I will update this branch whenever it will break.
+
+The output should look like this for a matching rom with ``NON_MATCHING ?= 1`` in the Makefile (from root folder):
+```
+python3 tools/z64compress_wrapper.py --cache cache --threads 4 zelda_ocarina_mq_dbg.z64 zelda_ocarina_mq_dbg_compressed.z64 zelda_ocarina_mq_dbg.elf build/spec
+./tools/z64compress/z64compress --in zelda_ocarina_mq_dbg.z64 --out zelda_ocarina_mq_dbg_compressed.z64 --mb 32 --codec yaz --cache cache --dma 0x12F70,1548 --compress 9-14,28-167,169-1531 --threads 4
+welcome to z64compress <z64.me>
+updating 'cache/yaz' 1548/1548: success!
+injecting file 1548/1548: success!
+compression ratio: 52.19%
+rom compressed successfully!
+compressed rom written successfully!
+```
+
+Thanks to @louist103 for [the original explanation on the Zelda Decompilation Discord](https://discord.com/channels/688807550715560050/718842910749229066/873714604071612458)
+
+## WAD Creation Guide
+Requirements:
+- Have [gzinject](https://github.com/krimtonz/gzinject) installed
+- Have the ``common-key.bin`` file in the root folder (file not provided in this repo)
+- Have an original Ocarina of Time NTSC WAD named: ``zelda_ocarina_base.wad``
+
+Once you have these requirements fulfilled, run ``make wad``.
+
+This should output a file called ``zelda_ocarina_mq_dbg.wad``.
+Controls: N64 L is mapped to GCN C-Stick Down, N64 D-Pad is mapped to GCN D-Pad, everything else is like normal Wii VC mapping
+
+
 [![Build Status][jenkins-badge]][jenkins] [![Decompilation Progress][progress-badge]][progress] [![Contributors][contributors-badge]][contributors] [![Discord Channel][discord-badge]][discord]
 
 [jenkins]: https://jenkins.deco.mp/job/OOT/job/master

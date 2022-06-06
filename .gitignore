@@ -57,6 +57,5 @@ assets_custom/
 .python-version
 assets_custom.py
 cache/
-z64compress/
 common-key.bin
 *.wad
