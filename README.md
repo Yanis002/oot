@@ -1,7 +1,7 @@
 # The Legend of Zelda: Ocarina of Time
 
 ## Mod: Link Objects
-This mod implements boomerang and sticks as adult and Mirror Shield, Hookshot/Longshot, Hammer, Iron/Hover Boots as child
+This mod implements boomerang and sticks as adult and Mirror Shield, Hookshot/Longshot, Hammer, Iron/Hover Boots and every tunic as child
 L+D-Pad Up to switch between child and adult Link.
 Quick text enabled by default.
 Note: this branch doesn't have the assets.
