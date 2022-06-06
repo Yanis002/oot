@@ -225,7 +225,8 @@ typedef struct EffectSs {
     /* 0x5C */ s16 life; // -1 means this entry is free
     /* 0x5E */ u8 priority; // Lower value means higher priority
     /* 0x5F */ u8 type;
-} EffectSs; // size = 0x60
+    /* 0x60 */ u8 isAdultWithSticks;
+} EffectSs; // size = 0x61
 
 typedef struct {
     /* 0x00 */ EffectSs* table; // "data_table"

@@ -7,9 +7,11 @@
 #include "z_eff_ss_stick.h"
 #include "objects/object_link_boy/object_link_boy.h"
 #include "objects/object_link_child/object_link_child.h"
+#include "assets/objects/gameplay_keep/gameplay_keep.h"
 
 #define rObjBankIdx regs[0]
 #define rYaw regs[1]
+#define ADULT_AND_STICK(play) (LINK_IS_ADULT && (GET_PLAYER(play)->itemActionParam == PLAYER_AP_STICK))
 
 u32 EffectSsStick_Init(PlayState* play, u32 index, EffectSs* this, void* initParamsx);
 void EffectSsStick_Draw(PlayState* play, u32 index, EffectSs* this);
@@ -29,8 +31,10 @@ u32 EffectSsStick_Init(PlayState* play, u32 index, EffectSs* this, void* initPar
     StickDrawInfo drawInfo[] = {
         { OBJECT_LINK_BOY, gLinkAdultBrokenGiantsKnifeBladeDL }, // adult, broken sword
         { OBJECT_LINK_CHILD, gLinkChildLinkDekuStickDL },        // child, broken stick
+        { OBJECT_GAMEPLAY_KEEP, gLinkDekuStickDL },        // adult, broken stick
     };
-    StickDrawInfo* ageInfoEntry = gSaveContext.linkAge + drawInfo;
+    u8 arrayIndex = (ADULT_AND_STICK(play) ? (gSaveContext.linkAge + 2) : gSaveContext.linkAge);
+    StickDrawInfo* ageInfoEntry = arrayIndex + drawInfo;
     EffectSsStickInitParams* initParams = (EffectSsStickInitParams*)initParamsx;
 
     this->rObjBankIdx = Object_GetIndex(&play->objectCtx, ageInfoEntry->objectID);
@@ -44,6 +48,7 @@ u32 EffectSsStick_Init(PlayState* play, u32 index, EffectSs* this, void* initPar
     this->update = EffectSsStick_Update;
     this->velocity.y = 26.0f;
     this->accel.y = -4.0f;
+    this->isAdultWithSticks = ADULT_AND_STICK(play);
 
     return 1;
 }
@@ -56,7 +61,7 @@ void EffectSsStick_Draw(PlayState* play, u32 index, EffectSs* this) {
 
     Matrix_Translate(this->pos.x, this->pos.y, this->pos.z, MTXMODE_NEW);
 
-    if (!LINK_IS_ADULT) {
+    if (this->isAdultWithSticks || !LINK_IS_ADULT) {
         Matrix_Scale(0.01f, 0.0025f, 0.01f, MTXMODE_APPLY);
         Matrix_RotateZYX(0, this->rYaw, 0, MTXMODE_APPLY);
     } else {
