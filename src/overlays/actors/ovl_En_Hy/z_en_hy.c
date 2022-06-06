@@ -931,7 +931,7 @@ void EnHy_InitImpl(EnHy* this, PlayState* play) {
                     this->actionFunc = func_80A710F8;
                     break;
                 }
-                // fall-through
+                FALLTHROUGH;
             case ENHY_TYPE_COB:
             case ENHY_TYPE_AHG_2:
             case ENHY_TYPE_AHG_4:
@@ -1095,7 +1095,7 @@ s32 EnHy_OverrideLimbDraw(PlayState* play, s32 limbIndex, Gfx** dList, Vec3f* po
     s32 pad;
     Vec3s sp48;
     u8 i;
-    UNK_PTR ptr;
+    void* ptr;
 
     if (1) {}
 
@@ -1181,7 +1181,7 @@ void EnHy_Draw(Actor* thisx, PlayState* play) {
     OPEN_DISPS(play->state.gfxCtx, "../z_en_hy.c", 2318);
 
     if (this->actionFunc != EnHy_InitImpl) {
-        func_80093D18(play->state.gfxCtx);
+        Gfx_SetupDL_25Opa(play->state.gfxCtx);
         Matrix_Translate(this->modelOffset.x, this->modelOffset.y, this->modelOffset.z, MTXMODE_APPLY);
         envColorSeg8 = sModelInfo[this->actor.params & 0x7F].envColorSeg8;
         envColorSeg9 = sModelInfo[this->actor.params & 0x7F].envColorSeg9;
