@@ -1863,7 +1863,7 @@ void Player_DrawPause(PlayState* play, u8* segment, SkelAnime* skelAnime, Vec3f*
         VIRTUAL_TO_PHYSICAL(segment + PAUSE_EQUIP_BUFFER_SIZE + PAUSE_PLAYER_SEGMENT_GAMEPLAY_KEEP_BUFFER_SIZE);
 
     if (!LINK_IS_ADULT) {
-        if (shield == PLAYER_SHIELD_DEKU) {
+        if ((shield == PLAYER_SHIELD_DEKU) || (shield == PLAYER_SHIELD_MIRROR)) {
             srcTable = gLinkPauseChildDekuShieldJointTable;
         } else {
             srcTable = gLinkPauseChildJointTable;
