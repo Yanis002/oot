@@ -5950,6 +5950,13 @@ void func_8083DDC8(Player* this, PlayState* play) {
 
 void func_8083DF68(Player* this, f32 arg1, s16 arg2) {
     Math_AsymStepToF(&this->linearVelocity, arg1, REG(19) / 100.0f, 1.5f);
+
+    if (this->currentMask == PLAYER_MASK_BUNNY) {
+        if (this->func_674 == func_80842180) {
+            this->linearVelocity = arg1 * 1.7;
+        }
+    }
+
     Math_ScaledStepToS(&this->currentYaw, arg2, REG(27));
 }
 
