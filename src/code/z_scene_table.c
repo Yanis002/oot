@@ -423,7 +423,7 @@ void Scene_DrawConfigMizusin(PlayState* play) {
     spAC = play->roomCtx.unk_74[1] & 0xFF;
     gameplayFrames = play->gameplayFrames;
 
-    gSPSegment(POLY_XLU_DISP++, 0x06, SEGMENTED_TO_VIRTUAL(D_8012A330[gSaveContext.nightFlag]));
+    gSPSegment(POLY_XLU_DISP++, 0x06, SEGMENTED_TO_VIRTUAL(D_8012A330[((void)0, gSaveContext.nightFlag)]));
 
     if (spB0 == 1) {
         gSPSegment(POLY_OPA_DISP++, 0x08,
