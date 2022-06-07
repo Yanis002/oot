@@ -3,7 +3,21 @@
 FORMAT_VER="11"
 FORMAT_OPTS="-i -style=file"
 TIDY_OPTS="-p . --fix --fix-errors"
-COMPILER_OPTS="-fno-builtin -std=gnu90 -Iinclude -Isrc -D_LANGUAGE_C -DNON_MATCHING"
+COMPILER_OPTS="-fno-builtin -fsyntax-only -std=gnu90 -Iinclude -Isrc -Ibuild -I. -D_LANGUAGE_C -DNON_MATCHING"
+
+# https://backreference.org/2010/05/23/sanitizing-files-with-no-trailing-newline/index.html
+# "gets the last character of the file pipes it into read, which will exit with
+# a nonzero exit code if it encounters EOF before newline (so, if the last
+# character of the file isn't a newline). If read exits nonzero, then append a
+# newline onto the file using echo (if read exits 0, that satisfies the ||, so
+# the echo command isn't run)." (https://stackoverflow.com/a/34865616)
+function add_final_newline () {
+    for file in "$@"
+    do
+        tail -c1 $file | read -r _ || echo >> $file
+    done
+}
+export -f add_final_newline
 
 # https://backreference.org/2010/05/23/sanitizing-files-with-no-trailing-newline/index.html
 # "gets the last character of the file pipes it into read, which will exit with
@@ -32,6 +46,12 @@ else
         echo "Neither clang-format nor clang-format-${FORMAT_VER} found. Exiting."
         exit 1
     fi
+fi
+
+if [ ! $(command -v clang-tidy) ]
+then
+    echo "clang-tidy not found. Exiting."
+    exit 1
 fi
 
 if (( $# > 0 )); then
