@@ -1,5 +1,6 @@
 <Root>
     <File Name="men_scene" Segment="2">
+        <Path Name="men_scenePathList_0002F0" Offset="0x02F0" NumPaths="2"/>
         <Texture Name="gGTGDayEntranceTex" OutName="day_entrance" Format="ia16" Width="8" Height="128" Offset="0xF930"/>
         <Texture Name="gGTGNightEntranceTex" OutName="night_entrance" Format="ia16" Width="8" Height="128" Offset="0x10130"/>
         <Scene Name="men_scene" Offset="0x0"/>
