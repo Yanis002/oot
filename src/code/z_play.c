@@ -16,7 +16,7 @@ u64 D_801614D0[0xA00];
 void Play_SpawnScene(PlayState* this, s32 sceneNum, s32 spawn);
 
 void func_800BC450(PlayState* this) {
-    Camera_ChangeDataIdx(GET_ACTIVE_CAM(this), this->unk_1242B - 1);
+    Camera_ChangeBgCamIndex(GET_ACTIVE_CAM(this), this->unk_1242B - 1);
 }
 
 void func_800BC490(PlayState* this, s16 point) {
@@ -201,7 +201,7 @@ void Play_Init(GameState* thisx) {
     u32 zAllocAligned;
     size_t zAllocSize;
     Player* player;
-    s32 playerStartCamId;
+    s32 playerStartBgCamIndex;
     s32 i;
     u8 tempSetupIndex;
     s32 pad[2];
@@ -307,7 +307,7 @@ void Play_Init(GameState* thisx) {
     if ((gEntranceTable[((void)0, gSaveContext.entranceIndex)].scene == SCENE_SPOT09) &&
         gSaveContext.sceneSetupIndex == 6) {
         osSyncPrintf("エンディングはじまるよー\n"); // "The ending starts"
-        ((void (*)())0x81000000)();
+        ((void (*)(void))0x81000000)();
         osSyncPrintf("出戻り？\n"); // "Return?"
     }
 
@@ -349,9 +349,8 @@ void Play_Init(GameState* thisx) {
 
     if (gSaveContext.gameMode != 1) {
         if (gSaveContext.nextTransitionType == TRANS_NEXT_TYPE_DEFAULT) {
-            // fade in
-            this->transitionType =
-                (gEntranceTable[((void)0, gSaveContext.entranceIndex) + tempSetupIndex].field >> 7) & 0x7F;
+            this->transitionType = ENTRANCE_INFO_END_TRANS_TYPE(
+                gEntranceTable[((void)0, gSaveContext.entranceIndex) + tempSetupIndex].field);
         } else {
             this->transitionType = gSaveContext.nextTransitionType;
             gSaveContext.nextTransitionType = TRANS_NEXT_TYPE_DEFAULT;
@@ -371,9 +370,9 @@ void Play_Init(GameState* thisx) {
 
     osSyncPrintf("ZELDA ALLOC SIZE=%x\n", THA_GetSize(&this->state.tha));
     zAllocSize = THA_GetSize(&this->state.tha);
-    zAlloc = GameState_Alloc(&this->state, zAllocSize, "../z_play.c", 2918);
+    zAlloc = (u32)GameState_Alloc(&this->state, zAllocSize, "../z_play.c", 2918);
     zAllocAligned = (zAlloc + 8) & ~0xF;
-    ZeldaArena_Init(zAllocAligned, zAllocSize - zAllocAligned + zAlloc);
+    ZeldaArena_Init((void*)zAllocAligned, zAllocSize - zAllocAligned + zAlloc);
     // "Zelda Heap"
     osSyncPrintf("ゼルダヒープ %08x-%08x\n", zAllocAligned,
                  (s32)(zAllocAligned + zAllocSize) - (s32)(zAllocAligned - zAlloc));
@@ -389,10 +388,10 @@ void Play_Init(GameState* thisx) {
     Camera_InitPlayerSettings(&this->mainCamera, player);
     Camera_ChangeMode(&this->mainCamera, CAM_MODE_NORMAL);
 
-    playerStartCamId = player->actor.params & 0xFF;
-    if (playerStartCamId != 0xFF) {
-        osSyncPrintf("player has start camera ID (" VT_FGCOL(BLUE) "%d" VT_RST ")\n", playerStartCamId);
-        Camera_ChangeDataIdx(&this->mainCamera, playerStartCamId);
+    playerStartBgCamIndex = player->actor.params & 0xFF;
+    if (playerStartBgCamIndex != 0xFF) {
+        osSyncPrintf("player has start camera ID (" VT_FGCOL(BLUE) "%d" VT_RST ")\n", playerStartBgCamIndex);
+        Camera_ChangeBgCamIndex(&this->mainCamera, playerStartBgCamIndex);
     }
 
     if (YREG(15) == 32) {
@@ -414,7 +413,7 @@ void Play_Init(GameState* thisx) {
     if (dREG(95) != 0) {
         D_8012D1F0 = D_801614D0;
         osSyncPrintf("\nkawauso_data=[%x]", D_8012D1F0);
-        DmaMgr_DmaRomToRam(0x03FEB000, (u32)D_8012D1F0, sizeof(D_801614D0));
+        DmaMgr_DmaRomToRam(0x03FEB000, D_8012D1F0, sizeof(D_801614D0));
     }
 }
 
@@ -490,7 +489,8 @@ void Play_Update(PlayState* this) {
                         }
 
                         // fade out bgm if "continue bgm" flag is not set
-                        if (!(gEntranceTable[this->nextEntranceIndex + sceneSetupIndex].field & 0x8000)) {
+                        if (!(gEntranceTable[this->nextEntranceIndex + sceneSetupIndex].field &
+                              ENTRANCE_INFO_CONTINUE_BGM_FLAG)) {
                             // "Sound initalized. 111"
                             osSyncPrintf("\n\n\nサウンドイニシャル来ました。111");
                             if ((this->transitionType < TRANS_TYPE_MAX) && !Environment_IsForcedSequenceDisabled()) {
@@ -1197,7 +1197,7 @@ void Play_Draw(PlayState* this) {
                 POLY_OPA_DISP = sp84;
                 goto Play_Draw_DrawOverlayElements;
             } else {
-                s32 sp80;
+                s32 roomDrawFlags;
 
                 if ((HREG(80) != 10) || (HREG(83) != 0)) {
                     if (this->skyboxId && (this->skyboxId != SKYBOX_UNSET_1D) && !this->envCtx.skyboxDisabled) {
@@ -1236,13 +1236,13 @@ void Play_Draw(PlayState* this) {
                 if ((HREG(80) != 10) || (HREG(84) != 0)) {
                     if (VREG(94) == 0) {
                         if (HREG(80) != 10) {
-                            sp80 = 3;
+                            roomDrawFlags = ROOM_DRAW_OPA | ROOM_DRAW_XLU;
                         } else {
-                            sp80 = HREG(84);
+                            roomDrawFlags = HREG(84);
                         }
                         Scene_Draw(this);
-                        Room_Draw(this, &this->roomCtx.curRoom, sp80 & 3);
-                        Room_Draw(this, &this->roomCtx.prevRoom, sp80 & 3);
+                        Room_Draw(this, &this->roomCtx.curRoom, roomDrawFlags & (ROOM_DRAW_OPA | ROOM_DRAW_XLU));
+                        Room_Draw(this, &this->roomCtx.prevRoom, roomDrawFlags & (ROOM_DRAW_OPA | ROOM_DRAW_XLU));
                     }
                 }
 
@@ -1808,8 +1808,8 @@ void Play_TriggerRespawn(PlayState* this) {
 }
 
 s32 func_800C0CB8(PlayState* this) {
-    return (this->roomCtx.curRoom.meshHeader->base.type != 1) && (YREG(15) != 0x20) && (YREG(15) != 0x30) &&
-           (YREG(15) != 0x40) && (this->sceneNum != SCENE_HAIRAL_NIWA);
+    return (this->roomCtx.curRoom.meshHeader->base.type != MESH_HEADER_TYPE_1) && (YREG(15) != 0x20) &&
+           (YREG(15) != 0x30) && (YREG(15) != 0x40) && (this->sceneNum != SCENE_HAIRAL_NIWA);
 }
 
 s32 FrameAdvance_IsEnabled(PlayState* this) {
