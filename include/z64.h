@@ -539,7 +539,7 @@ typedef struct {
 typedef struct {
     /* 0x0000 */ View   view;
     /* 0x0128 */ Font   font;
-    /* 0xE2B0 */ void*  textboxSegment; // original name: "fukidashiSegment"
+    /* 0xE2B0 */ u8*    textboxSegment; // original name: "fukidashiSegment"
     /* 0xE2B4 */ char   unk_E2B4[0x4];
     /* 0xE2B8 */ OcarinaStaff* ocarinaStaff; // original name : "info"
     /* 0xE2BC */ char   unk_E2BC[0x3C];
@@ -1344,6 +1344,20 @@ typedef struct {
     /* 0x24 */ s16 unk_24;
 } struct_80034A14_arg1; // size = 0x28
 
+// Macros for `EntranceInfo.field`
+#define ENTRANCE_INFO_CONTINUE_BGM_FLAG (1 << 15)
+#define ENTRANCE_INFO_DISPLAY_TITLE_CARD_FLAG (1 << 14)
+#define ENTRANCE_INFO_END_TRANS_TYPE_MASK 0x3F80
+#define ENTRANCE_INFO_END_TRANS_TYPE_SHIFT 7
+#define ENTRANCE_INFO_END_TRANS_TYPE(field)          \
+    (((field) >> ENTRANCE_INFO_END_TRANS_TYPE_SHIFT) \
+     & (ENTRANCE_INFO_END_TRANS_TYPE_MASK >> ENTRANCE_INFO_END_TRANS_TYPE_SHIFT))
+#define ENTRANCE_INFO_START_TRANS_TYPE_MASK 0x7F
+#define ENTRANCE_INFO_START_TRANS_TYPE_SHIFT 0
+#define ENTRANCE_INFO_START_TRANS_TYPE(field)          \
+    (((field) >> ENTRANCE_INFO_START_TRANS_TYPE_SHIFT) \
+     & (ENTRANCE_INFO_START_TRANS_TYPE_MASK >> ENTRANCE_INFO_START_TRANS_TYPE_SHIFT))
+
 typedef struct {
     /* 0x00 */ s8  scene;
     /* 0x01 */ s8  spawn;
@@ -1531,7 +1545,7 @@ typedef struct {
     /* 0x04 */ u32 decSize;
     /* 0x08 */ u32 compInfoOffset; // only used in mio0
     /* 0x0C */ u32 uncompDataOffset; // only used in mio0
-    /* 0x10 */ u32 data[1];
+    /* 0x10 */ u8 data[1];
 } Yaz0Header; // size = 0x10 ("data" is not part of the header)
 
 typedef struct {
