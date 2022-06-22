@@ -3,13 +3,13 @@
 s32 osRecvMesg(OSMesgQueue* mq, OSMesg* msg, s32 flag) {
     register u32 prevInt = __osDisableInt();
 
-    while (mq->validCount == 0) {
+    while (MQ_IS_EMPTY(mq)) {
         if (flag == OS_MESG_NOBLOCK) {
             __osRestoreInt(prevInt);
             return -1;
         }
-        __osRunningThread->state = 8;
-        __osEnqueueAndYield((OSThread**)mq);
+        __osRunningThread->state = OS_STATE_WAITING;
+        __osEnqueueAndYield(&mq->mtqueue);
     }
 
     if (msg != NULL) {

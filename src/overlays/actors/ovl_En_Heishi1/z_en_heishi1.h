@@ -6,7 +6,7 @@
 
 struct EnHeishi1;
 
-typedef void (*EnHeishi1ActionFunc)(struct EnHeishi1*, GlobalContext*);
+typedef void (*EnHeishi1ActionFunc)(struct EnHeishi1*, PlayState*);
 
 typedef struct EnHeishi1 {
     /* 0x0000 */ Actor actor;
@@ -31,7 +31,7 @@ typedef struct EnHeishi1 {
     union {
         struct {
             /* 0x0284 */ f32 animSpeed;
-            /* 0x0288 */ f32 transitionRate;
+            /* 0x0288 */ f32 animMorphFrames;
             /* 0x028C */ f32 moveSpeedTarget;
             /* 0x0290 */ f32 moveSpeedMax;
             /* 0x0294 */ f32 bodyTurnSpeedTarget;

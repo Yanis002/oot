@@ -19,7 +19,7 @@
 #define MODE_HEAL(this) (((this)->actor.home.rot.z >> 8) & 0x1)
 #define GET_DIVISOR(this) ((((this)->actor.home.rot.z >> 4) & 0xF) == 0 ? 1 : (((this)->actor.home.rot.z >> 4) & 0xF))
 #define GET_TIMER(this) (((this)->actor.home.rot.z & 0xF) * (20 / GET_DIVISOR(this)))
-#define GET_SWITCH_FLAG(globalCtx, this) ((MODE_HEAL(this) == true) ? Flags_GetSwitch(globalCtx, (this)->switchFlag) : false)
+#define GET_SWITCH_FLAG(play, this) ((MODE_HEAL(this) == true) ? Flags_GetSwitch(play, (this)->switchFlag) : false)
 
 // GET_POS return true if Player's inside WaterBox bounds
 #define POINT1(playerX, playerZ, this) (((playerX > (this)->pos1.x) && (playerZ > (this)->pos1.z)) ? true : false)

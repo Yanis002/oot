@@ -5,7 +5,7 @@
  */
 
 #include "z_en_trap.h"
-#include "objects/object_trap/object_trap.h"
+#include "assets/objects/object_trap/object_trap.h"
 
 #define FLAGS ACTOR_FLAG_4
 
@@ -29,10 +29,10 @@
 #define vClosestDirection genericVar1 // relative to spike trap's facing angle if moving out, absolute if moving in
 #define vMovementMetric genericVar2
 
-void EnTrap_Init(Actor* thisx, GlobalContext* globalCtx);
-void EnTrap_Destroy(Actor* thisx, GlobalContext* globalCtx);
-void EnTrap_Update(Actor* thisx, GlobalContext* globalCtx);
-void EnTrap_Draw(Actor* thisx, GlobalContext* globalCtx);
+void EnTrap_Init(Actor* thisx, PlayState* play);
+void EnTrap_Destroy(Actor* thisx, PlayState* play);
+void EnTrap_Update(Actor* thisx, PlayState* play);
+void EnTrap_Draw(Actor* thisx, PlayState* play);
 
 const ActorInit En_Trap_InitVars = {
     ACTOR_EN_TRAP,
@@ -59,7 +59,7 @@ static ColliderCylinderInit sCylinderInit = {
     { 30, 20, 0, { 0, 0, 0 } },
 };
 
-void EnTrap_Init(Actor* thisx, GlobalContext* globalCtx) {
+void EnTrap_Init(Actor* thisx, PlayState* play) {
     f32 trapDist;
     f32 trapSpeed;
     s16 zSpeed;
@@ -88,7 +88,9 @@ void EnTrap_Init(Actor* thisx, GlobalContext* globalCtx) {
             trapSpeed = 10.0f;
             thisx->params = 0xF;
         }
-        Actor_UpdateBgCheckInfo(globalCtx, thisx, 10.0f, 20.0f, 20.0f, 0x1D);
+        Actor_UpdateBgCheckInfo(play, thisx, 10.0f, 20.0f, 20.0f,
+                                UPDBGCHECKINFO_FLAG_0 | UPDBGCHECKINFO_FLAG_2 | UPDBGCHECKINFO_FLAG_3 |
+                                    UPDBGCHECKINFO_FLAG_4);
         thisx->home.pos = thisx->world.pos;
         this->targetPosLeft.x = thisx->world.pos.x + (trapDist * Math_CosS(thisx->world.rot.y));
         this->targetPosLeft.z = thisx->world.pos.z - (trapDist * Math_SinS(thisx->world.rot.y));
@@ -107,19 +109,19 @@ void EnTrap_Init(Actor* thisx, GlobalContext* globalCtx) {
         this->moveSpeedLeftRight.z = this->moveSpeedForwardBack.x = xSpeed;
     }
     thisx->focus.pos = thisx->world.pos;
-    Collider_InitCylinder(globalCtx, &this->collider);
-    Collider_SetCylinder(globalCtx, &this->collider, thisx, &sCylinderInit);
+    Collider_InitCylinder(play, &this->collider);
+    Collider_SetCylinder(play, &this->collider, thisx, &sCylinderInit);
     ActorShape_Init(&thisx->shape, 0.0f, ActorShadow_DrawCircle, 0.0f);
     thisx->targetMode = 3;
     thisx->colChkInfo.mass = 0xFF;
 }
 
-void EnTrap_Destroy(Actor* thisx, GlobalContext* globalCtx) {
+void EnTrap_Destroy(Actor* thisx, PlayState* play) {
     EnTrap* this = (EnTrap*)thisx;
-    Collider_DestroyCylinder(globalCtx, &this->collider);
+    Collider_DestroyCylinder(play, &this->collider);
 }
 
-void EnTrap_Update(Actor* thisx, GlobalContext* globalCtx) {
+void EnTrap_Update(Actor* thisx, PlayState* play) {
     EnTrap* this = (EnTrap*)thisx;
     Vec3f posTemp;
     s16 angleToKnockPlayer;
@@ -145,18 +147,18 @@ void EnTrap_Update(Actor* thisx, GlobalContext* globalCtx) {
         touchingActor = true;
     }
     // Freeze the trap if hit by ice arrows:
-    if ((this->collider.base.acFlags & AC_HIT) != 0) {
+    if (this->collider.base.acFlags & AC_HIT) {
         icePos = thisx->world.pos;
         this->collider.base.acFlags &= ~AC_HIT;
         Actor_SetColorFilter(thisx, 0, 250, 0, 250);
         icePos.y += 10.0f;
         icePos.z += 10.0f;
-        EffectSsEnIce_SpawnFlyingVec3f(globalCtx, thisx, &icePos, 150, 150, 150, 250, 235, 245, 255, 1.8f);
+        EffectSsEnIce_SpawnFlyingVec3f(play, thisx, &icePos, 150, 150, 150, 250, 235, 245, 255, 1.8f);
         icePos.x += 10.0f;
         icePos.z -= 20.0f;
-        EffectSsEnIce_SpawnFlyingVec3f(globalCtx, thisx, &icePos, 150, 150, 150, 250, 235, 245, 255, 1.8f);
+        EffectSsEnIce_SpawnFlyingVec3f(play, thisx, &icePos, 150, 150, 150, 250, 235, 245, 255, 1.8f);
         icePos.x -= 20.0f;
-        EffectSsEnIce_SpawnFlyingVec3f(globalCtx, thisx, &icePos, 150, 150, 150, 250, 235, 245, 255, 1.8f);
+        EffectSsEnIce_SpawnFlyingVec3f(play, thisx, &icePos, 150, 150, 150, 250, 235, 245, 255, 1.8f);
     }
     // If not frozen:
     if (thisx->colorFilterTimer == 0) {
@@ -173,14 +175,14 @@ void EnTrap_Update(Actor* thisx, GlobalContext* globalCtx) {
             } else {
                 angleToKnockPlayer = thisx->yawTowardsPlayer;
             }
-            globalCtx->damagePlayer(globalCtx, -4);
-            func_8002F7A0(globalCtx, thisx, 6.0f, angleToKnockPlayer, 6.0f);
+            play->damagePlayer(play, -4);
+            func_8002F7A0(play, thisx, 6.0f, angleToKnockPlayer, 6.0f);
             this->playerDmgTimer = 15;
         }
         if (thisx->params & SPIKETRAP_MODE_LINEAR) {
             this->vContinue = 1.0f;
             // If physically touching a wall and wall faces towards spike trap
-            if ((thisx->bgCheckFlags & 8) && (ABS(angleToWall) >= 0x6000)) {
+            if ((thisx->bgCheckFlags & BGCHECKFLAG_WALL) && (ABS(angleToWall) >= 0x6000)) {
                 this->vContinue = 0.0f;
             }
             // If there is a collision poly between current position and a position 30 units ahead of spike trap
@@ -188,7 +190,7 @@ void EnTrap_Update(Actor* thisx, GlobalContext* globalCtx) {
                 posAhead.x = (Math_SinS(thisx->world.rot.y) * 30.0f) + thisx->world.pos.x;
                 posAhead.z = (Math_CosS(thisx->world.rot.y) * 30.0f) + thisx->world.pos.z;
                 posAhead.y = thisx->world.pos.y;
-                if (BgCheck_EntityLineTest1(&globalCtx->colCtx, &thisx->world.pos, &posAhead, &colPoint, &colPoly, true,
+                if (BgCheck_EntityLineTest1(&play->colCtx, &thisx->world.pos, &posAhead, &colPoint, &colPoly, true,
                                             true, false, true, &bgId) == true) {
                     this->vContinue = 0.0f;
                 }
@@ -224,7 +226,7 @@ void EnTrap_Update(Actor* thisx, GlobalContext* globalCtx) {
                     case DIR_FWD:
                         if (!(thisx->params & SPIKETRAP_FOURWAY_FWD_ALLOWED)) {
                             this->vMovementMetric = 0.0f;
-                        } else if ((thisx->bgCheckFlags & 8) && (ABS(angleToWall) > 0x6000)) {
+                        } else if ((thisx->bgCheckFlags & BGCHECKFLAG_WALL) && (ABS(angleToWall) > 0x6000)) {
                             this->vMovementMetric = 0.0f;
                         }
                         if (touchingActor && (this->vMovementMetric != 0.0f) && (ABS(angleToCollidedActor) > 0x6000)) {
@@ -243,7 +245,8 @@ void EnTrap_Update(Actor* thisx, GlobalContext* globalCtx) {
                     case DIR_LEFT:
                         if (!(thisx->params & SPIKETRAP_FOURWAY_LEFT_ALLOWED)) {
                             this->vMovementMetric = 0.0f;
-                        } else if ((thisx->bgCheckFlags & 8) && (angleToWall < -0x2000) && (angleToWall > -0x6000)) {
+                        } else if ((thisx->bgCheckFlags & BGCHECKFLAG_WALL) && (angleToWall < -0x2000) &&
+                                   (angleToWall > -0x6000)) {
                             this->vMovementMetric = 0.0f;
                             break;
                         }
@@ -265,7 +268,7 @@ void EnTrap_Update(Actor* thisx, GlobalContext* globalCtx) {
                     case DIR_BACK:
                         if (!(thisx->params & SPIKETRAP_FOURWAY_BACK_ALLOWED)) {
                             this->vMovementMetric = 0.0f;
-                        } else if ((thisx->bgCheckFlags & 8) && (ABS(angleToWall) < 0x2000)) {
+                        } else if ((thisx->bgCheckFlags & BGCHECKFLAG_WALL) && (ABS(angleToWall) < 0x2000)) {
                             this->vMovementMetric = 0.0f;
                             break;
                         }
@@ -286,7 +289,8 @@ void EnTrap_Update(Actor* thisx, GlobalContext* globalCtx) {
                     case DIR_RIGHT:
                         if (!(thisx->params & SPIKETRAP_FOURWAY_RIGHT_ALLOWED)) {
                             this->vMovementMetric = 0.0f;
-                        } else if ((thisx->bgCheckFlags & 8) && (angleToWall > 0x2000) && (angleToWall < 0x6000)) {
+                        } else if ((thisx->bgCheckFlags & BGCHECKFLAG_WALL) && (angleToWall > 0x2000) &&
+                                   (angleToWall < 0x6000)) {
                             this->vMovementMetric = 0.0f;
                             break;
                         }
@@ -306,7 +310,7 @@ void EnTrap_Update(Actor* thisx, GlobalContext* globalCtx) {
                         }
                         break;
                 }
-                if (!Actor_TestFloorInDirection(thisx, globalCtx, 50.0f, this->vClosestDirection)) {
+                if (!Actor_TestFloorInDirection(thisx, play, 50.0f, this->vClosestDirection)) {
                     this->vMovementMetric = 0.0f;
                 }
                 // if in initial position:
@@ -324,7 +328,7 @@ void EnTrap_Update(Actor* thisx, GlobalContext* globalCtx) {
                 this->vClosestDirection = (Math_Vec3f_Yaw(&thisx->world.pos, &thisx->home.pos) + 0x2000) & 0xC000;
                 switch (this->vClosestDirection) {
                     case 0: // movement is closest to +z direction
-                        if (thisx->bgCheckFlags & 8) {
+                        if (thisx->bgCheckFlags & BGCHECKFLAG_WALL) {
                             if (ABS(thisx->wallYaw) > 0x6000) {
                                 blockedOnReturn = true;
                             }
@@ -333,7 +337,7 @@ void EnTrap_Update(Actor* thisx, GlobalContext* globalCtx) {
                         }
                         break;
                     case 0x4000: // movement is closest to +x direction
-                        if (thisx->bgCheckFlags & 8) {
+                        if (thisx->bgCheckFlags & BGCHECKFLAG_WALL) {
                             if ((thisx->wallYaw < -0x2000) && (thisx->wallYaw > -0x6000)) {
                                 blockedOnReturn = true;
                             }
@@ -343,7 +347,7 @@ void EnTrap_Update(Actor* thisx, GlobalContext* globalCtx) {
                         }
                         break;
                     case -0x8000: // movement is closest to -z direction
-                        if (thisx->bgCheckFlags & 8) {
+                        if (thisx->bgCheckFlags & BGCHECKFLAG_WALL) {
                             if (ABS(thisx->wallYaw) < 0x2000) {
                                 blockedOnReturn = true;
                             }
@@ -352,7 +356,7 @@ void EnTrap_Update(Actor* thisx, GlobalContext* globalCtx) {
                         }
                         break;
                     case -0x4000: // movement is closest to -x direction
-                        if (thisx->bgCheckFlags & 8) {
+                        if (thisx->bgCheckFlags & BGCHECKFLAG_WALL) {
                             if ((thisx->wallYaw > 0x2000) && (thisx->wallYaw < 0x6000)) {
                                 blockedOnReturn = true;
                             }
@@ -373,20 +377,22 @@ void EnTrap_Update(Actor* thisx, GlobalContext* globalCtx) {
         if (thisx->params & SPIKETRAP_MODE_LINEAR) {
             posTemp = thisx->world.pos;
         }
-        Actor_UpdateBgCheckInfo(globalCtx, thisx, 25.0f, 20.0f, 20.0f, 0x1D);
+        Actor_UpdateBgCheckInfo(play, thisx, 25.0f, 20.0f, 20.0f,
+                                UPDBGCHECKINFO_FLAG_0 | UPDBGCHECKINFO_FLAG_2 | UPDBGCHECKINFO_FLAG_3 |
+                                    UPDBGCHECKINFO_FLAG_4);
         if (thisx->params & SPIKETRAP_MODE_LINEAR) {
             thisx->world.pos.x = posTemp.x;
             thisx->world.pos.z = posTemp.z;
         }
     }
     Collider_UpdateCylinder(thisx, &this->collider);
-    CollisionCheck_SetOC(globalCtx, &globalCtx->colChkCtx, &this->collider.base);
+    CollisionCheck_SetOC(play, &play->colChkCtx, &this->collider.base);
     if (thisx->colorFilterTimer == 0) {
-        CollisionCheck_SetAC(globalCtx, &globalCtx->colChkCtx, &this->collider.base);
+        CollisionCheck_SetAC(play, &play->colChkCtx, &this->collider.base);
     }
 }
 
-void EnTrap_Draw(Actor* thisx, GlobalContext* globalCtx) {
-    func_8002EBCC(thisx, globalCtx, 1);
-    Gfx_DrawDListOpa(globalCtx, gSlidingBladeTrapDL);
+void EnTrap_Draw(Actor* thisx, PlayState* play) {
+    func_8002EBCC(thisx, play, 1);
+    Gfx_DrawDListOpa(play, gSlidingBladeTrapDL);
 }

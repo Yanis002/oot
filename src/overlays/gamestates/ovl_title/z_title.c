@@ -6,14 +6,14 @@
 
 #include "global.h"
 #include "alloca.h"
-#include "textures/nintendo_rogo_static/nintendo_rogo_static.h"
+#include "assets/textures/nintendo_rogo_static/nintendo_rogo_static.h"
 
 void Title_PrintBuildInfo(Gfx** gfxp) {
     Gfx* g;
     GfxPrint* printer;
 
     g = *gfxp;
-    g = func_8009411C(g);
+    g = Gfx_SetupDL_28(g);
     printer = alloca(sizeof(GfxPrint));
     GfxPrint_Init(printer);
     GfxPrint_Open(printer, g);
@@ -49,14 +49,14 @@ void Title_SetupView(TitleContext* this, f32 x, f32 y, f32 z) {
     lookAt.x = lookAt.y = lookAt.z = 0.0f;
     up.y = 1.0f;
 
-    func_800AA460(view, 30.0f, 10.0f, 12800.0f);
-    func_800AA358(view, &eye, &lookAt, &up);
-    func_800AAA50(view, 0xF);
+    View_SetPerspective(view, 30.0f, 10.0f, 12800.0f);
+    View_LookAt(view, &eye, &lookAt, &up);
+    View_Apply(view, VIEW_ALL);
 }
 
 void Title_Draw(TitleContext* this) {
     static s16 sTitleRotY = 0;
-    static Lights1 sTitleLights = gdSPDefLights1(0x64, 0x64, 0x64, 0xFF, 0xFF, 0xFF, 0x45, 0x45, 0x45);
+    static Lights1 sTitleLights = gdSPDefLights1(100, 100, 100, 255, 255, 255, 69, 69, 69);
 
     u16 y;
     u16 idx;
@@ -81,14 +81,14 @@ void Title_Draw(TitleContext* this) {
     func_8002EABC(&v1, &v2, &v3, this->state.gfxCtx);
     gSPSetLights1(POLY_OPA_DISP++, sTitleLights);
     Title_SetupView(this, 0, 150.0, 300.0);
-    func_80093D18(this->state.gfxCtx);
+    Gfx_SetupDL_25Opa(this->state.gfxCtx);
     Matrix_Translate(-53.0, -5.0, 0, MTXMODE_NEW);
     Matrix_Scale(1.0, 1.0, 1.0, MTXMODE_APPLY);
     Matrix_RotateZYX(0, sTitleRotY, 0, MTXMODE_APPLY);
 
     gSPMatrix(POLY_OPA_DISP++, Matrix_NewMtx(this->state.gfxCtx, "../z_title.c", 424), G_MTX_LOAD);
     gSPDisplayList(POLY_OPA_DISP++, gNintendo64LogoDL);
-    func_800944C4(this->state.gfxCtx);
+    Gfx_SetupDL_39Opa(this->state.gfxCtx);
     gDPPipeSync(POLY_OPA_DISP++);
     gDPSetCycleType(POLY_OPA_DISP++, G_CYC_2CYCLE);
     gDPSetRenderMode(POLY_OPA_DISP++, G_RM_XLU_SURF2, G_RM_OPA_CI | CVG_DST_WRAP);
@@ -106,7 +106,8 @@ void Title_Draw(TitleContext* this) {
                             G_TX_NOMASK, G_TX_NOLOD, G_TX_NOLOD);
 
         gDPSetTileSize(POLY_OPA_DISP++, 1, this->uls, (this->ult & 0x7F) - idx * 4, 0, 0);
-        gSPTextureRectangle(POLY_OPA_DISP++, 388, y << 2, 1156, (y + 2) << 2, G_TX_RENDERTILE, 0, 0, 1 << 10, 1 << 10);
+        gSPTextureRectangle(POLY_OPA_DISP++, 97 << 2, y << 2, 289 << 2, (y + 2) << 2, G_TX_RENDERTILE, 0, 0, 1 << 10,
+                            1 << 10);
     }
 
     Environment_FillScreen(this->state.gfxCtx, 0, 0, 0, (s16)this->coverAlpha, FILL_SCREEN_XLU);

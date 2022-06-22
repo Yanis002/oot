@@ -72,7 +72,7 @@ void StackCheck_Cleanup(StackEntry* entry) {
     }
 }
 
-StackStatus StackCheck_GetState(StackEntry* entry) {
+s32 StackCheck_GetState(StackEntry* entry) {
     u32* last;
     u32 used;
     u32 free;
@@ -103,7 +103,7 @@ StackStatus StackCheck_GetState(StackEntry* entry) {
     osSyncPrintf(VT_RST);
 
     if (ret != STACK_STATUS_OK) {
-        LogUtils_LogHexDump(entry->head, entry->tail - entry->head);
+        LogUtils_LogHexDump((void*)entry->head, entry->tail - entry->head);
     }
 
     return ret;

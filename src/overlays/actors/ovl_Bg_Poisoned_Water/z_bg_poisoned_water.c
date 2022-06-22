@@ -69,12 +69,12 @@ Custom Color Mode: 1
 
 #define FLAGS (ACTOR_FLAG_4 | ACTOR_FLAG_5)
 
-void BgPoisonedWater_Init(Actor* thisx, GlobalContext* globalCtx);
-void BgPoisonedWater_Destroy(Actor* thisx, GlobalContext* globalCtx);
-void BgPoisonedWater_Update(Actor* thisx, GlobalContext* globalCtx);
-void BgPoisonedWater_Draw(Actor* thisx, GlobalContext* globalCtx);
-void BgPoisonedWater_SetPrimColor(Actor* thisx, GlobalContext* globalCtx, Gfx* gfx);
-void BgPoisonedWater_SetAlpha(Actor* thisx, GlobalContext* globalCtx, Color_RGB8 color, Color_RGB8 colorToSet);
+void BgPoisonedWater_Init(Actor* thisx, PlayState* play);
+void BgPoisonedWater_Destroy(Actor* thisx, PlayState* play);
+void BgPoisonedWater_Update(Actor* thisx, PlayState* play);
+void BgPoisonedWater_Draw(Actor* thisx, PlayState* play);
+void BgPoisonedWater_SetPrimColor(Actor* thisx, PlayState* play, Gfx* gfx);
+void BgPoisonedWater_SetAlpha(Actor* thisx, PlayState* play, Color_RGB8 color, Color_RGB8 colorToSet);
 
 const ActorInit Bg_Poisoned_Water_InitVars = {
     ACTOR_BG_POISONED_WATER,
@@ -108,7 +108,7 @@ static Color_RGB8 healColors[] = {
     {128,   64,     0},       // brown
 };
 
-void BgPoisonedWater_Init(Actor* thisx, GlobalContext* globalCtx){
+void BgPoisonedWater_Init(Actor* thisx, PlayState* play){
     BgPoisonedWater* this = (BgPoisonedWater*)thisx;
     s16 params = this->actor.params;
     f32* ySurface = &this->actor.home.pos.y;
@@ -131,7 +131,7 @@ void BgPoisonedWater_Init(Actor* thisx, GlobalContext* globalCtx){
     this->rgb = GET_POISON_COLOR(this);
     this->alpha = ALPHA(this);
 
-    WaterBox_GetSurface1(globalCtx, &globalCtx->colCtx, this->actor.home.pos.x, this->actor.home.pos.z, ySurface,
+    WaterBox_GetSurface1(play, &play->colCtx, this->actor.home.pos.x, this->actor.home.pos.z, ySurface,
                          &this->waterBox);
 
     // Position of each corner of the WaterBox to poison
@@ -166,15 +166,15 @@ void BgPoisonedWater_Init(Actor* thisx, GlobalContext* globalCtx){
     }
 }
 
-void BgPoisonedWater_Destroy(Actor* thisx, GlobalContext* globalCtx){
+void BgPoisonedWater_Destroy(Actor* thisx, PlayState* play){
 }
 
-void BgPoisonedWater_Update(Actor* thisx, GlobalContext* globalCtx){
+void BgPoisonedWater_Update(Actor* thisx, PlayState* play){
     BgPoisonedWater* this = (BgPoisonedWater*)thisx;
-    Player* player = GET_PLAYER(globalCtx);
+    Player* player = GET_PLAYER(play);
 
     // update the damage amount (negative: decreases health, positive: increases health)
-    if (GET_SWITCH_FLAG(globalCtx, this)){
+    if (GET_SWITCH_FLAG(play, this)){
         if ((this->damageAmount < 0)) this->damageAmount = -this->damageAmount;
 
         // if the health is full stop code execution here
@@ -185,10 +185,10 @@ void BgPoisonedWater_Update(Actor* thisx, GlobalContext* globalCtx){
 
     // if the Player is in the WaterBox bounds and the Player interacts with a waterbox and not under invincibility timer
     if (GET_POS(player->actor.world.pos.x, player->actor.world.pos.z, this) && INTERACTS_WITH_WATERBOX(player->actor) &&
-        ((this->timer == 0) || ((player->invincibilityTimer == 0) && !GET_SWITCH_FLAG(globalCtx, this)))){
+        ((this->timer == 0) || ((player->invincibilityTimer == 0) && !GET_SWITCH_FLAG(play, this)))){
     
         // deals damages, if switch flag is set heals player
-        globalCtx->damagePlayer(globalCtx, this->damageAmount);
+        play->damagePlayer(play, this->damageAmount);
 
         // play damage sound
         if (this->damageAmount < 0){
@@ -203,13 +203,13 @@ void BgPoisonedWater_Update(Actor* thisx, GlobalContext* globalCtx){
     }
 }
 
-void BgPoisonedWater_SetAlpha(Actor* thisx, GlobalContext* globalCtx, Color_RGB8 curColor, Color_RGB8 colorToSet){
+void BgPoisonedWater_SetAlpha(Actor* thisx, PlayState* play, Color_RGB8 curColor, Color_RGB8 colorToSet){
     BgPoisonedWater* this = (BgPoisonedWater*)thisx;
 
     // makes an awful noise to tell the user there's an issue
     if ((curColor.r == colorToSet.r) && (curColor.g == colorToSet.g) && (curColor.b == colorToSet.b)){
         osSyncPrintf("ERROR: the current color is the same as the color to set. Aborting.\n");
-        func_8002F7DC(&GET_PLAYER(globalCtx)->actor, NA_SE_VO_Z1_CRY_0);
+        func_8002F7DC(&GET_PLAYER(play)->actor, NA_SE_VO_Z1_CRY_0);
         return;
     }
 
@@ -226,38 +226,38 @@ void BgPoisonedWater_SetAlpha(Actor* thisx, GlobalContext* globalCtx, Color_RGB8
             this->alpha++;
             if ((((this->alpha + 1) * 4) == 128) && Audio_IsSfxPlaying(NA_SE_EV_WATER_LEVEL_DOWN)) {
                 Audio_StopSfxById(NA_SE_EV_WATER_LEVEL_DOWN);
-                func_8002F7DC(&GET_PLAYER(globalCtx)->actor, NA_SE_SY_TRE_BOX_APPEAR);
+                func_8002F7DC(&GET_PLAYER(play)->actor, NA_SE_SY_TRE_BOX_APPEAR);
             }
         }
     }
 }
 
-void BgPoisonedWater_SetPrimColor(Actor* thisx, GlobalContext* globalCtx, Gfx* gfx){
+void BgPoisonedWater_SetPrimColor(Actor* thisx, PlayState* play, Gfx* gfx){
     BgPoisonedWater* this = (BgPoisonedWater*)thisx;
 
     if (MODE_HEAL(this)) {
-        if (GET_SWITCH_FLAG(globalCtx, this)) BgPoisonedWater_SetAlpha(thisx, globalCtx, GET_POISON_COLOR(this), GET_HEAL_COLOR(this));
-        else BgPoisonedWater_SetAlpha(thisx, globalCtx, GET_HEAL_COLOR(this), GET_POISON_COLOR(this));
+        if (GET_SWITCH_FLAG(play, this)) BgPoisonedWater_SetAlpha(thisx, play, GET_POISON_COLOR(this), GET_HEAL_COLOR(this));
+        else BgPoisonedWater_SetAlpha(thisx, play, GET_HEAL_COLOR(this), GET_POISON_COLOR(this));
     } else this->alpha = ALPHA(this);
 
     gDPSetPrimColor(gfx, 0, 0, this->rgb.r, this->rgb.g, this->rgb.b, (this->alpha * 4));
 }
 
-void BgPoisonedWater_Draw(Actor* thisx, GlobalContext* globalCtx){
+void BgPoisonedWater_Draw(Actor* thisx, PlayState* play){
     BgPoisonedWater* this = (BgPoisonedWater*)thisx;
     s32 gameplayFrames;
 
-    OPEN_DISPS(globalCtx->state.gfxCtx, __FILE__, __LINE__);
+    OPEN_DISPS(play->state.gfxCtx, __FILE__, __LINE__);
 
-    gameplayFrames = globalCtx->gameplayFrames;
+    gameplayFrames = play->gameplayFrames;
     gSPSegment(POLY_XLU_DISP++, 0x09,
-               Gfx_TwoTexScroll(globalCtx->state.gfxCtx, 0, 127 - (gameplayFrames % 128), (gameplayFrames * 1) % 128,
+               Gfx_TwoTexScroll(play->state.gfxCtx, 0, 127 - (gameplayFrames % 128), (gameplayFrames * 1) % 128,
                                 32, 32, 1, gameplayFrames % 128, (gameplayFrames * 1) % 128, 32, 32));
-    gSPMatrix(POLY_XLU_DISP++, Matrix_NewMtx(globalCtx->state.gfxCtx, __FILE__, __LINE__), G_MTX_NOPUSH | G_MTX_LOAD | G_MTX_MODELVIEW);
+    gSPMatrix(POLY_XLU_DISP++, Matrix_NewMtx(play->state.gfxCtx, __FILE__, __LINE__), G_MTX_NOPUSH | G_MTX_LOAD | G_MTX_MODELVIEW);
 
-    BgPoisonedWater_SetPrimColor(thisx, globalCtx, POLY_XLU_DISP++);
+    BgPoisonedWater_SetPrimColor(thisx, play, POLY_XLU_DISP++);
     gSPDisplayList(POLY_XLU_DISP++, gColorFilterDL);
     gSPDisplayList(POLY_XLU_DISP++, gPoisonedWaterDL);
 
-    CLOSE_DISPS(globalCtx->state.gfxCtx, __FILE__, __LINE__);
+    CLOSE_DISPS(play->state.gfxCtx, __FILE__, __LINE__);
 }

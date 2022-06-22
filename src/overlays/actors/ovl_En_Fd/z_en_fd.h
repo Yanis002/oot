@@ -6,13 +6,15 @@
 
 struct EnFd;
 
-typedef void (*EnFdActionFunc)(struct EnFd* this, GlobalContext* globalCtx);
+typedef void (*EnFdActionFunc)(struct EnFd* this, PlayState* play);
 
 typedef enum {
     FD_EFFECT_NONE,
     FD_EFFECT_FLAME,
     FD_EFFECT_DOT
 } FDEffectType;
+
+#define EN_FD_EFFECT_COUNT 200
 
 typedef struct {
     /* 0x0000 */ u8 type;
@@ -47,7 +49,7 @@ typedef struct EnFd {
     /* 0x04D0 */ Vec3f corePos;
     /* 0x04DC */ Vec3s jointTable[27];
     /* 0x057E */ Vec3s morphTable[27];
-    /* 0x0620 */ EnFdEffect effects[200];
+    /* 0x0620 */ EnFdEffect effects[EN_FD_EFFECT_COUNT];
 } EnFd; // size = 0x31E0
 
 #endif

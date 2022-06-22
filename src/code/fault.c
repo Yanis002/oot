@@ -128,8 +128,8 @@ void Fault_ClientRunTask(FaultClientTask* task) {
         // Run the fault client callback on a separate thread
         thread = alloca(sizeof(OSThread));
 
-        osCreateThread(thread, 2, Fault_ClientProcessThread, task, sFaultInstance->clientThreadSp,
-                       OS_PRIORITY_APPMAX - 1);
+        osCreateThread(thread, THREAD_ID_FAULT, Fault_ClientProcessThread, task, sFaultInstance->clientThreadSp,
+                       THREAD_PRI_FAULT_CLIENT);
         osStartThread(thread);
     } else {
         // Run the fault client callback on this thread
@@ -335,7 +335,7 @@ uintptr_t Fault_ConvertAddress(uintptr_t addr) {
 
     while (client != NULL) {
         if (client->callback != NULL) {
-            ret = Fault_ProcessClient(client->callback, addr, client->arg);
+            ret = Fault_ProcessClient(client->callback, (void*)addr, client->arg);
             if (ret == -1) {
                 Fault_RemoveAddrConvClient(client);
             } else if (ret != 0) {
@@ -1093,9 +1093,9 @@ void Fault_ResumeThread(OSThread* thread) {
     thread->context.cause = 0;
     thread->context.fpcsr = 0;
     thread->context.pc += sizeof(u32);
-    *(u32*)thread->context.pc = 0x0000000D; // write in a break instruction
-    osWritebackDCache(thread->context.pc, 4);
-    osInvalICache(thread->context.pc, 4);
+    *((u32*)thread->context.pc) = 0x0000000D; // write in a break instruction
+    osWritebackDCache((void*)thread->context.pc, 4);
+    osInvalICache((void*)thread->context.pc, 4);
     osStartThread(thread);
 }
 
@@ -1107,12 +1107,12 @@ void Fault_DisplayFrameBuffer(void) {
     osViSetSpecialFeatures(OS_VI_GAMMA_OFF | OS_VI_DITHER_FILTER_ON);
     osViBlack(false);
 
-    if (sFaultInstance->fb) {
+    if (sFaultInstance->fb != NULL) {
         fb = sFaultInstance->fb;
     } else {
         fb = osViGetNextFramebuffer();
         if ((uintptr_t)fb == K0BASE) {
-            fb = (PHYS_TO_K0(osMemSize) - sizeof(u16[SCREEN_HEIGHT][SCREEN_WIDTH]));
+            fb = (void*)(PHYS_TO_K0(osMemSize) - sizeof(u16[SCREEN_HEIGHT][SCREEN_WIDTH]));
         }
     }
 
@@ -1265,7 +1265,8 @@ void Fault_Init(void) {
     gFaultMgr.faultHandlerEnabled = true;
     osCreateMesgQueue(&sFaultInstance->queue, &sFaultInstance->msg, 1);
     StackCheck_Init(&sFaultThreadInfo, &sFaultStack, STACK_TOP(sFaultStack), 0, 0x100, "fault");
-    osCreateThread(&sFaultInstance->thread, 2, Fault_ThreadEntry, 0, STACK_TOP(sFaultStack), OS_PRIORITY_APPMAX);
+    osCreateThread(&sFaultInstance->thread, THREAD_ID_FAULT, Fault_ThreadEntry, 0, STACK_TOP(sFaultStack),
+                   THREAD_PRI_FAULT);
     osStartThread(&sFaultInstance->thread);
 }
 

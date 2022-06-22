@@ -4,6 +4,7 @@
 #define DEFAULT_LEN_1CH 0x1A0
 #define DEFAULT_LEN_2CH 0x340
 
+// DMEM Addresses for the RSP
 #define DMEM_TEMP 0x3C0
 #define DMEM_UNCOMPRESSED_NOTE 0x580
 #define DMEM_NOTE_PAN_TEMP 0x5C0
@@ -22,7 +23,7 @@ Acmd* AudioSynth_SaveRingBufferPart(Acmd* cmd, u16 dmem, u16 startPos, s32 lengt
 Acmd* AudioSynth_DoOneAudioUpdate(s16* aiBuf, s32 aiBufLen, Acmd* cmd, s32 updateIndex);
 Acmd* AudioSynth_ProcessNote(s32 noteIndex, NoteSubEu* noteSubEu, NoteSynthesisState* synthState, s16* aiBuf,
                              s32 aiBufLen, Acmd* cmd, s32 updateIndex);
-Acmd* AudioSynth_LoadWaveSamples(Acmd* cmd, NoteSubEu* noteSubEu, NoteSynthesisState* synthState, s32 nSamplesToLoad);
+Acmd* AudioSynth_LoadWaveSamples(Acmd* cmd, NoteSubEu* noteSubEu, NoteSynthesisState* synthState, s32 numSamplesToLoad);
 Acmd* AudioSynth_NoteApplyHeadsetPanEffects(Acmd* cmd, NoteSubEu* noteSubEu, NoteSynthesisState* synthState, s32 bufLen,
                                             s32 flags, s32 side);
 Acmd* AudioSynth_ProcessEnvelope(Acmd* cmd, NoteSubEu* noteSubEu, NoteSynthesisState* synthState, s32 aiBufLen,
@@ -30,31 +31,36 @@ Acmd* AudioSynth_ProcessEnvelope(Acmd* cmd, NoteSubEu* noteSubEu, NoteSynthesisS
 Acmd* AudioSynth_FinalResample(Acmd* cmd, NoteSynthesisState* synthState, s32 count, u16 pitch, u16 inpDmem,
                                s32 resampleFlags);
 
-u32 D_801304A0 = 0x13000000;
-u32 D_801304A4 = 0x5CAEC8E2;
-u32 D_801304A8 = 0x945CC8E2;
-u32 D_801304AC = 0x94AEC8E2;
+u32 D_801304A0 = _SHIFTL(A_ENVMIXER, 24, 8);
+u32 D_801304A4 = MK_CMD(DMEM_NOTE_PAN_TEMP >> 4, DMEM_RIGHT_CH >> 4, DMEM_WET_LEFT_CH >> 4, DMEM_WET_RIGHT_CH >> 4);
+u32 D_801304A8 = MK_CMD(DMEM_LEFT_CH >> 4, DMEM_NOTE_PAN_TEMP >> 4, DMEM_WET_LEFT_CH >> 4, DMEM_WET_RIGHT_CH >> 4);
+u32 D_801304AC = MK_CMD(DMEM_LEFT_CH >> 4, DMEM_RIGHT_CH >> 4, DMEM_WET_LEFT_CH >> 4, DMEM_WET_RIGHT_CH >> 4);
 
 u16 D_801304B0[] = {
     0x7FFF, 0xD001, 0x3FFF, 0xF001, 0x5FFF, 0x9001, 0x7FFF, 0x8001,
 };
 
-u8 D_801304C0[] = { 0x40, 0x20, 0x10, 0x8 };
+u8 sNumSamplesPerWavePeriod[] = {
+    WAVE_SAMPLE_COUNT,     // 1st harmonic
+    WAVE_SAMPLE_COUNT / 2, // 2nd harmonic
+    WAVE_SAMPLE_COUNT / 4, // 4th harmonic
+    WAVE_SAMPLE_COUNT / 8, // 8th harmonic
+};
 
-void AudioSynth_InitNextRingBuf(s32 chunkLen, s32 bufIndex, s32 reverbIndex) {
+void AudioSynth_InitNextRingBuf(s32 chunkLen, s32 updateIndex, s32 reverbIndex) {
     ReverbRingBufferItem* bufItem;
     s32 pad[3];
     SynthesisReverb* reverb = &gAudioContext.synthesisReverbs[reverbIndex];
     s32 temp_a0_2;
     s32 temp_a0_4;
-    s32 sampleCnt;
+    s32 numSamples;
     s32 extraSamples;
     s32 i;
     s32 j;
 
     if (reverb->downsampleRate >= 2) {
         if (reverb->framesToIgnore == 0) {
-            bufItem = &reverb->items[reverb->curFrame][bufIndex];
+            bufItem = &reverb->items[reverb->curFrame][updateIndex];
             Audio_InvalDCache(bufItem->toDownsampleLeft, DEFAULT_LEN_2CH);
 
             for (j = 0, i = 0; i < bufItem->lengthA / 2; j += reverb->downsampleRate, i++) {
@@ -69,23 +75,24 @@ void AudioSynth_InitNextRingBuf(s32 chunkLen, s32 bufIndex, s32 reverbIndex) {
         }
     }
 
-    bufItem = &reverb->items[reverb->curFrame][bufIndex];
-    sampleCnt = chunkLen / reverb->downsampleRate;
-    extraSamples = (sampleCnt + reverb->nextRingBufPos) - reverb->bufSizePerChan;
+    bufItem = &reverb->items[reverb->curFrame][updateIndex];
+    numSamples = chunkLen / reverb->downsampleRate;
+    extraSamples = (numSamples + reverb->nextRingBufPos) - reverb->bufSizePerChan;
     temp_a0_2 = reverb->nextRingBufPos;
     if (extraSamples < 0) {
-        bufItem->lengthA = sampleCnt * 2;
+        bufItem->lengthA = numSamples * 2;
         bufItem->lengthB = 0;
         bufItem->startPos = reverb->nextRingBufPos;
-        reverb->nextRingBufPos += sampleCnt;
+        reverb->nextRingBufPos += numSamples;
     } else {
-        bufItem->lengthA = (sampleCnt - extraSamples) * 2;
+        // End of the buffer is reached. Loop back around
+        bufItem->lengthA = (numSamples - extraSamples) * 2;
         bufItem->lengthB = extraSamples * 2;
         bufItem->startPos = reverb->nextRingBufPos;
         reverb->nextRingBufPos = extraSamples;
     }
 
-    bufItem->numSamplesAfterDownsampling = sampleCnt;
+    bufItem->numSamplesAfterDownsampling = numSamples;
     bufItem->chunkLen = chunkLen;
 
     if (reverb->unk_14 != 0) {
@@ -93,30 +100,31 @@ void AudioSynth_InitNextRingBuf(s32 chunkLen, s32 bufIndex, s32 reverbIndex) {
         if (temp_a0_4 >= reverb->bufSizePerChan) {
             temp_a0_4 -= reverb->bufSizePerChan;
         }
-        bufItem = &reverb->items2[reverb->curFrame][bufIndex];
-        sampleCnt = chunkLen / reverb->downsampleRate;
-        extraSamples = (temp_a0_4 + sampleCnt) - reverb->bufSizePerChan;
+        bufItem = &reverb->items2[reverb->curFrame][updateIndex];
+        numSamples = chunkLen / reverb->downsampleRate;
+        extraSamples = (temp_a0_4 + numSamples) - reverb->bufSizePerChan;
         if (extraSamples < 0) {
-            bufItem->lengthA = sampleCnt * 2;
+            bufItem->lengthA = numSamples * 2;
             bufItem->lengthB = 0;
             bufItem->startPos = temp_a0_4;
         } else {
-            bufItem->lengthA = (sampleCnt - extraSamples) * 2;
+            // End of the buffer is reached. Loop back around
+            bufItem->lengthA = (numSamples - extraSamples) * 2;
             bufItem->lengthB = extraSamples * 2;
             bufItem->startPos = temp_a0_4;
         }
-        bufItem->numSamplesAfterDownsampling = sampleCnt;
+        bufItem->numSamplesAfterDownsampling = numSamples;
         bufItem->chunkLen = chunkLen;
     }
 }
 
-void func_800DB03C(s32 arg0) {
+void func_800DB03C(s32 updateIndex) {
     NoteSubEu* subEu;
     NoteSubEu* subEu2;
     s32 baseIndex;
     s32 i;
 
-    baseIndex = gAudioContext.numNotes * arg0;
+    baseIndex = gAudioContext.numNotes * updateIndex;
     for (i = 0; i < gAudioContext.numNotes; i++) {
         subEu = &gAudioContext.notes[i].noteSubEu;
         subEu2 = &gAudioContext.noteSubsEu[baseIndex + i];
@@ -126,7 +134,7 @@ void func_800DB03C(s32 arg0) {
             subEu2->bitField0.enabled = false;
         }
 
-        subEu->unk_06 = 0;
+        subEu->harmonicIndexCurAndPrev = 0;
     }
 }
 
@@ -146,6 +154,7 @@ Acmd* AudioSynth_Update(Acmd* cmdStart, s32* cmdCnt, s16* aiStart, s32 aiBufLen)
 
     aiBufP = aiStart;
     gAudioContext.curLoadedBook = NULL;
+
     for (i = gAudioContext.audioBufferParameters.updatesPerFrame; i > 0; i--) {
         if (i == 1) {
             chunkLen = aiBufLen;
@@ -180,22 +189,22 @@ Acmd* AudioSynth_Update(Acmd* cmdStart, s32* cmdCnt, s16* aiStart, s32 aiBufLen)
     return cmdP;
 }
 
-void func_800DB2C0(s32 updateIndexStart, s32 noteIndex) {
-    NoteSubEu* temp_v1;
+void func_800DB2C0(s32 updateIndex, s32 noteIndex) {
+    NoteSubEu* noteSubEu;
     s32 i;
 
-    for (i = updateIndexStart + 1; i < gAudioContext.audioBufferParameters.updatesPerFrame; i++) {
-        temp_v1 = &gAudioContext.noteSubsEu[(gAudioContext.numNotes * i) + noteIndex];
-        if (!temp_v1->bitField0.needsInit) {
-            temp_v1->bitField0.enabled = 0;
+    for (i = updateIndex + 1; i < gAudioContext.audioBufferParameters.updatesPerFrame; i++) {
+        noteSubEu = &gAudioContext.noteSubsEu[(gAudioContext.numNotes * i) + noteIndex];
+        if (!noteSubEu->bitField0.needsInit) {
+            noteSubEu->bitField0.enabled = false;
         } else {
             break;
         }
     }
 }
 
-Acmd* AudioSynth_LoadRingBuffer1AtTemp(Acmd* cmd, SynthesisReverb* reverb, s16 bufIndex) {
-    ReverbRingBufferItem* bufItem = &reverb->items[reverb->curFrame][bufIndex];
+Acmd* AudioSynth_LoadRingBuffer1AtTemp(Acmd* cmd, SynthesisReverb* reverb, s16 updateIndex) {
+    ReverbRingBufferItem* bufItem = &reverb->items[reverb->curFrame][updateIndex];
 
     cmd = AudioSynth_LoadRingBufferPart(cmd, DMEM_WET_TEMP, bufItem->startPos, bufItem->lengthA, reverb);
     if (bufItem->lengthB != 0) {
@@ -205,8 +214,8 @@ Acmd* AudioSynth_LoadRingBuffer1AtTemp(Acmd* cmd, SynthesisReverb* reverb, s16 b
     return cmd;
 }
 
-Acmd* AudioSynth_SaveRingBuffer1AtTemp(Acmd* cmd, SynthesisReverb* reverb, s16 bufIndex) {
-    ReverbRingBufferItem* bufItem = &reverb->items[reverb->curFrame][bufIndex];
+Acmd* AudioSynth_SaveRingBuffer1AtTemp(Acmd* cmd, SynthesisReverb* reverb, s16 updateIndex) {
+    ReverbRingBufferItem* bufItem = &reverb->items[reverb->curFrame][updateIndex];
 
     cmd = AudioSynth_SaveRingBufferPart(cmd, DMEM_WET_TEMP, bufItem->startPos, bufItem->lengthA, reverb);
     if (bufItem->lengthB != 0) {
@@ -216,16 +225,18 @@ Acmd* AudioSynth_SaveRingBuffer1AtTemp(Acmd* cmd, SynthesisReverb* reverb, s16 b
     return cmd;
 }
 
+/**
+ * Leak some audio from the left reverb channel into the right reverb channel and vice versa (pan)
+ */
 Acmd* AudioSynth_LeakReverb(Acmd* cmd, SynthesisReverb* reverb) {
-    // Leak some audio from the left reverb channel into the right reverb channel and vice versa (pan)
     aDMEMMove(cmd++, DMEM_WET_LEFT_CH, DMEM_WET_SCRATCH, DEFAULT_LEN_1CH);
     aMix(cmd++, 0x1A, reverb->leakRtl, DMEM_WET_RIGHT_CH, DMEM_WET_LEFT_CH);
     aMix(cmd++, 0x1A, reverb->leakLtr, DMEM_WET_SCRATCH, DMEM_WET_RIGHT_CH);
     return cmd;
 }
 
-Acmd* func_800DB4E4(Acmd* cmd, s32 arg1, SynthesisReverb* reverb, s16 arg3) {
-    ReverbRingBufferItem* item = &reverb->items[reverb->curFrame][arg3];
+Acmd* func_800DB4E4(Acmd* cmd, s32 aiBufLen, SynthesisReverb* reverb, s16 updateIndex) {
+    ReverbRingBufferItem* item = &reverb->items[reverb->curFrame][updateIndex];
     s16 offsetA;
     s16 offsetB;
 
@@ -236,15 +247,15 @@ Acmd* func_800DB4E4(Acmd* cmd, s32 arg1, SynthesisReverb* reverb, s16 arg3) {
         // Ring buffer wrapped
         cmd = AudioSynth_LoadRingBufferPart(cmd, DMEM_WET_TEMP + offsetB, 0, DEFAULT_LEN_1CH - offsetB, reverb);
     }
-    aSetBuffer(cmd++, 0, DMEM_WET_TEMP + offsetA, DMEM_WET_LEFT_CH, arg1 * 2);
+    aSetBuffer(cmd++, 0, DMEM_WET_TEMP + offsetA, DMEM_WET_LEFT_CH, aiBufLen * 2);
     aResample(cmd++, reverb->resampleFlags, reverb->unk_0E, reverb->unk_30);
-    aSetBuffer(cmd++, 0, DMEM_WET_TEMP + DEFAULT_LEN_1CH + offsetA, DMEM_WET_RIGHT_CH, arg1 * 2);
+    aSetBuffer(cmd++, 0, DMEM_WET_TEMP + DEFAULT_LEN_1CH + offsetA, DMEM_WET_RIGHT_CH, aiBufLen * 2);
     aResample(cmd++, reverb->resampleFlags, reverb->unk_0E, reverb->unk_34);
     return cmd;
 }
 
-Acmd* func_800DB680(Acmd* cmd, SynthesisReverb* reverb, s16 bufIndex) {
-    ReverbRingBufferItem* bufItem = &reverb->items[reverb->curFrame][bufIndex];
+Acmd* func_800DB680(Acmd* cmd, SynthesisReverb* reverb, s16 updateIndex) {
+    ReverbRingBufferItem* bufItem = &reverb->items[reverb->curFrame][updateIndex];
 
     aSetBuffer(cmd++, 0, DMEM_WET_LEFT_CH, DMEM_WET_SCRATCH, bufItem->unk_18 * 2);
     aResample(cmd++, reverb->resampleFlags, bufItem->unk_16, reverb->unk_38);
@@ -268,29 +279,31 @@ Acmd* func_800DB680(Acmd* cmd, SynthesisReverb* reverb, s16 bufIndex) {
     return cmd;
 }
 
-Acmd* func_800DB828(Acmd* cmd, s32 arg1, SynthesisReverb* reverb, s16 arg3) {
-    ReverbRingBufferItem* item = &reverb->items[reverb->curFrame][arg3];
+Acmd* func_800DB828(Acmd* cmd, s32 aiBufLen, SynthesisReverb* reverb, s16 updateIndex) {
+    ReverbRingBufferItem* item = &reverb->items[reverb->curFrame][updateIndex];
     s16 offsetA;
     s16 offsetB;
 
-    item->unk_14 = (item->unk_18 << 0xF) / arg1;
+    item->unk_14 = (item->unk_18 << 0xF) / aiBufLen;
     offsetA = (item->startPos & 7) * 2;
-    item->unk_16 = (arg1 << 0xF) / item->unk_18;
+    item->unk_16 = (aiBufLen << 0xF) / item->unk_18;
     offsetB = ALIGN16(offsetA + item->lengthA);
     cmd = AudioSynth_LoadRingBufferPart(cmd, DMEM_WET_TEMP, item->startPos - (offsetA / 2), DEFAULT_LEN_1CH, reverb);
     if (item->lengthB != 0) {
         // Ring buffer wrapped
         cmd = AudioSynth_LoadRingBufferPart(cmd, DMEM_WET_TEMP + offsetB, 0, DEFAULT_LEN_1CH - offsetB, reverb);
     }
-    aSetBuffer(cmd++, 0, DMEM_WET_TEMP + offsetA, DMEM_WET_LEFT_CH, arg1 * 2);
+    aSetBuffer(cmd++, 0, DMEM_WET_TEMP + offsetA, DMEM_WET_LEFT_CH, aiBufLen * 2);
     aResample(cmd++, reverb->resampleFlags, item->unk_14, reverb->unk_30);
-    aSetBuffer(cmd++, 0, DMEM_WET_TEMP + DEFAULT_LEN_1CH + offsetA, DMEM_WET_RIGHT_CH, arg1 * 2);
+    aSetBuffer(cmd++, 0, DMEM_WET_TEMP + DEFAULT_LEN_1CH + offsetA, DMEM_WET_RIGHT_CH, aiBufLen * 2);
     aResample(cmd++, reverb->resampleFlags, item->unk_14, reverb->unk_34);
     return cmd;
 }
 
+/**
+ * Apply a filter (convolution) to each reverb channel.
+ */
 Acmd* AudioSynth_FilterReverb(Acmd* cmd, s32 count, SynthesisReverb* reverb) {
-    // Apply a filter (convolution) to each reverb channel.
     if (reverb->filterLeft != NULL) {
         aFilter(cmd++, 2, count, reverb->filterLeft);
         aFilter(cmd++, reverb->resampleFlags, DMEM_WET_LEFT_CH, reverb->filterLeftState);
@@ -303,14 +316,14 @@ Acmd* AudioSynth_FilterReverb(Acmd* cmd, s32 count, SynthesisReverb* reverb) {
     return cmd;
 }
 
-Acmd* AudioSynth_MaybeMixRingBuffer1(Acmd* cmd, SynthesisReverb* reverb, s32 arg2) {
+Acmd* AudioSynth_MaybeMixRingBuffer1(Acmd* cmd, SynthesisReverb* reverb, s32 updateIndex) {
     SynthesisReverb* temp_a3;
 
     temp_a3 = &gAudioContext.synthesisReverbs[reverb->unk_05];
     if (temp_a3->downsampleRate == 1) {
-        cmd = AudioSynth_LoadRingBuffer1AtTemp(cmd, temp_a3, arg2);
+        cmd = AudioSynth_LoadRingBuffer1AtTemp(cmd, temp_a3, updateIndex);
         aMix(cmd++, 0x34, reverb->unk_08, DMEM_WET_LEFT_CH, DMEM_WET_TEMP);
-        cmd = AudioSynth_SaveRingBuffer1AtTemp(cmd, temp_a3, arg2);
+        cmd = AudioSynth_SaveRingBuffer1AtTemp(cmd, temp_a3, updateIndex);
     }
     return cmd;
 }
@@ -318,8 +331,8 @@ Acmd* AudioSynth_MaybeMixRingBuffer1(Acmd* cmd, SynthesisReverb* reverb, s32 arg
 void func_800DBB94(void) {
 }
 
-void AudioSynth_ClearBuffer(Acmd* cmd, s32 arg1, s32 arg2) {
-    aClearBuffer(cmd, arg1, arg2);
+void AudioSynth_ClearBuffer(Acmd* cmd, s32 dmem, s32 size) {
+    aClearBuffer(cmd, dmem, size);
 }
 
 void func_800DBBBC(void) {
@@ -384,12 +397,12 @@ void AudioSynth_EnvSetup1(Acmd* cmd, s32 arg1, s32 arg2, s32 arg3, s32 arg4) {
 void func_800DBD08(void) {
 }
 
-void AudioSynth_LoadBuffer(Acmd* cmd, s32 arg1, s32 arg2, s32 arg3) {
-    aLoadBuffer(cmd, arg3, arg1, arg2);
+void AudioSynth_LoadBuffer(Acmd* cmd, s32 dmemDest, s32 size, void* addrSrc) {
+    aLoadBuffer(cmd, addrSrc, dmemDest, size);
 }
 
-void AudioSynth_SaveBuffer(Acmd* cmd, s32 arg1, s32 arg2, s32 arg3) {
-    aSaveBuffer(cmd, arg1, arg3, arg2);
+void AudioSynth_SaveBuffer(Acmd* cmd, s32 dmemSrc, s32 size, void* addrDest) {
+    aSaveBuffer(cmd, dmemSrc, addrDest, size);
 }
 
 void AudioSynth_EnvSetup2(Acmd* cmd, s32 volLeft, s32 volRight) {
@@ -446,16 +459,16 @@ void func_800DBE64(void) {
 void func_800DBE6C(void) {
 }
 
-void AudioSynth_LoadFilter(Acmd* cmd, s32 flags, s32 countOrBuf, s32 addr) {
+void AudioSynth_LoadFilter(Acmd* cmd, s32 flags, s32 countOrBuf, void* addr) {
     aFilter(cmd, flags, countOrBuf, addr);
 }
 
-void AudioSynth_LoadFilterCount(Acmd* cmd, s32 count, s32 addr) {
+void AudioSynth_LoadFilterCount(Acmd* cmd, s32 count, void* addr) {
     aFilter(cmd, 2, count, addr);
 }
 
-Acmd* AudioSynth_LoadRingBuffer1(Acmd* cmd, s32 arg1, SynthesisReverb* reverb, s16 bufIndex) {
-    ReverbRingBufferItem* ringBufferItem = &reverb->items[reverb->curFrame][bufIndex];
+Acmd* AudioSynth_LoadRingBuffer1(Acmd* cmd, s32 aiBufLen, SynthesisReverb* reverb, s16 updateIndex) {
+    ReverbRingBufferItem* ringBufferItem = &reverb->items[reverb->curFrame][updateIndex];
 
     cmd =
         AudioSynth_LoadRingBufferPart(cmd, DMEM_WET_LEFT_CH, ringBufferItem->startPos, ringBufferItem->lengthA, reverb);
@@ -468,8 +481,8 @@ Acmd* AudioSynth_LoadRingBuffer1(Acmd* cmd, s32 arg1, SynthesisReverb* reverb, s
     return cmd;
 }
 
-Acmd* AudioSynth_LoadRingBuffer2(Acmd* cmd, s32 arg1, SynthesisReverb* reverb, s16 bufIndex) {
-    ReverbRingBufferItem* bufItem = &reverb->items2[reverb->curFrame][bufIndex];
+Acmd* AudioSynth_LoadRingBuffer2(Acmd* cmd, s32 aiBufLen, SynthesisReverb* reverb, s16 updateIndex) {
+    ReverbRingBufferItem* bufItem = &reverb->items2[reverb->curFrame][updateIndex];
 
     cmd = AudioSynth_LoadRingBufferPart(cmd, DMEM_WET_LEFT_CH, bufItem->startPos, bufItem->lengthA, reverb);
     if (bufItem->lengthB != 0) {
@@ -496,34 +509,34 @@ Acmd* AudioSynth_SaveBufferOffset(Acmd* cmd, u16 dmem, u16 offset, s32 length, s
     return cmd;
 }
 
-Acmd* AudioSynth_MaybeLoadRingBuffer2(Acmd* cmd, s32 arg1, SynthesisReverb* reverb, s16 bufIndex) {
+Acmd* AudioSynth_MaybeLoadRingBuffer2(Acmd* cmd, s32 aiBufLen, SynthesisReverb* reverb, s16 updateIndex) {
     if (reverb->downsampleRate == 1) {
-        cmd = AudioSynth_LoadRingBuffer2(cmd, arg1, reverb, bufIndex);
+        cmd = AudioSynth_LoadRingBuffer2(cmd, aiBufLen, reverb, updateIndex);
     }
 
     return cmd;
 }
 
-Acmd* func_800DC164(Acmd* cmd, s32 arg1, SynthesisReverb* reverb, s16 arg3) {
+Acmd* AudioSynth_LoadReverbSamples(Acmd* cmd, s32 aiBufLen, SynthesisReverb* reverb, s16 updateIndex) {
     // Sets DMEM_WET_{LEFT,RIGHT}_CH, clobbers DMEM_TEMP
     if (reverb->downsampleRate == 1) {
         if (reverb->unk_18 != 0) {
-            cmd = func_800DB828(cmd, arg1, reverb, arg3);
+            cmd = func_800DB828(cmd, aiBufLen, reverb, updateIndex);
         } else {
-            cmd = AudioSynth_LoadRingBuffer1(cmd, arg1, reverb, arg3);
+            cmd = AudioSynth_LoadRingBuffer1(cmd, aiBufLen, reverb, updateIndex);
         }
     } else {
-        cmd = func_800DB4E4(cmd, arg1, reverb, arg3);
+        cmd = func_800DB4E4(cmd, aiBufLen, reverb, updateIndex);
     }
     return cmd;
 }
 
-Acmd* AudioSynth_SaveReverbSamples(Acmd* cmd, SynthesisReverb* reverb, s16 bufIndex) {
-    ReverbRingBufferItem* bufItem = &reverb->items[reverb->curFrame][bufIndex];
+Acmd* AudioSynth_SaveReverbSamples(Acmd* cmd, SynthesisReverb* reverb, s16 updateIndex) {
+    ReverbRingBufferItem* bufItem = &reverb->items[reverb->curFrame][updateIndex];
 
     if (reverb->downsampleRate == 1) {
         if (reverb->unk_18 != 0) {
-            cmd = func_800DB680(cmd, reverb, bufIndex);
+            cmd = func_800DB680(cmd, reverb, updateIndex);
         } else {
             // Put the oldest samples in the ring buffer into the wet channels
             cmd = AudioSynth_SaveRingBufferPart(cmd, DMEM_WET_LEFT_CH, bufItem->startPos, bufItem->lengthA, reverb);
@@ -537,15 +550,15 @@ Acmd* AudioSynth_SaveReverbSamples(Acmd* cmd, SynthesisReverb* reverb, s16 bufIn
         // Downsampling is done later by CPU when RSP is done, therefore we need to have
         // double buffering. Left and right buffers are adjacent in memory.
         AudioSynth_SaveBuffer(cmd++, DMEM_WET_LEFT_CH, DEFAULT_LEN_2CH,
-                              reverb->items[reverb->curFrame][bufIndex].toDownsampleLeft);
+                              reverb->items[reverb->curFrame][updateIndex].toDownsampleLeft);
     }
 
     reverb->resampleFlags = 0;
     return cmd;
 }
 
-Acmd* AudioSynth_SaveRingBuffer2(Acmd* cmd, SynthesisReverb* reverb, s16 bufIndex) {
-    ReverbRingBufferItem* bufItem = &reverb->items2[reverb->curFrame][bufIndex];
+Acmd* AudioSynth_SaveRingBuffer2(Acmd* cmd, SynthesisReverb* reverb, s16 updateIndex) {
+    ReverbRingBufferItem* bufItem = &reverb->items2[reverb->curFrame][updateIndex];
 
     cmd = AudioSynth_SaveRingBufferPart(cmd, DMEM_WET_LEFT_CH, bufItem->startPos, bufItem->lengthA, reverb);
     if (bufItem->lengthB != 0) {
@@ -594,24 +607,36 @@ Acmd* AudioSynth_DoOneAudioUpdate(s16* aiBuf, s32 aiBufLen, Acmd* cmd, s32 updat
     }
 
     aClearBuffer(cmd++, DMEM_LEFT_CH, DEFAULT_LEN_2CH);
+
     i = 0;
     for (reverbIndex = 0; reverbIndex < gAudioContext.numSynthesisReverbs; reverbIndex++) {
         reverb = &gAudioContext.synthesisReverbs[reverbIndex];
         useReverb = reverb->useReverb;
         if (useReverb) {
-            cmd = func_800DC164(cmd, aiBufLen, reverb, updateIndex);
-            aMix(cmd++, 0x34, reverb->unk_0A, DMEM_WET_LEFT_CH, DMEM_LEFT_CH);
+
+            // Loads reverb samples from RDRAM (ringBuffer) into DMEM (DMEM_WET_LEFT_CH)
+            cmd = AudioSynth_LoadReverbSamples(cmd, aiBufLen, reverb, updateIndex);
+
+            // Mixes reverb sample into the main dry channel
+            // reverb->volume is always set to 0x7FFF (audio spec), and DMEM_LEFT_CH is cleared before the loop.
+            // So for the first iteration, this is essentially a DMEMmove from DMEM_WET_LEFT_CH to DMEM_LEFT_CH
+            aMix(cmd++, DEFAULT_LEN_2CH >> 4, reverb->volume, DMEM_WET_LEFT_CH, DMEM_LEFT_CH);
+
             unk14 = reverb->unk_14;
             if (unk14) {
                 aDMEMMove(cmd++, DMEM_WET_LEFT_CH, DMEM_WET_TEMP, DEFAULT_LEN_2CH);
             }
 
-            aMix(cmd++, 0x34, reverb->unk_0C + 0x8000, DMEM_WET_LEFT_CH, DMEM_WET_LEFT_CH);
+            // Decays reverb over time. The (+ 0x8000) here is -100%
+            aMix(cmd++, DEFAULT_LEN_2CH >> 4, reverb->decayRatio + 0x8000, DMEM_WET_LEFT_CH, DMEM_WET_LEFT_CH);
+
+            // Leak reverb between the left and right channels
             if (reverb->leakRtl != 0 || reverb->leakLtr != 0) {
                 cmd = AudioSynth_LeakReverb(cmd, reverb);
             }
 
             if (unk14) {
+                // Saves the wet channel sample from DMEM (DMEM_WET_LEFT_CH) into RDRAM (ringBuffer) for future use
                 cmd = AudioSynth_SaveReverbSamples(cmd, reverb, updateIndex);
                 if (reverb->unk_05 != -1) {
                     cmd = AudioSynth_MaybeMixRingBuffer1(cmd, reverb, updateIndex);
@@ -637,6 +662,8 @@ Acmd* AudioSynth_DoOneAudioUpdate(s16* aiBuf, s32 aiBufLen, Acmd* cmd, s32 updat
             if (reverb->filterLeft != NULL || reverb->filterRight != NULL) {
                 cmd = AudioSynth_FilterReverb(cmd, aiBufLen * 2, reverb);
             }
+
+            // Saves the wet channel sample from DMEM (DMEM_WET_LEFT_CH) into RDRAM (ringBuffer) for future use
             if (unk14) {
                 cmd = AudioSynth_SaveRingBuffer2(cmd, reverb, updateIndex);
             } else {
@@ -665,7 +692,7 @@ Acmd* AudioSynth_DoOneAudioUpdate(s16* aiBuf, s32 aiBufLen, Acmd* cmd, s32 updat
 Acmd* AudioSynth_ProcessNote(s32 noteIndex, NoteSubEu* noteSubEu, NoteSynthesisState* synthState, s16* aiBuf,
                              s32 aiBufLen, Acmd* cmd, s32 updateIndex) {
     s32 pad1[3];
-    SoundFontSample* audioFontSample;
+    Sample* sample;
     AdpcmLoop* loopInfo;
     s32 nSamplesUntilLoopEnd;
     s32 nSamplesInThisIteration;
@@ -675,7 +702,7 @@ Acmd* AudioSynth_ProcessNote(s32 noteIndex, NoteSubEu* noteSubEu, NoteSynthesisS
     u16 resamplingRateFixedPoint;
     s32 nSamplesInFirstFrame;
     s32 nTrailingSamplesToIgnore;
-    s32 phi_a1_2;
+    s32 gain;
     s32 frameIndex;
     s32 skipBytes;
     s32 temp_v1_6;
@@ -700,12 +727,12 @@ Acmd* AudioSynth_ProcessNote(s32 noteIndex, NoteSubEu* noteSubEu, NoteSynthesisS
     s32 sampleDataStartPad;
     s32 side;
     s32 resampledTempLen;
-    u16 noteSamplesDmemAddrBeforeResampling;
+    u16 sampleDmemBeforeResampling;
     s32 sampleDataOffset;
     s32 thing;
     s32 s5;
     Note* note;
-    u32 nSamplesToLoad;
+    u32 numSamplesToLoad;
     u16 unk7;
     u16 unkE;
     s16* filter;
@@ -723,7 +750,7 @@ Acmd* AudioSynth_ProcessNote(s32 noteIndex, NoteSubEu* noteSubEu, NoteSynthesisS
     if (noteSubEu->bitField0.needsInit == true) {
         flags = A_INIT;
         synthState->restart = 0;
-        synthState->samplePosInt = note->unk_BC;
+        synthState->samplePosInt = note->startSamplePos;
         synthState->samplePosFrac = 0;
         synthState->curVolLeft = 0;
         synthState->curVolRight = 0;
@@ -739,7 +766,7 @@ Acmd* AudioSynth_ProcessNote(s32 noteIndex, NoteSubEu* noteSubEu, NoteSynthesisS
     resamplingRateFixedPoint = noteSubEu->resamplingRateFixedPoint;
     nParts = noteSubEu->bitField1.hasTwoParts + 1;
     samplesLenFixedPoint = (resamplingRateFixedPoint * aiBufLen * 2) + synthState->samplePosFrac;
-    nSamplesToLoad = samplesLenFixedPoint >> 16;
+    numSamplesToLoad = samplesLenFixedPoint >> 16;
     synthState->samplePosFrac = samplesLenFixedPoint & 0xFFFF;
 
     // Partially-optimized out no-op ifs required for matching. SM64 decomp
@@ -752,14 +779,14 @@ Acmd* AudioSynth_ProcessNote(s32 noteIndex, NoteSubEu* noteSubEu, NoteSynthesisS
     synthState->numParts = nParts;
 
     if (noteSubEu->bitField1.isSyntheticWave) {
-        cmd = AudioSynth_LoadWaveSamples(cmd, noteSubEu, synthState, nSamplesToLoad);
-        noteSamplesDmemAddrBeforeResampling = DMEM_UNCOMPRESSED_NOTE + (synthState->samplePosInt * 2);
-        synthState->samplePosInt += nSamplesToLoad;
+        cmd = AudioSynth_LoadWaveSamples(cmd, noteSubEu, synthState, numSamplesToLoad);
+        sampleDmemBeforeResampling = DMEM_UNCOMPRESSED_NOTE + (synthState->samplePosInt * (s32)sizeof(s16));
+        synthState->samplePosInt += numSamplesToLoad;
     } else {
-        audioFontSample = noteSubEu->sound.soundFontSound->sample;
-        loopInfo = audioFontSample->loop;
+        sample = noteSubEu->tunedSample->sample;
+        loopInfo = sample->loop;
         loopEndPos = loopInfo->end;
-        sampleAddr = audioFontSample->sampleAddr;
+        sampleAddr = (u32)sample->sampleAddr;
         resampledTempLen = 0;
 
         for (curPart = 0; curPart < nParts; curPart++) {
@@ -767,15 +794,15 @@ Acmd* AudioSynth_ProcessNote(s32 noteIndex, NoteSubEu* noteSubEu, NoteSynthesisS
             s5 = 0;
 
             if (nParts == 1) {
-                samplesLenAdjusted = nSamplesToLoad;
-            } else if (nSamplesToLoad & 1) {
-                samplesLenAdjusted = (nSamplesToLoad & ~1) + (curPart * 2);
+                samplesLenAdjusted = numSamplesToLoad;
+            } else if (numSamplesToLoad & 1) {
+                samplesLenAdjusted = (numSamplesToLoad & ~1) + (curPart * 2);
             } else {
-                samplesLenAdjusted = nSamplesToLoad;
+                samplesLenAdjusted = numSamplesToLoad;
             }
 
-            if (audioFontSample->codec == CODEC_ADPCM || audioFontSample->codec == CODEC_SMALL_ADPCM) {
-                if (gAudioContext.curLoadedBook != audioFontSample->book->book) {
+            if (sample->codec == CODEC_ADPCM || sample->codec == CODEC_SMALL_ADPCM) {
+                if (gAudioContext.curLoadedBook != sample->book->book) {
                     u32 nEntries;
                     switch (bookOffset) {
                         case 1:
@@ -784,13 +811,13 @@ Acmd* AudioSynth_ProcessNote(s32 noteIndex, NoteSubEu* noteSubEu, NoteSynthesisS
                         case 2:
                         case 3:
                         default:
-                            gAudioContext.curLoadedBook = audioFontSample->book->book;
+                            gAudioContext.curLoadedBook = sample->book->book;
                             break;
                     }
                     if (1) {}
                     if (1) {}
                     if (1) {}
-                    nEntries = 16 * audioFontSample->book->order * audioFontSample->book->npredictors;
+                    nEntries = 16 * sample->book->order * sample->book->numPredictors;
                     aLoadADPCM(cmd++, nEntries, gAudioContext.curLoadedBook);
                 }
             }
@@ -829,22 +856,25 @@ Acmd* AudioSynth_ProcessNote(s32 noteIndex, NoteSubEu* noteSubEu, NoteSynthesisS
                     }
                 }
 
-                switch (audioFontSample->codec) {
+                switch (sample->codec) {
                     case CODEC_ADPCM:
                         frameSize = 9;
                         skipInitialSamples = 16;
                         sampleDataStart = 0;
                         break;
+
                     case CODEC_SMALL_ADPCM:
                         frameSize = 5;
                         skipInitialSamples = 16;
                         sampleDataStart = 0;
                         break;
+
                     case CODEC_S8:
                         frameSize = 16;
                         skipInitialSamples = 16;
                         sampleDataStart = 0;
                         break;
+
                     case CODEC_S16_INMEMORY:
                         AudioSynth_ClearBuffer(cmd++, DMEM_UNCOMPRESSED_NOTE, (samplesLenAdjusted * 2) + 0x20);
                         flags = A_CONTINUE;
@@ -852,6 +882,7 @@ Acmd* AudioSynth_ProcessNote(s32 noteIndex, NoteSubEu* noteSubEu, NoteSynthesisS
                         nSamplesProcessed = samplesLenAdjusted;
                         s5 = samplesLenAdjusted;
                         goto skip;
+
                     case CODEC_S16:
                         AudioSynth_ClearBuffer(cmd++, DMEM_UNCOMPRESSED_NOTE, (samplesLenAdjusted * 2) + 0x20);
                         flags = A_CONTINUE;
@@ -859,6 +890,7 @@ Acmd* AudioSynth_ProcessNote(s32 noteIndex, NoteSubEu* noteSubEu, NoteSynthesisS
                         nSamplesProcessed = samplesLenAdjusted;
                         s5 = samplesLenAdjusted;
                         goto skip;
+
                     case CODEC_REVERB:
                         break;
                 }
@@ -866,14 +898,14 @@ Acmd* AudioSynth_ProcessNote(s32 noteIndex, NoteSubEu* noteSubEu, NoteSynthesisS
                 if (nFramesToDecode != 0) {
                     frameIndex = (synthState->samplePosInt + skipInitialSamples - nFirstFrameSamplesToIgnore) / 16;
                     sampleDataOffset = frameIndex * frameSize;
-                    if (audioFontSample->medium == MEDIUM_RAM) {
+                    if (sample->medium == MEDIUM_RAM) {
                         sampleData = (u8*)(sampleDataStart + sampleDataOffset + sampleAddr);
-                    } else if (audioFontSample->medium == MEDIUM_UNK) {
+                    } else if (sample->medium == MEDIUM_UNK) {
                         return cmd;
                     } else {
                         sampleData = AudioLoad_DmaSampleData(sampleDataStart + sampleDataOffset + sampleAddr,
                                                              ALIGN16((nFramesToDecode * frameSize) + 0x10), flags,
-                                                             &synthState->sampleDmaIndex, audioFontSample->medium);
+                                                             &synthState->sampleDmaIndex, sample->medium);
                     }
 
                     if (sampleData == NULL) {
@@ -890,7 +922,7 @@ Acmd* AudioSynth_ProcessNote(s32 noteIndex, NoteSubEu* noteSubEu, NoteSynthesisS
                 }
 
                 if (synthState->restart) {
-                    aSetLoop(cmd++, audioFontSample->loop->state);
+                    aSetLoop(cmd++, sample->loop->predictorState);
                     flags = A_LOOP;
                     synthState->restart = false;
                 }
@@ -902,7 +934,8 @@ Acmd* AudioSynth_ProcessNote(s32 noteIndex, NoteSubEu* noteSubEu, NoteSynthesisS
                 } else {
                     phi_s4 = ALIGN16(s5 + 16);
                 }
-                switch (audioFontSample->codec) {
+
+                switch (sample->codec) {
                     case CODEC_ADPCM:
                         aligned = ALIGN16((nFramesToDecode * frameSize) + 0x10);
                         addr = DMEM_COMPRESSED_ADPCM_DATA - aligned;
@@ -910,6 +943,7 @@ Acmd* AudioSynth_ProcessNote(s32 noteIndex, NoteSubEu* noteSubEu, NoteSynthesisS
                                    nSamplesToDecode * 2);
                         aADPCMdec(cmd++, flags, synthState->synthesisBuffers->adpcmdecState);
                         break;
+
                     case CODEC_SMALL_ADPCM:
                         aligned = ALIGN16((nFramesToDecode * frameSize) + 0x10);
                         addr = DMEM_COMPRESSED_ADPCM_DATA - aligned;
@@ -917,6 +951,7 @@ Acmd* AudioSynth_ProcessNote(s32 noteIndex, NoteSubEu* noteSubEu, NoteSynthesisS
                                    nSamplesToDecode * 2);
                         aADPCMdec(cmd++, flags | 4, synthState->synthesisBuffers->adpcmdecState);
                         break;
+
                     case CODEC_S8:
                         aligned = ALIGN16((nFramesToDecode * frameSize) + 0x10);
                         addr = DMEM_COMPRESSED_ADPCM_DATA - aligned;
@@ -938,9 +973,11 @@ Acmd* AudioSynth_ProcessNote(s32 noteIndex, NoteSubEu* noteSubEu, NoteSynthesisS
                         skipBytes = 0x20;
                         s5 = (nSamplesToDecode + 0x10) * 2;
                         break;
+
                     case A_LOOP:
                         s5 = nSamplesInThisIteration * 2 + s5;
                         break;
+
                     default:
                         if (s5 != 0) {
                             s5 = nSamplesInThisIteration * 2 + s5;
@@ -972,23 +1009,25 @@ Acmd* AudioSynth_ProcessNote(s32 noteIndex, NoteSubEu* noteSubEu, NoteSynthesisS
 
             switch (nParts) {
                 case 1:
-                    noteSamplesDmemAddrBeforeResampling = DMEM_UNCOMPRESSED_NOTE + skipBytes;
+                    sampleDmemBeforeResampling = DMEM_UNCOMPRESSED_NOTE + skipBytes;
                     break;
+
                 case 2:
                     switch (curPart) {
                         case 0:
                             AudioSynth_InterL(cmd++, DMEM_UNCOMPRESSED_NOTE + skipBytes, DMEM_TEMP + 0x20,
-                                              ((samplesLenAdjusted / 2) + 7) & ~7);
+                                              ALIGN8(samplesLenAdjusted / 2));
                             resampledTempLen = samplesLenAdjusted;
-                            noteSamplesDmemAddrBeforeResampling = DMEM_TEMP + 0x20;
+                            sampleDmemBeforeResampling = DMEM_TEMP + 0x20;
                             if (finished) {
-                                AudioSynth_ClearBuffer(cmd++, noteSamplesDmemAddrBeforeResampling + resampledTempLen,
+                                AudioSynth_ClearBuffer(cmd++, sampleDmemBeforeResampling + resampledTempLen,
                                                        samplesLenAdjusted + 0x10);
                             }
                             break;
+
                         case 1:
                             AudioSynth_InterL(cmd++, DMEM_UNCOMPRESSED_NOTE + skipBytes,
-                                              DMEM_TEMP + 0x20 + resampledTempLen, ((samplesLenAdjusted / 2) + 7) & ~7);
+                                              DMEM_TEMP + 0x20 + resampledTempLen, ALIGN8(samplesLenAdjusted / 2));
                             break;
                     }
             }
@@ -1004,8 +1043,8 @@ Acmd* AudioSynth_ProcessNote(s32 noteIndex, NoteSubEu* noteSubEu, NoteSynthesisS
         flags = A_INIT;
     }
 
-    cmd = AudioSynth_FinalResample(cmd, synthState, aiBufLen * 2, resamplingRateFixedPoint,
-                                   noteSamplesDmemAddrBeforeResampling, flags);
+    cmd = AudioSynth_FinalResample(cmd, synthState, aiBufLen * 2, resamplingRateFixedPoint, sampleDmemBeforeResampling,
+                                   flags);
     if (bookOffset == 3) {
         AudioSynth_UnkCmd19(cmd++, DMEM_TEMP, DMEM_TEMP, aiBufLen * 2, 0);
     }
@@ -1014,12 +1053,13 @@ Acmd* AudioSynth_ProcessNote(s32 noteIndex, NoteSubEu* noteSubEu, NoteSynthesisS
         AudioSynth_UnkCmd3(cmd++, DMEM_TEMP, DMEM_TEMP, aiBufLen * 2);
     }
 
-    phi_a1_2 = noteSubEu->unk_2;
-    if (phi_a1_2 != 0) {
-        if (phi_a1_2 < 0x10) {
-            phi_a1_2 = 0x10;
+    gain = noteSubEu->gain;
+    if (gain != 0) {
+        // A gain of 0x10 (a UQ4.4 number) is equivalent to 1.0 and represents no volume change
+        if (gain < 0x10) {
+            gain = 0x10;
         }
-        AudioSynth_HiLoGain(cmd++, phi_a1_2, DMEM_TEMP, 0, (aiBufLen * 2) + 0x20);
+        AudioSynth_HiLoGain(cmd++, gain, DMEM_TEMP, 0, (aiBufLen * 2) + 0x20);
     }
 
     filter = noteSubEu->filter;
@@ -1149,27 +1189,43 @@ Acmd* AudioSynth_ProcessEnvelope(Acmd* cmd, NoteSubEu* noteSubEu, NoteSynthesisS
     return cmd;
 }
 
-Acmd* AudioSynth_LoadWaveSamples(Acmd* cmd, NoteSubEu* noteSubEu, NoteSynthesisState* synthState, s32 nSamplesToLoad) {
-    s32 temp_v0;
-    s32 unk6 = noteSubEu->unk_06;
+Acmd* AudioSynth_LoadWaveSamples(Acmd* cmd, NoteSubEu* noteSubEu, NoteSynthesisState* synthState,
+                                 s32 numSamplesToLoad) {
+    s32 numSamplesAvail;
+    s32 harmonicIndexCurAndPrev = noteSubEu->harmonicIndexCurAndPrev;
     s32 samplePosInt = synthState->samplePosInt;
-    s32 repeats;
+    s32 numDuplicates;
 
     if (noteSubEu->bitField1.bookOffset != 0) {
-        AudioSynth_LoadBuffer(cmd++, DMEM_UNCOMPRESSED_NOTE, ALIGN16(nSamplesToLoad * 2), gWaveSamples[8]);
-        gWaveSamples[8] += nSamplesToLoad * 2;
+        // Move the noise wave (that reads compiled assembly as samples) from ram to dmem
+        AudioSynth_LoadBuffer(cmd++, DMEM_UNCOMPRESSED_NOTE, ALIGN16(numSamplesToLoad * sizeof(s16)), gWaveSamples[8]);
+        // Offset the address for the samples read by gWaveSamples[8] to the next set of samples
+        gWaveSamples[8] += numSamplesToLoad * sizeof(s16);
         return cmd;
     } else {
-        aLoadBuffer(cmd++, noteSubEu->sound.samples, DMEM_UNCOMPRESSED_NOTE, 0x80);
-        if (unk6 != 0) {
-            samplePosInt = (samplePosInt * D_801304C0[unk6 >> 2]) / D_801304C0[unk6 & 3];
+        // Move the synthetic wave from ram to dmem
+        aLoadBuffer(cmd++, noteSubEu->waveSampleAddr, DMEM_UNCOMPRESSED_NOTE, WAVE_SAMPLE_COUNT * sizeof(s16));
+
+        // If the harmonic changes, map the offset in the wave from one harmonic to another for continuity
+        if (harmonicIndexCurAndPrev != 0) {
+            samplePosInt = samplePosInt * sNumSamplesPerWavePeriod[harmonicIndexCurAndPrev >> 2] /
+                           sNumSamplesPerWavePeriod[harmonicIndexCurAndPrev & 3];
         }
-        samplePosInt &= 0x3F;
-        temp_v0 = 0x40 - samplePosInt;
-        if (temp_v0 < nSamplesToLoad) {
-            repeats = ((nSamplesToLoad - temp_v0 + 0x3F) / 0x40);
-            if (repeats != 0) {
-                aDuplicate(cmd++, repeats, DMEM_UNCOMPRESSED_NOTE, DMEM_UNCOMPRESSED_NOTE + 0x80, 0x80);
+
+        // Offset in the WAVE_SAMPLE_COUNT samples of gWaveSamples to start processing the wave for continuity
+        samplePosInt = (u32)samplePosInt % WAVE_SAMPLE_COUNT;
+        // Number of samples in the initial WAVE_SAMPLE_COUNT samples available to be used to process
+        numSamplesAvail = WAVE_SAMPLE_COUNT - samplePosInt;
+
+        // Require duplicates if there are more samples to load than available
+        if (numSamplesToLoad > numSamplesAvail) {
+            // Duplicate (copy) the WAVE_SAMPLE_COUNT samples as many times as needed to reach numSamplesToLoad.
+            // (numSamplesToLoad - numSamplesAvail) is the number of samples missing.
+            // Divide by WAVE_SAMPLE_COUNT, rounding up, to get the amount of duplicates
+            numDuplicates = ((numSamplesToLoad - numSamplesAvail + (WAVE_SAMPLE_COUNT - 1)) / WAVE_SAMPLE_COUNT);
+            if (numDuplicates != 0) {
+                aDuplicate(cmd++, numDuplicates, DMEM_UNCOMPRESSED_NOTE,
+                           DMEM_UNCOMPRESSED_NOTE + (WAVE_SAMPLE_COUNT * sizeof(s16)));
             }
         }
         synthState->samplePosInt = samplePosInt;

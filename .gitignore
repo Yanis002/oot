@@ -54,6 +54,7 @@ graphs/
 
 # Per-user configuration
 .python-version
+assets_custom/
 assets_custom.py
 !assets_custom/objects/object_poisoned_water
 cache/

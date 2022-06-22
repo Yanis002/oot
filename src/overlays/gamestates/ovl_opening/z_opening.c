@@ -13,13 +13,11 @@ void Opening_SetupTitleScreen(OpeningContext* this) {
     // Sram_InitDebugSave();
     // gSaveContext.cutsceneIndex = 0xFFF3;
     // gSaveContext.sceneSetupIndex = 7;
-    // SET_NEXT_GAMESTATE(&this->state, Gameplay_Init, GlobalContext);
+    // SET_NEXT_GAMESTATE(&this->state, Play_Init, PlayState);
 
     Sram_InitDebugSave();
     gSaveContext.gameMode = 0;
-    gSaveContext.unk_13F6 = gSaveContext.magic;
     gSaveContext.magic = 0;
-    gSaveContext.unk_13F4 = 0;
     gSaveContext.magicLevel = gSaveContext.magic;
 
     gSaveContext.linkAge = LINK_AGE_CHILD;
@@ -31,13 +29,13 @@ void Opening_SetupTitleScreen(OpeningContext* this) {
     gSaveContext.buttonStatus[0] = BTN_ENABLED;
     gSaveContext.unk_13E7 = gSaveContext.unk_13E8 = gSaveContext.unk_13EA = gSaveContext.unk_13EC = 0;
     Audio_QueueSeqCmd(NA_BGM_STOP);
-    gSaveContext.entranceIndex = 0x33; //B1 for mkt, 171 for tot exterior, 33 for mkt entrance, 1FD for field, 82 for spirit
+    gSaveContext.entranceIndex = ENTR_ENTRA_0; //B1 for mkt, 171 for tot exterior, 33 for mkt entrance, 1FD for field, 82 for spirit
     gSaveContext.respawnFlag = 0;
     gSaveContext.respawn[RESPAWN_MODE_DOWN].entranceIndex = -1;
     gSaveContext.showTitleCard = true;
     gWeatherMode = 0;
     this->state.running = false;
-    SET_NEXT_GAMESTATE(&this->state, Gameplay_Init, GlobalContext);
+    SET_NEXT_GAMESTATE(&this->state, Play_Init, PlayState);
 }
 
 void func_80803C5C(OpeningContext* this) {

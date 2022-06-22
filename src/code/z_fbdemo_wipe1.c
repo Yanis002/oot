@@ -1,6 +1,6 @@
 #include "global.h"
 
-#include "code/fbdemo_wipe1/z_fbdemo_wipe1.c"
+#include "assets/code/fbdemo_wipe1/z_fbdemo_wipe1.c"
 
 Gfx sWipeDList[] = {
     gsDPPipeSync(),
@@ -39,7 +39,7 @@ Gfx sWipeSyncDList[] = {
 void TransitionWipe_Start(void* thisx) {
     TransitionWipe* this = (TransitionWipe*)thisx;
 
-    this->isDone = 0;
+    this->isDone = false;
 
     if (this->direction) {
         this->texY = 0x14D;
@@ -63,21 +63,18 @@ void TransitionWipe_Destroy(void* thisx) {
 
 void TransitionWipe_Update(void* thisx, s32 updateRate) {
     TransitionWipe* this = (TransitionWipe*)thisx;
-    u8 unk1419;
 
     if (this->direction != 0) {
-        unk1419 = gSaveContext.unk_1419;
-        this->texY += (unk1419 * 3) / updateRate;
+        this->texY += (((void)0, gSaveContext.transWipeSpeed) * 3) / updateRate;
         if (this->texY >= 0x264) {
             this->texY = 0x264;
-            this->isDone = 1;
+            this->isDone = true;
         }
     } else {
-        unk1419 = gSaveContext.unk_1419;
-        this->texY -= (unk1419 * 3) / updateRate;
-        if (this->texY < 0x14E) {
+        this->texY -= (((void)0, gSaveContext.transWipeSpeed) * 3) / updateRate;
+        if (this->texY <= 0x14D) {
             this->texY = 0x14D;
-            this->isDone = 1;
+            this->isDone = true;
         }
     }
 }

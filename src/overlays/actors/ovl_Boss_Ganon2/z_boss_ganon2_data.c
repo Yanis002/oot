@@ -1,6 +1,8 @@
 #include "z_boss_ganon2.h"
 #include "overlays/actors/ovl_En_Zl3/z_en_zl3.h"
-#include "objects/object_ganon2/object_ganon2.h"
+#include "assets/objects/object_ganon2/object_ganon2.h"
+
+#define BOSS_GANON2_EFFECT_COUNT 100
 
 typedef struct {
     /* 0x00 */ u8 type;
@@ -329,7 +331,7 @@ static u8 D_809071EC[] = { 3, 2, 2, 1, 3, 3, 1, 3, 3, 1, 0, 3, 1, 0, 3 };
 // padding
 static u32 D_809071FC[2] = { 0 };
 
-#include "overlays/ovl_Boss_Ganon2/ovl_Boss_Ganon2.c"
+#include "assets/overlays/ovl_Boss_Ganon2/ovl_Boss_Ganon2.c"
 
 static Vec3f D_8090EB20;
 
@@ -340,7 +342,7 @@ static Actor* D_8090EB30;
 // unused
 static UNK_TYPE D_8090EB34;
 
-static BossGanon2Effect sParticles[100];
+static BossGanon2Effect sEffects[BOSS_GANON2_EFFECT_COUNT];
 
 static s32 sSeed1;
 static s32 sSeed2;

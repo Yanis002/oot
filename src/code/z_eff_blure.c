@@ -1,5 +1,5 @@
 #include "global.h"
-#include "objects/gameplay_keep/gameplay_keep.h"
+#include "assets/objects/gameplay_keep/gameplay_keep.h"
 
 void EffectBlure_AddVertex(EffectBlure* this, Vec3f* p1, Vec3f* p2) {
     EffectBlureElement* elem;
@@ -382,7 +382,7 @@ void EffectBlure_GetComputedValues(EffectBlure* this, s32 index, f32 ratio, Vec3
 void EffectBlure_SetupSmooth(EffectBlure* this, GraphicsContext* gfxCtx) {
     OPEN_DISPS(gfxCtx, "../z_eff_blure.c", 809);
 
-    POLY_XLU_DISP = Gfx_CallSetupDL(POLY_XLU_DISP, 0x26);
+    POLY_XLU_DISP = Gfx_SetupDL(POLY_XLU_DISP, SETUPDL_38);
 
     CLOSE_DISPS(gfxCtx, "../z_eff_blure.c", 813);
 }
@@ -714,7 +714,7 @@ void EffectBlure_DrawSmooth(EffectBlure* this2, GraphicsContext* gfxCtx) {
 void EffectBlure_SetupSimple(GraphicsContext* gfxCtx, EffectBlure* this, Vtx* vtx) {
     OPEN_DISPS(gfxCtx, "../z_eff_blure.c", 1280);
 
-    POLY_XLU_DISP = Gfx_CallSetupDL(POLY_XLU_DISP, 0x26);
+    POLY_XLU_DISP = Gfx_SetupDL(POLY_XLU_DISP, SETUPDL_38);
 
     CLOSE_DISPS(gfxCtx, "../z_eff_blure.c", 1285);
 }
@@ -723,7 +723,7 @@ void EffectBlure_SetupSimpleAlt(GraphicsContext* gfxCtx, EffectBlure* this, Vtx*
     OPEN_DISPS(gfxCtx, "../z_eff_blure.c", 1294);
 
     gDPPipeSync(POLY_XLU_DISP++);
-    POLY_XLU_DISP = Gfx_CallSetupDL(POLY_XLU_DISP, 0x26);
+    POLY_XLU_DISP = Gfx_SetupDL(POLY_XLU_DISP, SETUPDL_38);
 
     gDPSetCycleType(POLY_XLU_DISP++, G_CYC_2CYCLE);
     gDPSetTextureLUT(POLY_XLU_DISP++, G_TT_NONE);
@@ -944,7 +944,7 @@ void EffectBlure_Draw(void* thisx, GraphicsContext* gfxCtx) {
     EffectBlureElement* elem;
     s32 i;
     s32 j;
-    s32 phi_t2;
+    s32 flag;
 
     OPEN_DISPS(gfxCtx, "../z_eff_blure.c", 1596);
 
@@ -952,7 +952,7 @@ void EffectBlure_Draw(void* thisx, GraphicsContext* gfxCtx) {
 
     if (this->numElements != 0) {
         if (this->flags == 0) {
-            func_800942F0(gfxCtx);
+            Gfx_SetupDL_38Xlu(gfxCtx);
             gDPPipeSync(POLY_XLU_DISP++);
 
             vtx = Graph_Alloc(gfxCtx, sizeof(Vtx[32]));
@@ -1029,22 +1029,22 @@ void EffectBlure_Draw(void* thisx, GraphicsContext* gfxCtx) {
 
                 gSPVertex(POLY_XLU_DISP++, vtx, 32, 0);
 
-                phi_t2 = 0;
+                flag = 0;
                 for (i = 0; i < this->numElements; i++) {
                     elem = &this->elements[i];
 
                     if (elem->state == 0) {
-                        phi_t2 = 0;
+                        flag = 0;
                     } else {
-                        if (phi_t2 == 0) {
-                            phi_t2 = 1;
+                        if (flag == 0) {
+                            flag = 1;
                         } else {
                             gSP1Quadrangle(POLY_XLU_DISP++, j - 2, j - 1, j + 1, j, 0);
 
                             if (1) {} // Necessary to match
 
                             if (this->unkFlag == 1) {
-                                phi_t2 = 0;
+                                flag = 0;
                             }
                         }
                         j += 2;

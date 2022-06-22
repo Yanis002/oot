@@ -6,7 +6,9 @@
 
 struct BossDodongo;
 
-typedef void (*BossDodongoActionFunc)(struct BossDodongo*, GlobalContext*);
+typedef void (*BossDodongoActionFunc)(struct BossDodongo*, PlayState*);
+
+#define BOSS_DODONGO_EFFECT_COUNT 80
 
 typedef struct {
     /* 0x00 */ Vec3f unk_00;
@@ -39,7 +41,7 @@ typedef struct BossDodongo {
     /* 0x01AE */ s16 unk_1AE;
     /* 0x01B0 */ s16 unk_1B0;
     /* 0x01B2 */ char unk_1B2[0x2];
-    /* 0x01B4 */ s16 cutsceneCamera;
+    /* 0x01B4 */ s16 subCamId;
     /* 0x01B6 */ s16 unk_1B6;
     /* 0x01B8 */ s16 playerYawInRange;
     /* 0x01BA */ s16 playerPosInRange;
@@ -91,11 +93,11 @@ typedef struct BossDodongo {
     /* 0x0404 */ Vec3f unk_404;
     /* 0x0410 */ Vec3f unk_410;
     /* 0x041C */ Vec3f mouthPos;
-    /* 0x0428 */ Vec3f cameraEye;
-    /* 0x0434 */ Vec3f cameraAt;
+    /* 0x0428 */ Vec3f subCamEye;
+    /* 0x0434 */ Vec3f subCamAt;
     /* 0x0440 */ ColliderJntSph collider;
     /* 0x0460 */ ColliderJntSphElement items[19];
-    /* 0x0920 */ BossDodongoEffect effects[80];
+    /* 0x0920 */ BossDodongoEffect effects[BOSS_DODONGO_EFFECT_COUNT];
 } BossDodongo; // size = 0x1820
 
 #endif
