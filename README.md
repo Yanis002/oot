@@ -6,7 +6,7 @@
 This custom actor was made for the Hylian Modding Community Project, [more informations on Discord](https://discord.gg/nGFZ394)
 
 ## Documentation
-ACTOR ID: 0x1
+ACTOR ID: 0x1D7
 
 OBJECT ID: 0x4
 
