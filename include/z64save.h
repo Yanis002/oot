@@ -617,14 +617,14 @@ typedef enum {
 #define INFTABLE_12A 0x12A
 #define INFTABLE_138 0x138
 #define INFTABLE_139 0x139
-#define INFTABLE_140 0x140
-#define INFTABLE_141 0x141
-#define INFTABLE_142 0x142
-#define INFTABLE_143 0x143
-#define INFTABLE_144 0x144
-#define INFTABLE_145 0x145
-#define INFTABLE_146 0x146
-#define INFTABLE_147 0x147
+#define INFTABLE_RUTO_HOLDING_SWITCH_38 0x140 // makes ruto spawn near a jabu blue switch that has it's flag set to 0x38
+#define INFTABLE_RUTO_FIRST_MEET 0x141 // the text right before the one where Ruto's scream is written
+#define INFTABLE_RUTO_BEFORE_CARRY 0x142 // triggers the text right before you can carry Ruto
+#define INFTABLE_RUTO_AFTER_CARRY 0x143 // triggers the "oh villain" text when you can carry Ruto
+#define INFTABLE_RUTO_BEFORE_RUTO_HAS_SAPPHIRE 0x144 // sets after the pre-big octo fight cs
+#define INFTABLE_RUTO_AFTER_RUTO_HAS_SAPPHIRE 0x145 // sets after the cs where ruto grabs the stone
+#define INFTABLE_RUTO_AFTER_RUTO_ABDUCTED 0x146 // sets after Ruto gets abducted
+#define INFTABLE_RUTO_CAN_SPAWN_IN_ROOM_2 0x147 // used to allow ruto spawn in the holes room (room 2 of jabu)
 #define INFTABLE_160 0x160
 #define INFTABLE_161 0x161
 #define INFTABLE_162 0x162
