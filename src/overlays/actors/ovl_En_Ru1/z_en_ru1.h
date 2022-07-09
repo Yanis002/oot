@@ -19,9 +19,9 @@ typedef enum {
     /* 0x02 */ RUTO_TYPE_FIRST_TIME_MEET,
     /* 0x03 */ RUTO_TYPE_CARRY,
     /* 0x04 */ RUTO_TYPE_BIG_OCTO_CS,
-    /* 0x05 */ RUTO_TYPE_UNK5,
-    /* 0x06 */ RUTO_TYPE_UNK6,
-    /* 0x0A */ RUTO_TYPE_UNKA = 0xA
+    /* 0x05 */ RUTO_TYPE_IN_DOMAIN,
+    /* 0x06 */ RUTO_TYPE_NEAR_BLUE_SWITCH,
+    /* 0x0A */ RUTO_TYPE_UNK_A = 0xA
 } EnRu1Type;
 
 typedef enum {
@@ -53,10 +53,10 @@ typedef enum {
     /* 19 */ RUTO_ACTION_19, // unused?
     /* 20 */ RUTO_ACTION_20,
     /* 21 */ RUTO_ACTION_21,
-    /* 22 */ RUTO_ACTION_22,
-    /* 23 */ RUTO_ACTION_23,
-    /* 24 */ RUTO_ACTION_24,
-    /* 25 */ RUTO_ACTION_25,
+    /* 22 */ RUTO_ACTION_SET_ACTION_SETUP_STANDING,
+    /* 23 */ RUTO_ACTION_SETUP_STANDING,
+    /* 24 */ RUTO_ACTION_STANDING_IDLE,
+    /* 25 */ RUTO_ACTION_STANDING_TALK,
     /* 26 */ RUTO_ACTION_26,
     /* 27 */ RUTO_ACTION_27,
     /* 28 */ RUTO_ACTION_28,
@@ -75,8 +75,8 @@ typedef enum {
     /* 41 */ RUTO_ACTION_41,
     /* 42 */ RUTO_ACTION_42,
     /* 43 */ RUTO_ACTION_43,
-    /* 44 */ RUTO_ACTION_44,
-    /* 45 */ RUTO_ACTION_45
+    /* 44 */ RUTO_ACTION_DOMAIN_IDLE,
+    /* 45 */ RUTO_ACTION_DOMAIN_TALKING
 } EnRu1Action;
 
 typedef struct EnRu1 {
