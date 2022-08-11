@@ -2260,7 +2260,6 @@ void EnRu1_Update(Actor* thisx, PlayState* play) {
     }
 
     sActionFuncs[this->action](this, play);
-    // osSyncPrintf("!!!!!!!! ACTION: %d\n", this->action);
 }
 
 void EnRu1_Init(Actor* thisx, PlayState* play) {
