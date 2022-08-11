@@ -492,7 +492,7 @@ void DemoEffect_Init(Actor* thisx, PlayState* play2) {
             this->jewel.isPositionInit = 0;
             DemoEffect_InitJewel(play, this);
             Actor_ChangeCategory(play, &play->actorCtx, &this->actor, ACTOR_EN_DOOR);
-            if ((play->sceneNum == SCENE_BDAN) && GET_INFTABLE(INFTABLE_145)) {
+            if ((play->sceneNum == SCENE_BDAN) && GET_INFTABLE(INFTABLE_RUTO_AFTER_RUTO_HAS_SAPPHIRE)) {
                 Actor_Kill(&this->actor);
                 return;
             }
