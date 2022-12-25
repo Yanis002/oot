@@ -371,9 +371,9 @@ void EnIshi_Wait(EnIshi* this, PlayState* play) {
             if (this->actor.xzDistToPlayer < 90.0f) {
                 // GI_NONE in these cases allows the player to lift the actor
                 if (type == ROCK_LARGE) {
-                    func_8002F434(&this->actor, play, GI_NONE, 80.0f, 20.0f);
+                    Actor_OfferGetItem(&this->actor, play, GI_NONE, 80.0f, 20.0f);
                 } else {
-                    func_8002F434(&this->actor, play, GI_NONE, 50.0f, 10.0f);
+                    Actor_OfferGetItem(&this->actor, play, GI_NONE, 50.0f, 10.0f);
                 }
             }
         }
@@ -403,8 +403,8 @@ void EnIshi_LiftedUp(EnIshi* this, PlayState* play) {
 }
 
 void EnIshi_SetupFly(EnIshi* this) {
-    this->actor.velocity.x = Math_SinS(this->actor.world.rot.y) * this->actor.speedXZ;
-    this->actor.velocity.z = Math_CosS(this->actor.world.rot.y) * this->actor.speedXZ;
+    this->actor.velocity.x = Math_SinS(this->actor.world.rot.y) * this->actor.speed;
+    this->actor.velocity.z = Math_CosS(this->actor.world.rot.y) * this->actor.speed;
     if ((this->actor.params & 1) == ROCK_SMALL) {
         sRotSpeedX = (Rand_ZeroOne() - 0.5f) * 16000.0f;
         sRotSpeedY = (Rand_ZeroOne() - 0.5f) * 2400.0f;
