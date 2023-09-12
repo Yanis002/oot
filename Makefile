@@ -1,27 +1,66 @@
+#### MAKE SETTINGS ####
+# Do not change this unless you know what you're doing
+
+PROJECT_DIR := $(dir $(realpath $(firstword $(MAKEFILE_LIST))))
+MAKE = make
 MAKEFLAGS += --no-builtin-rules
+N_THREADS ?= $(shell nproc)
 
 # Ensure the build fails if a piped command fails
 SHELL = /bin/bash
 .SHELLFLAGS = -o pipefail -c
 
+# Detect OS
+ifeq ($(OS),Windows_NT)
+    DETECTED_OS = windows
+else
+    UNAME_S := $(shell uname -s)
+    ifeq ($(UNAME_S),Linux)
+        DETECTED_OS = linux
+    endif
+    ifeq ($(UNAME_S),Darwin)
+        DETECTED_OS = macos
+    endif
+endif
+
+#### PROJECT SETTINGS ####
+
 # Build options can either be changed by modifying the makefile, or by building with 'make SETTING=value'
 
 # If COMPARE is 1, check the output md5sum after building
 COMPARE ?= 1
+
 # If NON_MATCHING is 1, define the NON_MATCHING C flag when building
+# This should always be set to 1 when it's not a decompilation context
+# Note: this is automatically set to 1 if the compiler is GCC
 NON_MATCHING ?= 0
-# If ORIG_COMPILER is 1, compile with QEMU_IRIX and the original compiler
-ORIG_COMPILER ?= 0
+
+#### Compiler Settings ####
+
 # If COMPILER is "gcc", compile with GCC instead of IDO.
 COMPILER ?= ido
 
+# If ORIG_COMPILER is 1, compile with QEMU_IRIX and the original compiler
+ORIG_COMPILER ?= 0
+
+# Set prefix to mips binutils binaries (mips-linux-gnu-ld => 'mips-linux-gnu-') - Change at your own risk!
+# In nearly all cases, not having 'mips-linux-gnu-*' binaries on the PATH is indicative of missing dependencies
+MIPS_BINUTILS_PREFIX ?= mips-linux-gnu-
+
+# Check code syntax with host compiler
+CHECK_WARNINGS := -Wall -Wextra -Wno-format-security -Wno-unknown-pragmas -Wno-unused-parameter -Wno-unused-variable -Wno-missing-braces
+
+# Include flags
+INC := -Iinclude -Isrc -Ibuild -I.
+
 CFLAGS ?=
 CPPFLAGS ?=
+CPPFLAGS += -fno-dollars-in-identifiers -P
 
 # ORIG_COMPILER cannot be combined with a non-IDO compiler. Check for this case and error out if found.
 ifneq ($(COMPILER),ido)
   ifeq ($(ORIG_COMPILER),1)
-    $(error ORIG_COMPILER can only be used with the IDO compiler. Please check your Makefile variables and try again)
+    $(error 'ORIG_COMPILER' can only be used with the IDO compiler. Please check your Makefile variables and try again.)
   endif
 endif
 
@@ -31,40 +70,22 @@ ifeq ($(COMPILER),gcc)
   NON_MATCHING := 1
 endif
 
-# Set prefix to mips binutils binaries (mips-linux-gnu-ld => 'mips-linux-gnu-') - Change at your own risk!
-# In nearly all cases, not having 'mips-linux-gnu-*' binaries on the PATH is indicative of missing dependencies
-MIPS_BINUTILS_PREFIX ?= mips-linux-gnu-
-
 ifeq ($(NON_MATCHING),1)
   CFLAGS += -DNON_MATCHING -DAVOID_UB
   CPPFLAGS += -DNON_MATCHING -DAVOID_UB
   COMPARE := 0
 endif
 
-PROJECT_DIR := $(dir $(realpath $(firstword $(MAKEFILE_LIST))))
-
-MAKE = make
-CPPFLAGS += -fno-dollars-in-identifiers -P
-
-ifeq ($(OS),Windows_NT)
-    DETECTED_OS=windows
+# Detect compiler and set flags
+ifeq ($(COMPILER),gcc)
+  MIPS_VERSION := -mips3
+  CFLAGS += -G 0 -nostdinc $(INC) -march=vr4300 -mfix4300 -mabi=32 -mno-abicalls -mdivide-breaks -fno-zero-initialized-in-bss -fno-toplevel-reorder -ffreestanding -fno-common -fno-merge-constants -mno-explicit-relocs -mno-split-addresses $(CHECK_WARNINGS) -funsigned-char
+  OPTFLAGS := -Os -ffast-math -fno-unsafe-math-optimizations
 else
-    UNAME_S := $(shell uname -s)
-    ifeq ($(UNAME_S),Linux)
-        DETECTED_OS=linux
-    endif
-    ifeq ($(UNAME_S),Darwin)
-        DETECTED_OS=macos
-        MAKE=gmake
-        CPPFLAGS += -xc++
-    endif
-endif
-
-N_THREADS ?= $(shell nproc)
-
-#### Tools ####
-ifneq ($(shell type $(MIPS_BINUTILS_PREFIX)ld >/dev/null 2>/dev/null; echo $$?), 0)
-  $(error Unable to find $(MIPS_BINUTILS_PREFIX)ld. Please install or build MIPS binutils, commonly mips-linux-gnu. (or set MIPS_BINUTILS_PREFIX if your MIPS binutils install uses another prefix))
+  # we support Microsoft extensions such as anonymous structs, which the compiler does support but warns for their usage. Surpress the warnings with -woff.
+  MIPS_VERSION := -mips2
+  CFLAGS += -G 0 -non_shared -fullwarn -verbose -Xcpluscomm $(INC) -Wab,-r4300_mul -woff 516,649,838,712
+  OPTFLAGS := -O2
 endif
 
 # Detect compiler and set variables appropriately.
@@ -91,42 +112,6 @@ ifeq ($(ORIG_COMPILER),1)
   CC_OLD    = $(QEMU_IRIX) -L tools/ido5.3_compiler tools/ido5.3_compiler/usr/bin/cc
 endif
 
-AS         := $(MIPS_BINUTILS_PREFIX)as
-LD         := $(MIPS_BINUTILS_PREFIX)ld
-OBJCOPY    := $(MIPS_BINUTILS_PREFIX)objcopy
-OBJDUMP    := $(MIPS_BINUTILS_PREFIX)objdump
-EMULATOR   ?= 
-EMU_FLAGS  ?= 
-
-INC        := -Iinclude -Isrc -Ibuild -I.
-
-# Check code syntax with host compiler
-CHECK_WARNINGS := -Wall -Wextra -Wno-format-security -Wno-unknown-pragmas -Wno-unused-parameter -Wno-unused-variable -Wno-missing-braces
-
-CPP        := cpp
-MKLDSCRIPT := tools/mkldscript
-MKDMADATA  := tools/mkdmadata
-ELF2ROM    := tools/elf2rom
-ZAPD       := tools/ZAPD/ZAPD.out
-FADO       := tools/fado/fado.elf
-
-ifeq ($(COMPILER),gcc)
-  OPTFLAGS := -Os -ffast-math -fno-unsafe-math-optimizations
-else
-  OPTFLAGS := -O2
-endif
-
-ASFLAGS := -march=vr4300 -32 -no-pad-sections -Iinclude
-
-ifeq ($(COMPILER),gcc)
-  CFLAGS += -G 0 -nostdinc $(INC) -march=vr4300 -mfix4300 -mabi=32 -mno-abicalls -mdivide-breaks -fno-zero-initialized-in-bss -fno-toplevel-reorder -ffreestanding -fno-common -fno-merge-constants -mno-explicit-relocs -mno-split-addresses $(CHECK_WARNINGS) -funsigned-char
-  MIPS_VERSION := -mips3
-else
-  # we support Microsoft extensions such as anonymous structs, which the compiler does support but warns for their usage. Surpress the warnings with -woff.
-  CFLAGS += -G 0 -non_shared -fullwarn -verbose -Xcpluscomm $(INC) -Wab,-r4300_mul -woff 516,649,838,712
-  MIPS_VERSION := -mips2
-endif
-
 ifeq ($(COMPILER),ido)
   # Have CC_CHECK pretend to be a MIPS compiler
   MIPS_BUILTIN_DEFS := -D_MIPS_ISA_MIPS2=2 -D_MIPS_ISA=_MIPS_ISA_MIPS2 -D_ABIO32=1 -D_MIPS_SIM=_ABIO32 -D_MIPS_SZINT=32 -D_MIPS_SZLONG=32 -D_MIPS_SZPTR=32
@@ -142,13 +127,48 @@ else
   CC_CHECK  = @:
 endif
 
+#### OS SETTINGS ####
+
+ifeq ($(DETECTED_OS),macos)
+	MAKE = gmake
+	CPPFLAGS += -xc++
+endif
+
+#### TOOLS ####
+
+# MIPS binaries
+AS         := $(MIPS_BINUTILS_PREFIX)as
+LD         := $(MIPS_BINUTILS_PREFIX)ld
+OBJCOPY    := $(MIPS_BINUTILS_PREFIX)objcopy
+OBJDUMP    := $(MIPS_BINUTILS_PREFIX)objdump
+
+ifneq ($(shell type $(LD) >/dev/null 2>/dev/null; echo $$?), 0)
+  $(error Unable to find $(LD). Please install or build MIPS binutils, commonly mips-linux-gnu. (or set MIPS_BINUTILS_PREFIX if your MIPS binutils install uses another prefix))
+endif
+
+# Project Tools
+CPP        := cpp
+MKLDSCRIPT := tools/mkldscript
+MKDMADATA  := tools/mkdmadata
+ELF2ROM    := tools/elf2rom
+ZAPD       := tools/ZAPD/ZAPD.out
+FADO       := tools/fado/fado.elf
+
+# Tools' Flags
+ASFLAGS := -march=vr4300 -32 -no-pad-sections -Iinclude
 OBJDUMP_FLAGS := -d -r -z -Mreg-names=32
 
-#### Files ####
+#### EMULATOR SETTINGS ####
+
+EMULATOR   ?=
+EMU_FLAGS  ?= 
+
+#### FILES ####
 
 # ROM image
 ROM := zelda_ocarina_mq_dbg.z64
 ELF := $(ROM:.z64=.elf)
+
 # description of ROM segments
 SPEC := spec
 
@@ -186,8 +206,10 @@ TEXTURE_FILES_JPG := $(foreach dir,$(ASSET_BIN_DIRS),$(wildcard $(dir)/*.jpg))
 TEXTURE_FILES_OUT := $(foreach f,$(TEXTURE_FILES_PNG:.png=.inc.c),build/$f) \
 					 $(foreach f,$(TEXTURE_FILES_JPG:.jpg=.jpg.inc.c),build/$f) \
 
-# create build directories
+# Create build directories
 $(shell mkdir -p build/baserom build/assets/text $(foreach dir,$(SRC_DIRS) $(UNDECOMPILED_DATA_DIRS) $(ASSET_BIN_DIRS),build/$(dir)))
+
+#### OVERRIDES ####
 
 ifeq ($(COMPILER),ido)
 build/src/code/fault.o: CFLAGS += -trapuv
@@ -242,7 +264,7 @@ build/src/libultra/libc/ll.o: OPTFLAGS := -Ofast
 build/src/%.o: CC := $(CC) -fexec-charset=euc-jp
 endif
 
-#### Main Targets ###
+#### MAIN TARGETS ###
 
 all: $(ROM)
 ifeq ($(COMPARE),1)
@@ -278,7 +300,7 @@ endif
 
 .PHONY: all clean setup run distclean assetclean
 
-#### Various Recipes ####
+#### VARIOUS RECIPES ####
 
 $(ROM): $(ELF)
 	$(ELF2ROM) -cic 6105 $< $@
