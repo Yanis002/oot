@@ -164,6 +164,7 @@ EMULATOR   ?=
 EMU_FLAGS  ?= 
 
 #### FILES ####
+BUILD_DIR = build
 
 # ROM image
 ROM := zelda_ocarina_mq_dbg.z64
@@ -182,17 +183,17 @@ ASSET_BIN_DIRS := $(shell find assets/* -type d -not -path "assets/xml*" -not -p
 ASSET_FILES_XML := $(foreach dir,$(ASSET_BIN_DIRS),$(wildcard $(dir)/*.xml))
 ASSET_FILES_BIN := $(foreach dir,$(ASSET_BIN_DIRS),$(wildcard $(dir)/*.bin))
 ASSET_FILES_OUT := $(foreach f,$(ASSET_FILES_XML:.xml=.c),$f) \
-				   $(foreach f,$(ASSET_FILES_BIN:.bin=.bin.inc.c),build/$f) \
-				   $(foreach f,$(wildcard assets/text/*.c),build/$(f:.c=.o))
+				   $(foreach f,$(ASSET_FILES_BIN:.bin=.bin.inc.c),$(BUILD_DIR)/$f) \
+				   $(foreach f,$(wildcard assets/text/*.c),$(BUILD_DIR)/$(f:.c=.o))
 
 UNDECOMPILED_DATA_DIRS := $(shell find data -type d)
 
 # source files
 C_FILES       := $(filter-out %.inc.c,$(foreach dir,$(SRC_DIRS) $(ASSET_BIN_DIRS),$(wildcard $(dir)/*.c)))
 S_FILES       := $(foreach dir,$(SRC_DIRS) $(UNDECOMPILED_DATA_DIRS),$(wildcard $(dir)/*.s))
-O_FILES       := $(foreach f,$(S_FILES:.s=.o),build/$f) \
-                 $(foreach f,$(C_FILES:.c=.o),build/$f) \
-                 $(foreach f,$(wildcard baserom/*),build/$f.o)
+O_FILES       := $(foreach f,$(S_FILES:.s=.o),$(BUILD_DIR)/$f) \
+                 $(foreach f,$(C_FILES:.c=.o),$(BUILD_DIR)/$f) \
+                 $(foreach f,$(wildcard baserom/*),$(BUILD_DIR)/$f.o)
 
 OVL_RELOC_FILES := $(shell $(CPP) $(CPPFLAGS) $(SPEC) | grep -o '[^"]*_reloc.o' )
 
@@ -203,65 +204,65 @@ DEP_FILES := $(O_FILES:.o=.asmproc.d) $(OVL_RELOC_FILES:.o=.d)
 
 TEXTURE_FILES_PNG := $(foreach dir,$(ASSET_BIN_DIRS),$(wildcard $(dir)/*.png))
 TEXTURE_FILES_JPG := $(foreach dir,$(ASSET_BIN_DIRS),$(wildcard $(dir)/*.jpg))
-TEXTURE_FILES_OUT := $(foreach f,$(TEXTURE_FILES_PNG:.png=.inc.c),build/$f) \
-					 $(foreach f,$(TEXTURE_FILES_JPG:.jpg=.jpg.inc.c),build/$f) \
+TEXTURE_FILES_OUT := $(foreach f,$(TEXTURE_FILES_PNG:.png=.inc.c),$(BUILD_DIR)/$f) \
+					 $(foreach f,$(TEXTURE_FILES_JPG:.jpg=.jpg.inc.c),$(BUILD_DIR)/$f) \
 
 # Create build directories
-$(shell mkdir -p build/baserom build/assets/text $(foreach dir,$(SRC_DIRS) $(UNDECOMPILED_DATA_DIRS) $(ASSET_BIN_DIRS),build/$(dir)))
+$(shell mkdir -p $(BUILD_DIR)/baserom $(BUILD_DIR)/assets/text $(foreach dir,$(SRC_DIRS) $(UNDECOMPILED_DATA_DIRS) $(ASSET_BIN_DIRS),$(BUILD_DIR)/$(dir)))
 
 #### OVERRIDES ####
 
 ifeq ($(COMPILER),ido)
-build/src/code/fault.o: CFLAGS += -trapuv
-build/src/code/fault.o: OPTFLAGS := -O2 -g3
-build/src/code/fault_drawer.o: CFLAGS += -trapuv
-build/src/code/fault_drawer.o: OPTFLAGS := -O2 -g3
-build/src/code/ucode_disas.o: OPTFLAGS := -O2 -g3
-build/src/code/fmodf.o: OPTFLAGS := -g
-build/src/code/__osMemset.o: OPTFLAGS := -g
-build/src/code/__osMemmove.o: OPTFLAGS := -g
+$(BUILD_DIR)/src/code/fault.o: CFLAGS += -trapuv
+$(BUILD_DIR)/src/code/fault.o: OPTFLAGS := -O2 -g3
+$(BUILD_DIR)/src/code/fault_drawer.o: CFLAGS += -trapuv
+$(BUILD_DIR)/src/code/fault_drawer.o: OPTFLAGS := -O2 -g3
+$(BUILD_DIR)/src/code/ucode_disas.o: OPTFLAGS := -O2 -g3
+$(BUILD_DIR)/src/code/fmodf.o: OPTFLAGS := -g
+$(BUILD_DIR)/src/code/__osMemset.o: OPTFLAGS := -g
+$(BUILD_DIR)/src/code/__osMemmove.o: OPTFLAGS := -g
 
-build/src/audio/%.o: OPTFLAGS := -O2
+$(BUILD_DIR)/src/audio/%.o: OPTFLAGS := -O2
 
 # Use signed chars instead of unsigned for this audio file (needed to match AudioDebug_ScrPrt)
-build/src/audio/general.o: CFLAGS += -signed
+$(BUILD_DIR)/src/audio/general.o: CFLAGS += -signed
 
 # Put string literals in .data for some audio files (needed to match these files with literals)
-build/src/audio/sfx.o: CFLAGS += -use_readwrite_const
-build/src/audio/sequence.o: CFLAGS += -use_readwrite_const
+$(BUILD_DIR)/src/audio/sfx.o: CFLAGS += -use_readwrite_const
+$(BUILD_DIR)/src/audio/sequence.o: CFLAGS += -use_readwrite_const
 
-build/src/libultra/libc/absf.o: OPTFLAGS := -O2 -g3
-build/src/libultra/libc/sqrt.o: OPTFLAGS := -O2 -g3
-build/src/libultra/libc/ll.o: OPTFLAGS := -O1
-build/src/libultra/libc/ll.o: MIPS_VERSION := -mips3 -32
-build/src/libultra/libc/llcvt.o: OPTFLAGS := -O1
-build/src/libultra/libc/llcvt.o: MIPS_VERSION := -mips3 -32
+$(BUILD_DIR)/src/libultra/libc/absf.o: OPTFLAGS := -O2 -g3
+$(BUILD_DIR)/src/libultra/libc/sqrt.o: OPTFLAGS := -O2 -g3
+$(BUILD_DIR)/src/libultra/libc/ll.o: OPTFLAGS := -O1
+$(BUILD_DIR)/src/libultra/libc/ll.o: MIPS_VERSION := -mips3 -32
+$(BUILD_DIR)/src/libultra/libc/llcvt.o: OPTFLAGS := -O1
+$(BUILD_DIR)/src/libultra/libc/llcvt.o: MIPS_VERSION := -mips3 -32
 
-build/src/libultra/os/%.o: OPTFLAGS := -O1
-build/src/libultra/io/%.o: OPTFLAGS := -O2
-build/src/libultra/libc/%.o: OPTFLAGS := -O2
-build/src/libultra/rmon/%.o: OPTFLAGS := -O2
-build/src/libultra/gu/%.o: OPTFLAGS := -O2
+$(BUILD_DIR)/src/libultra/os/%.o: OPTFLAGS := -O1
+$(BUILD_DIR)/src/libultra/io/%.o: OPTFLAGS := -O2
+$(BUILD_DIR)/src/libultra/libc/%.o: OPTFLAGS := -O2
+$(BUILD_DIR)/src/libultra/rmon/%.o: OPTFLAGS := -O2
+$(BUILD_DIR)/src/libultra/gu/%.o: OPTFLAGS := -O2
 
-build/assets/misc/z_select_static/%.o: CFLAGS += -DF3DEX_GBI
+$(BUILD_DIR)/assets/misc/z_select_static/%.o: CFLAGS += -DF3DEX_GBI
 
-build/src/libultra/gu/%.o: CC := $(CC_OLD)
-build/src/libultra/io/%.o: CC := $(CC_OLD)
-build/src/libultra/libc/%.o: CC := $(CC_OLD)
-build/src/libultra/os/%.o: CC := $(CC_OLD)
-build/src/libultra/rmon/%.o: CC := $(CC_OLD)
+$(BUILD_DIR)/src/libultra/gu/%.o: CC := $(CC_OLD)
+$(BUILD_DIR)/src/libultra/io/%.o: CC := $(CC_OLD)
+$(BUILD_DIR)/src/libultra/libc/%.o: CC := $(CC_OLD)
+$(BUILD_DIR)/src/libultra/os/%.o: CC := $(CC_OLD)
+$(BUILD_DIR)/src/libultra/rmon/%.o: CC := $(CC_OLD)
 
-build/src/code/jpegutils.o: CC := $(CC_OLD)
-build/src/code/jpegdecoder.o: CC := $(CC_OLD)
+$(BUILD_DIR)/src/code/jpegutils.o: CC := $(CC_OLD)
+$(BUILD_DIR)/src/code/jpegdecoder.o: CC := $(CC_OLD)
 
-build/src/boot/%.o: CC := python3 tools/asm_processor/build.py $(CC) -- $(AS) $(ASFLAGS) --
-build/src/code/%.o: CC := python3 tools/asm_processor/build.py $(CC) -- $(AS) $(ASFLAGS) --
-build/src/overlays/%.o: CC := python3 tools/asm_processor/build.py $(CC) -- $(AS) $(ASFLAGS) --
+$(BUILD_DIR)/src/boot/%.o: CC := python3 tools/asm_processor/build.py $(CC) -- $(AS) $(ASFLAGS) --
+$(BUILD_DIR)/src/code/%.o: CC := python3 tools/asm_processor/build.py $(CC) -- $(AS) $(ASFLAGS) --
+$(BUILD_DIR)/src/overlays/%.o: CC := python3 tools/asm_processor/build.py $(CC) -- $(AS) $(ASFLAGS) --
 
-build/assets/%.o: CC := python3 tools/asm_processor/build.py $(CC) -- $(AS) $(ASFLAGS) --
+$(BUILD_DIR)/assets/%.o: CC := python3 tools/asm_processor/build.py $(CC) -- $(AS) $(ASFLAGS) --
 else
-build/src/libultra/libc/ll.o: OPTFLAGS := -Ofast
-build/src/%.o: CC := $(CC) -fexec-charset=euc-jp
+$(BUILD_DIR)/src/libultra/libc/ll.o: OPTFLAGS := -Ofast
+$(BUILD_DIR)/src/%.o: CC := $(CC) -fexec-charset=euc-jp
 endif
 
 #### MAIN TARGETS ###
@@ -273,12 +274,12 @@ ifeq ($(COMPARE),1)
 endif
 
 clean:
-	$(RM) -r $(ROM) $(ELF) build
+	$(RM) -r $(ROM) $(ELF) $(BUILD_DIR)
 
 assetclean:
 	$(RM) -r $(ASSET_BIN_DIRS)
 	$(RM) -r assets/text/*.h
-	$(RM) -r build/assets
+	$(RM) -r $(BUILD_DIR)/assets
 	$(RM) -r .extracted-assets.json
 
 distclean: clean assetclean
@@ -305,8 +306,8 @@ endif
 $(ROM): $(ELF)
 	$(ELF2ROM) -cic 6105 $< $@
 
-$(ELF): $(TEXTURE_FILES_OUT) $(ASSET_FILES_OUT) $(O_FILES) $(OVL_RELOC_FILES) build/ldscript.txt build/undefined_syms.txt
-	$(LD) -T build/undefined_syms.txt -T build/ldscript.txt --no-check-sections --accept-unknown-input-arch --emit-relocs -Map build/z64.map -o $@
+$(ELF): $(TEXTURE_FILES_OUT) $(ASSET_FILES_OUT) $(O_FILES) $(OVL_RELOC_FILES) $(BUILD_DIR)/ldscript.txt $(BUILD_DIR)/undefined_syms.txt
+	$(LD) -T $(BUILD_DIR)/undefined_syms.txt -T $(BUILD_DIR)/ldscript.txt --no-check-sections --accept-unknown-input-arch --emit-relocs -Map $(BUILD_DIR)/z64.map -o $@
 
 ## Order-only prerequisites
 # These ensure e.g. the O_FILES are built before the OVL_RELOC_FILES.
@@ -320,70 +321,70 @@ $(O_FILES): | asset_files
 
 .PHONY: o_files asset_files
 
-build/$(SPEC): $(SPEC)
+$(BUILD_DIR)/$(SPEC): $(SPEC)
 	$(CPP) $(CPPFLAGS) $< > $@
 
-build/ldscript.txt: build/$(SPEC)
+$(BUILD_DIR)/ldscript.txt: $(BUILD_DIR)/$(SPEC)
 	$(MKLDSCRIPT) $< $@
 
-build/undefined_syms.txt: undefined_syms.txt
+$(BUILD_DIR)/undefined_syms.txt: undefined_syms.txt
 	$(CPP) $(CPPFLAGS) $< > $@
 
-build/baserom/%.o: baserom/%
+$(BUILD_DIR)/baserom/%.o: baserom/%
 	$(OBJCOPY) -I binary -O elf32-big $< $@
 
-build/data/%.o: data/%.s
+$(BUILD_DIR)/data/%.o: data/%.s
 	$(AS) $(ASFLAGS) $< -o $@
 
-build/assets/text/%.enc.h: assets/text/%.h assets/text/charmap.txt
+$(BUILD_DIR)/assets/text/%.enc.h: assets/text/%.h assets/text/charmap.txt
 	python3 tools/msgenc.py assets/text/charmap.txt $< $@
 
-build/assets/text/fra_message_data_static.o: build/assets/text/message_data.enc.h
-build/assets/text/ger_message_data_static.o: build/assets/text/message_data.enc.h
-build/assets/text/nes_message_data_static.o: build/assets/text/message_data.enc.h
-build/assets/text/staff_message_data_static.o: build/assets/text/message_data_staff.enc.h
+$(BUILD_DIR)/assets/text/fra_message_data_static.o: $(BUILD_DIR)/assets/text/message_data.enc.h
+$(BUILD_DIR)/assets/text/ger_message_data_static.o: $(BUILD_DIR)/assets/text/message_data.enc.h
+$(BUILD_DIR)/assets/text/nes_message_data_static.o: $(BUILD_DIR)/assets/text/message_data.enc.h
+$(BUILD_DIR)/assets/text/staff_message_data_static.o: $(BUILD_DIR)/assets/text/message_data_staff.enc.h
 
-build/assets/%.o: assets/%.c
+$(BUILD_DIR)/assets/%.o: assets/%.c
 	$(CC) -c $(CFLAGS) $(MIPS_VERSION) $(OPTFLAGS) -o $@ $<
 	$(OBJCOPY) -O binary $@ $@.bin
 
-build/src/%.o: src/%.s
+$(BUILD_DIR)/src/%.o: src/%.s
 	$(CPP) $(CPPFLAGS) -Iinclude $< | $(AS) $(ASFLAGS) -o $@
 
-build/dmadata_table_spec.h: build/$(SPEC)
+$(BUILD_DIR)/dmadata_table_spec.h: $(BUILD_DIR)/$(SPEC)
 	$(MKDMADATA) $< $@
 
-build/src/boot/z_std_dma.o: build/dmadata_table_spec.h
-build/src/dmadata/dmadata.o: build/dmadata_table_spec.h
+$(BUILD_DIR)/src/boot/z_std_dma.o: $(BUILD_DIR)/dmadata_table_spec.h
+$(BUILD_DIR)/src/dmadata/dmadata.o: $(BUILD_DIR)/dmadata_table_spec.h
 
-build/src/%.o: src/%.c
+$(BUILD_DIR)/src/%.o: src/%.c
 	$(CC_CHECK) $<
 	$(CC) -c $(CFLAGS) $(MIPS_VERSION) $(OPTFLAGS) -o $@ $<
 	@$(OBJDUMP) $(OBJDUMP_FLAGS) $@ > $(@:.o=.s)
 
-build/src/libultra/libc/ll.o: src/libultra/libc/ll.c
-	$(CC_CHECK) $<
-	$(CC) -c $(CFLAGS) $(MIPS_VERSION) $(OPTFLAGS) -o $@ $<
-	python3 tools/set_o32abi_bit.py $@
-	@$(OBJDUMP) $(OBJDUMP_FLAGS) $@ > $(@:.o=.s)
-
-build/src/libultra/libc/llcvt.o: src/libultra/libc/llcvt.c
+$(BUILD_DIR)/src/libultra/libc/ll.o: src/libultra/libc/ll.c
 	$(CC_CHECK) $<
 	$(CC) -c $(CFLAGS) $(MIPS_VERSION) $(OPTFLAGS) -o $@ $<
 	python3 tools/set_o32abi_bit.py $@
 	@$(OBJDUMP) $(OBJDUMP_FLAGS) $@ > $(@:.o=.s)
 
-build/src/overlays/%_reloc.o: build/$(SPEC)
+$(BUILD_DIR)/src/libultra/libc/llcvt.o: src/libultra/libc/llcvt.c
+	$(CC_CHECK) $<
+	$(CC) -c $(CFLAGS) $(MIPS_VERSION) $(OPTFLAGS) -o $@ $<
+	python3 tools/set_o32abi_bit.py $@
+	@$(OBJDUMP) $(OBJDUMP_FLAGS) $@ > $(@:.o=.s)
+
+$(BUILD_DIR)/src/overlays/%_reloc.o: $(BUILD_DIR)/$(SPEC)
 	$(FADO) $$(tools/reloc_prereq $< $(notdir $*)) -n $(notdir $*) -o $(@:.o=.s) -M $(@:.o=.d)
 	$(AS) $(ASFLAGS) $(@:.o=.s) -o $@
 
-build/%.inc.c: %.png
+$(BUILD_DIR)/%.inc.c: %.png
 	$(ZAPD) btex -eh -tt $(subst .,,$(suffix $*)) -i $< -o $@
 
-build/assets/%.bin.inc.c: assets/%.bin
+$(BUILD_DIR)/assets/%.bin.inc.c: assets/%.bin
 	$(ZAPD) bblb -eh -i $< -o $@
 
-build/assets/%.jpg.inc.c: assets/%.jpg
+$(BUILD_DIR)/assets/%.jpg.inc.c: assets/%.jpg
 	$(ZAPD) bren -eh -i $< -o $@
 
 -include $(DEP_FILES)
