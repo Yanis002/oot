@@ -5,4 +5,5 @@
     <EntranceList File="EntranceList_OoTMqDbg.txt"/>
     <SpecialEntranceList File="SpecialEntranceList_OoTMqDbg.txt"/>
     <ExternalXMLFolder Path="assets/xml/"/>
+    <EnumData File="EnumData.xml"/>
 </Root>
