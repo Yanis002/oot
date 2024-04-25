@@ -271,4 +271,10 @@ extern struct GraphicsContext* __gfxCtx;
                        ((height)-1) << G_TEXTURE_IMAGE_FRAC);                                                          \
     } while (0)
 
+#ifdef __GNUC__
+#define NO_REORDER __attribute__((section(".data"))) __attribute__((no_reorder))
+#else
+#define NO_REORDER
+#endif
+
 #endif

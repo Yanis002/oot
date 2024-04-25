@@ -13,13 +13,13 @@ NON_MATCHING := 0
 # If ORIG_COMPILER is 1, compile with QEMU_IRIX and the original compiler
 ORIG_COMPILER := 0
 # If COMPILER is "gcc", compile with GCC instead of IDO.
-COMPILER := ido
+COMPILER := gcc
 # Target game version. Currently the following versions are supported:
 #   gc-eu-mq       GameCube Europe/PAL Master Quest
 #   gc-eu-mq-dbg   GameCube Europe/PAL Master Quest Debug (default)
 # The following versions are work-in-progress and not yet matching:
 #   gc-eu          GameCube Europe/PAL
-VERSION := gc-eu-mq-dbg
+VERSION := gc-eu-mq
 # Number of threads to extract and compress with
 N_THREADS := $(shell nproc)
 # Check code syntax with host compiler
@@ -108,6 +108,8 @@ endif
 # Detect compiler and set variables appropriately.
 ifeq ($(COMPILER),gcc)
   CC       := $(MIPS_BINUTILS_PREFIX)gcc
+  CPPFLAGS += -fno-reorder-blocks -fno-optimize-sibling-calls
+  CFLAGS += -fno-reorder-blocks -fno-optimize-sibling-calls
 else ifeq ($(COMPILER),ido)
   CC       := tools/ido_recomp/$(DETECTED_OS)/7.1/cc
   CC_OLD   := tools/ido_recomp/$(DETECTED_OS)/5.3/cc
@@ -328,6 +330,14 @@ $(BUILD_DIR)/assets/%.o: CFLAGS += -fno-zero-initialized-in-bss -fno-toplevel-re
 $(BUILD_DIR)/src/%.o: CFLAGS += -fexec-charset=euc-jp
 $(BUILD_DIR)/src/libultra/libc/ll.o: OPTFLAGS := -Ofast
 $(BUILD_DIR)/src/overlays/%.o: CFLAGS += -fno-merge-constants -mno-explicit-relocs -mno-split-addresses
+
+$(BUILD_DIR)/src/overlays/actors/ovl_Item_Shield/%.o: OPTFLAGS := -O2
+$(BUILD_DIR)/src/overlays/actors/ovl_En_Part/%.o: OPTFLAGS := -O2
+$(BUILD_DIR)/src/overlays/actors/ovl_Item_B_Heart/%.o: OPTFLAGS := -O0
+$(BUILD_DIR)/src/overlays/actors/ovl_Bg_Mori_Hineri/%.o: OPTFLAGS := -O0
+
+$(BUILD_DIR)/src/libultra/os/%.o: OPTFLAGS := -O1
+$(BUILD_DIR)/src/libultra/%.o: OPTFLAGS := -O2
 endif
 
 #### Main Targets ###
@@ -340,7 +350,11 @@ ifneq ($(COMPARE),0)
 	@md5sum -c $(BASEROM_DIR)/checksum.md5
 endif
 
-compress: $(ROMC)
+compress:
+	$(MAKE) $(ROMC)
+	cp $(ROMC) /mnt/c/Users/Yanis/Desktop/hackeroot_gc_testing/files/zlj_f.n64
+	$(PYTHON) ./gc_utility.py -v $(VERSION)
+	cp $(BUILD_DIR)/dma_config.txt /mnt/c/Users/Yanis/Desktop/hackeroot_gc_testing/files/dma_config.txt
 ifneq ($(COMPARE),0)
 	@md5sum $(ROMC)
 	@md5sum -c $(BASEROM_DIR)/checksum-compressed.md5
