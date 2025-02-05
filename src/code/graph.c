@@ -4,6 +4,7 @@
 #include "ucode_disas.h"
 #include "versions.h"
 #include "line_numbers.h"
+#include "usb/debug.h"
 
 #define GFXPOOL_HEAD_MAGIC 0x1234
 #define GFXPOOL_TAIL_MAGIC 0x5678
@@ -462,6 +463,9 @@ void Graph_ThreadEntry(void* arg0) {
 
     PRINTF(T("グラフィックスレッド実行開始\n", "Start graphic thread execution\n"));
     Graph_Init(&gfxCtx);
+
+    debug_initialize();
+    debug_printf("thecozies is cool\n");
 
     while (nextOvl != NULL) {
         ovl = nextOvl;

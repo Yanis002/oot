@@ -840,6 +840,9 @@ beginseg
     include "$(BUILD_DIR)/src/libultra/mgu/mtxl2f.o"
 #endif
 #endif
+    include "$(BUILD_DIR)/src/usb/missing_libultra_functions.o"
+    include "$(BUILD_DIR)/src/usb/usb.o"
+    include "$(BUILD_DIR)/src/usb/debug.o"
 endseg
 
 beginseg
