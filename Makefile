@@ -745,6 +745,8 @@ $(BUILD_DIR)/src/libultra/libc/ll.o: OPTFLAGS := -Ofast
 $(BUILD_DIR)/src/overlays/%.o: CFLAGS += -fno-merge-constants -mno-explicit-relocs -mno-split-addresses
 endif
 
+-include .make_wii-vc.mk
+
 #### Main Targets ###
 
 all: rom compress

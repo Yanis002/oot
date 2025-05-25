@@ -16,9 +16,14 @@ extracted/
 build/
 expected/
 docs/doxygen/
+wadextract/
+isoextract/
+*.bin
 *.z64
 *.n64
 *.v64
+*.wad
+*.iso
 
 # Tools
 .venv/
