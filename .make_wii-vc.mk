@@ -23,7 +23,7 @@ GEN_LIB_CONFIG := tools/generate_lib_config.py
 
 ## Files
 
-BASEWAD := $(BASEROM_DIR)/baserom-US.wad
+BASEWAD := baseroms/baserom-$(REGION).wad
 COMMON_KEY := baseroms/common-key.bin
 WAD := $(ROM:.z64=.wad)
 
@@ -52,8 +52,13 @@ TARGET :=
 
 ifeq ($(COMPILER),gcc)
 ifneq ($(TARGET),)
-CFLAGS += -fno-reorder-blocks -fno-optimize-sibling-calls
-CPPFLAGS += -fno-reorder-blocks -fno-optimize-sibling-calls
+CFLAGS += -fno-reorder-blocks -fno-optimize-sibling-calls -fno-toplevel-reorder
+CPPFLAGS += -fno-reorder-blocks -fno-optimize-sibling-calls -fno-toplevel-reorder
+
+# Disables `.set gp=64` in exceptasm.s
+CCASFLAGS += -DTARGET_GC
+
+$(BUILD_DIR)/src/audio/internal/seqplayer.o: OPTFLAGS := -O1
 endif
 endif
 
@@ -61,7 +66,7 @@ endif
 
 wad:
 	$(MAKE) compress TARGET=wad
-	$(GZINJECT) -a inject -k $(COMMON_KEY) -m $(ROMC) -w $(BASEWAD) -o $(WAD) -p NACE.gzi -p gz_default_remap.gzi
+	$(GZINJECT) -a inject -k $(COMMON_KEY) -m $(ROMC) -w $(BASEWAD) -o $(WAD) -p gzi/$(REGION).gzi -p gzi/controller.gzi
 	$(RM) -r wadextract/
 
 # for ISOs we need to do things manually since we want to remove
