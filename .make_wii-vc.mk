@@ -7,7 +7,9 @@
 
 ## Tools
 
+# You can get gzinject here https://github.com/PracticeROM/gzinject
 GZINJECT ?= gzinject
+
 COPY ?= cp -v
 
 # This tool generates a file that the (modified) emulator can read
