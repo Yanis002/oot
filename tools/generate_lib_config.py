@@ -35,7 +35,7 @@ class SymInfo:
 def get_sym_info(map_path: Path, symbol: str):
     with Capturing() as stdout:
         ret = mapfile_parser.frontends.sym_info.doSymInfo(map_path, symbol)
-    assert ret == 0
+    assert ret == 0, f"failed with {symbol}"
 
     split = stdout[0].removesuffix(")").split("(")
     split2 = split[1].split(", ")
@@ -77,11 +77,11 @@ funcs_to_process = [
     "guOrtho",
     "guPerspectiveF",
     "guPerspective",
-    "guScaleF",
+    # "guScaleF",
     "guScale",
     "guRotateF",
     "guRotate",
-    "guTranslateF",
+    # "guTranslateF",
     "guTranslate",
     "guLookAtF",
     "guLookAt",

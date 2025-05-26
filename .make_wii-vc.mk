@@ -75,9 +75,9 @@ iso:
 	$(MAKE) compress TARGET=iso
 	$(GZINJECT) -a extract -s $(BASEISO)
 	$(PYTHON) $(GEN_DMA_CONFIG) -v $(VERSION)
-	$(PYTHON) $(GEN_LIB_CONFIG) -v $(VERSION)
 	$(COPY) $(BUILD_DIR)/$(DMA_CONFIG_FILE) isoextract/zlj_f.tgc/$(DMA_CONFIG_FILE)
 ifneq ($(COMPILER),ido)
+	$(PYTHON) $(GEN_LIB_CONFIG) -v $(VERSION)
 	$(COPY) $(BUILD_DIR)/$(LIB_CONFIG_FILE) isoextract/zlj_f.tgc/$(LIB_CONFIG_FILE)
 endif
 	$(COPY) $(ROMC) isoextract/zlj_f.tgc/$(ROM_NAME).n64
