@@ -1,6 +1,9 @@
 # Example usage:
 # - make wad VERSION=ntsc-1.2
 # - make iso VERSION=ntsc-1.2
+#
+# if building a mod for the GameCube, you will need to build this: https://github.com/Yanis002/oot-gc/tree/oot_gcc_compat
+# and place the build in the baseroms folder (see `DOL` below)
 
 ## Tools
 
