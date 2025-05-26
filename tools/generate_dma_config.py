@@ -40,7 +40,7 @@ if __name__ == "__main__":
 
     VERSION = args.version
     DMATABLE_PATH = Path(f"build/{VERSION}/dmadata_table_spec.h").resolve()
-    ROM_PATH = f"build/{VERSION}/{'oot-' if VERSION != 'hackeroot-mq' else ''}{VERSION}-compressed{'-' + args.codec if VERSION == 'hackeroot-mq' else ''}.z64"
+    ROM_PATH = f"build/{VERSION}/oot-{VERSION}-compressed.z64"
     sceneFiles: list[DmaInfo] = []
     otherFiles: list[DmaInfo] = []
     allFiles: list[DmaInfo] = []

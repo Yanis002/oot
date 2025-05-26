@@ -24,6 +24,7 @@ isoextract/
 *.v64
 *.wad
 *.iso
+*.dol
 
 # Tools
 .venv/

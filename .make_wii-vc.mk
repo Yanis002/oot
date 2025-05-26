@@ -7,14 +7,23 @@
 GZINJECT ?= gzinject
 COPY ?= cp -v
 
-# this tool generates a file that the (modified) emulator can read
-# to figure out which parts of the rom to cache
-# it outputs file indices from the rom and the location and the size of `gDmaDataTable`
+# This tool generates a file that the (modified) emulator can read
+# to figure out which parts of the rom to cache.
+# It outputs file indices from the rom and the location and the size of `gDmaDataTable`.
 GEN_DMA_CONFIG := tools/generate_dma_config.py
+
+# This tool generates a file that the (modified) emulator can read
+# to figure out where some of the N64 functions are to apply the proper hacks
+# to make the game run properly.
+# By default, the emulator will compute a checksum and it tries to find functions based on
+# the calculated checksum and the size of the function, though this can fail completely
+# since other compilers like GCC can change these values, this system is a workaround for that.
+# Note: this is only useful when building with GCC.
+GEN_LIB_CONFIG := tools/generate_lib_config.py
 
 ## Files
 
-BASEWAD := $(BASEROM_DIR)/baserom-$(REGION).wad
+BASEWAD := $(BASEROM_DIR)/baserom-US.wad
 COMMON_KEY := baseroms/common-key.bin
 WAD := $(ROM:.z64=.wad)
 
@@ -22,6 +31,7 @@ WAD := $(ROM:.z64=.wad)
 BASEISO := baseroms/baserom.iso
 ISO := $(ROM:.z64=.iso)
 DMA_CONFIG_FILE := dma_config.bin
+LIB_CONFIG_FILE := lib_config.bin
 
 # set to 1 to inject in MQ
 MQ_INJECT ?= 0
@@ -33,27 +43,38 @@ ROM_NAME := zlj_f
 endif
 
 # the emulator replacement dol, can be empty skip this step
-DOL := # baseroms/oot-gc.dol
+DOL := baseroms/oot-gc.dol
+
+## Flags
+
+# wad or iso to make a compatible gcc build
+TARGET :=
+
+ifeq ($(COMPILER),gcc)
+ifneq ($(TARGET),)
+CFLAGS += -fno-reorder-blocks -fno-optimize-sibling-calls
+CPPFLAGS += -fno-reorder-blocks -fno-optimize-sibling-calls
+endif
+endif
 
 ## Targets
 
-wad: compress
-ifeq ($(COMPILER),gcc)
-$(error gcc not supported yet)
-else
-	$(GZINJECT) -a inject -k $(COMMON_KEY) -m $(ROMC) -w $(BASEWAD) -o $(WAD)
-endif
+wad:
+	$(MAKE) compress TARGET=wad
+	$(GZINJECT) -a inject -k $(COMMON_KEY) -m $(ROMC) -w $(BASEWAD) -o $(WAD) -p NACE.gzi -p gz_default_remap.gzi
 	$(RM) -r wadextract/
 
 # for ISOs we need to do things manually since we want to remove
 # the useless files that increase the size of the file by a lot
-iso: compress
-ifeq ($(COMPILER),gcc)
-$(error gcc not supported yet)
-else
+iso:
+	$(MAKE) compress TARGET=iso
 	$(GZINJECT) -a extract -s $(BASEISO)
 	$(PYTHON) $(GEN_DMA_CONFIG) -v $(VERSION)
+	$(PYTHON) $(GEN_LIB_CONFIG) -v $(VERSION)
 	$(COPY) $(BUILD_DIR)/$(DMA_CONFIG_FILE) isoextract/zlj_f.tgc/$(DMA_CONFIG_FILE)
+ifneq ($(COMPILER),ido)
+	$(COPY) $(BUILD_DIR)/$(LIB_CONFIG_FILE) isoextract/zlj_f.tgc/$(LIB_CONFIG_FILE)
+endif
 	$(COPY) $(ROMC) isoextract/zlj_f.tgc/$(ROM_NAME).n64
 ifneq ($(DOL),)
 	$(COPY) $(DOL) isoextract/zlj_f.tgc/main.dol
@@ -61,6 +82,5 @@ endif
 	$(RM) -r isoextract/S_*.tgc/ isoextract/zlj_f.tgc/*.thp
 	$(GZINJECT) -a pack -s $(ISO)
 	$(RM) -r isoextract/
-endif
 
 .PHONY: wad iso
