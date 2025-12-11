@@ -3,7 +3,7 @@
 
 #include "array_count.h"
 #include "gfx.h"
-#include "z64player.h"
+#include "player.h"
 
 // Eyes textures
 
@@ -19,12 +19,12 @@ u64 gLinkAdultEyesClosedfTex[TEX_LEN(u64, LINK_ADULT_EYES_TEX_WIDTH, LINK_ADULT_
 #include "assets/objects/object_link_boy/gLinkAdultEyesClosedfTex.ci8.tlut_gLinkAdultHeadTLUT.inc.c"
 };
 
-u64 gLinkAdultEyesLeftTex[TEX_LEN(u64, LINK_ADULT_EYES_TEX_WIDTH, LINK_ADULT_EYES_TEX_HEIGHT, 8)] = {
-#include "assets/objects/object_link_boy/gLinkAdultEyesLeftTex.ci8.tlut_gLinkAdultHeadTLUT.inc.c"
-};
-
 u64 gLinkAdultEyesRightTex[TEX_LEN(u64, LINK_ADULT_EYES_TEX_WIDTH, LINK_ADULT_EYES_TEX_HEIGHT, 8)] = {
 #include "assets/objects/object_link_boy/gLinkAdultEyesRightTex.ci8.tlut_gLinkAdultHeadTLUT.inc.c"
+};
+
+u64 gLinkAdultEyesLeftTex[TEX_LEN(u64, LINK_ADULT_EYES_TEX_WIDTH, LINK_ADULT_EYES_TEX_HEIGHT, 8)] = {
+#include "assets/objects/object_link_boy/gLinkAdultEyesLeftTex.ci8.tlut_gLinkAdultHeadTLUT.inc.c"
 };
 
 u64 gLinkAdultEyesWideTex[TEX_LEN(u64, LINK_ADULT_EYES_TEX_WIDTH, LINK_ADULT_EYES_TEX_HEIGHT, 8)] = {
@@ -959,7 +959,7 @@ Gfx gLinkAdultHookshotReticleDL[13] = {
 #include "assets/objects/object_link_boy/gLinkAdultHookshotReticleDL.inc.c"
 };
 
-// Far skeleton vertices
+// Far skeleton vertices and DLs
 
 Vtx gLinkAdultRightFootFarVtx[] = {
 #include "assets/objects/object_link_boy/gLinkAdultRightFootFarVtx.inc.c"
@@ -1089,7 +1089,7 @@ Gfx gLinkAdultLeftArmFarDL[86] = {
 #include "assets/objects/object_link_boy/gLinkAdultLeftArmFarDL.inc.c"
 };
 
-// Near skeleton vertices
+// Near skeleton vertices and DLs
 
 Vtx gLinkAdultRightFootNearVtx[] = {
 #include "assets/objects/object_link_boy/gLinkAdultRightFootNearVtx.inc.c"

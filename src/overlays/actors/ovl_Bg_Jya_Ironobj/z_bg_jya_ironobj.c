@@ -14,8 +14,8 @@
 #include "translation.h"
 #include "z_en_item00.h"
 #include "z_lib.h"
-#include "z64effect.h"
-#include "z64play.h"
+#include "effect.h"
+#include "play_state.h"
 
 #include "assets/objects/object_jya_iron/object_jya_iron.h"
 
@@ -60,8 +60,8 @@ static ColliderCylinderInit sCylinderInit = {
     },
     {
         ELEM_MATERIAL_UNK0,
-        { 0x00000000, 0x00, 0x00 },
-        { 0xFFCFFFFF, 0x00, 0x00 },
+        { 0x00000000, HIT_SPECIAL_EFFECT_NONE, 0x00 },
+        { 0xFFCFFFFF, HIT_BACKLASH_NONE, 0x00 },
         ATELEM_NONE,
         ACELEM_ON,
         OCELEM_NONE,
@@ -91,15 +91,15 @@ static InitChainEntry sInitChain[] = {
 static CollisionHeader* sCollisionHeaders[] = { &gPillarCol, &gThroneCol };
 
 void BgJyaIronobj_InitCylinder(BgJyaIronobj* this, PlayState* play) {
-    ColliderCylinder* colCylinder = &this->colliderCylinder;
+    s32 pad;
 
-    Collider_InitCylinder(play, colCylinder);
-    Collider_SetCylinder(play, colCylinder, &this->dyna.actor, &sCylinderInit);
+    Collider_InitCylinder(play, &this->colliderCylinder);
+    Collider_SetCylinder(play, &this->colliderCylinder, &this->dyna.actor, &sCylinderInit);
     if (PARAMS_GET_U(this->dyna.actor.params, 0, 1) == 1) {
         this->colliderCylinder.dim.radius = 40;
         this->colliderCylinder.dim.height = 100;
     }
-    Collider_UpdateCylinder(&this->dyna.actor, colCylinder);
+    Collider_UpdateCylinder(&this->dyna.actor, &this->colliderCylinder);
 }
 
 /*

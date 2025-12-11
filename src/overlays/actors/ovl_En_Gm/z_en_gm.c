@@ -15,9 +15,10 @@
 #include "segmented_address.h"
 #include "sys_matrix.h"
 #include "terminal.h"
-#include "z64play.h"
-#include "z64player.h"
-#include "z64save.h"
+#include "translation.h"
+#include "play_state.h"
+#include "player.h"
+#include "save.h"
 
 #include "assets/objects/object_oF1d_map/object_oF1d_map.h"
 #include "assets/objects/object_gm/object_gm.h"
@@ -61,8 +62,8 @@ static ColliderCylinderInitType1 sCylinderInit = {
     },
     {
         ELEM_MATERIAL_UNK0,
-        { 0x00000000, 0x00, 0x00 },
-        { 0x00000000, 0x00, 0x00 },
+        { 0x00000000, HIT_SPECIAL_EFFECT_NONE, 0x00 },
+        { 0x00000000, HIT_BACKLASH_NONE, 0x00 },
         ATELEM_NONE,
         ACELEM_NONE,
         OCELEM_ON,
@@ -80,15 +81,14 @@ void EnGm_Init(Actor* thisx, PlayState* play) {
 
     Actor_ProcessInitChain(&this->actor, sInitChain);
 
-    // "Medi Goron"
-    PRINTF(VT_FGCOL(GREEN) "%s[%d] : 中ゴロン[%d]" VT_RST "\n", "../z_en_gm.c", 133, this->actor.params);
+    PRINTF(VT_FGCOL(GREEN) T("%s[%d] : 中ゴロン[%d]", "%s[%d] : Medi Goron [%d]") VT_RST "\n", "../z_en_gm.c", 133,
+           this->actor.params);
 
     this->gmObjectSlot = Object_GetSlot(&play->objectCtx, OBJECT_GM);
 
     if (this->gmObjectSlot < 0) {
         PRINTF_COLOR_ERROR();
-        // "There is no model bank! !! (Medi Goron)"
-        PRINTF("モデル バンクが無いよ！！（中ゴロン）\n");
+        PRINTF(T("モデル バンクが無いよ！！（中ゴロン）\n", "There is no model bank!! (Medi Goron)\n"));
         PRINTF_RST();
         ASSERT(0, "0", "../z_en_gm.c", 145);
     }
