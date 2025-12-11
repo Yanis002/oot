@@ -12,13 +12,13 @@ GZINJECT ?= gzinject
 
 COPY ?= cp -v
 
-# GameCube:
+# GameCube only:
 # This tool generates a file that the (modified) emulator can read
 # to figure out which parts of the rom to cache.
 # It outputs file indices from the rom and the location and the size of `gDmaDataTable`.
 GEN_DMA_CONFIG := tools/generate_dma_config.py
 
-# GameCube:
+# GameCube only:
 # This tool generates a file that the (modified) emulator can read
 # to figure out where some of the N64 functions are to apply the proper hacks
 # to make the game run properly.
@@ -54,7 +54,7 @@ else
 ROM_NAME := zlj_f
 endif
 
-# the emulator replacement dol, can be empty skip this step
+# the emulator replacement dol, can be empty to skip this step
 DOL := baseroms/oot-gc.dol
 
 ## Flags
